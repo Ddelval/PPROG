@@ -48,7 +48,7 @@ Canvas* canv_ini(int wid,int hei){
 /// @param f File from which the data will be read
 Canvas* canv_load(FILE* f){
     if(!f)return NULL;
-    Canvas* c = calloc(1,sizeof(Canvas));
+    Canvas* c = (Canvas*)calloc(1,sizeof(Canvas));
     if(!c)return NULL;
     fscanf(f,"%d %d",&c->wid,&c->hei);
     c->data=(Pixel***)calloc(c->hei,sizeof(Pixel**));
