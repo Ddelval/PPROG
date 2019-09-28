@@ -56,15 +56,11 @@ void win_free(Window* win) {
 
 Window* win_redraw(Window* win, int width, int height, int weight) {
 	if(!win) return NULL;
-	
-	Window* win2=win_copy(win);
-	if(!win2) return NULL;
-	win2->width=width;
-	win2->height=height;
-	win2->weight=weight;
-	win_free(win);
-	if(!win_render(win2, 0)) return NULL;
-	return win2;
+	win->width=width;
+	win->height=height;
+	win->weight=weight;
+	if(!win_render(win, 0)) return NULL;
+	return win;
 }
 
 Window* win_setSelected(Window* win, int* selected_elem) {
