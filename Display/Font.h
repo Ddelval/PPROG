@@ -10,5 +10,5 @@
 #include <stdio.h>
 typedef struct _Font Font;
 Font* font_load(FILE* fil);
-Character* font_getChar(Font* f,char c);
+Canvas* font_renderText(Font* f,char* txt);
 #endif /* Font_h */

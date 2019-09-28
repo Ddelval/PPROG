@@ -48,7 +48,7 @@ Canvas* canv_ini(int wid,int hei){
 /// @param f File from which the data will be read
 Canvas* canv_load(FILE* f){
     if(!f)return NULL;
-    Canvas* c = (Canvas*)calloc(1,sizeof(Canvas));
+    Canvas* c = calloc(1,sizeof(Canvas));
     if(!c)return NULL;
     fscanf(f,"%d %d",&c->wid,&c->hei);
     c->data=(Pixel***)calloc(c->hei,sizeof(Pixel**));
@@ -148,10 +148,6 @@ void canv_printR(FILE* f,Canvas* c,int x,int y,int wid,int hei){
     }
     free(da);
 }
-Canvas* _canv_setOverlay(Canvas* res,Canvas* base,Canvas* over,int o_x, int o_y){
-    
-    return res;
-}
 
 Canvas* canv_Overlay(Canvas* base, Canvas* over, int o_x, int o_y){
     if(!base||!over)return NULL;
@@ -160,12 +156,12 @@ Canvas* canv_Overlay(Canvas* base, Canvas* over, int o_x, int o_y){
     int owid,ohei;
     owid=over->wid;
     ohei=over->hei;
-    if(owid+o_x>base->wid)owid=base->wid-o_x;
-    if(ohei+o_y>base->hei)ohei=base->hei-o_y;
+    if(owid+o_y>base->wid)owid=base->wid-o_y;
+    if(ohei+o_x>base->hei)ohei=base->hei-o_x;
     for(int i=0;i<base->hei;++i){
         for(int j=0;j<base->wid;++j){
             if(i>=o_x&&j>=o_y&&i<(o_x+ohei)&&j<(o_y+owid)){
-                res->data[i][j]=pix_overlay(base->data[i][j], over->data[i][j]);
+                res->data[i][j]=pix_overlay(base->data[i][j], over->data[i-o_x][j-o_y]);
             }
             else{
                 res->data[i][j]=pix_copy(base->data[i][j]);
@@ -260,8 +256,7 @@ Canvas ** canv_VSplit(Canvas* src, int* nelem){
             if(pindex<j-1){
                 elements[lindex]=canv_subCopy(src, 0, src->hei, pindex+1, j);
                 //fprintf(stdout,"%s Abcdeeefesasd",movecur(0, 40*lindex));
-                //canv_print(stdout, elements[lindex], 0, 40*lindex+10);
-                //exit(0);
+                //canv_print(stdout, elements[lindex], 40*(lindex/10),40*(lindex%10));
                 if(!elements[lindex]){
                     for(int i=0;i<j;++i){
                         canv_free(elements[i]);

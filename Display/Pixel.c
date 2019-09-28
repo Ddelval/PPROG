@@ -128,7 +128,7 @@ char* pix_scapeSeq(Pixel* a){
 char * pix_renderLine(Pixel**a,int len){
     int diff=0;
     for(int i=1;i<len;++i) diff+=!pix_equals(a[i], a[i-1]); //Count differences
-    int size=(diff+1)*25+len+2;
+    int size=(diff+2)*25+(len+1)+2;
     char * res= (char*) malloc(sizeof(char)*size);
     int ipos=0;
     appendf(res, &ipos, pix_scapeSeq(a[0]));
@@ -140,6 +140,9 @@ char * pix_renderLine(Pixel**a,int len){
             append(res, &ipos, " ");
         }
     }
+    Pixel* p = pix_ini(0, 0, 0, 0);
+    appendf(res,&ipos,pix_scapeSeq(p));
+    free(p);
     return res;
 }
 Pixel * pix_copy(Pixel* src){
