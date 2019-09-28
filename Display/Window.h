@@ -11,7 +11,7 @@ void win_free(Window* win);
 Window* win_redraw(Window* win, int wid, int hei);
 
 Window* win_setSelected(Window* win, int* selected_elem);
-Welem* win_getSelected(Window*win);
+Welem* win_getSelected(Window* win);
 
 Window* win_scrollDown(Window* win);
 Window* win_scrollUp(Window* win);
