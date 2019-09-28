@@ -104,10 +104,12 @@ char** canv_render(Canvas* c,int wid, int hei){
     if(wid>c->wid)wid=c->wid;
     if(hei>c->hei)hei=c->hei;
     if(!c)return NULL;
+    Canvas* cop=canv_backGrnd(0, 0, 0, 255, c->wid, c->hei);
+    canv_addOverlay(cop, c, 0, 0);
     char** ch=(char**) malloc(sizeof(char*)*c->hei);
     if(!ch)return NULL;
     for(int i=0;i<hei;++i){
-        ch[i]=pix_renderLine(c->data[i], wid);
+        ch[i]=pix_renderLine(cop->data[i], wid);
         if(!ch[i]){
             for(int j=0;j<i;++j){
                 free(ch[j]);
@@ -116,6 +118,7 @@ char** canv_render(Canvas* c,int wid, int hei){
             return NULL;
         }
     }
+    canv_free(cop);
     return ch;
 }
 
@@ -146,6 +149,14 @@ void canv_printR(FILE* f,Canvas* c,int x,int y,int wid,int hei){
     free(da);
 }
 Canvas* _canv_setOverlay(Canvas* res,Canvas* base,Canvas* over,int o_x, int o_y){
+    
+    return res;
+}
+
+Canvas* canv_Overlay(Canvas* base, Canvas* over, int o_x, int o_y){
+    if(!base||!over)return NULL;
+    Canvas* res=canv_ini(base->wid, base->hei);
+    if(!res)return NULL;
     int owid,ohei;
     owid=over->wid;
     ohei=over->hei;
@@ -160,41 +171,30 @@ Canvas* _canv_setOverlay(Canvas* res,Canvas* base,Canvas* over,int o_x, int o_y)
                 res->data[i][j]=pix_copy(base->data[i][j]);
             }
             if(!res->data[i][j]){
-                for(int w=0;w<j;++w){
-                    pix_free(res->data[i][w]);
-                }
-                for(int z=0;z<i;++z){
-                    for(int w=0;w<base->wid;++w){
-                        pix_free(res->data[z][w]);
-                    }
-                    free(res->data[z]);
-                }
-                free(res->data);
-                free(res);
+                canv_free(res);
+                return NULL;
                 
             }
         }
     }
     return res;
 }
-
-Canvas* canv_Overlay(Canvas* base, Canvas* over, int o_x, int o_y){
-    if(!base||!over)return NULL;
-    Canvas* res=canv_ini(base->wid, base->hei);
-    if(!res)return NULL;
-    if(!_canv_setOverlay(res, base, over, o_x, o_y)){
-        canv_free(res);
-        return NULL;
+Canvas* canv_addOverlay(Canvas* base, Canvas* over, int o_x, int o_y){
+    Canvas* c=canv_Overlay(base, over, o_x, o_y);
+    if(!c)return NULL;
+    for(int i=0;i<base->hei;++i){
+        for(int j=0;j<base->wid;++j){
+            pix_copyVals(base->data[i][j], c->data[i][j]);
+        }
     }
-    return res;
-}
-Canvas* canv_AddOverlay(Canvas* base, Canvas* over, int o_x, int o_y){
-    return _canv_setOverlay(base, base, over, o_x, o_y);
+    canv_free(c);
+    return base;
 }
 
 Canvas* canv_copy (Canvas* bas){
     if(!bas)return NULL;
     Canvas* res=canv_ini(bas->wid, bas->hei);
+    if(!res)return NULL;
     for(int i=0;i<bas->hei;++i){
         for(int j=0;j<bas->wid;++j){
             res->data[i][j]=pix_copy(bas->data[i][j]);
@@ -205,8 +205,140 @@ Canvas* canv_copy (Canvas* bas){
         }
     }
     return res;
-}/*
-Canvas ** canv_split(Canvas* src){
+}
+
+/// Returns a copy of a section of the given Canvas
+/// @param bas Source canvas
+/// @param x1 x starting index (included)
+/// @param x2 x ending   index (excluded)
+/// @param y1 y starting index (included)
+/// @param y2 y ending   index (excluded)
+Canvas* canv_subCopy (Canvas* bas,int x1,int x2,int y1,int y2){
+    if(!bas)return NULL;
+    int hei,wid;
+    hei=x2-x1;
+    wid=y2-y1;
+    Canvas* res=canv_ini(wid, hei);
+    if(!res) return NULL;
+    for(int i=0;i<hei;++i){
+        for(int j=0;j<wid;++j){
+            res->data[i][j]=pix_copy(bas->data[x1+i][y1+j]);
+            if(!(res->data[i][j])){
+                canv_free(res);
+                return NULL;
+            }
+        }
+    }
+    return res;
+}
+bool _transparentColumn(Canvas * c, int j){
+    if(j>=c->wid) return false;
+    bool b=true;
+    for(int i=0;i<c->hei;++i)b*=pix_transparent(c->data[i][j]);
+    return b;
     
 }
-*/
+Canvas ** canv_VSplit(Canvas* src, int* nelem){
+    /* Count the ammount of sub elements*/
+    int cnt=0;
+    int prev=true;
+    for(int j=0;j<src->wid;++j){
+        bool b=_transparentColumn(src, j);
+        if(!b&&prev){
+           
+            cnt++;
+        }
+        prev=b;
+    }
+    *nelem=cnt;
+    /* Splits the sub elements and stores them in elements */
+    Canvas** elements=calloc(cnt+2, sizeof(Canvas*));
+    int lindex=0;
+    int pindex=0;
+    for(int j=0;j<src->wid;++j){
+        if(_transparentColumn(src, j)){
+            if(pindex<j-1){
+                elements[lindex]=canv_subCopy(src, 0, src->hei, pindex+1, j);
+                //fprintf(stdout,"%s Abcdeeefesasd",movecur(0, 40*lindex));
+                //canv_print(stdout, elements[lindex], 0, 40*lindex+10);
+                //exit(0);
+                if(!elements[lindex]){
+                    for(int i=0;i<j;++i){
+                        canv_free(elements[i]);
+                    }
+                    free(elements);
+                    return NULL;
+                }
+                lindex++;
+                
+            }
+            pindex=j;
+        }
+    }
+    return elements;
+}
+Canvas* canv_backGrnd(int r, int g, int b, int a, int width, int height){
+    Canvas* canres= canv_ini(width, height);
+    if(!canres){
+        return NULL;
+    }
+    for(int i=0;i<height;++i){
+        for(int j=0;j<width;++j){
+            canres->data[i][j]=pix_ini(r, g, b, a);
+            if(!(canres->data[i][j])){
+                canv_free(canres);
+                return NULL;
+            }
+        }
+    }
+    return canres;
+}
+Canvas* canv_AdjustCrop(Canvas* src, int nwidth,int nheight){
+    Canvas* crop;
+    int x1,y1;
+    int x2,y2;
+    if(src->wid>nwidth){
+        if(src->hei>nheight){
+            x1=(int)ceil((src->hei-nheight)/2);
+            x2=x1+nheight;
+            
+            y1=(int)ceil((src->wid-nwidth)/2);
+            y2=y1+nwidth;
+            
+        }
+        else{
+            x1=0;
+            x2=src->hei;
+            
+            y1=(int)ceil((src->wid-nwidth)/2);
+            y2=y1+nwidth;
+        }
+    }
+    else{
+        if(src->hei>nheight){
+            x1=(int)ceil((src->hei-nheight)/2);
+            x2=x1+nheight;
+            
+            y1=0;
+            y2=src->wid;
+        }
+        else{
+            x1=0;
+            x2=src->hei;
+            
+            y1=0;
+            y2=src->wid;
+        }
+    }
+    crop=canv_subCopy(src,x1,x2,y1,y2);
+    if(!crop){
+        return NULL;
+    }
+    Canvas* work=canv_backGrnd(0, 0, 0, 0, nwidth, nheight);
+    int o_x,o_y;
+    o_x=(nheight-work->hei)/2;
+    o_y=(nwidth-work->wid)/2;
+    canv_addOverlay(work, crop, o_x, o_y);
+    return work;
+}
+

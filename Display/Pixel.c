@@ -26,7 +26,7 @@ Pixel* pix_ini(int r,int g, int b, int a){
 void pix_free(Pixel* p){
     free(p);
 }
-
+/*
 /// Returns the pixel resulting of overlaying the top pixel over the back one
 /// @param back     Underlaying pixel. It cannot have an alpha value different from 255
 ///                 That is to say, hasAlpha=false.
@@ -42,6 +42,36 @@ Pixel* pix_overlay(Pixel* back, Pixel* top){
     nb=top->b*ra+(1-ra)*back->b;
     return pix_ini(nr, ng, nb, 255);
 }
+ */
+Pixel* pix_overlay(Pixel* back, Pixel* top){
+    if(!back||!top)return NULL;
+    if(top->a==255)return pix_copy(top);
+    if(top->a==0&&back->a==0) return pix_ini(0,0,0,0);
+    if(top->a==0) return pix_copy(back);
+    if(back->a==0)return pix_copy(top);
+    double fr,fg,fb,fa;
+    double br,bg,bb,ba;
+    double oa,or,og,ob;
+    br=back->r/255.0;
+    bg=back->g/255.0;
+    bb=back->b/255.0;
+    ba=back->a/255.0;
+    
+    fr=top->r/255.0;
+    fg=top->g/255.0;
+    fb=top->b/255.0;
+    fa=top->a/255.0;
+    
+    
+    oa=1-(1-ba)*(1-fa);
+    or=(ba*(1-fa)*br+fa*fr)/oa;
+    og=(ba*(1-fa)*bg+fa*fg)/oa;
+    ob=(ba*(1-fa)*bb+fa*fb)/oa;
+    
+    oa*=255; or*=255; og*=255; ob*=255;
+    return pix_ini((int)round(or), (int)round(og), (int)round(ob), (int)round(oa));
+}
+
 Pixel* pix_setR(Pixel* p, int r){
     if(!p)return NULL;
     p->r=r;
@@ -62,6 +92,12 @@ Pixel* pix_setA(Pixel* p, int a){
     p->a=a;
     return p;
 }
+void pix_copyVals(Pixel*dest, Pixel*src){
+    dest->r=src->r;
+    dest->g=src->g;
+    dest->b=src->b;
+    dest->a=src->a;
+}
 int pix_retR(Pixel* p){
     if(!p)return -1;
     return p->r;
@@ -80,6 +116,9 @@ int pix_retA(Pixel* p){
 }
 bool pix_equals(Pixel* a,Pixel*b){
     return a->r==b->r&&a->g==b->g&&a->b==b->b&&a->a==b->a;
+}
+bool pix_transparent(Pixel* a){
+    return a->a==0;
 }
 char* pix_scapeSeq(Pixel* a){
     char* c=(char*)malloc(sizeof(char)*25);
