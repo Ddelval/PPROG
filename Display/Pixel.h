@@ -25,8 +25,9 @@ int pix_retR(Pixel* p);
 int pix_retG(Pixel* p);
 int pix_retB(Pixel* p);
 int pix_retA(Pixel* p);
-
+void pix_copyVals(Pixel*dest, Pixel*src);
 bool pix_equals(Pixel* a,Pixel*b);
+bool pix_transparent(Pixel* a);
 char * pix_renderLine(Pixel**a,int len);
 
 

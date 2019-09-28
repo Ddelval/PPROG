@@ -6,10 +6,11 @@
 
 #ifndef Utility_h
 #define Utility_h
-
+#define siz(x) sizeof(x)/sizeof((x[0]))
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 typedef enum{false,true}bool;
 
 void appendf(char* dest, int* spos,char* orig);
