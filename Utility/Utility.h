@@ -16,4 +16,5 @@ typedef enum{false,true}bool;
 void appendf(char* dest, int* spos,char* orig);
 void append (char* dest, int* spos, const char* orig);
 char* movecur(int x,int y);
+int max(int a,int b);
 #endif /* Utility_h */

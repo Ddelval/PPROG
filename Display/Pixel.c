@@ -14,6 +14,7 @@ int _filter(int a){
     if(a<0)a=0;
     return a;
 }
+
 Pixel* pix_ini(int r,int g, int b, int a){
     Pixel* p= (Pixel*) calloc(1,sizeof(Pixel));
     if(!p)return NULL;
@@ -26,23 +27,8 @@ Pixel* pix_ini(int r,int g, int b, int a){
 void pix_free(Pixel* p){
     free(p);
 }
-/*
-/// Returns the pixel resulting of overlaying the top pixel over the back one
-/// @param back     Underlaying pixel. It cannot have an alpha value different from 255
-///                 That is to say, hasAlpha=false.
-/// @param top      Overlaying pixel. It's alpha value will define the blend.
-Pixel* pix_overlay(Pixel* back, Pixel* top){
-    if(!back||!top)return NULL;
-    if(back->a!=255)return NULL;
-    int nr,ng,nb;
-    double ra;
-    ra=top->a/255.0;
-    nr=top->r*ra+(1-ra)*back->r;
-    ng=top->g*ra+(1-ra)*back->g;
-    nb=top->b*ra+(1-ra)*back->b;
-    return pix_ini(nr, ng, nb, 255);
-}
- */
+
+
 Pixel* pix_overlay(Pixel* back, Pixel* top){
     if(!back||!top)return NULL;
     if(top->a==255)return pix_copy(top);

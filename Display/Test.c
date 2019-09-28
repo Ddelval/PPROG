@@ -8,11 +8,10 @@
 #include "Font.h"
 #include "Canvas.h"
 int main(int argc, const char * argv[]) {
-    FILE* f = fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPROG/Display/Fonts/CD_Robo_Mono_11.txt", "r");
-    Font *ff=font_load(f);
-
-    
-    Canvas* c=font_renderText(ff, "Hello 123");
-    canv_print(stdout, c, 10, 10);
+    FILE* f = fopen("/Users/delvaldavid/Desktop/data", "r");
+    Canvas* c=canv_load(f);
+    Canvas* c2=canv_copy(c);
+    Canvas* ad=canv_appendV(c, c2);
+    canv_print(stdout, ad, 10, 10);
     return 0;
 }
