@@ -21,28 +21,20 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 		return NULL;
 	}
 	if(num_elems>0) {
+		Welem** we=(Welem**)calloc(num_elems, sizeof(Welem*));
+		if(!we) win_free(win); 
 		for(int i=0; i<num_elems; i++) {
-			win->Win_elem[i]=(Welem*)calloc(1, sizeof(Welem));
-			if(!win->Win_elem[i]) {
-				for(int j=0; j<i; j++) {
-					Welem_free(win->Win_elem[j]);
+			we[i]=Welem_copy(Win_elem[i]);
+			if(!we[i]) {
+				for(int j=0; j<i; ++j) {
+					Welem_free(we[j]);
 				}
-				free(win->title);
-				free(win);
-				return NULL;
-			}
-			win->Win_elem[i]=Welem_copy(Win_elem[i]);
-			if(!win->Win_elem[i]) {	
-				for(int j=0; j<i; j++) {
-					Welem_free(win->Win_elem[j]);
-				}
-				free(win->title);
-				free(win);
-				return NULL;
-			}
+				free(we);
+			}	
 		}
-		win->num_elems=num_elems;
+		win->Win_elem=we;
 	}
+	win->num_elems=num_elems;
 	win->width=wid;
 	win->height=hei;
 	win->weight=weight;
@@ -125,10 +117,10 @@ Window* win_copy(Window* win) {
 	for(int i=0; i<=MAX_SELECTABLE; ++i) {
 		win2->selected_elem[i]=win->selected_elem[i];
 	}
-	if(num_elems<0) return win2;
-	Welem** we=(Welem**)calloc(num_elems, sizeof(Welem*));
+	if(win2->num_elems<0) return win2;
+	Welem** we=(Welem**)calloc(win2->num_elems, sizeof(Welem*));
 	if(!we) win_free(win2); 
-	for(int i=0; i<num_elems; i++) {
+	for(int i=0; i<win2->num_elems; i++) {
 		we[i]=Welem_copy(win->Win_elem[i]);
 		if(!we[i]) {
 			for(int j=0; j<i; ++j) {
