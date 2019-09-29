@@ -106,7 +106,7 @@ Canvas* canv_AdjustCrop(const Canvas* src, int nwidth,int nheight);
 
 
 /*-----------------------------------------------------------------*/
-/// Merge two canvases into one
+/// Merge two canvases into a new canvas
 ///
 /// @param base The canvas that will act as background
 /// @param over The canvas that will act as foreground
@@ -146,7 +146,7 @@ void canv_print(FILE* f, const Canvas* c,int x,int y);
 
 
 /*-----------------------------------------------------------------*/
-/// Print the canvas to the file
+/// Print an area of the canvas to a file
 ///
 /// @param f    File in which the canvas will be printed
 /// @param c    Canvas to be printed
