@@ -46,6 +46,7 @@ Font* font_ini(int hei, int wid, int size, int spacing, int whitespace){
 void font_free(Font* f){
     if(!f)return;
     if(f->data)for(int i=0;i<MAX_CHARS;++i)cha_free(f->data[i]);
+    free(f->data);
     free(f->id);
     free(f);
 }
@@ -62,10 +63,10 @@ Font* font_load(FILE* fil){
     int l,si;
     int wid, hei,spa,whitespa;
     fscanf(fil,"%d",&l);
-    char* id= calloc(l, sizeof(char));
+    char* id= calloc(l+1, sizeof(char));
     if(!id) return NULL;
     fscanf(fil,"%s %d %d %d %d %d",id,&si,&wid,&hei,&spa, &whitespa);
-    char* elem= calloc(si,sizeof(char));
+    char* elem= calloc(si+1,sizeof(char));
     if(!elem){
         free(id);
         return NULL;
@@ -92,10 +93,14 @@ Font* font_load(FILE* fil){
     }
     Canvas* tmp;
     Font* f=font_ini(hei, wid, si,spa,whitespa);
+    f->id=id;
     for(int i=0;i<si;++i){
         tmp=canv_AdjustCrop(split[i], wid, hei);
         f->data[elem[i]]=cha_ini(hei, wid, elem[i],tmp);
+        canv_free(split[i]);
     }
+    free(elem);
+    free(split);
     return f;
 }
 
@@ -140,7 +145,7 @@ Canvas* font_renderText(Font* f,char* txt){
                 canv_free(res);
                 return NULL;
             }
-            free(tmp);
+            canv_free(tmp);
             y+=f->wid;
         }
         

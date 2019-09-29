@@ -5,6 +5,7 @@
 //
 
 #include "Pixel.h"
+#include <math.h>
 #define  MAX_VAL 255
 struct _Pixel{
     int r,g,b,a;

@@ -17,11 +17,14 @@ bool _transparentColumn(const Canvas * c, int j);
 void canv_free(Canvas* c){
     if(!c)return;
     for(int i=0;i<c->hei;++i){
-        if(!(c->data[i]))return;
+        if(!(c->data[i]))continue;
         for(int j=0;j<c->wid;++j){
             pix_free(c->data[i][j]);
         }
+	free(c->data[i]);
     }
+    free(c->data);
+    free(c);
     
 }
 
@@ -376,6 +379,7 @@ Canvas* canv_AdjustCrop(const Canvas* src, int nwidth,int nheight){
     o_x=(nheight-work->hei)/2;
     o_y=(nwidth-work->wid)/2;
     canv_addOverlay(work, crop, o_x, o_y);
+    canv_free(crop);
     return work;
 }
 
