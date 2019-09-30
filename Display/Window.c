@@ -11,9 +11,10 @@ struct _Window {
 	int scroll_pos;
 	int weight;
 	int leftm, rightm, topm, botm;
+        int ypos, xpos;
 };
 
-Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight) {
+Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int ypos, int xpos) {
 	Window* win=(Window*)calloc(1, sizeof(Window));
 	if(!win) return NULL;
 
@@ -60,17 +61,29 @@ void win_free(Window* win) {
 	free(win);
 }
 
-Window* win_render(Window* win) {
+Window* win_render(Window* win, int pos) {
 	if(!win) return NULL;
-	
+        
+	Canvas* back = canv_backGrnd(92, 82, 56, 255, win->width, win->height);     // Temporary color for the background
+        if(!back) return NULL;
+        
+        FILE* fi = fopen(/Fonts/Robo_Mono_11.txt);
+        if(!fi) {
+            canv_free(back);
+            return NULL;
+        }
+        Font* f = font_load(fi);
+        //check for title size and add it, etc.
 }
 
 
-Window* win_redraw(Window* win, int width, int height, int weight) {
+Window* win_redraw(Window* win, int width, int height, int weight, int x, int y) {
 	if(!win) return NULL;
 	win->width=width;
 	win->height=height;
 	win->weight=weight;
+        win->xpos=x;
+        win->ypos=y;
 	if(!win_render(win, 0)) return NULL;
 	return win;
 }
