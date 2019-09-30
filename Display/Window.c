@@ -10,11 +10,17 @@ struct _Window {
 	int width, height;
 	int scroll_pos;
 	int weight;
+	int leftm, rightm, topm, botm;
 };
 
 Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight) {
 	Window* win=(Window*)calloc(1, sizeof(Window));
 	if(!win) return NULL;
+
+	if(!win_setMargins(win, 0, 0, 0, 0)) {
+		free(win);
+		return NULL;
+	}
 
 	if(!strcpy(win->title, title)) {
 		free(win);
@@ -38,7 +44,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->width=wid;
 	win->height=hei;
 	win->weight=weight;
-	
+
 	return win;
 }
 
@@ -53,6 +59,12 @@ void win_free(Window* win) {
 	free(Win_elem);
 	free(win);
 }
+
+Window* win_render(Window* win) {
+	if(!win) return NULL;
+	
+}
+
 
 Window* win_redraw(Window* win, int width, int height, int weight) {
 	if(!win) return NULL;
@@ -126,4 +138,27 @@ Window* win_copy(Window* win) {
 		}	
 	}
 	win2->Win_elem=we;
+}
+
+Window* win_setMargins(Window *win, int lm, int rm, int tm, int bm) {
+	if (!win) return NULL;
+	win->leftm=lm;
+	win->rightm=rm;
+	win->topm=tm;
+	win->botm=bm;
+
+	return win;
+}
+
+int* win_getMargins(Window *win) {
+	if(!win) return NULL;
+
+	int* m=(int*)calloc(4, sizeof(int));
+	if(!m) return NULL;
+	m[0]=win->leftm;
+	m[1]=win->rightm;
+	m[2]=win->topm;
+	m[3]=win->botm;
+
+	return m;
 }
