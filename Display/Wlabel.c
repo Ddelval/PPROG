@@ -11,6 +11,14 @@ struct _Wlabel{
 	int vgap;
 	const Font *f;
 };
+
+/// Creates a new label
+/// @param t    Text that will be displayed. This data is copied
+/// @param f    Pointer to the font that will be used to represent the text.
+///             Note that this is not copied, so if the font is changed (which it should not),
+///             the display font will also be changed.
+/// @param vgap Vertical separation between two lines of text, besides the height of the text itself
+
 Wlabel* wl_ini(char* t, const Font* f,int vgap){
 	if(!t||!f)return NULL;
 	Wlabel* w= calloc(1, sizeof(Wlabel));
@@ -25,6 +33,7 @@ Wlabel* wl_ini(char* t, const Font* f,int vgap){
 	w->vgap=vgap;
 	return w;
 }
+/// Frees the allocated memory
 void wl_free(Wlabel* l){
 	if(!l)return;
 	if(l->txt){
@@ -32,6 +41,20 @@ void wl_free(Wlabel* l){
 	}
 	free(l);
 }
+
+/// Copies the label
+/// @param src Label to be copied
+Wlabel* wl_copy(Wlabel* src){
+    return wl_ini(src->txt,src->f,src->vgap);
+}
+
+/// Internal function used to split the string to display it.
+/// It will always try to split the text where there is a space
+/// The endpos argument should be passed to the function
+/// @param txt Text to be splitted
+/// @param width Available width
+/// @param f Font to be used. It is used to calculate the width of a piece of text
+/// @param endpos This is used to tell the caller where the copy process ended.
 char* _charSplit(char* txt, int width, const Font* f,char** endpos){
 	char c=txt[0];
 	char* res;
@@ -68,6 +91,11 @@ char* _charSplit(char* txt, int width, const Font* f,char** endpos){
 	return res;
 	
 }
+
+
+/// Returns a canvas with the text displayed
+/// @param l Label to be processed
+/// @param width Maximum width that the canvas can take;
 Canvas* wl_render(Wlabel* l,int width){
 	if(!l)return NULL;
 	if(font_calcWidth(l->f, l->txt)<width){
