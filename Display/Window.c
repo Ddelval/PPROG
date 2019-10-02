@@ -67,15 +67,75 @@ Window* win_render(Window* win, int pos) {
 	Canvas* back = canv_backGrnd(92, 82, 56, 255, win->width, win->height);     // Temporary color for the background
         if(!back) return NULL;
         
-        FILE* fi = fopen(/Fonts/Robo_Mono_11.txt);
+        FILE* fi = fopen(/Fonts/Robo_Mono_11.txt);				    // Temporary font for titles
         if(!fi) {
-            canv_free(back);
-            return NULL;
+	        canv_free(back);
+		return NULL;
         }
         Font* f = font_load(fi);
-        //check for title size and add it, etc.
+        if(!f) {
+		canv_free(back);
+		fclose(fi);
+		return NULL;
+	}
+	if(!win->title) {	// Window has to have always a title, even if it's " "
+		canv_free(back);
+		fclose(fi);
+		font_free(f);
+		return NULL;
+	}
+	int clen=font_calcWidth(f, win->title);
+	Canvas* t_cv;
+	if(clen > win->width+4) {
+		clen /= strlen(win->title);
+		int mlen = (win->width/clen);
+		char* title=(char*)calloc(mlen, sizeof(char));
+		strcpy(title, win->title, mlen-3);
+		title[mlen-3]='.';
+		title[mlen-2]='.';
+		title[mlen-1]='.';
+		if(!t_cv=font_renderText(f, title)) {
+			canv_free(back);
+			fclose(fi);
+			font_free(f);
+			free(title);
+			return NULL;
+		}
+		if(!canv_addOverlay(back, t_cv, 2, 2)) {			// Padding numbers can be changed
+			canv_free(back);
+			fclose(fi);
+			font_free(f);
+			free(title);
+			canv_free(t_cv);
+			return NULL;
+		}
+	} else {	
+		if(!t_cv=font_renderText(f, win->title)) {
+			canv_free(back);
+			fclose(fi);
+			font_free(f);
+			return NULL;
+		}
+		if(!canv_addOverlay(back, t_cv, 2, 2)) {			
+			canv_free(back);
+			fclose(fi);
+			font_free(f);
+			canv_free(t_cv);
+			return NULL;
+		}
+	}
+	// So far now we have added the title
+	
+	Canvas* body = canv_addMargin(back, win->tm, win->rm+4, win->bm, win->lm);	// +4 in right margin for a position scrollbar in case window has to scroll
+	if(!body) {
+		canv_free(back);
+		fclose(fi);
+		font_free(f);
+		canv_free(t_cv);
+		return NULL;
+	}
+	// Margins added
 }
-
 
 Window* win_redraw(Window* win, int width, int height, int weight, int x, int y) {
 	if(!win) return NULL;
