@@ -29,15 +29,15 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	}
 	if(num_elems>0) {
 		Welem** we=(Welem**)calloc(num_elems, sizeof(Welem*));
-		if(!we) win_free(win);
+		if(!we) win_free(win); 
 		for(int i=0; i<num_elems; i++) {
-			we[i]=we_copy(Win_elem[i]);
+			we[i]=Welem_copy(Win_elem[i]);
 			if(!we[i]) {
 				for(int j=0; j<i; ++j) {
-					we_free(we[j]);
+					Welem_free(we[j]);
 				}
 				free(we);
-			}
+			}	
 		}
 		win->Win_elem=we;
 	}
@@ -54,10 +54,10 @@ void win_free(Window* win) {
 	
 	free(win->title);
 	free(win->selected_elem);
-	for(int i=0; i<win->num_elems; i++) {
-		we_free(win->Win_elem[i]);
+	for(int i=0; i<num_elems; i++) {
+		Welem_free(win->Win_elem[i]);
 	}
-	free(win->Win_elem);
+	free(Win_elem);
 	free(win);
 }
 
@@ -67,14 +67,13 @@ Window* win_render(Window* win, int pos) {
 	Canvas* back = canv_backGrnd(92, 82, 56, 255, win->width, win->height);     // Temporary color for the background
         if(!back) return NULL;
         
-        FILE* fi = fopen("/Fonts/Robo_Mono_11.txt","r");
+        FILE* fi = fopen(/Fonts/Robo_Mono_11.txt);
         if(!fi) {
             canv_free(back);
             return NULL;
         }
         Font* f = font_load(fi);
         //check for title size and add it, etc.
-	return NULL;
 }
 
 
@@ -111,25 +110,25 @@ Welem** win_getSelected(Window* win) {
 
 Window* win_scrollDown(Window* win) {
 	if(!win) return NULL;
-	if(!win_render(win, win->scroll_pos+1)) return NULL;
+	if(!win_render(win, win->scroll_pos+1) return NULL;
 	win->scroll_pos++;
 	return win;
 }
 
 Window* win_scrollUp(Window* win) {
 	if(!win) return NULL;
-	if(!win_render(win, win->scroll_pos-1)) return NULL;
+	if(!win_render(win, win->scroll_pos-1) return NULL;
 	win->scroll_pos--;
 	return win;
 }
 
 Window* win_copy(Window* win) {
 	if(!win) return NULL;
-	Window* win2=(Window*)calloc(1, sizeof(Window));
+	Window* win2=(Window*)calloc(1, sizeof(Window);
 	if(!win2) return NULL;
 	if(!strcpy(win2->title, win->title)) {
 		win_free(win2);
-		return NULL;
+		return NULL;	
 	}
 	win2->num_elems=win->num_elems;
 	win2->height=win->height;
@@ -141,18 +140,17 @@ Window* win_copy(Window* win) {
 	}
 	if(win2->num_elems<0) return win2;
 	Welem** we=(Welem**)calloc(win2->num_elems, sizeof(Welem*));
-	if(!we) win_free(win2);
+	if(!we) win_free(win2); 
 	for(int i=0; i<win2->num_elems; i++) {
-		we[i]=we_copy(win->Win_elem[i]);
+		we[i]=Welem_copy(win->Win_elem[i]);
 		if(!we[i]) {
 			for(int j=0; j<i; ++j) {
-				we_free(we[j]);
+				Welem_free(we[j]);
 			}
 			free(we);
-		}
+		}	
 	}
 	win2->Win_elem=we;
-	return win2;
 }
 
 Window* win_setMargins(Window *win, int lm, int rm, int tm, int bm) {

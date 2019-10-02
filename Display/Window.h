@@ -3,11 +3,7 @@
 #ifndef Window_h
 #define Window_h
 #include "Welem.h"
-#include "Utility.h"
-#include "Canvas.h"
-#include "Font.h"
 
-#define MAX_SELECTABLE 256
 typedef struct _Window Window;
 
 Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int ypos, int xpos);
