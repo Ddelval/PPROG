@@ -158,4 +158,10 @@ void canv_print(FILE* f, const Canvas* c,int x,int y);
 
 void canv_printR(FILE* f, const Canvas* c,int x,int y,int wid,int hei);
 
+
+int canv_getWidth(const Canvas* c);
+
+int canv_getHeight(const Canvas* c);
+
+
 #endif /* Canvas_h */

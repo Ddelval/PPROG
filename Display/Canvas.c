@@ -492,7 +492,16 @@ void canv_printR(FILE* f, const Canvas* c,int x,int y,int wid,int hei){
     free(da);
 }
 
+int canv_getWidth(const Canvas* c){
+  if(!c)return -1;
+  return c->wid;
+}
 
+
+int canv_getHeight(const Canvas* c){
+  if(!c)return -1;
+  return c->hei;
+}
 /// Checks if the j-th column of this canvas is transparent
 ///
 /// @param c Canvas to be check
