@@ -28,6 +28,7 @@ Canvas* canv_ini(int wid,int hei);
 /// [r,g,b,a] [r,g,b,a]...
 ///
 /// @param f File from which the data will be read
+
 Canvas* canv_load(FILE* f);
 
 

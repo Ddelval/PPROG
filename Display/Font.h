@@ -42,19 +42,20 @@ Font* font_load(FILE* fil);
 /*-----------------------------------------------------------------*/
 /// Calculate the width that a
 /// given string needs to be displayed with a font
-int font_calcWidth(Font* f,char* txt);
+int font_calcWidth(const Font* f,char* txt);
 
 
 /*-----------------------------------------------------------------*/
 /// Get the height of the font
-int font_getHeight(Font* f);
+int font_getHeight(const Font* f);
 
 
 /*-----------------------------------------------------------------*/
 /// Renders the given string in a canvas with the given font
 /// @param f    Font to be used in the render
 /// @param txt  String to be rendered
-Canvas* font_renderText(Font* f,char* txt);
+Canvas* font_renderText(const Font* f,char* txt);
 
+Font* font_copy(const Font*f);
 
 #endif /* Font_h */
