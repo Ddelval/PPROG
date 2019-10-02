@@ -18,7 +18,7 @@ struct _Font{
 };
 
 /* Prototypes*/
-Canvas* _font_getCharacterCanvas(Font* f, char c);
+Canvas* _font_getCharacterCanvas(const Font* f, char c);
 
 
 /// Initalizes the font with these values
@@ -60,6 +60,7 @@ void font_free(Font* f){
 ///
 /// @remark The caracters have to be rendered with a white font over a transparent background
 Font* font_load(FILE* fil){
+	if(!fil)return NULL;
     int l,si;
     int wid, hei,spa,whitespa;
     fscanf(fil,"%d",&l);
@@ -103,23 +104,37 @@ Font* font_load(FILE* fil){
     free(split);
     return f;
 }
-
+Font* font_copy(const Font*f){
+	if(!f)return NULL;
+	Font * nf=font_ini(f->hei, f->wid, f->size, f->padding, f->whitespace);
+	if(!nf)return NULL;
+	strcpy(nf->id, f->id);
+	for(int i=0;i<MAX_CHARS;++i){
+		if(f->data[i])nf->data[i]=cha_copy(f->data[i]);
+		if(!nf->data[i]){
+			font_free(nf);
+			return NULL;
+		}
+	}
+	return nf;
+	
+}
 /// Calculate the width that a
 /// given string needs to be displayed with a font
-int font_calcWidth(Font* f,char* txt){
+int font_calcWidth(const Font* f,char* txt){
     int n=(int)strlen(txt);
     return f->wid*n+(n-1)*f->padding;
 }
 
 /// Get the height of the font
-int font_getHeight(Font* f){
+int font_getHeight(const Font* f){
     return f->hei;
 }
 
 /// Renders the given string in a canvas with the given font
 /// @param f    Font to be used in the render
 /// @param txt  String to be rendered
-Canvas* font_renderText(Font* f,char* txt){
+Canvas* font_renderText(const Font* f,char* txt){
     if(!f)return NULL;
     int y=0;
     int len=(int)strlen(txt);
@@ -152,6 +167,6 @@ Canvas* font_renderText(Font* f,char* txt){
     }
     return res;
 }
-Canvas* _font_getCharacterCanvas(Font* f, char c){
+Canvas* _font_getCharacterCanvas(const Font* f, char c){
     return cha_getCanvas(f->data[c]);
 }
