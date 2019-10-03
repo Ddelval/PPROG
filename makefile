@@ -68,7 +68,7 @@ Wlabel.o : Display/Wlabel.c Display/Wlabel.h Utility.o
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
-Wlabel.o : Display/Window.c Display/Window.h Utility.o
+Window.o : Display/Window.c Display/Window.h Utility.o
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depepends on $^"
