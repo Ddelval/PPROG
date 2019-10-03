@@ -12,7 +12,6 @@ TestFont: %: %.o $(DISPLAY)
 	@echo "# Has changed $<"
 	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
 
-
 TestFont.o: Testing/TestFont.c Utility.o
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
@@ -33,7 +32,6 @@ TestLabel.o: Testing/TestLabel.c Utility.o
 	@echo "# Depepends on $^"
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
-
 
 Canvas.o : Display/Canvas.c Display/Canvas.h
 	@echo "#---------------------------"
