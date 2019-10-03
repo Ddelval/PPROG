@@ -1,6 +1,7 @@
 /*	Window.c	*/
 
 #include "Window.h"
+#include "../Utility/Utility.h"
 
 struct _Window {
 	char* title;
@@ -31,10 +32,10 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 		Welem** we=(Welem**)calloc(num_elems, sizeof(Welem*));
 		if(!we) win_free(win);
 		for(int i=0; i<num_elems; i++) {
-			we[i]=Welem_copy(Win_elem[i]);
+			we[i]=we_copy(Win_elem[i]);
 			if(!we[i]) {
 				for(int j=0; j<i; ++j) {
-					Welem_free(we[j]);
+					we_free(we[j]);
 				}
 				free(we);
 			}
@@ -56,8 +57,8 @@ void win_free(Window* win) {
 
 	free(win->title);
 	free(win->selected_elem);
-	for(int i=0; i<num_elems; i++) {
-		Welem_free(win->Win_elem[i]);
+	for(int i=0; i<win->num_elems; i++) {
+		we_free(win->Win_elem[i]);
 	}
 	free(Win_elem);
 	free(win);
@@ -83,7 +84,7 @@ Window* win_render(Window* win, int pos) {
 		font_free(f);
 		return NULL;
 	}
-	Canvas* can=wl_render(t_lab, win->width-win->lm-win->rm-10); //padding for the window with its title element
+	Canvas* can=wl_render(t_lab, win->width-win->leftm-win->rm-10); //padding for the window with its title element
 	if(!t_can) {
 		fclose(fi);
 		font_free(f);
@@ -101,7 +102,7 @@ Window* win_render(Window* win, int pos) {
 			canv_free(can);
 			return NULL;
 		}
-		if(!canv_addOverlay(back, can, win->lm+5, win->tm)) {
+		if(!canv_addOverlay(back, can, win->leftm+5, win->tm)) {
 			fclose(fi);
 			font_free(f);
 			wl_free(t_lab);
@@ -127,7 +128,7 @@ Window* win_render(Window* win, int pos) {
 		}
 
 		for(int i=0; i<num_elems; i++) {
-			Canvas* ele=we_render(win->Win_elem[i], win->width-win->lm-win->rm);
+			Canvas* ele=we_render(win->Win_elem[i], win->width-win->leftm-win->rm);
 			if(!ele) {
 				fclose(fi);
 				font_free(f);
@@ -258,10 +259,10 @@ Window* win_copy(Window* win) {
 	Welem** we=(Welem**)calloc(win2->num_elems, sizeof(Welem*));
 	if(!we) win_free(win2);
 	for(int i=0; i<win2->num_elems; i++) {
-		we[i]=Welem_copy(win->Win_elem[i]);
+		we[i]=we_copy(win->Win_elem[i]);
 		if(!we[i]) {
 			for(int j=0; j<i; ++j) {
-				Welem_free(we[j]);
+				we_free(we[j]);
 			}
 			free(we);
 		}
