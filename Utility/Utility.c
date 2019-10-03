@@ -41,7 +41,7 @@ char* movecur(int x,int y){
 int max(int a,int b){
     return a>b? a:b;
 }
-
+/*
 void handle_winch(Display* dis) {
     signal(SIGWINCH, SIG_IGN);
 
@@ -53,4 +53,4 @@ void handle_winch(Display* dis) {
     if(!disp_fulldraw(dis, LINES, COLS)) err=WINCH_ERR;
     
     signal(SIGWINCH, handle_winch);
-}
+}*/
