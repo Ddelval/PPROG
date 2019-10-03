@@ -63,78 +63,111 @@ void win_free(Window* win) {
 
 Window* win_render(Window* win, int pos) {
 	if(!win) return NULL;
-        
-	Canvas* back = canv_backGrnd(92, 82, 56, 255, win->width, win->height);     // Temporary color for the background
-        if(!back) return NULL;
-        
-        FILE* fi = fopen(/Fonts/Robo_Mono_11.txt);				    // Temporary font for titles
-        if(!fi) {
-	        canv_free(back);
-		return NULL;
-        }
-        Font* f = font_load(fi);
-        if(!f) {
-		canv_free(back);
+	FILE* fi=fopen("/Fonts/CD_Robo_Mono_11.txt", "r");
+	if(!fi) return NULL;
+	Font* f=font_load(fi);
+	if(!f) {
 		fclose(fi);
 		return NULL;
 	}
-	if(!win->title) {	// Window has to have always a title, even if it's " "
-		canv_free(back);
+	if(!win->title) {
 		fclose(fi);
 		font_free(f);
 		return NULL;
 	}
-	int clen=font_calcWidth(f, win->title);
-	Canvas* t_cv;
-	if(clen > win->width+4) {
-		clen /= strlen(win->title);
-		int mlen = (win->width/clen);
-		char* title=(char*)calloc(mlen, sizeof(char));
-		strcpy(title, win->title, mlen-3);
-		title[mlen-3]='.';
-		title[mlen-2]='.';
-		title[mlen-1]='.';
-		if(!t_cv=font_renderText(f, title)) {
-			canv_free(back);
-			fclose(fi);
-			font_free(f);
-			free(title);
-			return NULL;
-		}
-		if(!canv_addOverlay(back, t_cv, 2, 2)) {			// Padding numbers can be changed
-			canv_free(back);
-			fclose(fi);
-			font_free(f);
-			free(title);
-			canv_free(t_cv);
-			return NULL;
-		}
-	} else {	
-		if(!t_cv=font_renderText(f, win->title)) {
-			canv_free(back);
-			fclose(fi);
-			font_free(f);
-			return NULL;
-		}
-		if(!canv_addOverlay(back, t_cv, 2, 2)) {			
-			canv_free(back);
-			fclose(fi);
-			font_free(f);
-			canv_free(t_cv);
-			return NULL;
-		}
+	Wlabel* t_lab=wl_ini(win->title, f, 4);
+	if(!t_lab) {
+		fclose(fi);
+		font_free(f);
+		return NULL;
 	}
-	// So far now we have added the title
+	Canvas* can=wl_render(t_lab, win->width-win->lm-win->rm-10); //padding for the window with its title element
+	if(!t_can) {
+		fclose(fi);
+		font_free(f);
+		wl_free(t_lab);
+		return NULL;
+	}
+	// So far we have added the title
 	
-	Canvas* body = canv_addMargin(back, win->tm, win->rm+4, win->bm, win->lm);	// +4 in right margin for a position scrollbar in case window has to scroll
-	if(!body) {
-		canv_free(back);
+	if(!num_elems) {
+		Canvas* back=canv_backGrnd(207, 204, 184, 255, win->width, win->height);
+		if(!back) {
+			fclose(fi);
+			font_free(f);
+			wl_free(t_lab);
+			canv_free(can);
+			return NULL;
+		}
+		if(!canv_addOverlay(back, can, win->tm, win->lm+5)) {
+			fclose(fi);
+			font_free(f);
+			wl_free(t_lab);
+			canv_free(can);
+			canv_free(back);
+			return NULL;
+		}
+		canv_printR(stdout, back, 0, 0, win->width, win->height); // How do we get where this window is?
 		fclose(fi);
 		font_free(f);
-		canv_free(t_cv);
-		return NULL;
-	}
-	// Margins added
+		wl_free(t_lab);
+		canv_free(can);
+		canv_free(back);
+		return win;
+	} else {
+		Canvas* canm=canv_addMargin(can, 0, 0, 10, 0);
+		if(!canm) {
+			fclose(fi);
+			font_free(f);
+			wl_free(t_lab);
+			canv_free(can);
+			return NULL;
+		}
+		
+		for(int i=0; i<num_elems; i++) {
+			Canvas* ele=we_render(win->Win_elem[i], win->width-win->lm-win->rm);
+			if(!ele) {
+				fclose(fi);
+				font_free(f);
+				wl_free(t_lab);
+				canv_free(can);
+				canv_free(canm);
+				return NULL;
+			}
+			Canvas* fin=canv_appendV(canm, ele);
+			if(!fin) {
+				fclose(fi);
+				font_free(f);
+				wl_free(t_lab);
+				canv_free(can);
+				canv_free(canm);
+				canv_free(ele);
+				return NULL;
+			}
+			canv_free(canm);
+			Canvas* canm=canv_addMargin(fin, 0, 0, 5, 0);
+			if(!canm) {
+				fclose(fi);
+				font_free(f);
+				wl_free(t_lab);
+				canv_free(can);
+				canv_free(ele);
+				canv_free(fin);
+				return NULL;
+			}
+			canv_free(fin);
+			canv_free(ele);
+		}
+	} // Welems added
+	canv_printR(stdout, canm, 0, 0, win->width, win->height); // How do we get where this window is?
+	fclose(fi);
+	font_free(f);
+	wl_free(t_lab);
+	canv_free(can);
+	canv_free(ele);
+	canv_free(fin);
+	canv_free(canm);
+	return win;
 }
 
 Window* win_redraw(Window* win, int width, int height, int weight, int x, int y) {
