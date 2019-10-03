@@ -1,6 +1,6 @@
 CC = gcc -g
 EXE =
-DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Window.o
+DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o
 LIB= -I Display/ -I Utility/
 
 clean:
@@ -69,6 +69,13 @@ Wlabel.o : Display/Wlabel.c Display/Wlabel.h Utility.o
 	$(CC) -c $< $(LIB)
 
 Window.o : Display/Window.c Display/Window.h Utility.o
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depepends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
+Welem.o : Display/Welem.c Display/Welem.h Utility.o
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depepends on $^"

@@ -60,7 +60,7 @@ void win_free(Window* win) {
 	for(int i=0; i<win->num_elems; i++) {
 		we_free(win->Win_elem[i]);
 	}
-	free(Win_elem);
+	free(win->Win_elem);
 	free(win);
 }
 
@@ -84,16 +84,20 @@ Window* win_render(Window* win, int pos) {
 		font_free(f);
 		return NULL;
 	}
-	Canvas* can=wl_render(t_lab, win->width-win->leftm-win->rm-10); //padding for the window with its title element
-	if(!t_can) {
+	//Canvas* can=wl_render(t_lab, win->width-win->leftm,win->rightm-10); //padding for the window with its title element
+	//if(!can) {
+	if(false){ //Just to make it compile
 		fclose(fi);
 		font_free(f);
 		wl_free(t_lab);
 		return NULL;
 	}
 	// So far we have added the title
-
-	if(!num_elems) {
+	Canvas* ele= NULL;
+	Canvas* canm=NULL;
+	Canvas* fin=NULL;
+	Canvas* can = NULL;
+	if(!win->num_elems) {
 		Canvas* back=canv_backGrnd(207, 204, 184, 255, win->width, win->height);
 		if(!back) {
 			fclose(fi);
@@ -102,7 +106,7 @@ Window* win_render(Window* win, int pos) {
 			canv_free(can);
 			return NULL;
 		}
-		if(!canv_addOverlay(back, can, win->leftm+5, win->tm)) {
+		if(!canv_addOverlay(back, can, win->leftm+5, win->topm)) {
 			fclose(fi);
 			font_free(f);
 			wl_free(t_lab);
@@ -127,8 +131,8 @@ Window* win_render(Window* win, int pos) {
 			return NULL;
 		}
 
-		for(int i=0; i<num_elems; i++) {
-			Canvas* ele=we_render(win->Win_elem[i], win->width-win->leftm-win->rm);
+		for(int i=0; i<win->num_elems; i++) {
+			ele=we_render(win->Win_elem[i], win->width-win->leftm-win->rightm);
 			if(!ele) {
 				fclose(fi);
 				font_free(f);
@@ -137,7 +141,7 @@ Window* win_render(Window* win, int pos) {
 				canv_free(canm);
 				return NULL;
 			}
-			Canvas* fin=canv_appendV(canm, ele);
+			fin=canv_appendV(canm, ele);
 			if(!fin) {
 				fclose(fi);
 				font_free(f);
@@ -148,7 +152,7 @@ Window* win_render(Window* win, int pos) {
 				return NULL;
 			}
 			canv_free(canm);
-			Canvas* canm=canv_addMargin(fin, 0, 0, 5, 0);
+			canm=canv_addMargin(fin, 0, 0, 5, 0);
 			if(!canm) {
 				fclose(fi);
 				font_free(f);
@@ -227,21 +231,21 @@ Welem** win_getSelected(Window* win) {
 
 Window* win_scrollDown(Window* win) {
 	if(!win) return NULL;
-	if(!win_render(win, win->scroll_pos+1) return NULL;
+	if(!win_render(win, win->scroll_pos+1)) return NULL;
 	win->scroll_pos++;
 	return win;
 }
 
 Window* win_scrollUp(Window* win) {
 	if(!win) return NULL;
-	if(!win_render(win, win->scroll_pos-1) return NULL;
+	if(!win_render(win, win->scroll_pos-1)) return NULL;
 	win->scroll_pos--;
 	return win;
 }
 
 Window* win_copy(Window* win) {
 	if(!win) return NULL;
-	Window* win2=(Window*)calloc(1, sizeof(Window);
+	Window* win2=(Window*)calloc(1, sizeof(Window));
 	if(!win2) return NULL;
 	if(!strcpy(win2->title, win->title)) {
 		win_free(win2);
