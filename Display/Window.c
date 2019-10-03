@@ -11,7 +11,7 @@ struct _Window {
 	int scroll_pos;
 	int weight;
 	int leftm, rightm, topm, botm;
-        int ypos, xpos;
+  int ypos, xpos;
 };
 
 Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int ypos, int xpos) {
@@ -29,7 +29,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	}
 	if(num_elems>0) {
 		Welem** we=(Welem**)calloc(num_elems, sizeof(Welem*));
-		if(!we) win_free(win); 
+		if(!we) win_free(win);
 		for(int i=0; i<num_elems; i++) {
 			we[i]=Welem_copy(Win_elem[i]);
 			if(!we[i]) {
@@ -37,7 +37,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 					Welem_free(we[j]);
 				}
 				free(we);
-			}	
+			}
 		}
 		win->Win_elem=we;
 	}
@@ -45,13 +45,15 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->width=wid;
 	win->height=hei;
 	win->weight=weight;
+	win->xpos=xpos;
+	win->ypos=ypos;
 
 	return win;
 }
 
 void win_free(Window* win) {
 	if(!win) return;
-	
+
 	free(win->title);
 	free(win->selected_elem);
 	for(int i=0; i<num_elems; i++) {
@@ -89,7 +91,7 @@ Window* win_render(Window* win, int pos) {
 		return NULL;
 	}
 	// So far we have added the title
-	
+
 	if(!num_elems) {
 		Canvas* back=canv_backGrnd(207, 204, 184, 255, win->width, win->height);
 		if(!back) {
@@ -99,7 +101,7 @@ Window* win_render(Window* win, int pos) {
 			canv_free(can);
 			return NULL;
 		}
-		if(!canv_addOverlay(back, can, win->tm, win->lm+5)) {
+		if(!canv_addOverlay(back, can, win->lm+5, win->tm)) {
 			fclose(fi);
 			font_free(f);
 			wl_free(t_lab);
@@ -107,7 +109,7 @@ Window* win_render(Window* win, int pos) {
 			canv_free(back);
 			return NULL;
 		}
-		canv_printR(stdout, back, 0, 0, win->width, win->height); // How do we get where this window is?
+		canv_printR(stdout, back, win->xpos, win->ypos, win->width, win->height); // How do we get where this window is?
 		fclose(fi);
 		font_free(f);
 		wl_free(t_lab);
@@ -123,7 +125,7 @@ Window* win_render(Window* win, int pos) {
 			canv_free(can);
 			return NULL;
 		}
-		
+
 		for(int i=0; i<num_elems; i++) {
 			Canvas* ele=we_render(win->Win_elem[i], win->width-win->lm-win->rm);
 			if(!ele) {
@@ -159,7 +161,29 @@ Window* win_render(Window* win, int pos) {
 			canv_free(ele);
 		}
 	} // Welems added
-	canv_printR(stdout, canm, 0, 0, win->width, win->height); // How do we get where this window is?
+	Canvas* back=canv_backGrnd(207, 204, 184, 255, win->width, win->height);
+	if(!back) {
+		fclose(fi);
+		font_free(f);
+		wl_free(t_lab);
+		canv_free(can);
+		canv_free(ele);
+		canv_free(fin);
+		canv_free(canm);
+		return NULL;
+	}
+	if(!canv_addOverlay(back, canm, 0, 0)) {
+		fclose(fi);
+		font_free(f);
+		wl_free(t_lab);
+		canv_free(can);
+		canv_free(ele);
+		canv_free(fin);
+		canv_free(canm);
+		canv_free(back);
+		return NULL;
+	}
+	canv_printR(stdout, canm, win->xpos, win->ypos, win->width, win->height); // How do we get where this window is?
 	fclose(fi);
 	font_free(f);
 	wl_free(t_lab);
@@ -175,8 +199,7 @@ Window* win_redraw(Window* win, int width, int height, int weight, int x, int y)
 	win->width=width;
 	win->height=height;
 	win->weight=weight;
-        win->xpos=x;
-        win->ypos=y;
+
 	if(!win_render(win, 0)) return NULL;
 	return win;
 }
@@ -221,7 +244,7 @@ Window* win_copy(Window* win) {
 	if(!win2) return NULL;
 	if(!strcpy(win2->title, win->title)) {
 		win_free(win2);
-		return NULL;	
+		return NULL;
 	}
 	win2->num_elems=win->num_elems;
 	win2->height=win->height;
@@ -233,7 +256,7 @@ Window* win_copy(Window* win) {
 	}
 	if(win2->num_elems<0) return win2;
 	Welem** we=(Welem**)calloc(win2->num_elems, sizeof(Welem*));
-	if(!we) win_free(win2); 
+	if(!we) win_free(win2);
 	for(int i=0; i<win2->num_elems; i++) {
 		we[i]=Welem_copy(win->Win_elem[i]);
 		if(!we[i]) {
@@ -241,7 +264,7 @@ Window* win_copy(Window* win) {
 				Welem_free(we[j]);
 			}
 			free(we);
-		}	
+		}
 	}
 	win2->Win_elem=we;
 }
