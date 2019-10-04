@@ -50,7 +50,7 @@ Display* disp_AddLWindow(Display*dis, Window* w){
     return dis;
 }
 Display* disp_RemLwindow(Display* dis, int index){
-    if(!dis)return NULL;
+    if(!dis) return NULL;
     if(index<0||index>=dis->nLatWindow)return NULL;
     win_free(dis->latWindow[index]);
     dis->latWindow[index]=NULL;
