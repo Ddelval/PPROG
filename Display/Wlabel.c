@@ -120,5 +120,7 @@ Canvas* wl_render(Wlabel* l,int width){
 		free(res);
 		if(!strlen(endpos))break;
 	}
-	return c;
+	Canvas* cc=canv_AdjustCrop(c, canv_getWidth(c), canv_getHeight(c));
+	canv_free(c);
+	return cc;
 }
