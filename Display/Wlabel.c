@@ -104,7 +104,7 @@ Canvas* wl_render(Wlabel* l,int width){
 	char* endpos=l->txt;
 	char*res;
 	Canvas* c=NULL;
-	while( ((res=_charSplit(endpos, width, l->f, &endpos))) &&(*res)){
+	while( ((res=_charSplit(endpos, width, l->f, &endpos)))&&(*res)){
 		if(!c){
 			c=font_renderText(l->f, res);
 		}
@@ -120,7 +120,9 @@ Canvas* wl_render(Wlabel* l,int width){
 		free(res);
 		if(!strlen(endpos))break;
 	}
-	Canvas* cc=canv_AdjustCrop(c, width, canv_getHeight(c));
+	Canvas* b=canv_backGrnd(0,0,0,255,width,canv_getHeight(c));
+	canv_addOverlay(b,c,(width-canv_getWidth(c))/2,0);
+	//Canvas* cc=canv_AdjustCrop(c, width, canv_getHeight(c));
 	canv_free(c);
-	return cc;
+	return b;
 }
