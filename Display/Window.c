@@ -70,7 +70,7 @@ void win_free(Window* win) {
 Window* win_render(Window* win, int pos) {
 	if(!win) return NULL;
 	errno=0;
-	FILE* fi=fopen("Display/Fonts/CD_Robo_Mono_11.txt", "r");
+	FILE* fi=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
 	if(!fi) {
 		fprintf(stderr, "%d", errno);
 		return NULL;

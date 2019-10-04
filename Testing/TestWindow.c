@@ -9,7 +9,7 @@ int main(int argc, const char* argv[]) {
 		return 1;
 	}
 	errno = 0;
-	if(!win_setMargins(win, 20, 10, 20, 20)) printf("aaa");
+	if(!win_setMargins(win, 0, 0, 0, 0)) printf("aaa");
 	if(!win_render(win, 0)) {
 		fprintf(stderr, "BAD RENDER");
 		return 2;
