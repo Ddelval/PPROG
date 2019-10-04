@@ -66,13 +66,15 @@ Font* font_load(FILE* fil){
     fscanf(fil,"%d",&l);
     char* id= calloc(l+1, sizeof(char));
     if(!id) return NULL;
-    fscanf(fil,"%s %d %d %d %d %d",id,&si,&wid,&hei,&spa, &whitespa);
+    fscanf(fil,"%s %d %d %d %d %d\n",id,&si,&wid,&hei,&spa, &whitespa);
     char* elem= calloc(si+1,sizeof(char));
     if(!elem){
         free(id);
         return NULL;
     }
-    fscanf(fil,"%s",elem);
+    //fscanf(fil,"%s",elem);
+    fgets(elem,si+1,fil);
+    fflush(stdout);
     Canvas* whole=canv_load(fil);
     if(!whole){
         free(elem);
@@ -80,9 +82,10 @@ Font* font_load(FILE* fil){
         return NULL;
     }
     int nelem;
+
     Canvas** split=canv_VSplit(whole, &nelem);
     canv_free(whole);
-    if(nelem<si){
+    if(nelem<strlen(elem)){
         fprintf(stderr,"Not all the characters were found");
         free(id);
         free(elem);
@@ -122,15 +125,39 @@ Font* font_copy(const Font*f){
 /// Calculate the width that a
 /// given string needs to be displayed with a font
 int font_calcWidth(const Font* f,char* txt){
-    int n=(int)strlen(txt);
-    return f->wid*n+(n-1)*f->padding;
+    int ch=0,sp=0;
+    for(int i=0;i<strlen(txt);++i){
+        if(txt[i]==' ')sp++;
+        else ch++;
+    }
+    
+    return f->wid*ch+(ch+sp)*f->padding+sp*f->whitespace;
 }
 
 /// Get the height of the font
 int font_getHeight(const Font* f){
     return f->hei;
 }
-
+char* _remQuotes(char* src){
+    int cnt=0;
+    int n=(int)strlen(src);
+    for(int i=0;i<n;++i)cnt+=src[i]=='"';
+    char * res= calloc(n+cnt+1, sizeof(char));
+    if(!res)return NULL;
+    int j=0;
+    for(int i=0;i<n;++i){
+        if(src[i]=='\"'){
+            res[j]='\'';
+            j++;
+            res[j]='\'';
+        }
+        else{
+            res[j]=src[i];
+        }
+        ++j;
+    }
+    return res;
+}
 /// Renders the given string in a canvas with the given font
 /// @param f    Font to be used in the render
 /// @param txt  String to be rendered
@@ -138,19 +165,22 @@ Canvas* font_renderText(const Font* f,char* txt){
     if(!f)return NULL;
     int y=0;
     int len=(int)strlen(txt);
+    char *mod_txt=_remQuotes(txt);
     Canvas* tmp;
-    Canvas* res=canv_backGrnd(0, 0, 0, 255, font_calcWidth(f, txt), f->hei);
+    Canvas* res=canv_backGrnd(0, 0, 0, 0, font_calcWidth(f, mod_txt), f->hei);
     if(!res){
         return NULL;
     }
     if(!res)return NULL;
     for(int i=0;i<len;++i){
         y+=f->padding;
-        if(txt[i]==' '){
+        if(mod_txt[i]==' '){
             y+=f->whitespace;
         }
         else{
-            tmp=_font_getCharacterCanvas(f, txt[i]);
+            printf("%c",mod_txt[i]);
+            fflush(stdout);
+            tmp=_font_getCharacterCanvas(f, mod_txt[i]);
             if(!tmp){
                 canv_free(res);
                 return NULL;
@@ -165,6 +195,7 @@ Canvas* font_renderText(const Font* f,char* txt){
         }
         
     }
+    free(mod_txt);
     return res;
 }
 Canvas* _font_getCharacterCanvas(const Font* f, char c){

@@ -280,6 +280,7 @@ Canvas ** canv_VSplit(const Canvas* src, int* nelem){
         if(_transparentColumn(src, j)){
             if(pindex<j-1){
                 elements[lindex]=canv_subCopy(src, 0, src->hei, pindex+1, j);
+                //canv_print(stdout, elements[lindex], (lindex/20)*40, (lindex%20)*40);
                 if(!elements[lindex]){
                     for(int i=0;i<j;++i){
                         canv_free(elements[i]);
@@ -376,8 +377,8 @@ Canvas* canv_AdjustCrop(const Canvas* src, int nwidth,int nheight){
     }
     Canvas* work=canv_backGrnd(0, 0, 0, 0, nwidth, nheight);
     int o_x,o_y;
-    o_x=(nheight-work->hei)/2;
-    o_y=(nwidth-work->wid)/2;
+    o_x=(nheight-crop->hei)/2;
+    o_y=(nwidth-crop->wid)/2;
     canv_addOverlay(work, crop, o_x, o_y);
     canv_free(crop);
     return work;
@@ -388,26 +389,26 @@ Canvas* canv_AdjustCrop(const Canvas* src, int nwidth,int nheight){
 ///
 /// @param base The canvas that will act as background
 /// @param over The canvas that will act as foreground
-/// @param o_x  The top limit of the foreground canvas
-/// @param o_y  The left limit of the foreground canvas
+/// @param o_i  The top limit of the foreground canvas
+/// @param o_j  The left limit of the foreground canvas
 ///
 /// @remark     (o_x,o_y) are the coordinates of the top-left corner of the foreground canvas
 ///             with respecto to the background canvas
 ///
 /// @return A new canvas containing the merge of the other two
-Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_x, int o_y){
+Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_i, int o_j){
     if(!base||!over)return NULL;
     Canvas* res=canv_ini(base->wid, base->hei);
     if(!res)return NULL;
     int owid,ohei;
     owid=over->wid;
     ohei=over->hei;
-    if(owid+o_y>base->wid)owid=base->wid-o_y;
-    if(ohei+o_x>base->hei)ohei=base->hei-o_x;
+    if(owid+o_j>base->wid)owid=base->wid-o_j;
+    if(ohei+o_i>base->hei)ohei=base->hei-o_i;
     for(int i=0;i<base->hei;++i){
         for(int j=0;j<base->wid;++j){
-            if(i>=o_x&&j>=o_y&&i<(o_x+ohei)&&j<(o_y+owid)){
-                res->data[i][j]=pix_overlay(base->data[i][j], over->data[i-o_x][j-o_y]);
+            if(i>=o_i&&j>=o_j&&i<(o_i+ohei)&&j<(o_j+owid)){
+                res->data[i][j]=pix_overlay(base->data[i][j], over->data[i-o_i][j-o_j]);
             }
             else{
                 res->data[i][j]=pix_copy(base->data[i][j]);
@@ -426,14 +427,14 @@ Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_x, int o_y){
 ///
 /// @param base The canvas that will act as background
 /// @param over The canvas that will act as foreground
-/// @param o_x  The top limit of the foreground canvas
-/// @param o_y  The left limit of the foreground canvas
+/// @param o_i  The top limit of the foreground canvas
+/// @param o_j  The left limit of the foreground canvas
 ///
 /// @remark     In this case, no new canvas is created,
 ///             the changes are applied to the background canvas.
-Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_x, int o_y){
+Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j){
     if(!base||!over)return NULL;
-    Canvas* c=canv_Overlay(base, over, o_x, o_y);
+    Canvas* c=canv_Overlay(base, over, o_i, o_j);
     if(!c)return NULL;
     for(int i=0;i<base->hei;++i){
         for(int j=0;j<base->wid;++j){
@@ -450,20 +451,20 @@ Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_x, int o_y){
 ///
 /// @param f    File in which the canvas will be printed
 /// @param c    Canvas to be printed
-/// @param x    Top limit of the canvas when it is displayed on the screen
-/// @param y    Left limit of the canvas when it is displayed on the screen
+/// @param i    x-coordinate of of the canvas when it is displayed on the screen
+/// @param j    Left limit of the canvas when it is displayed on the screen
 ///
 /// @remark     The caller must know that the canvas will fit in the screen
-void canv_print(FILE* f, const Canvas* c,int x,int y){
+void canv_print(FILE* f, const Canvas* c,int i,int j){
     if(!f||!c)return;
     char ** da=_canv_render(c,c->wid,c->hei);
     if(!da)return;
-    for(int i=0;i<c->hei;++i){
-        char * aux=movecur(x+i, y);
+    for(int w=0;w<c->hei;++w){
+        char * aux=movecur(i+w, j);
         fprintf(f,"%s",aux);
         free(aux);
-        fprintf(f, "%s",da[i]);
-        free(da[i]);
+        fprintf(f, "%s",da[w]);
+        free(da[w]);
     }
     free(da);
 }

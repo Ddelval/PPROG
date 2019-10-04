@@ -111,14 +111,14 @@ Canvas* canv_AdjustCrop(const Canvas* src, int nwidth,int nheight);
 ///
 /// @param base The canvas that will act as background
 /// @param over The canvas that will act as foreground
-/// @param o_x  The top limit of the foreground canvas
-/// @param o_y  The left limit of the foreground canvas
+/// @param o_i  The top limit of the foreground canvas
+/// @param o_j  The left limit of the foreground canvas
 ///
 /// @remark     (o_x,o_y) are the coordinates of the top-left corner of the foreground canvas
 ///             with respecto to the background canvas
 ///
 /// @return A new canvas containing the merge of the other two
-Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_x, int o_y);
+Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_i, int o_j);
 
 
 /*-----------------------------------------------------------------*/
@@ -126,12 +126,12 @@ Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_x, int o_y);
 ///
 /// @param base The canvas that will act as background
 /// @param over The canvas that will act as foreground
-/// @param o_x  The top limit of the foreground canvas
-/// @param o_y  The left limit of the foreground canvas
+/// @param o_i  The top limit of the foreground canvas
+/// @param o_j  The left limit of the foreground canvas
 ///
 /// @remark     In this case, no new canvas is created,
 ///             the changes are applied to the background canvas.
-Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_x, int o_y);
+Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j);
 
 
 /*-----------------------------------------------------------------*/
@@ -139,11 +139,11 @@ Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_x, int o_y);
 ///
 /// @param f    File in which the canvas will be printed
 /// @param c    Canvas to be printed
-/// @param x    Top limit of the canvas when it is displayed in the screen
-/// @param y    Left limit of the canvas when it is displayed in the screen
+/// @param i    Top limit of the canvas when it is displayed in the screen
+/// @param j    Left limit of the canvas when it is displayed in the screen
 ///
 /// @remark     The caller must know that the canvas will fit in the screen
-void canv_print(FILE* f, const Canvas* c,int x,int y);
+void canv_print(FILE* f, const Canvas* c,int i,int j);
 
 
 /*-----------------------------------------------------------------*/
