@@ -89,7 +89,7 @@ char* _charSplit(char* txt, int width, const Font* f,char** endpos){
 	res=calloc(strlen(txt)+1, sizeof(char));
 	strcpy(res, txt);
 	return res;
-	
+
 }
 
 
@@ -120,7 +120,7 @@ Canvas* wl_render(Wlabel* l,int width){
 		free(res);
 		if(!strlen(endpos))break;
 	}
-	Canvas* cc=canv_AdjustCrop(c, canv_getWidth(c), canv_getHeight(c));
+	Canvas* cc=canv_AdjustCrop(c, width, canv_getHeight(c));
 	canv_free(c);
 	return cc;
 }
