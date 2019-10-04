@@ -60,7 +60,6 @@ void win_free(Window* win) {
 	if(!win) return;
 
 	free(win->title);
-	free(win->selected_elem);
 	for(int i=0; i<win->num_elems; i++) {
 		we_free(win->Win_elem[i]);
 	}

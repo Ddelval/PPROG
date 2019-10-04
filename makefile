@@ -31,6 +31,7 @@ TestLabel.o: Testing/TestLabel.c Utility.o
 	@echo "# Generating $@ "
 	@echo "# Depepends on $^"
 	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
 
 TestWindow: %: %.o $(DISPLAY)
 	@echo "#---------------------------"
@@ -44,7 +45,6 @@ TestWindow.o: Testing/TestWindow.c Utility.o
 	@echo "# Generating $@ "
 	@echo "# Depepends on $^"
 	@echo "# Has changed $<"
-	$(CC) -c $< $(LIB)
 	$(CC) -c $< $(LIB)
 
 Canvas.o : Display/Canvas.c Display/Canvas.h
