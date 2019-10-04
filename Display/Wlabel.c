@@ -120,9 +120,10 @@ Canvas* wl_render(Wlabel* l,int width){
 		free(res);
 		if(!strlen(endpos))break;
 	}
-	Canvas* b=canv_backGrnd(0,0,0,255,width,canv_getHeight(c));
+	Canvas* b=canv_backGrnd(0,0,255,255,width,canv_getHeight(c));
 	canv_addOverlay(b,c,(width-canv_getWidth(c))/2,0);
 	//Canvas* cc=canv_AdjustCrop(c, width, canv_getHeight(c));
+	canv_print(stdout,b,0,0);
 	canv_free(c);
 	return b;
 }
