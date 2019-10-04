@@ -47,6 +47,20 @@ TestWindow.o: Testing/TestWindow.c Utility.o
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
+TestCanvas: %: %.o $(DISPLAY)
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depepends on $^"
+	@echo "# Has changed $<"
+	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
+
+TestCanvas.o: Testing/TestCanvas.c Utility.o
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depepends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
 Canvas.o : Display/Canvas.c Display/Canvas.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
