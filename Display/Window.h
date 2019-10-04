@@ -2,7 +2,12 @@
 
 #ifndef Window_h
 #define Window_h
+#include "../Utility/Utility.h"
+#include "Canvas.h"
+#include "Wlabel.h"
 #include "Welem.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 typedef struct _Window Window;
 

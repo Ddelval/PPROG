@@ -1,7 +1,7 @@
 /*	Window.c	*/
 
 #include "Window.h"
-#include "../Utility/Utility.h"
+#include <errno.h>
 
 struct _Window {
 	char* title;
@@ -23,7 +23,11 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 		free(win);
 		return NULL;
 	}
-
+	win->title=(char*)calloc(strlen(title)+1,sizeof(char));
+	if(!win->title) {
+		free(win);
+		return NULL;
+	}
 	if(!strcpy(win->title, title)) {
 		free(win);
 		return NULL;
@@ -66,8 +70,12 @@ void win_free(Window* win) {
 
 Window* win_render(Window* win, int pos) {
 	if(!win) return NULL;
-	FILE* fi=fopen("/Fonts/CD_Robo_Mono_11.txt", "r");
-	if(!fi) return NULL;
+	errno=0;
+	FILE* fi=fopen("Display/Fonts/CD_Robo_Mono_11.txt", "r");
+	if(!fi) {
+		fprintf(stderr, "%d", errno);
+		return NULL;
+	}
 	Font* f=font_load(fi);
 	if(!f) {
 		fclose(fi);
@@ -84,9 +92,9 @@ Window* win_render(Window* win, int pos) {
 		font_free(f);
 		return NULL;
 	}
-	//Canvas* can=wl_render(t_lab, win->width-win->leftm,win->rightm-10); //padding for the window with its title element
-	//if(!can) {
-	if(false){ //Just to make it compile
+	Canvas* can=wl_render(t_lab, win->width-win->leftm-win->rightm-10); //padding for the window with its title element
+	if(!can) {
+	//if(false){ //Just to make it compile
 		fclose(fi);
 		font_free(f);
 		wl_free(t_lab);
@@ -96,7 +104,6 @@ Window* win_render(Window* win, int pos) {
 	Canvas* ele= NULL;
 	Canvas* canm=NULL;
 	Canvas* fin=NULL;
-	Canvas* can = NULL;
 	if(!win->num_elems) {
 		Canvas* back=canv_backGrnd(207, 204, 184, 255, win->width, win->height);
 		if(!back) {
