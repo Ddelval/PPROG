@@ -76,7 +76,7 @@ Window.o : Display/Window.c Display/Window.h Utility.o
 	$(CC) -c $< $(LIB)
 
 Welem.o : Display/Welem.c Display/Welem.h Utility.o
-	@echo "#---------------------------"
+	@echo "#--------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depepends on $^"
 	@echo "# Has changed $<"
