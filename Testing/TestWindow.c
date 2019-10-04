@@ -3,7 +3,7 @@
 #include "Window.h"
 
 int main(int argc, const char* argv[]) {
-	Window* win = win_ini("Hello", NULL, 0, 200, 150, 1, 400, 0);
+	Window* win = win_ini("Inventory", NULL, 0, 300, 250, 1, 909, 0);
 	if(!win) {
 		fprintf(stderr, "NULL WINDOW");
 		return 1;

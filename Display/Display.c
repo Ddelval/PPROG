@@ -11,19 +11,20 @@ struct _Display{
     Room* room;
     int nLatWindow;
     int latWinalloc;
-    Window ** latWindow;
-    Window * popup;
+    Window** latWindow;
+    Window* popup;
 };
+
 Display* disp_ini(int wid, int hei, Room* room){
-    if(!room)return NULL;
-    Display* dis= calloc(1, sizeof(Display));
+    if(!room) return NULL;
+    Display* dis=(Display*)calloc(1, sizeof(Display));
     if(!dis) return NULL;
     dis->width=wid;
     dis->height=hei;
     dis->room=room;
     dis->nLatWindow=0;
     dis->latWinalloc=3;
-    dis->latWindow=calloc(ARR_INC, sizeof(Window*));
+    dis->latWindow=(Window**)calloc(ARR_INC, sizeof(Window*));
     if(!dis->latWindow){
         disp_free(dis);
         return NULL;
@@ -63,15 +64,15 @@ Display* disp_RemLwindow(Display* dis, int index){
     return dis;
 }
 Display* disp_SetPopup(Display* dis, Window* p){
-    if(!dis||!p){
+    if(!dis||!p) {
         return NULL;
     }
     dis->popup=win_copy(p);
-    if(!dis->popup)return NULL;
-    
+    if(!dis->popup) return NULL;
+
     return dis;
 }
 void disp_RemPopup(Display* dis){
-    if(!dis->popup)return;
+    if(!dis->popup) return;
     win_free(dis->popup);
 }

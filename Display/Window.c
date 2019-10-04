@@ -104,7 +104,7 @@ Window* win_render(Window* win, int pos) {
 	Canvas* canm=NULL;
 	Canvas* fin=NULL;
 	if(!win->num_elems) {
-		Canvas* back=canv_backGrnd(207, 204, 184, 255, win->width, win->height);
+		Canvas* back=canv_backGrnd(80, 85, 222, 255, win->width, win->height);
 		if(!back) {
 			fclose(fi);
 			font_free(f);
