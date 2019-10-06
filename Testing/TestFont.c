@@ -14,7 +14,7 @@ int main(int argc, const char * argv[]) {
     Canvas* back=canv_backGrnd(0, 0, 255, 255, canv_getWidth(c), canv_getHeight(c));
     canv_addOverlay(back, c, 0, 0);
     canv_print(stdout, back, 10, 10);
-    f = fopen("Display/Fonts/Robo_Mono/11.txt", "r");
+    f = fopen("Display/Fonts/Robo_Mono/04.txt", "r");
     ff=font_load(f);
     c=font_renderText(ff, "Hello, world");
     back=canv_backGrnd(0, 0, 255, 255, canv_getWidth(c), canv_getHeight(c));
