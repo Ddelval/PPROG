@@ -104,7 +104,7 @@ int pix_retA(Pixel* p){
 bool pix_equals(Pixel* a,Pixel*b){
     return a->r==b->r&&a->g==b->g&&a->b==b->b&&a->a==b->a;
 }
-bool pix_transparent(Pixel* a){
+bool pix_transparent(const Pixel* a){
     return a->a==0;
 }
 char* pix_scapeSeq(Pixel* a){

@@ -163,5 +163,6 @@ int canv_getWidth(const Canvas* c);
 
 int canv_getHeight(const Canvas* c);
 
+const Pixel* canv_getPixel(const Canvas* c,int i,int j);
 
 #endif /* Canvas_h */

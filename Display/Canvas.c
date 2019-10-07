@@ -85,7 +85,7 @@ Canvas* canv_load(FILE* f){
             while(c1!='['){
                 fscanf(f,"%c",&c1);
             }
-            fscanf(f,"%d, %d, %d, %d]",&a,&r,&g,&b);
+            fscanf(f,"%d, %d, %d, %d]",&a,&r,&g,&b);
             c->data[i][j]=pix_ini(r, g, b, a);
             if(!(c->data[i][j])){
                canv_free(c);
@@ -502,6 +502,9 @@ int canv_getWidth(const Canvas* c){
 int canv_getHeight(const Canvas* c){
   if(!c)return -1;
   return c->hei;
+}
+const Pixel* canv_getPixel(const Canvas* c,int i,int j){
+    return c->data[i][j];
 }
 /// Checks if the j-th column of this canvas is transparent
 ///

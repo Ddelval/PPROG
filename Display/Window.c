@@ -2,7 +2,7 @@
 
 #include "Window.h"
 #include <errno.h>
-
+#define MAX_SELECTABLE 10
 struct _Window {
 	char* title;
 	Welem** Win_elem;
@@ -278,6 +278,7 @@ Window* win_copy(Window* win) {
 		}
 	}
 	win2->Win_elem=we;
+    return win2;
 }
 
 Window* win_setMargins(Window *win, int lm, int rm, int tm, int bm) {
