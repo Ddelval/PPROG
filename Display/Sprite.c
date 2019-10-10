@@ -21,14 +21,14 @@ Sprite* spr_ini(int id, int width, int height){
     spr->id=id;
     spr->width=width;
     spr->height=height;
-    
+
     spr->trigger=calloc(height, sizeof(int*));
     if(!spr->trigger)ret_free(spr);
     for(int i=0;i<height;++i){
         spr->trigger[i]=calloc(width, sizeof(int));
         if(!spr->trigger[i])ret_free(spr);
     }
-    
+
     spr->collision=calloc(height, sizeof(int*));
     if(!spr->collision)ret_free(spr);
     for(int i=0;i<height;++i){
@@ -57,6 +57,8 @@ void spr_free(Sprite* sp){
         }
         free(sp->collision);
     }
+    canv_free(sp->canvas);
+    free(sp);
 }
 Sprite* spr_copy(const Sprite* spr){
     Sprite* sp=spr_ini(spr->id, spr->width, spr->height);
@@ -87,14 +89,14 @@ Sprite* spr_copy(const Sprite* spr){
  where i1 is the initial row, i2 is the last row,
  j1 is the first row, j2 is the last row
  (All included)
- 
+
  */
 Sprite* spr_load(FILE* f){
     if(!f)return NULL;
     int w,h,id;
     int ff;
     fscanf(f,"%d %d",&id,&ff);
-    
+
     Canvas* c=canv_load(f);
     if(!c){
         return NULL;
@@ -114,13 +116,13 @@ Sprite* spr_load(FILE* f){
     else{
         colldata=canv_copy(c);
     }
-    
+
     for(int i=0;i<h;++i){
         for(int j=0;j<w;++j){
             res->collision[i][j]=pix_transparent(canv_getPixel(colldata,i,j));
         }
     }
-    
+
     int n=0;
     fscanf(f, "%d",&n);
     if(n==0){
@@ -142,6 +144,7 @@ Sprite* spr_load(FILE* f){
             }
         }
     }
+    canv_free(colldata);
     return res;
 }
 const Canvas* spr_getDispData(Sprite* spr){

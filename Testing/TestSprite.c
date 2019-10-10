@@ -14,7 +14,10 @@ int main(){
     Room* r=room_ini(1, "Hello", 200, 200, pix_ini(100, 150, 0, 255));
     room_addBSprite(r, s);
     spr_setCoodrinates(s, 20, 80);
-     room_addBSprite(r, s);
+    room_addBSprite(r, s);
     canv_print(stdout, room_getRender(r),0,0);
+    room_free(r);
+    fclose(f);
+    spr_free(s);
     return 0;
 }

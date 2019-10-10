@@ -12,7 +12,7 @@ struct _Room{
     int id;
     char* name;
     int hei, wid;
-    
+
     Pixel* backcol;
     Sprite ** backg;
     int backgsiz;
@@ -21,7 +21,7 @@ struct _Room{
     int overssiz;
     int overpos;
     Canvas * map;
-    
+
     bool ** colision;
     bool ** shadows;
     int ** trigger;
@@ -36,16 +36,16 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     strcpy(r->name, name);
     r->hei=hei;
     r->wid=wid;
-    
+
     r->backgsiz=MEM_INI;
     r->backg=calloc(MEM_INI, sizeof(Sprite*));
     if(!r->backg)ret_free(r);
-    
+
     r->overssiz=MEM_INI;
     r->overs=calloc(MEM_INI, sizeof(Sprite*));
     if(!r->overs)ret_free(r);
     r->backpos=r->overpos=0;
-    
+
     //Colision bool array
     r->colision=calloc(hei, sizeof(bool*));
     if(!r->colision)ret_free(r);
@@ -69,7 +69,7 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
        }
     r->map=canv_backGrnd(pix_retR(backcol), pix_retG(backcol), pix_retB(backcol), pix_retA(backcol), wid, hei);
     return r;
-    
+
 }
 Room* room_addBSprite(Room* r, Sprite*s){
     if(!r||!s)return NULL;
@@ -111,19 +111,19 @@ Canvas* room_getRender(Room* r){
 void room_free(Room* r){
     if(!r)return;
     free(r->name);
-    
+
     //Background sprite array
     if(r->backg){
-        for(int i=0;i<r->hei;++i)free(r->backg[i]);
+        for(int i=0;i<r->backpos;++i)spr_free(r->backg[i]);
         free(r->backg);
     }
-    
+
     //Foreground sprite array
     if(r->overs){
         for(int i=0;i<r->hei;++i)free(r->overs[i]);
         free(r->overs);
     }
-    
+
     //Colision bool array
     if(r->colision){
         for(int i=0;i<r->hei;++i)free(r->colision[i]);
@@ -139,5 +139,6 @@ void room_free(Room* r){
         for(int i=0;i<r->hei;++i)free(r->trigger[i]);
         free(r->trigger);
     }
+    canv_free(r->map);
+    free(r);
 }
-
