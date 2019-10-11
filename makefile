@@ -75,6 +75,20 @@ TestSprite.o: Testing/TestSprite.c Utility.o
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
+TestSize: %: %.o $(DISPLAY)
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
+
+TestSize.o: Testing/TestSize.c Utility.o
+		@echo "#---------------------------"
+		@echo "# Generating $@ "
+		@echo "# Depends on $^"
+		@echo "# Has changed $<"
+		$(CC) -c $< $(LIB)
+
 Canvas.o : Display/Canvas.c Display/Canvas.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
