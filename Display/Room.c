@@ -71,7 +71,7 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     return r;
 
 }
-Room* room_addBSprite(Room* r, Sprite*s){
+Room* room_addBSprite(Room* r, Sprite* s){
     if(!r||!s)return NULL;
     if(r->backpos==r->backgsiz){
         int nsiz=(int)ceil(r->backgsiz*MEM_INCREMENT);
@@ -85,7 +85,7 @@ Room* room_addBSprite(Room* r, Sprite*s){
     canv_addOverlay(r->map, spr_getDispData(s), spr_getOI(s), spr_getOJ(s));
     return r;
 }
-Room* room_addOSprite(Room* r, Sprite*s){
+Room* room_addOSprite(Room* r, Sprite* s){
     if(!r||!s)return NULL;
     if(r->overpos==r->overssiz){
         int nsiz=(int)ceil(r->overssiz*MEM_INCREMENT);
@@ -114,13 +114,15 @@ void room_free(Room* r){
 
     //Background sprite array
     if(r->backg){
-        for(int i=0;i<r->backpos;++i)spr_free(r->backg[i]);
+        for(int i=0;i<r->backpos;++i) {
+            spr_free(r->backg[i]);
+        }
         free(r->backg);
     }
 
     //Foreground sprite array
     if(r->overs){
-        for(int i=0;i<r->hei;++i)free(r->overs[i]);
+        for(int i=0;i<r->hei;++i)spr_free(r->overs[i]);
         free(r->overs);
     }
 
