@@ -127,6 +127,7 @@ Sprite* spr_load(FILE* f){
     fscanf(f, "%d",&n);
     if(n==0){
         res->existstrigger=false;
+        canv_free(colldata);
         return res;
     }
     int i1,i2,j1,j2;
