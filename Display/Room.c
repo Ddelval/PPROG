@@ -122,7 +122,7 @@ void room_free(Room* r){
 
     //Foreground sprite array
     if(r->overs){
-        for(int i=0;i<r->hei;++i)spr_free(r->overs[i]);
+        for(int i=0;i<r->overpos;++i)spr_free(r->overs[i]);
         free(r->overs);
     }
 

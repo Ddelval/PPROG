@@ -46,13 +46,13 @@ void spr_setCoodrinates(Sprite* sp,int i,int j){
 void spr_free(Sprite* sp){
     if(!sp)return;
     if(sp->trigger){
-        for(int i=0;i<sp->width;++i){
+        for(int i=0;i<sp->height;++i){
             free(sp->trigger[i]);
         }
         free(sp->trigger);
     }
     if(sp->collision){
-        for(int i=0;i<sp->width;++i){
+        for(int i=0;i<sp->height;++i){
             free(sp->collision[i]);
         }
         free(sp->collision);
