@@ -80,7 +80,7 @@ TestSize: %: %.o $(DISPLAY)
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"
 	@echo "# Has changed $<"
-	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
+	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm -lncurses
 
 TestSize.o: Testing/TestSize.c Utility.o
 		@echo "#---------------------------"
