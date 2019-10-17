@@ -61,10 +61,22 @@ Entity *entity_ini (char *name, Sprite *s, entType t, int x, int y){
 
 Entity *entity_load(char *file){
   Entity *e = NULL;
+  FILE *f = NULL;
+  entType t = 0;
+  char name[MAX_NAME_LENGTH];
+  int x = 0, y = 0;
   e = entity_ini();
   if(!e) return NULL;
 
-  FILE *fopen(const char *filename, const char *mode)
+  f = fopen(const char *filename, "r");
+   if (f == NULL) {
+       printf("Error when opening the file\n");
+       return NULL;
+   }
+
+   fscanf(f, "%s %d %d %d", name, t, x, y);
+   spr_load(f);
+
 }
 
 Status entity_setName(Entity* p, char* c){
