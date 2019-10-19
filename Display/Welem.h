@@ -36,7 +36,7 @@ Welem* we_copy(Welem* w);
 ///             the space will be distributed as well as possible according to the element
 ///             that has to be displayed. For instance, a label might be split in several
 ///             lines and an icon might be centered in the area
-/// @return      A new canvas containing all the
+/// @return     A new canvas containing all the
 Canvas* we_render(Welem*w, int wid);
 	
 #endif /* Welem_h */
