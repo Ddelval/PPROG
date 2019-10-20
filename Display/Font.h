@@ -1,8 +1,14 @@
-//  Test
+//  PPROG
 //	Font.h
 //  Created by David del Val on 28/09/2019
 //
-//
+
+/// Description:
+/// The Font ADT holds the description of a font. It stores all the
+/// characters that can be displayed on the screen. Additionally, it
+/// provides all the required functionality to load this information
+/// from a file and to render text to the screen. That is to say,
+/// to convert an array of chars to a canvas that can be printed.
 
 #ifndef Font_h
 #define Font_h
@@ -29,13 +35,28 @@ void font_free(Font* f);
 /*-----------------------------------------------------------------*/
 /// Loads a font from a file. The format should be:
 ///
-/// <name_length> <name> <size> <width> <height> <spacing> <whitespace>
-/// <List of the characters included>, one after the other
-/// Canvas with all the characters one after the other
+/// name_length  name   size   width   height   spacing   whitespace
+/// List of chars (l)
+/// Canvas with all the characters(c)
 ///
-/// @param fil file with the font
+/// This elements represent:
+/// name_length: the length of the name field of the font.
+/// name:           Actual name of the font
+/// size:           Amount of characters that will be described in
+///                 the file. Therefore it is the amount of different
+///                 characters that can be printed to the screen using
+///                 this font
+/// width:          Width of a single character (in pixels)
+/// height:         Height of a line (in pixels)
+/// spacing:        Space left between two characters (in pixels)
+/// whitespace:     Space left when a whitespace is encountered
+/// l               String with all the chars. E.g. abcde
+/// c               Canvas with all the caracters. They have to be
+///                 rendered with a black font over a transparent
+///                 background
+/// @param      fil file with the font
+/// @return     New font with all the data loaded
 ///
-/// @remark The caracters have to be rendered with a white font over a transparent background
 Font* font_load(FILE* fil);
 
 
@@ -56,6 +77,10 @@ int font_getHeight(const Font* f);
 /// @param txt  String to be rendered
 Canvas* font_renderText(const Font* f,char* txt);
 
+
+/*-----------------------------------------------------------------*/
+/// Creates a copy of a font.
+/// @param f Font to be copied
 Font* font_copy(const Font*f);
 
 #endif /* Font_h */

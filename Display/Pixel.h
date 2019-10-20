@@ -1,8 +1,12 @@
-//  Test
+//  PPROG
 //	Pixel.h
 //  Created by David del Val on 27/09/2019
-//
-//
+
+
+/// Description:
+/// The pixel ADT represents a color. It also includes all the
+/// necessary functionality to overlay two colors when we are
+/// dealing with transparencies.
 
 #ifndef Pixel_h
 #define Pixel_h
@@ -95,5 +99,13 @@ bool pix_transparent(const Pixel* a);
 /// @return An array of chars that, if printed on the screen will represent this line of pixels.
 char * pix_renderLine(Pixel**a,int len);
 
+/*-----------------------------------------------------------------*/
+/// Creates a new pixel from the description conatined in a file.
+/// The file should be already pointing to the beginning of this
+/// description.
+/// The format is the following
+/// alpha red green blue
+/// @param f    file from which the information will be read
+/// @return     A new pixel with the color specified in the file
 Pixel* pix_load(FILE* f);
 #endif /* Pixel_h */

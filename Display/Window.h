@@ -1,5 +1,12 @@
 /*	Window.h	*/
 
+/// Description:
+/// The window is an UI element that has a title and contains
+/// several different window elements stacked vertically one after
+/// the other. It will probably include some sort of scrolling.
+/// Therefore, the height dimension will only be used to specify
+/// the part of the window that will be visible.
+
 #ifndef Window_h
 #define Window_h
 #include "../Utility/Utility.h"
@@ -11,21 +18,87 @@
 
 typedef struct _Window Window;
 
-Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int ypos, int xpos);
-void win_free(Window* win);
-Window* win_addWindowElement(Window* win, Welem* we);
-Window* win_render(Window* win, int pos);
-Window* win_redraw(Window* win, int wid, int hei, int weight, int x, int y);
+/*-----------------------------------------------------------------*/
+/// Create a new window
+/// @param title        Text that will appear the top, centered
+/// @param Win_elem     Elements contained in the window
+/// @param num_elems    Amoun of Welem that are given to this constuctor
+/// @param wid          Width of the window
+/// @param hei          Height of the portion that will be rendered
+/// @param weight       A weight attribute that can be used in the
+///                     resizing process
+/// @param jpos         Column of the top-left corner of thewindow
+///                     on the screen
+/// @param ipos         Row of the top-left corner of thewindow
+///                     on the screen
+Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int jpos, int ipos);
 
+
+/*-----------------------------------------------------------------*/
+/// Free the window
+void win_free(Window* win);
+
+/*-----------------------------------------------------------------*/
+/// Add a new window element to the Window.
+/// There is no limit in the amount of elmenets that a window can
+/// store. As more elements are added the allocated space will increase
+/// @param win  Window in which the element has to be added
+/// @param we   Element to be added
+Window* win_addWindowElement(Window* win, Welem* we);
+
+/*-----------------------------------------------------------------*/
+/// Render the window and prints it in the correct position on the
+/// screen
+/// @param win Window to be processed
+Window* win_render(Window* win);
+
+/*-----------------------------------------------------------------*/
+/// Render the window modifying the parameters before doing so
+/// @param win      Window to be renderd
+/// @param wid      New width value
+/// @param hei      New height value
+/// @param weight   New weight value
+/// @param i        New top limit
+/// @param j        New left limit
+Window* win_redraw(Window* win, int wid, int hei, int weight, int i, int j);
+
+/*-----------------------------------------------------------------*/
+/// Set the focus on an element
+/// @param win           Window that contains
+/// @param selected_elem Index of the element that has to be selected
 Window* win_setSelected(Window* win, int* selected_elem);
+
+/*-----------------------------------------------------------------*/
+/// Returns the index of the selected element
 Welem** win_getSelected(Window* win);
 
+/*-----------------------------------------------------------------*/
+/// Moves the scroll position to the next section of the window
 Window* win_scrollDown(Window* win);
+/*-----------------------------------------------------------------*/
+/// Moves the scroll position to the previous section of the window
 Window* win_scrollUp(Window* win);
 
+/*-----------------------------------------------------------------*/
+/// Creates a copy of the window with the same data
 Window* win_copy(Window* win);
 
+/*-----------------------------------------------------------------*/
+/// Sets the padding for the window. The elements of the window
+/// will be drawn in the area defined by the dimensions of the window
+/// minus the margins
+/// @param win  The window
+/// @param lm   Left margin for the window
+/// @param rm   Right margin for the window
+/// @param tm   Top margin for the window
+/// @param bm   Bottom margin for the window
 Window* win_setMargins(Window *win, int lm, int rm, int tm, int bm);
+/*-----------------------------------------------------------------*/
+
+/// Returns the margins of a given window.
+/// An array with four integers will be retourned in the following
+/// order: top, right, bottom, left
+/// @param win Window whose margins are being fetched
 int* win_getMargins(Window *win);
 
 #endif

@@ -351,20 +351,20 @@ Canvas ** canv_VSplit(const Canvas* src, int* nelem){
 /// Returns a copy of a section of the given Canvas
 ///
 /// @param bas Source canvas
-/// @param x1 x starting index (included)
-/// @param x2 x ending   index (excluded)
-/// @param y1 y starting index (included)
-/// @param y2 y ending   index (excluded)
-Canvas* canv_subCopy (const Canvas* bas,int x1,int x2,int y1,int y2){
+/// @param i1 i starting index (included)
+/// @param i2 i ending   index (excluded)
+/// @param j1 j starting index (included)
+/// @param j2 j ending   index (excluded)
+Canvas* canv_subCopy (const Canvas* bas,int i1,int i2,int j1,int j2){
     if(!bas)return NULL;
     int hei,wid;
-    hei=x2-x1;
-    wid=y2-y1;
+    hei=i2-i1;
+    wid=j2-j1;
     Canvas* res=canv_ini(wid, hei);
     if(!res) return NULL;
     for(int i=0;i<hei;++i){
         for(int j=0;j<wid;++j){
-            res->data[i][j]=pix_copy(bas->data[x1+i][y1+j]);
+            res->data[i][j]=pix_copy(bas->data[i1+i][j1+j]);
             if(!(res->data[i][j])){
                 canv_free(res);
                 return NULL;
@@ -522,23 +522,23 @@ void canv_print(FILE* f, const Canvas* c,int i,int j){
 ///
 /// @param f    File in which the canvas will be printed
 /// @param c    Canvas to be printed
-/// @param x    Top limit of the canvas when it is displayed on the screen
-/// @param y    Left limit of the canvas when it is displayed on the screen
+/// @param i    Top limit of the canvas when it is displayed on the screen
+/// @param j    Left limit of the canvas when it is displayed on the screen
 /// @param wid  Maximum width that will be displayed
 /// @param hei  Maximum height that will be displayed
 
-void canv_printR(FILE* f, const Canvas* c,int x,int y,int wid,int hei){
+void canv_printR(FILE* f, const Canvas* c,int i,int j,int wid,int hei){
     if(!f||!c)return;
     if(wid>c->wid)wid=c->wid;
     if(hei>c->hei)hei=c->hei;
     char ** da=_canv_render(c,wid,hei);
     if(!da)return;
-    for(int i=0;i<c->hei;++i){
-        char * aux=movecur(x+i, y);
+    for(int ii=0;ii<c->hei;++ii){
+        char * aux=movecur(i+ii, j);
         fprintf(f,"%s",aux);
         free(aux);
-        fprintf(f, "%s",da[i]);
-        free(da[i]);
+        fprintf(f, "%s",da[ii]);
+        free(da[ii]);
     }
     free(da);
 }

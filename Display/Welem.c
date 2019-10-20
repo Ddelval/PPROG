@@ -12,9 +12,9 @@ struct _Welem {
 
 
 /// Initalizes a window element
-/// @param t Type of the element, must be one of the values included in the Wtype typedef
+/// @param t    Type of the element, must be one of the values included in the Wtype typedef
 /// @param data The element that is going to be wrapped by this Welem. It must be a pointer to
-/// the type that is described in the other parameter
+///             the type that is described in the other parameter
 Welem* we_ini(Wtype t, void* data){
 	Welem* w= calloc(1,sizeof(Welem));
 	if(!w)return NULL;

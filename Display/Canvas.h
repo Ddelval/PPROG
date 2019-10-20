@@ -1,8 +1,19 @@
-//  Test
+//  PPROG
 //	Canvas.h
 //  Created by David del Val on 27/09/2019
-//
-//
+
+/// Description:
+/// The canvas ADT is the data structure that holds an array
+/// of pixels. Additionally, it includes all the functions required
+/// to work with them.
+/// Instances of Canvas may be overlayed, appended, splitted...
+/// Furthermore, the objects that are printed to the screen are
+/// of the type Canvas.
+///
+/// It is important to note that coordinates (0,0) will be considered
+/// the top left corner and we wil refer to the row number with i and
+/// to the column number with j.
+/// We will follow the same conventions as when we access a 2-D array
 
 #ifndef Canvas_h
 #define Canvas_h
@@ -60,9 +71,26 @@ Canvas* canv_appendH(const Canvas* west, const Canvas* east);
 Canvas* canv_appendV(const Canvas* north, const Canvas* south);
 
 
-
+/*-----------------------------------------------------------------*/
+/// Append the south Canvas below the North canvas
+///
+/// @param north Canvas that will be in the northern region of the result
+/// @param south Canvas that will be in the southern region of the result
+/// @returns     A not NULL value as long as the process has been
+///              completed successfully
 Canvas* canv_appendVI(Canvas* north, const Canvas* south);
+
+
+/*-----------------------------------------------------------------*/
+/// Get a new canvas that contains both canvases appended horizontally
+///
+/// @param west  Canvas that will be in the western region of the result
+/// @param east  Canvas that will be in the eastern region of the result
+/// @returns     A not NULL value as long as the process has been
+///              completed successfully
 Canvas* canv_appendHI(Canvas* west, const Canvas* east);
+
+
 /*-----------------------------------------------------------------*/
 /// Returns a new Canvas that contains the original one and the margins defined in the input parameters
 Canvas* canv_addMargin (const Canvas *src, int top, int right, int bottom, int left);
@@ -90,11 +118,11 @@ Canvas ** canv_VSplit(const Canvas* src, int* nelem);
 /// Returns a copy of a section of the given Canvas
 ///
 /// @param bas Source canvas
-/// @param x1 x starting index (included)
-/// @param x2 x ending   index (excluded)
-/// @param y1 y starting index (included)
-/// @param y2 y ending   index (excluded)
-Canvas* canv_subCopy (const Canvas* bas,int x1,int x2,int y1,int y2);
+/// @param i1 i starting index (included)
+/// @param i2 i ending   index (excluded)
+/// @param j1 j starting index (included)
+/// @param j2 j ending   index (excluded)
+Canvas* canv_subCopy (const Canvas* bas,int i1,int i2,int j1,int j2);
 
 
 /*-----------------------------------------------------------------*/
@@ -154,18 +182,27 @@ void canv_print(FILE* f, const Canvas* c,int i,int j);
 ///
 /// @param f    File in which the canvas will be printed
 /// @param c    Canvas to be printed
-/// @param x    Top limit of the canvas when it is displayed in the screen
-/// @param y    Left limit of the canvas when it is displayed in the screen
+/// @param i    Top limit of the canvas when it is displayed in the screen
+/// @param j    Left limit of the canvas when it is displayed in the screen
 /// @param wid  Maximum width that will be displayed
 /// @param hei  Maximum height that will be displayed
 
-void canv_printR(FILE* f, const Canvas* c,int x,int y,int wid,int hei);
+void canv_printR(FILE* f, const Canvas* c,int i,int j,int wid,int hei);
 
 
+/// Return the widht of the canvas
 int canv_getWidth(const Canvas* c);
 
+
+/// Return the height of the canvas
 int canv_getHeight(const Canvas* c);
 
+
+/// Allows the access to a particular pixel stored in a Canvas.
+/// @param c Canvas that contains the pixel that is going to be accesed
+/// @param i Row of the pixel
+/// @param j Column of the pixel
+/// @return  Reference to the pixel in the canvas
 const Pixel* canv_getPixel(const Canvas* c,int i,int j);
 
 #endif /* Canvas_h */

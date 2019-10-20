@@ -15,10 +15,10 @@ struct _Window {
 	int scroll_pos;
 	int weight;
 	int leftm, rightm, topm, botm;
-  int ypos, xpos;
+    int jpos, ipos;
 };
 
-Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int ypos, int xpos) {
+Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int jpos, int ipos) {
 	Window* win=(Window*)calloc(1, sizeof(Window));
 	if(!win) return NULL;
 
@@ -53,8 +53,8 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->width=wid;
 	win->height=hei;
 	win->weight=weight;
-	win->xpos=xpos;
-	win->ypos=ypos;
+	win->ipos=ipos;
+	win->jpos=jpos;
 
 	return win;
 }
@@ -91,7 +91,7 @@ Window* win_addWindowElement(Window* win, Welem* we){
     return win;
 }
 
-Window* win_render(Window* win, int pos) {
+Window* win_render(Window* win) {
 	if(!win||!win->title) return NULL;
 	errno=0;
     Wlabel* t_lab=NULL;
@@ -142,7 +142,10 @@ Window* win_render(Window* win, int pos) {
     
 END:
     
-    if(back)canv_printR(stdout, back, win->xpos, win->ypos, win->width, win->height);
+    if(back){
+        Canvas* r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height, 0, win->width);
+        canv_print(stdout, r, win->ipos, win->jpos);
+    }
     wl_free(t_lab);
     canv_free(back);
     canv_free(c_tit);
@@ -154,13 +157,14 @@ END:
  
 }
 
-Window* win_redraw(Window* win, int width, int height, int weight, int x, int y) {
+Window* win_redraw(Window* win, int width, int height, int weight, int i, int j) {
 	if(!win) return NULL;
 	win->width=width;
 	win->height=height;
 	win->weight=weight;
-
-	if(!win_render(win, 0)) return NULL;
+    win->ipos=i;
+    win->jpos=j;
+	if(!win_render(win)) return NULL;
 	return win;
 }
 
@@ -186,14 +190,16 @@ Welem** win_getSelected(Window* win) {
 
 Window* win_scrollDown(Window* win) {
 	if(!win) return NULL;
-	if(!win_render(win, win->scroll_pos+1)) return NULL;
+    win->scroll_pos+=win->height;
+	if(!win_render(win)) return NULL;
 	win->scroll_pos++;
 	return win;
 }
 
 Window* win_scrollUp(Window* win) {
 	if(!win) return NULL;
-	if(!win_render(win, win->scroll_pos-1)) return NULL;
+    win->scroll_pos=max(0,win->scroll_pos-win->height);
+	if(!win_render(win)) return NULL;
 	win->scroll_pos--;
 	return win;
 }
@@ -245,10 +251,10 @@ int* win_getMargins(Window *win) {
 
 	int* m=(int*)calloc(4, sizeof(int));
 	if(!m) return NULL;
-	m[0]=win->leftm;
+	m[0]=win->topm;
 	m[1]=win->rightm;
-	m[2]=win->topm;
-	m[3]=win->botm;
+	m[2]=win->botm;
+	m[3]=win->leftm;
 
 	return m;
 }
