@@ -16,14 +16,16 @@ bool _transparentColumn(const Canvas * c, int j);
 /// Free the allocated memory
 void canv_free(Canvas* c){
     if(!c)return;
-    for(int i=0;i<c->hei;++i){
-        if(!(c->data[i]))continue;
-        for(int j=0;j<c->wid;++j){
-            pix_free(c->data[i][j]);
+    if(c->data){
+        for(int i=0;i<c->hei;++i){
+            if(!(c->data[i]))continue;
+            for(int j=0;j<c->wid;++j){
+                pix_free(c->data[i][j]);
+            }
+        free(c->data[i]);
         }
-	free(c->data[i]);
+        free(c->data);
     }
-    free(c->data);
     free(c);
     
 }
@@ -80,13 +82,15 @@ Canvas* canv_load(FILE* f){
             return NULL;
         }
         for(int j=0;j<c->wid;++j){
-            int r,g,b,a;
+            //int r,g,b,a;
             char c1='.';
             while(c1!='['){
                 fscanf(f,"%c",&c1);
             }
-            fscanf(f,"%d, %d, %d, %d]",&a,&r,&g,&b);
+            /*fscanf(f,"%d, %d, %d, %d]",&a,&r,&g,&b);
             c->data[i][j]=pix_ini(r, g, b, a);
+             */
+            c->data[i][j]=pix_load(f);
             if(!(c->data[i][j])){
                canv_free(c);
                 return NULL;
@@ -221,6 +225,52 @@ Canvas* canv_appendV(const Canvas* north, const Canvas* south){
     return res;
     
 }
+
+Canvas* canv_appendVI(Canvas* north, const Canvas* south){
+    if(!north||!south){
+        return NULL;
+    }
+    Canvas*res=canv_appendV(north, south);
+    
+    // Get rid of the pixels in north
+    for(int i=0;i<north->hei;++i){
+        if(!(north->data[i]))continue;
+        for(int j=0;j<north->wid;++j){
+            pix_free(north->data[i][j]);
+        }
+        free(north->data[i]);
+    }
+    free(north->data);
+    north->data=res->data;
+    north->hei=res->hei;
+    north->wid=res->wid;
+    res->data=NULL;
+    canv_free(res);
+    return north;
+}
+
+
+Canvas* canv_appendHI(Canvas* west, const Canvas* east){
+    if(!east||!west){
+        return NULL;
+    }
+    Canvas* res= canv_appendH(west, east);
+    for(int i=0;i<west->hei;++i){
+        if(!(west->data[i]))continue;
+        for(int j=0;j<west->wid;++j){
+            pix_free(west->data[i][j]);
+        }
+        free(west->data[i]);
+    }
+    free(west->data);
+    west->data=res->data;
+    res->data=NULL;
+    west->hei=res->hei;
+    west->wid=res->wid;
+    canv_free(res);
+    return west;
+}
+
 
 /// Returns a new Canvas that contains the original one and the margins defined in the input parameters
 Canvas* canv_addMargin (const Canvas *src, int top, int right, int bottom, int left){

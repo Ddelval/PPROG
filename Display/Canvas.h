@@ -60,6 +60,9 @@ Canvas* canv_appendH(const Canvas* west, const Canvas* east);
 Canvas* canv_appendV(const Canvas* north, const Canvas* south);
 
 
+
+Canvas* canv_appendVI(Canvas* north, const Canvas* south);
+Canvas* canv_appendHI(Canvas* west, const Canvas* east);
 /*-----------------------------------------------------------------*/
 /// Returns a new Canvas that contains the original one and the margins defined in the input parameters
 Canvas* canv_addMargin (const Canvas *src, int top, int right, int bottom, int left);

@@ -3,10 +3,13 @@
 #include "Window.h"
 #include <errno.h>
 #define MAX_SELECTABLE 10
+#define MIN_SIZ 3
+#define STEP 5
 struct _Window {
 	char* title;
 	Welem** Win_elem;
 	int num_elems;
+    int num_elems_siz;
 	int selected_elem[MAX_SELECTABLE];
 	int width, height;
 	int scroll_pos;
@@ -32,8 +35,8 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 		free(win);
 		return NULL;
 	}
-	if(num_elems>0) {
-		Welem** we=(Welem**)calloc(num_elems, sizeof(Welem*));
+    win->num_elems_siz=max(num_elems,MIN_SIZ);
+		Welem** we=(Welem**)calloc(win->num_elems_siz, sizeof(Welem*));
 		if(!we) win_free(win);
 		for(int i=0; i<num_elems; i++) {
 			we[i]=we_copy(Win_elem[i]);
@@ -45,7 +48,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 			}
 		}
 		win->Win_elem=we;
-	}
+    
 	win->num_elems=num_elems;
 	win->width=wid;
 	win->height=hei;
@@ -67,142 +70,88 @@ void win_free(Window* win) {
 	free(win);
 }
 
+
+Window* win_addWindowElement(Window* win, Welem* we){
+    if(!win||!we)return NULL;
+    if(win->num_elems>win->num_elems_siz) return NULL;
+    if(win->num_elems==win->num_elems_siz){
+        int nsiz=win->num_elems_siz+STEP;
+        Welem** w=calloc(nsiz,sizeof(Welem*));
+        if(!w)return NULL;
+        for(int i=0;i<win->num_elems;++i){
+            w[i]=win->Win_elem[i];
+        }
+        free(win->Win_elem);
+        win->Win_elem=w;
+        win->num_elems_siz=nsiz;
+    }
+    win->Win_elem[win->num_elems]=we_copy(we);
+    if(!win->Win_elem[win->num_elems])return NULL;
+    win->num_elems++;
+    return win;
+}
+
 Window* win_render(Window* win, int pos) {
-	if(!win) return NULL;
+	if(!win||!win->title) return NULL;
 	errno=0;
-	FILE* fi=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
+    Wlabel* t_lab=NULL;
+    Canvas* back=NULL;
+    Canvas* c_tit=NULL;
+    Canvas * ele=NULL;
+    Font * f=NULL;
+	FILE* fi=fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Display/Fonts/Robo_Mono/06.txt", "r");
 	if(!fi) {
 		fprintf(stderr, "%d", errno);
 		return NULL;
 	}
-	Font* f=font_load(fi);
-	if(!f) {
-		fclose(fi);
-		return NULL;
+	f=font_load(fi);
+	if(!f) goto END;
+	
+	t_lab=wl_ini(win->title, f, 4);
+	if(!t_lab) goto END;
+	
+    back=canv_backGrnd(80, 85, 222, 255, win->width, win->height);
+    if(!back)  goto END;
+    
+    
+	c_tit=wl_render(t_lab, win->width-win->leftm-win->rightm-10); //padding for the window with its title element
+	if(!c_tit) {
+		back=NULL;
+        goto END;
 	}
-	if(!win->title) {
-		fclose(fi);
-		font_free(f);
-		return NULL;
-	}
-	Wlabel* t_lab=wl_ini(win->title, f, 4);
-	if(!t_lab) {
-		fclose(fi);
-		font_free(f);
-		return NULL;
-	}
-	Canvas* can=wl_render(t_lab, win->width-win->leftm-win->rightm-10); //padding for the window with its title element
-	if(!can) {
-	//if(false){ //Just to make it compile
-		fclose(fi);
-		font_free(f);
-		wl_free(t_lab);
-		return NULL;
-	}
-	// So far we have added the title
-	Canvas* ele= NULL;
-	Canvas* canm=NULL;
-	Canvas* fin=NULL;
-	if(!win->num_elems) {
-		Canvas* back=canv_backGrnd(80, 85, 222, 255, win->width, win->height);
-		if(!back) {
-			fclose(fi);
-			font_free(f);
-			wl_free(t_lab);
-			canv_free(can);
-			return NULL;
-		}
-		if(!canv_addOverlay(back, can, win->leftm+5, win->topm)) {
-			fclose(fi);
-			font_free(f);
-			wl_free(t_lab);
-			canv_free(can);
-			canv_free(back);
-			return NULL;
-		}
-		canv_printR(stdout, back, win->xpos, win->ypos, win->width, win->height); // How do we get where this window is?
-		fclose(fi);
-		font_free(f);
-		wl_free(t_lab);
-		canv_free(can);
-		canv_free(back);
-		return win;
-	} else {
-		Canvas* canm=canv_addMargin(can, 0, 0, 10, 0);
-		if(!canm) {
-			fclose(fi);
-			font_free(f);
-			wl_free(t_lab);
-			canv_free(can);
-			return NULL;
-		}
-
-		for(int i=0; i<win->num_elems; i++) {
-			ele=we_render(win->Win_elem[i], win->width-win->leftm-win->rightm);
-			if(!ele) {
-				fclose(fi);
-				font_free(f);
-				wl_free(t_lab);
-				canv_free(can);
-				canv_free(canm);
-				return NULL;
-			}
-			fin=canv_appendV(canm, ele);
-			if(!fin) {
-				fclose(fi);
-				font_free(f);
-				wl_free(t_lab);
-				canv_free(can);
-				canv_free(canm);
-				canv_free(ele);
-				return NULL;
-			}
-			canv_free(canm);
-			canm=canv_addMargin(fin, 0, 0, 5, 0);
-			if(!canm) {
-				fclose(fi);
-				font_free(f);
-				wl_free(t_lab);
-				canv_free(can);
-				canv_free(ele);
-				canv_free(fin);
-				return NULL;
-			}
-			canv_free(fin);
-			canv_free(ele);
-		}
-	} // Welems added
-	Canvas* back=canv_backGrnd(207, 204, 184, 255, win->width, win->height);
-	if(!back) {
-		fclose(fi);
-		font_free(f);
-		wl_free(t_lab);
-		canv_free(can);
-		canv_free(ele);
-		canv_free(fin);
-		canv_free(canm);
-		return NULL;
-	}
-	if(!canv_addOverlay(back, canm, 0, 0)) {
-		fclose(fi);
-		font_free(f);
-		wl_free(t_lab);
-		canv_free(can);
-		canv_free(ele);
-		canv_free(fin);
-		canv_free(canm);
-		canv_free(back);
-		return NULL;
-	}
-	canv_printR(stdout, canm, win->xpos, win->ypos, win->width, win->height); // How do we get where this window is?
-	fclose(fi);
-	font_free(f);
-	wl_free(t_lab);
-	canv_free(can);
-	canv_free(ele);
-	canv_free(fin);
-	canv_free(canm);
-	return win;
+    
+    for(int i=0;i<win->num_elems;++i){
+        ele=we_render(win->Win_elem[i], win->width-win->leftm-win->rightm);
+        if(!ele) {
+            back=NULL;
+            goto END;
+        }
+        canv_appendVI(c_tit, ele);
+        canv_free(ele);
+        ele=NULL;
+        if(!c_tit){
+            back=NULL;
+            goto END;
+        }
+        
+    }
+    if(!canv_addOverlay(back, c_tit, 0, 0)) {
+        back=NULL;
+        goto END;
+    }
+    
+END:
+    
+    if(back)canv_printR(stdout, back, win->xpos, win->ypos, win->width, win->height);
+    wl_free(t_lab);
+    canv_free(back);
+    canv_free(c_tit);
+    canv_free(ele);
+    font_free(f);
+    if(fi)fclose(fi);
+    if(back)return win;
+    return NULL;
+ 
 }
 
 Window* win_redraw(Window* win, int width, int height, int weight, int x, int y) {

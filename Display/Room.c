@@ -71,6 +71,54 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     return r;
 
 }
+
+/// Loads a map from a file, the format should be the following
+/// id lengthOfName name
+/// height width backgroudColor
+/// numberOfSprites
+/// id ipos jpos
+/// @param f File that contains the description of the room
+Room* room_load(FILE* f){
+    int h,w,id;
+    int len;
+    int nsp;
+    fscanf(f,"%d %d",&id,&len);
+    char* idd= calloc(len+1, sizeof(char));
+    if(!idd){
+        return NULL;
+    }
+    fscanf(f, "%s %d %d",idd,&h,&w);
+    Pixel* back=pix_load(f);
+    if(!back){
+        free(idd);
+        return NULL;
+    }
+    Room* r=room_ini(id, idd, h, w, back);
+    if(!r){
+        free(idd);
+        pix_free(back);
+        return NULL;
+    }
+    pix_free(back);
+    free(idd);
+    fscanf(f, "%d",&nsp);
+    int a,b,c;
+    for(int i=0;i<nsp;++i){
+        fscanf(f, "%d %d %d",&a,&b,&c);
+        Sprite* s=sdic_lookup(a);
+        if(!s){
+            room_free(r);
+            return NULL;
+        }
+        spr_setOI(s, b);
+        spr_setOJ(s, c);
+        if(room_addBSprite(r, s)==NULL){
+            room_free(r);
+            return NULL;
+        }
+    }
+    return r;
+}
 Room* room_addBSprite(Room* r, Sprite* s){
     if(!r||!s)return NULL;
     if(r->backpos==r->backgsiz){

@@ -13,6 +13,7 @@ typedef struct _Window Window;
 
 Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int ypos, int xpos);
 void win_free(Window* win);
+Window* win_addWindowElement(Window* win, Welem* we);
 Window* win_render(Window* win, int pos);
 Window* win_redraw(Window* win, int wid, int hei, int weight, int x, int y);
 

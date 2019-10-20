@@ -149,11 +149,28 @@ Sprite* spr_load(FILE* f){
     return res;
 }
 const Canvas* spr_getDispData(Sprite* spr){
+    if(!spr)return NULL;
     return spr->canvas;
 }
 int spr_getOI(Sprite* spr){
+    if(!spr)return 0;
     return spr->iPos;
 }
 int spr_getOJ(Sprite* spr){
+    if(!spr)return 0;
     return spr->jPos;
+}
+
+void spr_setOI(Sprite* spr,int ipos){
+    if(!spr)return;
+    spr->iPos=ipos;
+}
+void spr_setOJ(Sprite* spr, int jpos){
+    if(!spr)return;
+    spr->jPos=jpos;
+}
+
+int spr_getId(const Sprite* sp){
+    if(!sp)return 0;
+    return sp->id;
 }

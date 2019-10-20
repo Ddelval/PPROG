@@ -19,6 +19,7 @@ Welem* we_ini(Wtype t, void* data){
 	Welem* w= calloc(1,sizeof(Welem));
 	if(!w)return NULL;
 	w->dat=data;
+    w->t=t;
 	return w;
 }
 
@@ -48,9 +49,10 @@ Canvas* we_render(Welem*w, int wid){
 /// Returns a copy of the given window element
 /// @param w Element to be copied
 Welem* we_copy(Welem* w){
-    void * data;
+    void * data=NULL;
     if(w->t==LABEL){
         data= wl_copy((Wlabel*)w->dat);
+        return we_ini(w->t, data);
     }
     
 	return NULL;

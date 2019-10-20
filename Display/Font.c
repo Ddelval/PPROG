@@ -178,7 +178,7 @@ Canvas* font_renderText(const Font* f,char* txt){
             y+=f->whitespace;
         }
         else{
-            printf("%c",mod_txt[i]);
+            //printf("%c",mod_txt[i]);
             fflush(stdout);
             tmp=_font_getCharacterCanvas(f, mod_txt[i]);
             if(!tmp){

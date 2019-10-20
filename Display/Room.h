@@ -10,6 +10,7 @@
 #include "Utility.h"
 #include "Canvas.h"
 #include "Sprite.h"
+#include "SpriteDic.h"
 typedef struct _Room Room;
 Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol);
 void room_free(Room* r);

@@ -19,4 +19,7 @@ const Canvas* spr_getDispData(Sprite* spr);
 void spr_setCoodrinates(Sprite* sp,int i,int j);
 int spr_getOI(Sprite* spr);
 int spr_getOJ(Sprite* spr);
+void spr_setOJ(Sprite* spr, int jpos);
+void spr_setOI(Sprite* spr,int ipos);
+int spr_getId(const Sprite* sp);
 #endif /* Sprite_h */
