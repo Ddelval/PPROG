@@ -18,9 +18,9 @@ typedef struct _Font Font;
 
 
 /*-----------------------------------------------------------------*/
-/// Initalizes the font with these values
+/// Initalises the font with these values
 /// @param hei          Height of each character
-/// @param wid          Widht of the characters
+/// @param wid          Width of the characters
 /// @param size         Amount of elements that will be stored
 /// @param spacing      The gap left between each letter
 /// @param whitespace   The gap left when a ' ' is encountered
@@ -51,7 +51,7 @@ void font_free(Font* f);
 /// spacing:        Space left between two characters (in pixels)
 /// whitespace:     Space left when a whitespace is encountered
 /// l               String with all the chars. E.g. abcde
-/// c               Canvas with all the caracters. They have to be
+/// c               Canvas with all the characters. They have to be
 ///                 rendered with a black font over a transparent
 ///                 background
 /// @param      fil file with the font

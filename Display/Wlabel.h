@@ -5,7 +5,7 @@
 
 //  Description:
 //  Wlabel is a window element that displays text.
-//  To initalize the element, it is required to specify the font,
+//  To initialise the element, it is required to specify the font,
 //  text and vertical spacing.
 //  However, the width of the element will be given when it is rendered.
 //  This approach allows us to work with different widths for each label.

@@ -38,7 +38,7 @@ Sprite* spr_ini(int id, int width, int height){
     spr->iPos=spr->jPos=-1;
     return spr;
 }
-void spr_setCoodrinates(Sprite* sp,int i,int j){
+void spr_setCoordinates(Sprite* sp,int i,int j){
     if(!sp)return;
     sp->iPos=i;
     sp->jPos=j;

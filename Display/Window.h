@@ -96,7 +96,7 @@ Window* win_setMargins(Window *win, int lm, int rm, int tm, int bm);
 /*-----------------------------------------------------------------*/
 
 /// Returns the margins of a given window.
-/// An array with four integers will be retourned in the following
+/// An array with four integers will be returned in the following
 /// order: top, right, bottom, left
 /// @param win Window whose margins are being fetched
 int* win_getMargins(Window *win);

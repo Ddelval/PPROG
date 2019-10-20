@@ -1,4 +1,4 @@
-//  ppro
+//  PPROG
 //	Display.h
 //  Created by David del Val on 02/10/2019
 //
@@ -19,14 +19,39 @@
 
 typedef struct _Display Display;
 /*-----------------------------------------------------------------*/
-/// <#Description#>
-/// @param wid <#wid description#>
-/// @param hei <#hei description#>
-/// @param room <#room description#>
+/// Create a new Display object
+/// @param wid  Total width of the display
+/// @param hei  Total height of the display
+/// @param room Room (map) which we will be using
 Display* disp_ini(int wid, int hei, Room* room);
+
+/*-----------------------------------------------------------------*/
+/// Free the memory allocated for this display
 void disp_free(Display* dat);
+
+/*-----------------------------------------------------------------*/
+/// Add a new window to the vertical stack of windows on the right
+/// section of the display
+/// @param dis  Display object in which the element will be added
+/// @param w    New window to add
 Display* disp_AddLWindow(Display*dis, Window* w);
+
+/*-----------------------------------------------------------------*/
+/// Remove the window in position index of the array of windows
+/// that are displayed on the right column
+/// @param dis Display object from which the window will be removed
+/// @param index Index of the window to be removed
 Display* disp_RemLwindow(Display* dis, int index);
+
+/*-----------------------------------------------------------------*/
+/// Add a pop-up window that will be displayed on top of the map
+/// and the right column of windows
+/// @param dis  Display object in which this window will be added
+/// @param p    Window to be set as pop-up
 Display* disp_SetPopup(Display* dis, Window* p);
+
+/*-----------------------------------------------------------------*/
+/// Remove the pop-up window from the display
+/// @param dis Display whose pop-up we want to remove
 void disp_RemPopup(Display* dis);
 #endif /* Display_h */

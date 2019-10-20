@@ -38,14 +38,14 @@ void we_free(Welem* w);
 Welem* we_copy(Welem* w);
 
 /*-----------------------------------------------------------------*/
-/// Render this Welem calling the respective function accoring to the
+/// Render this Welem calling the respective function according to the
 /// type of the data contained in this wrapper
 /// @param w    Element to be rendered
-/// @param wid  The available width. The element will be centered in
+/// @param wid  The available width. The element will be centred in
 ///             that width and the space will be distributed as well
 ///             as possible according to the element that has to be
 ///             displayed. For instance, a label might be split
-///             in several lines and an icon might be centered in
+///             in several lines and an icon might be centred in
 ///             the area
 /// @return     A new canvas containing the representation of the
 ///             window element

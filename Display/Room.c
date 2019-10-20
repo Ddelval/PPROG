@@ -46,7 +46,7 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     if(!r->overs)ret_free(r);
     r->backpos=r->overpos=0;
 
-    //Colision bool array
+    //Colission bool array
     r->colision=calloc(hei, sizeof(bool*));
     if(!r->colision)ret_free(r);
     for(int i=0;i<hei;++i){
@@ -129,6 +129,9 @@ Room* room_addBSprite(Room* r, Sprite* s){
         r->backgsiz=nsiz;
     }
     r->backg[r->backpos]=spr_copy(s);
+    if(!r->backg[r->backpos]){
+        return NULL;
+    }
     r->backpos++;
     canv_addOverlay(r->map, spr_getDispData(s), spr_getOI(s), spr_getOJ(s));
     return r;
@@ -143,6 +146,9 @@ Room* room_addOSprite(Room* r, Sprite* s){
         r->overssiz=nsiz;
     }
     r->overs[r->overpos]=spr_copy(s);
+    if(!r->overs[r->overpos]){
+        return NULL;
+    }
     r->overpos++;
     return r;
 }
