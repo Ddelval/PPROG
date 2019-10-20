@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   skill.h
  * Author: jaime
  *
@@ -17,13 +17,27 @@
 #include "types.h"
 typedef struct _skill skill;
 typedef struct _entity entity;
-
+/*
+ Function name: skill_ini
+ Utility: It creates a new skill structure with NULL in each camp
+ Inputs:
+ Outputs: skill pointer
+ */
 skill * skill_ini();
-
+/*
+Function name: skill_destroy
+ Utility: Destroys a skill struct
+ Inputs: skill to destroy (pointer)
+ Outputs: skill pointer
+ */
 void skill_destroy(skill* skill);
-
+/*
+Function name: skill_load
+ Utility: It takes a file with skill camps and inserts them into an object struct
+ Inputs: skill pointer, file pointer, name of the file.
+ Outputs: skill pointer
+ */
 skill * skill_activate(skill*skill, entity * entity);
 
 
 #endif /* SKILL_H */
-
