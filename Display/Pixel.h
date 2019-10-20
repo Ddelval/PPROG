@@ -87,6 +87,16 @@ bool pix_equals(const Pixel* a,const Pixel*b);
 /// Check if a pixel is transparent
 /// @param a Pixel to be checked
 bool pix_transparent(const Pixel* a);
+<<<<<<< HEAD
+=======
+
+/*-----------------------------------------------------------------*/
+/// Render a horizontal line of pixels.
+/// @param a	Pointer to the array of pixels
+/// @param len 	Amount of pixels to be rendered
+/// @return An array of chars that, if printed on the screen will represent this line of pixels.
+char * pix_renderLine(Pixel**a,int len);
+>>>>>>> 5e6251f763bd3d4733bb4a783002ce194582d910
 
 /*-----------------------------------------------------------------*/
 /// Render a horizontal line of pixels.

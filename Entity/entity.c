@@ -5,7 +5,7 @@
 
 #define MAX_NAME_LENGTH 30
 
-typedef enum entType {PLAYER = 1, ENEMY = 2, ALLY = 3};
+typedef enum {PLAYER = 1, ENEMY = 2, ALLY = 3} entType;
 
 /*
 name: Entitys's name.
@@ -25,7 +25,7 @@ struct _Entity {
         entType t;
         int x;
         int y;
-        attribute *attr;
+        atb *attr;
         inventory *inv;
 };
 
@@ -65,23 +65,48 @@ Entity *entity_load(char *file){
   entType t = 0;
   char name[MAX_NAME_LENGTH];
   int x = 0, y = 0;
-  e = entity_ini();
+  e = entity_ini(NULL, NULL, 0, 0, 0);
   if(!e) return NULL;
 
-  f = fopen(const char *filename, "r");
+  f = fopen(file, "r");
    if (f == NULL) {
        printf("Error when opening the file\n");
+       entity_destroy(e);
        return NULL;
    }
 
    fscanf(f, "%s %d %d %d", name, t, x, y);
-   spr_load(f);
+   if (spr_load(file) == NULL){
+     entity_destroy(e);
+     return NULL;
+   }
 
+   if(entity_setName(Entity* p, char* c) == ERROR){
+     entity_destroy(e);
+     return NULL;
+   }
+
+   if(entity_setEntType(e,  t) == ERROR) {
+     entity_destroy(e);
+     return NULL;
+   }
+
+   if(entity_setCoordX(e,  x) == ERROR) {
+     entity_destroy(e);
+     return NULL;
+   }
+
+   if(entity_setCoordY(e,  y) == ERROR) {
+     entity_destroy(e);
+     return NULL;
+   }
+
+   return e;
 }
 
 Status entity_setName(Entity* p, char* c){
         if(!p || !c) return ERROR;
-        if strlen(c) >= MAX_NAME_LENGTH{
+        if (strlen(c) >= MAX_NAME_LENGTH){
           printf("Name can't have so many characters.");
           return ERROR;
         }
@@ -91,24 +116,24 @@ Status entity_setName(Entity* p, char* c){
 
 Status entity_setSprite(Entity* p, Sprite *s){
         if(!p || !s) return ERROR;
-        if (sprite_set(p->s, c) == ERROR) return ERROR;
+        p->s = s;
         return OK;
 }
 
 Status entity_setEntType(Entity* p, entType t){
-        if(!p) return ERROR;
+        if(!p || t < 1 || t > 3) return ERROR;
         p->t = t;
         return OK;
 }
 
 Status entity_setCoordX(Entity* p, int x){
-        if(!p) return ERROR;
+        if(!p || x < 0) return ERROR;
         p->x = x;
         return OK;
 }
 
 Status entity_setCoordY(Entity* p, int y){
-        if(!p) return ERROR;
+        if(!p  || y < 0) return ERROR;
         p->y = y;
         return OK;
 }
@@ -116,9 +141,14 @@ Status entity_setCoordY(Entity* p, int y){
 
 
 char *entity_getName(Entity* p){
-  char name[MAX_NAME_LENGTH];
+  char *name = NULL;
+
   if(!p) return NULL;
   if(!(p->name)) return NULL;
+
+  name = (char*) calloc (MAX_NAME_LENGTH, sizeof(char));
+  if(!name) return NULL;
+
   strcpy(name, p->name);
   return name;
 }
@@ -126,49 +156,54 @@ char *entity_getName(Entity* p){
 Sprite *entity_getSprite(Entity* p){
   Sprite *s = NULL;
   if(!p || !(p->s)) return NULL;
-  s = sprite_get(p);
+  s = sprite_copy(p->s);
   return s;
 }
 
 entType entity_getEntType(Entity* p){
-  entType e = -1;
-  if ((!p) || ((p->t != 0) && (p->t != 1) && (p->t != 2)) return e;
+  entType e = 0;
+  if ((!p) || (p->t != 1) && (p->t != 2) && (p->t != 3)) return e;
   return p->t;
 }
 
 int entity_getCoordX(Entity* p){
-  if(!p) return 100000;
+  if(!p) return -1;
   return p->x;
 }
 
 int entity_getCoordY(Entity* p){
-  if(!p) return 100000;
+  if(!p) return -1;
   return p->y;
 }
 
-attribute *entity_getAttribute(Entity* p){
-  if(!p || !(p->atrr)) return NULL;
-  return p->attr;
+atb *entity_getAttribute(Entity* p){
+  atb *a = NULL;
+  if(!p || !(p->attr)) return NULL;
+  a = attribute_copy(p->attr);
+  return a;
 }
 
 inventory *entity_getInventory(Entity* p){
+  inventory *i = NULL;
   if(!p || !(p->inv)) return NULL;
-  return p->inv;
+  i = inventory_copy(p->inv);
+  return i;
 }
 
 
-Status entity_moveUp(Entity* p, int canv_size){
+
+Status entity_moveUp(Entity* p){
   if(!p) return ERROR;
-  if(p->y == canv_size){
+  if(p->y == 0){
     printf("You cannot move in this direction!");
     return OK;
   }
   (p->y)--;
   return OK;
 }
-Status entity_moveDown(Entity* p){
+Status entity_moveDown(Entity* p, int canv_size){
   if(!p) return ERROR;
-  if(p->y == 0){
+  if(p->y == canv_size){
     printf("You cannot move in this direction!");
     return OK;
   }
@@ -177,14 +212,14 @@ Status entity_moveDown(Entity* p){
 }
 Status entity_moveLeft(Entity* p){
   if(!p) return ERROR;
-  if(p->x == canv_size){
+  if(p->x == 0){
     printf("You cannot move in this direction!");
     return OK;
   }
   (p->x)--;
   return OK;
 }
-Status entity_moveRight(Entity* pint canv_size){
+Status entity_moveRight(Entity* p, int canv_size){
   if(!p) return ERROR;
   if(p->x == canv_size){
     printf("You cannot move in this direction!");
@@ -198,12 +233,13 @@ void entity_destroy(Entity *p){
   if(!p) return;
   if(p->name) free(p->name);
   p->name = NULL;
-  if(p->s) sprite_destroy(p->s);
+  if(p->s) spr_free(p->s);
   p->s = NULL;
   if (p->attr) attribue_destroy(p->atrr);
   p->atrr = NULL;
   if(p->inv) inventory_destroy(p->inv);
   p->inv = NULL;
   free(p);
+  p = NULL;
   return;
 }

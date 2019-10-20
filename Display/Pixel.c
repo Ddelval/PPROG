@@ -210,6 +210,7 @@ char * pix_renderLine(Pixel**a,int len){
     return res;
 }
 
+<<<<<<< HEAD
 Pixel* pix_load(FILE* f){
     if(!f)return NULL;
     int a,r,g,b;
@@ -217,3 +218,5 @@ Pixel* pix_load(FILE* f){
     return pix_ini(r, g, b, a);
     
 }
+=======
+>>>>>>> 5e6251f763bd3d4733bb4a783002ce194582d910
