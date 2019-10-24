@@ -144,6 +144,7 @@ END:
     if(back){
         Canvas* r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height, 0, win->width);
         canv_print(stdout, r, win->ipos, win->jpos);
+				canv_free(r);
     }
     wl_free(t_lab);
     canv_free(back);
