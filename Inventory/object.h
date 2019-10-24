@@ -38,6 +38,7 @@ Function name: object_load
  */
 object * object_load(object* object, FILE * pf, char * name);
 
+Bool object_class(object * object);
 
 
 #endif /* OBJECT_H */

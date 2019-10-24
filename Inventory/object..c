@@ -16,6 +16,7 @@ struct _object {
     char name[20];
     sprite * image;
     objType class;
+    int amount;
     atb * atb;
     skill * special;
     Bool destroyable;
@@ -30,16 +31,17 @@ struct _object {
 object * object_ini(){
     object * object = NULL;
     object = (object *)calloc(1,sizeof(object));
-    
+
      if (object== NULL) {
         printf("Error: calloc.\n");
         return NULL;
     }
     object->atb = atb_ini();
     object->special = NULL;
-    
-    
-    
+    object->amount = 0;
+
+
+
 }
 /*
 Function name: object_destroy
@@ -49,7 +51,7 @@ Function name: object_destroy
  */
 void object_destroy(object* object){
     //FALTAN COSAS POR AÑADIR (CAMPOS TODAVIA NO CREADOS)
-    
+
     atb_destroy(object->atb);
     free(object);
 }
@@ -65,8 +67,8 @@ object * object_load( char * name){
     object * object;
     object = object_ini();
     f = fopen(name ,"r");
-    
-    
+
+
     fscanf(f,"%d %s %d %d %d %d %d %d\n",object->id,object->name,object->class,a,b,c,d,e);
    atb_setter(object->atb,a,1);
    atb_setter(object->atb,b,2);
@@ -79,10 +81,22 @@ object * object_load( char * name){
     fclose(f);
 }
 
+int consumable_decrease(object * obj){
+  if(!obj) return -1
+  obj->amount--;
+  return obj->amount;
+}
 
+int consumable_increase(object * obj){
+  if(!obj) return -1
+  obj->amount++;
+  return obj->amount;
+}
 
+char * object_getname(object * obj){
+  return obj->name;
+}
 
 
 
 //CONTINUAMOS EN DESARROLLO A LA ESPERA DE LA INTERFAZ Y EL TAD INVENTORY GRACIAS!!
-
