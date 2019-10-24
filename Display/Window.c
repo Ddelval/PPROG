@@ -150,7 +150,7 @@ END:
     canv_free(c_tit);
     canv_free(ele);
     font_free(f);
-		free(win);
+		win_free(win);
     if(fi)fclose(fi);
     if(back)return win;
     return NULL;
