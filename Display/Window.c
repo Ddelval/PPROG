@@ -98,7 +98,7 @@ Window* win_render(Window* win) {
     Canvas* c_tit=NULL;
     Canvas * ele=NULL;
     Font * f=NULL;
-	FILE* fi=fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Display/Fonts/Robo_Mono/06.txt", "r");
+	FILE* fi=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
 	if(!fi) {
 		fprintf(stderr, "%d", errno);
 		return NULL;
