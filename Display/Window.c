@@ -2,7 +2,6 @@
 
 #include "Window.h"
 #include <errno.h>
-#define MAX_SELECTABLE 10
 #define MIN_SIZ 3
 #define STEP 5
 struct _Window {
