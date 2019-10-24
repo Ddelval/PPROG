@@ -18,8 +18,14 @@ struct _Welem {
 Welem* we_ini(Wtype t, void* data){
 	Welem* w= calloc(1,sizeof(Welem));
 	if(!w)return NULL;
-	w->dat=data;
-    w->t=t;
+	if(w->t==LABEL){
+		w->dat=wl_copy(data);
+	}
+	if(!w->dat){
+		free(w);
+		return NULL;
+	}
+  w->t=t;
 	return w;
 }
 
@@ -54,7 +60,6 @@ Welem* we_copy(Welem* w){
         data= wl_copy((Wlabel*)w->dat);
         return we_ini(w->t, data);
     }
-    
+
 	return NULL;
 }
-
