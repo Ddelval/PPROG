@@ -12,6 +12,7 @@ int main(int argc, const char* argv[]) {
 	if(!win_setMargins(win, 0, 0, 0, 0)) printf("aaa");
 	if(!win_render(win)) {
 		fprintf(stderr, "BAD RENDER");
+		win_free(win);
 		return 2;
 	}
 	win_free(win);
