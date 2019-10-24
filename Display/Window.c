@@ -47,7 +47,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 			}
 		}
 		win->Win_elem=we;
-    
+
 	win->num_elems=num_elems;
 	win->width=wid;
 	win->height=hei;
@@ -105,20 +105,20 @@ Window* win_render(Window* win) {
 	}
 	f=font_load(fi);
 	if(!f) goto END;
-	
+
 	t_lab=wl_ini(win->title, f, 4);
 	if(!t_lab) goto END;
-	
+
     back=canv_backGrnd(80, 85, 222, 255, win->width, win->height);
     if(!back)  goto END;
-    
-    
+
+
 	c_tit=wl_render(t_lab, win->width-win->leftm-win->rightm-10); //padding for the window with its title element
 	if(!c_tit) {
 		back=NULL;
         goto END;
 	}
-    
+
     for(int i=0;i<win->num_elems;++i){
         ele=we_render(win->Win_elem[i], win->width-win->leftm-win->rightm);
         if(!ele) {
@@ -132,15 +132,15 @@ Window* win_render(Window* win) {
             back=NULL;
             goto END;
         }
-        
+
     }
     if(!canv_addOverlay(back, c_tit, 0, 0)) {
         back=NULL;
         goto END;
     }
-    
+
 END:
-    
+
     if(back){
         Canvas* r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height, 0, win->width);
         canv_print(stdout, r, win->ipos, win->jpos);
@@ -150,10 +150,11 @@ END:
     canv_free(c_tit);
     canv_free(ele);
     font_free(f);
+		free(win)
     if(fi)fclose(fi);
     if(back)return win;
     return NULL;
- 
+
 }
 
 Window* win_redraw(Window* win, int width, int height, int weight, int i, int j) {
