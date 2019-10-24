@@ -1,10 +1,13 @@
 CC = gcc -g
-EXE =
+EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite
 DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o
 LIB= -I Display/ -I Utility/
 
+all: $(EXE)
+
 clean:
 	rm -f *.o core $(EXE)
+
 TestFont: %: %.o $(DISPLAY)
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
@@ -83,11 +86,11 @@ TestSize: %: %.o $(DISPLAY)
 	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm -lncurses
 
 TestSize.o: Testing/TestSize.c Utility.o
-		@echo "#---------------------------"
-		@echo "# Generating $@ "
-		@echo "# Depends on $^"
-		@echo "# Has changed $<"
-		$(CC) -c $< $(LIB)
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
 
 Canvas.o : Display/Canvas.c Display/Canvas.h
 	@echo "#---------------------------"
