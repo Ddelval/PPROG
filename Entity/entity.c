@@ -5,7 +5,7 @@
 
 #define MAX_NAME_LENGTH 30
 
-typedef enum {PLAYER = 1, ENEMY = 2, ALLY = 3} entType;
+
 
 /*
 name: Entitys's name.
@@ -30,27 +30,24 @@ struct _Entity {
 };
 
 
-Entity *entity_ini (char *name, Sprite *s, entType t, int x, int y){
+
+
+Entity *entity_ini (char *name, entType t, int x, int y){
         Entity* e = NULL;
         e = (Entity*) malloc(sizeof(Entity));
         if(!e) return NULL;
-        if(!name || strlen(name)>=MAX_NAME_LENGTH) e->name = NULL;
-        else{
-          strcpy(e->name, name);
-        }
-        if (sprite_set(e->s, s) == ERROR){
-          entity_destroy(e);
-          return NULL;
-        }
+        if(name && strlen(name) < MAX_NAME_LENGTH) strcpy(e->name, name);
+
         e->t = t;
         e->x = x;
         e->y = y;
+
         e->attr = atb_ini();
         if (e->attr == NULL){
           entity_destroy(e);
           return NULL;
         }
-        e->inv = inv_ini();
+        e->inv = inventory_ini();
         if (e->inv == NULL){
           entity_destroy(e);
           return NULL;
@@ -65,7 +62,7 @@ Entity *entity_load(char *file){
   entType t = 0;
   char name[MAX_NAME_LENGTH];
   int x = 0, y = 0;
-  e = entity_ini(NULL, NULL, 0, 0, 0);
+  e = entity_ini(NULL, 0, 0, 0);
   if(!e) return NULL;
 
   f = fopen(file, "r");
@@ -76,12 +73,12 @@ Entity *entity_load(char *file){
    }
 
    fscanf(f, "%s %d %d %d", name, t, x, y);
-   if (spr_load(file) == NULL){
+   if(entity_setSprite(e, spr_load(file)) == ERROR){
      entity_destroy(e);
      return NULL;
    }
 
-   if(entity_setName(Entity* p, char* c) == ERROR){
+   if(entity_setName(e, name) == ERROR){
      entity_destroy(e);
      return NULL;
    }
@@ -116,6 +113,7 @@ Status entity_setName(Entity* p, char* c){
 
 Status entity_setSprite(Entity* p, Sprite *s){
         if(!p || !s) return ERROR;
+        if(p->s) spr_free(e->s);
         p->s = s;
         return OK;
 }
@@ -156,7 +154,7 @@ char *entity_getName(Entity* p){
 Sprite *entity_getSprite(Entity* p){
   Sprite *s = NULL;
   if(!p || !(p->s)) return NULL;
-  s = sprite_copy(p->s);
+  s = spr_copy(p->s);
   return s;
 }
 
@@ -177,17 +175,13 @@ int entity_getCoordY(Entity* p){
 }
 
 atb *entity_getAttribute(Entity* p){
-  atb *a = NULL;
   if(!p || !(p->attr)) return NULL;
-  a = attribute_copy(p->attr);
-  return a;
+  return p->attr;
 }
 
 inventory *entity_getInventory(Entity* p){
-  inventory *i = NULL;
   if(!p || !(p->inv)) return NULL;
-  i = inventory_copy(p->inv);
-  return i;
+  return p->inv;
 }
 
 
@@ -231,12 +225,10 @@ Status entity_moveRight(Entity* p, int canv_size){
 
 void entity_destroy(Entity *p){
   if(!p) return;
-  if(p->name) free(p->name);
-  p->name = NULL;
   if(p->s) spr_free(p->s);
   p->s = NULL;
-  if (p->attr) attribue_destroy(p->atrr);
-  p->atrr = NULL;
+  if (p->attr) atb_destroy(p->attr);
+  p->attr = NULL;
   if(p->inv) inventory_destroy(p->inv);
   p->inv = NULL;
   free(p);
