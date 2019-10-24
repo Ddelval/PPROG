@@ -1,18 +1,20 @@
-#ifndef entity.h
-#define entity.h
+#ifndef entity
+#define entity
 
 #include "inventory.h"
-#include "sprite.h"
+#include "Sprite.h"
 #include "object.h"
 #include "types.h"
 
 typedef struct _Entity Entity;
 
+typedef enum {PLAYER = 1, ENEMY = 2, ALLY = 3} entType;
+
 
 /*Creates an entity and assigns a name, a sprite, an entType, a x and y coordinate
 and initializes the inventory and attribute field. If either of the pounter arguments is NULL, it sets
 that field to NULL*/
-Entity *entity_ini (char *name, Sprite *s, entType t, int x, int y);
+Entity *entity_ini (char *name, entType t, int x, int y);
 
 /* Reads from the file passed as argument the  name, entity type (player (1), enemy(2) or ally (3)),
  x Coodinate, y coordinate and sprite in this order and initializes an entity with
@@ -88,3 +90,4 @@ void entity_destroy(Entity *p);
 
 
 #endif
+
