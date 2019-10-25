@@ -4,14 +4,15 @@
 #include "Welem.h"
 #include "Wlabel.h"
 int main(int argc, const char* argv[]) {
-	Window* win = win_ini("Inventory", NULL, 0, 300, 250, 1, 909, 0);
+	FILE* fi=fopen("Display/Fonts/Robo_Mono/04.txt", "r");
+	Font* f=font_load(fi);
+	Window* win = win_ini("Inventory", NULL, 0, 300, 250, 1, 909, 0, f);
 	if(!win) {
 		fprintf(stderr, "NULL WINDOW");
 		return 1;
 	}
 	errno = 0;
-	FILE* fi=fopen("Display/Fonts/Robo_Mono/04.txt", "r");
-	Font* f=font_load(fi);
+
 	Wlabel* w=wl_ini("5x data",f,10);
 	Welem* wel=we_ini(LABEL,w);
 	win_addWindowElement(win,wel);

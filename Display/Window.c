@@ -8,19 +8,24 @@ struct _Window {
 	char* title;
 	Welem** Win_elem;
 	int num_elems;
-    int num_elems_siz;
+  int num_elems_siz;
 	int selected_elem[MAX_SELECTABLE];
 	int width, height;
 	int scroll_pos;
 	int weight;
 	int leftm, rightm, topm, botm;
-    int jpos, ipos;
+  int jpos, ipos;
+	const Font* titlef;
 };
 
-Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int jpos, int ipos) {
+Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int jpos, int ipos, const Font* titlef) {
 	Window* win=(Window*)calloc(1, sizeof(Window));
 	if(!win) return NULL;
-
+	if(!titlef) {
+		free(win);
+		return NULL;
+	}
+	win->titlef=titlef;
 	if(!win_setMargins(win, 0, 0, 0, 0)) {
 		free(win);
 		return NULL;
@@ -36,7 +41,10 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	}
     win->num_elems_siz=max(num_elems,MIN_SIZ);
 		Welem** we=(Welem**)calloc(win->num_elems_siz, sizeof(Welem*));
-		if(!we) win_free(win);
+		if(!we) {
+			win_free(win);
+			return NULL;
+		}
 		for(int i=0; i<num_elems; i++) {
 			we[i]=we_copy(Win_elem[i]);
 			if(!we[i]) {
@@ -90,7 +98,7 @@ Window* win_addWindowElement(Window* win, Welem* we){
     return win;
 }
 
-Window* win_render(Window* win) {
+Canvas* win_render(Window* win) {
 	if(!win||!win->title) return NULL;
 	errno=0;
     Wlabel* t_lab=NULL;
@@ -98,6 +106,7 @@ Window* win_render(Window* win) {
     Canvas* c_tit=NULL;
     Canvas * ele=NULL;
     Font * f=NULL;
+		Canvas* r;
 	FILE* fi=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
 	if(!fi) {
 		fprintf(stderr, "%d", errno);
@@ -140,11 +149,9 @@ Window* win_render(Window* win) {
     }
 
 END:
-
+		r=NULL;
     if(back){
-        Canvas* r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height, 0, win->width);
-        canv_print(stdout, r, win->ipos, win->jpos);
-				canv_free(r);
+        r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height, 0, win->width);
     }
     wl_free(t_lab);
     canv_free(back);
@@ -152,8 +159,7 @@ END:
     canv_free(ele);
     font_free(f);
     if(fi)fclose(fi);
-    if(back)return win;
-    return NULL;
+    return r;
 
 }
 

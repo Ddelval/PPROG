@@ -31,7 +31,7 @@ typedef struct _Window Window;
 ///                     on the screen
 /// @param ipos         Row of the top-left corner of thewindow
 ///                     on the screen
-Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int jpos, int ipos);
+Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int jpos, int ipos, const Font* titlef);
 
 
 /*-----------------------------------------------------------------*/
@@ -50,7 +50,7 @@ Window* win_addWindowElement(Window* win, Welem* we);
 /// Render the window and prints it in the correct position on the
 /// screen
 /// @param win Window to be processed
-Window* win_render(Window* win);
+Canvas* win_render(Window* win);
 
 /*-----------------------------------------------------------------*/
 /// Render the window modifying the parameters before doing so

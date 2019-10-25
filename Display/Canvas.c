@@ -1,6 +1,7 @@
 /* Canvas.c */
 
 #include "Canvas.h"
+#include <stdio.h>
 
 struct _Canvas {
     Pixel*** data;
@@ -27,7 +28,7 @@ void canv_free(Canvas* c){
         free(c->data);
     }
     free(c);
-    
+
 }
 
 
@@ -97,7 +98,7 @@ Canvas* canv_load(FILE* f){
             }
         }
     }
-    
+
     return c;
 }
 
@@ -155,24 +156,24 @@ Canvas* canv_appendH(const Canvas* west, const Canvas* east){
                 canv_free(r1);
                 canv_free(res);
                 return NULL;
-                
+
             }
         }
-        for(int j=0;j<west->wid;++j){
+        for(int j=0;j<east->wid;++j){
             res->data[i][j+west->wid]=pix_copy(r1->data[i][j]);
             if(!res->data[i][j+west->wid]){
                 canv_free(l1);
                 canv_free(r1);
                 canv_free(res);
                 return NULL;
-                
+
             }
         }
     }
     canv_free(r1);
     canv_free(l1);
     return res;
-    
+
 }
 
 /// Get a new canvas that contains both canvases appended vertically
@@ -204,7 +205,7 @@ Canvas* canv_appendV(const Canvas* north, const Canvas* south){
                 canv_free(s1);
                 canv_free(res);
                 return NULL;
-                
+
             }
         }
     }
@@ -216,14 +217,14 @@ Canvas* canv_appendV(const Canvas* north, const Canvas* south){
                 canv_free(s1);
                 canv_free(res);
                 return NULL;
-                
+
             }
         }
     }
     canv_free(s1);
     canv_free(n1);
     return res;
-    
+
 }
 
 Canvas* canv_appendVI(Canvas* north, const Canvas* south){
@@ -231,7 +232,7 @@ Canvas* canv_appendVI(Canvas* north, const Canvas* south){
         return NULL;
     }
     Canvas*res=canv_appendV(north, south);
-    
+
     // Get rid of the pixels in north
     for(int i=0;i<north->hei;++i){
         if(!(north->data[i]))continue;
@@ -316,7 +317,7 @@ Canvas ** canv_VSplit(const Canvas* src, int* nelem){
     for(int j=0;j<src->wid;++j){
         bool b=_transparentColumn(src, j);
         if(!b&&prev){
-           
+
             cnt++;
         }
         prev=b;
@@ -339,7 +340,7 @@ Canvas ** canv_VSplit(const Canvas* src, int* nelem){
                     return NULL;
                 }
                 lindex++;
-                
+
             }
             pindex=j;
         }
@@ -392,15 +393,15 @@ Canvas* canv_AdjustCrop(const Canvas* src, int nwidth,int nheight){
         if(src->hei>nheight){
             x1=(int)ceil((src->hei-nheight)/2);
             x2=x1+nheight;
-            
+
             y1=(int)ceil((src->wid-nwidth)/2);
             y2=y1+nwidth;
-            
+
         }
         else{
             x1=0;
             x2=src->hei;
-            
+
             y1=(int)ceil((src->wid-nwidth)/2);
             y2=y1+nwidth;
         }
@@ -409,14 +410,14 @@ Canvas* canv_AdjustCrop(const Canvas* src, int nwidth,int nheight){
         if(src->hei>nheight){
             x1=(int)ceil((src->hei-nheight)/2);
             x2=x1+nheight;
-            
+
             y1=0;
             y2=src->wid;
         }
         else{
             x1=0;
             x2=src->hei;
-            
+
             y1=0;
             y2=src->wid;
         }
@@ -466,7 +467,7 @@ Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_i, int o_j){
             if(!res->data[i][j]){
                 canv_free(res);
                 return NULL;
-                
+
             }
         }
     }
@@ -566,7 +567,7 @@ bool _transparentColumn(const Canvas * c, int j){
     bool b=true;
     for(int i=0;i<c->hei;++i)b*=pix_transparent(c->data[i][j]);
     return b;
-    
+
 }
 
 
@@ -610,4 +611,3 @@ char** _canv_render(const Canvas* c,int wid, int hei){
     canv_free(cop);
     return ch;
 }
-
