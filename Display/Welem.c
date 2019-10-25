@@ -58,8 +58,7 @@ Canvas* we_render(Welem*w, int wid){
 Welem* we_copy(Welem* w){
     void * data=NULL;
     if(w->t==LABEL){
-        data= wl_copy((Wlabel*)w->dat);
-        return we_ini(w->t, data);
+        return we_ini(w->t, w->dat);
     }
 
 	return NULL;
