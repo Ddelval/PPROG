@@ -1,11 +1,8 @@
-
 #include <stdlib.h>
 #include <string.h>
 #include "entity.h"
 
 #define MAX_NAME_LENGTH 30
-
-
 
 /*
 name: Entitys's name.
@@ -61,7 +58,7 @@ Entity *entity_load(char *file){
   FILE *f = NULL;
   entType t = 0;
   char name[MAX_NAME_LENGTH];
-  int x = 0, y = 0;
+  int x = 0, y = 0, aux = 0;
   e = entity_ini(NULL, 0, 0, 0);
   if(!e) return NULL;
 
@@ -72,8 +69,14 @@ Entity *entity_load(char *file){
        return NULL;
    }
 
-   fscanf(f, "%s %d %d %d", name, t, x, y);
-   if(entity_setSprite(e, spr_load(file)) == ERROR){
+   fscanf(f, "%s %d %d %d", name, &aux, &x, &y);
+   if(entity_setEntType(e, t)){
+     entity_destroy(e);
+     return NULL;
+   }
+
+
+   if(entity_setSprite(e, spr_load(f)) == ERROR){
      entity_destroy(e);
      return NULL;
    }
@@ -113,7 +116,7 @@ Status entity_setName(Entity* p, char* c){
 
 Status entity_setSprite(Entity* p, Sprite *s){
         if(!p || !s) return ERROR;
-        if(p->s) spr_free(e->s);
+        if(p->s) spr_free(p->s);
         p->s = s;
         return OK;
 }
