@@ -35,6 +35,7 @@ void we_free(Welem* w){
     if(w->t==LABEL){
         wl_free(w->dat);
     }
+		free(w);
 }
 
 /// Renders this Welem calling the respective function accoring to the type
