@@ -29,6 +29,14 @@ Welem* we_ini(Wtype t, void* data){
 	return w;
 }
 
+Welem* we_createLabel(char* t, const Font* f,int vgap){
+	if(!t||!f)return NULL;
+	Wlabel* wl=wl_ini(t,f,vgap);
+	if(!wl)return NULL;
+	Welem* w=(LABEL,wl);
+	wl_free(wl);
+	return w;
+}
 
 /// Frees the allocated memory
 void we_free(Welem* w){
@@ -58,7 +66,8 @@ Canvas* we_render(Welem*w, int wid){
 Welem* we_copy(Welem* w){
     void * data=NULL;
     if(w->t==LABEL){
-        return we_ini(w->t, w->dat);
+        data= wl_copy((Wlabel*)w->dat);
+        return we_ini(w->t, data);
     }
 
 	return NULL;
