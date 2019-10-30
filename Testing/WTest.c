@@ -4,7 +4,34 @@
 #include "Welem.h"
 #include "Wlabel.h"
 #include "Display.h"
+#include <unistd.h>
+#include <termios.h>
 #include "Room.h"
+char getch1(void)
+{
+    char buf = 0;
+    struct termios old = {0};
+    fflush(stdout);
+    tcgetattr(0, &old);
+    //if(tcgetattr(0, &old) < 0)
+        //perror("tcsetattr()");
+    old.c_lflag &= ~ICANON;
+    old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN] = 1;
+    old.c_cc[VTIME] = 0;
+    tcsetattr(0, TCSANOW, &old);
+   // if(tcsetattr(0, TCSANOW, &old) < 0)
+        //perror("tcsetattr ICANON");
+    read(0, &buf, 1);
+    //if(read(0, &buf, 1) < 0)
+        //perror("read()");
+    old.c_lflag |= ICANON;
+    old.c_lflag |= ECHO;
+    tcsetattr(0, TCSADRAIN, &old);
+    //if(tcsetattr(0, TCSADRAIN, &old) < 0)
+        //perror("tcsetattr ~ICANON");
+    return buf;
+ }
 
 int main(){
     int vdiv=800;
@@ -34,10 +61,13 @@ int main(){
     char* c="Room 1";
     Display* dis= disp_ini(w, h, r, vdiv, c, f6);
     
-    
+    f=fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Icons/food.txt", "r");
+    Canvas* canvv=canv_load(f);
+    fclose(f);
     
     Welem* wel[3];
-    wel[0]=we_createLabel("6 x Food", f4, 10);
+  //  wel[0]=we_createLabel("6 x Food", f4, 10);
+    wel[0]=we_createLabic("5", f6, 10, 10, canvv, TEXT_LEFT);
     wel[1]=we_createLabel("5 x Water", f4, 10);
     wel[2]=we_createLabel("5 x Stone", f4, 10);
     
@@ -52,53 +82,31 @@ int main(){
     Window* w2=win_ini("Actions", wela, 3, w-vdiv, h/2-20, 1, 0, 0, f6);
     disp_AddLWindow(dis, w1);
     disp_AddLWindow(dis, w2);
-    Canvas * buff=disp_Render(dis);
-    Canvas * buff2=NULL;
-    canv_print(stdout, buff, 0, 0);
-    buff2=canv_subCopy(buff, 0, 0, vdiv, h);
-    canv_free(buff);
-    buff=buff2;
-    buff2=NULL;
+
+    canv_print(stdout, disp_Render(dis), 0, 0);
+
     while(1){
         char c;
-        scanf("%c",&c);
-        printf("%c\n",c);
+        c=getch1();
+        //scanf("%c",&c);
+        //printf("%c\n",c);
         if(c=='W'){
             room_incPos(r, 0, -10, 0);
             room_printMod(r, 0, 0, 0, 0, vdiv, h);
-//            buff2=disp_Render(dis);
-//            canvas_printDiff(stdout, buff2, buff, 0, 0);
-//            canv_free(buff);
-//            buff=buff2;
-//            buff2=buff;
         }
         if(c=='S'){
             room_incPos(r, 0, 10, 0);
             room_printMod(r, 0, 0, 0, 0, vdiv, h);
-            //buff2=room_getSubRender(r, 0, 0, vdiv, h);
-            //canvas_printDiff(stdout, buff2, buff, 0, 0);
-            //canv_print(stdout, buff2, 0, 0);
-            //canv_free(buff);
         }
         if(c=='A'){
             room_incPos(r, 0, 0, -10);
             room_printMod(r, 0, 0, 0, 0, vdiv, h);
-//            buff2=disp_Render(dis);
-//            //canvas_printDiff(stdout, buff2, buff, 0, 0);
-//
-//            canv_free(buff);
-//            buff=buff2;
-//            buff2=buff;
         }
         if(c=='D'){
             room_incPos(r, 0, 0, 10);
             room_printMod(r, 0, 0, 0, 0, vdiv, h);
-//            buff2=disp_Render(dis);
-//            canvas_printDiff(stdout, buff2, buff, 0, 0);
-//            canv_free(buff);
-//            buff=buff2;
-//            buff2=buff;
         }
+        usleep(100000);
         
     }
     return 0;

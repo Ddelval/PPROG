@@ -51,5 +51,5 @@ Wlabel* wl_copy(Wlabel* src);
 /// @param width    Maximum width that the canvas can take;
 Canvas* wl_render(Wlabel* l,int width);
 
-
+Canvas* wl_renderSmall(Wlabel* l,int width);
 #endif /* Wlabel_h */

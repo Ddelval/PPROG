@@ -52,6 +52,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 					we_free(we[j]);
 				}
 				free(we);
+                return NULL;
 			}
 		}
 		win->Win_elem=we;

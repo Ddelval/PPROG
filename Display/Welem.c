@@ -18,9 +18,13 @@ struct _Welem {
 Welem* we_ini(Wtype t, void* data){
 	Welem* w= calloc(1,sizeof(Welem));
 	if(!w)return NULL;
+    w->t=t;
 	if(w->t==LABEL){
 		w->dat=wl_copy(data);
 	}
+    if(w->t==ICONLABEL){
+        w->dat=wi_copy(data);
+    }
 	if(!w->dat){
 		free(w);
 		return NULL;
@@ -38,12 +42,27 @@ Welem* we_createLabel(char* t, const Font* f,int vgap){
 	return w;
 }
 
+Welem* we_createLabic(char*t, const Font*f,int vgap,int hgap, Canvas* c,Alignment l){
+    if(!t||!f||!c)return NULL;
+    Wlabic* w=wi_ini(t, f , vgap, hgap,l);
+    if(!w)return NULL;
+    if(!wi_setCanvas(w,c)){
+        wi_free(w);
+        return NULL;
+    }
+    Welem* ww=we_ini(ICONLABEL, (void*)w);
+    wi_free(w);
+    return ww;
+}
 /// Frees the allocated memory
 void we_free(Welem* w){
     if(w->t==LABEL){
         wl_free(w->dat);
     }
-		free(w);
+    if(w->t==ICONLABEL){
+        wi_free(w->dat);
+    }
+    free(w);
 }
 
 /// Renders this Welem calling the respective function accoring to the type
@@ -58,6 +77,9 @@ Canvas* we_render(Welem*w, int wid){
     if(w->t==LABEL){
         return wl_render((Wlabel*)w->dat, wid);
     }
+    if(w->t==ICONLABEL){
+        return wi_render((Wlabic*)w->dat, wid);
+    }
 	return NULL;
 }
 
@@ -67,6 +89,10 @@ Welem* we_copy(Welem* w){
     void * data=NULL;
     if(w->t==LABEL){
         data= wl_copy((Wlabel*)w->dat);
+        return we_ini(w->t, data);
+    }
+    if(w->t==ICONLABEL){
+        data= wi_copy((Wlabic*)w->dat);
         return we_ini(w->t, data);
     }
 

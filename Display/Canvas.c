@@ -540,8 +540,49 @@ void canv_print(FILE* f, const Canvas* c,int i,int j){
         fprintf(f, "%s",da[w]);
         free(da[w]);
     }
+    if(tofree)canv_free(c);
+    fflush(f);
     free(da);
 }
+
+char * canv_StorePrint(const Canvas* c, int i, int j){
+    if(!c)return NULL;
+    bool tofree=false;
+    if(i<0&&j<0){
+        if(-i>canv_getHeight(c)||-j>canv_getWidth(c))return NULL;
+        tofree=true;
+        c=canv_subCopy(c, -i, canv_getHeight(c)+i, -j, canv_getWidth(c)+j);
+    }
+    else if(i<0){
+        if(-i>canv_getHeight(c)||-j>canv_getWidth(c))return NULL;
+        tofree=true;
+        c=canv_subCopy(c, -i, canv_getHeight(c)+i, 0, canv_getWidth(c));
+    }
+    else if(j<0){
+        if(-i>canv_getHeight(c)||-j>canv_getWidth(c))return NULL;
+        tofree=true;
+        c=canv_subCopy(c, 0, canv_getHeight(c), -j, canv_getWidth(c)+j);
+    }
+    char ** da=_canv_render(c,c->wid,c->hei);
+    if(!da)return NULL;
+    char * res=calloc(25*canv_getWidth(c)*canv_getHeight(c), sizeof(char));
+    if(!res){
+        free(da);
+        return NULL;
+    }
+    int pos=0;
+    for(int w=0;w<c->hei;++w){
+        char * aux=movecur(i+w, j);
+        appendf(res, &pos, aux);
+        appendf(res,&pos,da[w]);
+    }
+    if(tofree)canv_free(c);
+    return res;
+}
+
+
+
+
 /// Print the canvas to the file
 ///
 /// @param f    File in which the canvas will be printed
@@ -564,6 +605,7 @@ void canv_printR(FILE* f, const Canvas* c,int i,int j,int wid,int hei){
         fprintf(f, "%s",da[ii]);
         free(da[ii]);
     }
+    fflush(f);
     free(da);
 }
 Canvas* canvas_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int oj){
