@@ -11,7 +11,7 @@ struct _SpriteDic{
     int size;
 };
 
-char c[]= "File in which the sprites are";
+char c[]= "/Users/delvaldavid/Documents/GitHub/Mine/PPROG/Sprites/Dat.txt";
 SpriteDic* data=NULL;
 void sdic_free(SpriteDic* d){
     if(!d)return;
@@ -31,7 +31,7 @@ int cmpSprite(const void* s1,const void* s2){
 }
 /*
  In the file, there should be a number with the amount of sprites
- that
+ that will be read.
  
  */
 SpriteDic* sdic_ini(){
@@ -53,7 +53,7 @@ SpriteDic* sdic_ini(){
             sdic_free(s);
         }
     }
-    qsort(s->dat,siz,sizeof(Sprite*),cmpSprite);
+    //qsort(s->dat,siz,sizeof(Sprite*),cmpSprite);
     return s;
 }
 
@@ -62,9 +62,11 @@ Sprite* sdic_lookup(int id){
     if(data==NULL){
         data=sdic_ini();
     }
-    Sprite* ref=spr_ini(id, 100, 100);
-    Sprite* res=(Sprite*)bsearch(ref, data->dat, data->size, sizeof(Sprite*), cmpSprite);
-    free(ref);
-    return spr_copy(res);
+    for(int i=0;i<data->size;++i){
+        if(spr_getId(data->dat[i])==id){
+            return spr_copy(data->dat[i]);
+        }
+    }
+    return NULL;
 }
 

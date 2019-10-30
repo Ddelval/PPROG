@@ -8,6 +8,12 @@
 #define ret_free(r) {room_free(r); return NULL;}
 #define MEM_INCREMENT 1.5
 #define MEM_INI 5
+
+typedef struct _box{
+    int i,j,w,h;
+}box;
+
+
 struct _Room{
     int id;
     char* name;
@@ -18,14 +24,16 @@ struct _Room{
     int backgsiz;
     int backpos;
     Sprite ** overs;
+    box * ov;
     int overssiz;
     int overpos;
     Canvas * map;
-
+    
     bool ** colision;
     bool ** shadows;
     int ** trigger;
 };
+
 
 Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     Room* r=calloc(1, sizeof(Room));
@@ -45,7 +53,10 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     r->overs=calloc(MEM_INI, sizeof(Sprite*));
     if(!r->overs)ret_free(r);
     r->backpos=r->overpos=0;
-
+    
+    r->ov=calloc(MEM_INI, sizeof(box));
+    
+    
     //Colission bool array
     r->colision=calloc(hei, sizeof(bool*));
     if(!r->colision)ret_free(r);
@@ -144,6 +155,10 @@ Room* room_addOSprite(Room* r, Sprite* s){
         if(!tmp)return NULL;
         r->overs=tmp;
         r->overssiz=nsiz;
+        
+        box* bb=realloc(r->ov, nsiz);
+        if(!bb) return NULL;
+        
     }
     r->overs[r->overpos]=spr_copy(s);
     if(!r->overs[r->overpos]){
@@ -153,14 +168,89 @@ Room* room_addOSprite(Room* r, Sprite* s){
     return r;
 }
 Canvas* room_getRender(Room* r){
-    Canvas* canv=r->map;
+    Canvas* canv=canv_copy(r->map);
     Canvas* tmp;
     for(int i=0;i<r->overpos;++i){
-        tmp=canv_Overlay(canv, spr_getDispData(r->overs[i]), spr_getOI(r->overs[i]), spr_getOJ(r->overs[i]));
-        if(canv!=r->map)canv_free(canv);
-        canv=tmp;
+        const Canvas * tmpc=spr_getDispData(r->overs[i]);
+        tmp=canv_addOverlay(canv, spr_getDispData(r->overs[i]), spr_getOI(r->overs[i]), spr_getOJ(r->overs[i]));
+        if(!tmp)return NULL;
+        
+        box b;
+        b.i=spr_getOI(r->overs[i]);
+        b.j=spr_getOJ(r->overs[i]);
+        b.w=canv_getWidth(tmpc);
+        b.h=canv_getHeight(tmpc);
+        r->ov[i]=b;
     }
     return canv;
+}
+Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei){
+    if(!r)return NULL;
+    Canvas* c=room_getRender(r);
+    if(i>=canv_getHeight(c)||j>=canv_getWidth(c)){
+        canv_free(c);
+        return NULL;
+    }
+    Canvas *cc=canv_subCopy(c, i, i+hei, j, j+wid);
+    Canvas *ccc=canv_AdjustCrop(cc, wid, hei);
+    canv_free(cc);
+    canv_free(c);
+    return ccc;
+}
+Room* room_modPos(Room* r, int index, int i, int j){
+    if(!r||index>=r->overpos){
+        return NULL;
+    }
+    spr_setOJ(r->overs[index], j);
+    spr_setOI(r->overs[index], i);
+    return r;
+}
+Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int hei){
+    
+    for(int i=0;i<r->overpos;++i){
+        int i1,i2,j1,j2;
+        i1=max(r->ov[i].i,i);
+        j1=max(r->ov[i].j,j);
+        
+        i2=min(r->ov[i].i+r->ov[i].h,i+hei);
+        j2=min(r->ov[i].j+r->ov[i].w,j+wid);
+        if(i1>=i2||j1>=j2)continue;
+        
+        Canvas* c=canv_subCopy(r->map,i1,i2,j1,j2);
+        canv_print(stdout, c, i1-i+disp_i, j1-j+disp_j+1);
+    }
+    for(int i=0;i<r->overpos;++i){
+        /***
+         
+         ADD CHECK FOR OUT OF BOUNDS
+         
+         
+         
+         
+         */
+        const Canvas* torender=spr_getDispData(r->overs[i]);
+        Canvas* bb=canv_subCopy(r->map, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+        Canvas* rb=canv_Overlay(bb, torender, 0, 0);
+        canv_print(stdout, rb, -i+disp_i+spr_getOI(r->overs[i]), -j+disp_j+spr_getOJ(r->overs[j])+1);
+        //canv_print(stdout, rb, -i+disp_i+spr_getOI(r->overs[i]), 1000);
+        box b;
+        b.i=spr_getOI(r->overs[i]);
+        b.j=spr_getOJ(r->overs[i]);
+        b.w=canv_getWidth(spr_getDispData(r->overs[i]));
+        b.h=canv_getHeight(spr_getDispData(r->overs[i]));
+        r->ov[i]=b;
+        canv_free(bb);
+        canv_free(rb);
+    }
+    return r;
+}
+Room* room_incPos(Room* r, int index, int i, int j){
+    if(!r||index>=r->overpos){
+        return NULL;
+    }
+    spr_setOJ(r->overs[index], j+spr_getOJ(r->overs[index]));
+    spr_setOI(r->overs[index], i+spr_getOI(r->overs[index]));
+    return r;
 }
 void room_free(Room* r){
     if(!r)return;

@@ -26,6 +26,15 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol);
 /// Free the memory allocated for the room
 void room_free(Room* r);
 
+
+Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei);
+Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int hei);
+
+Room* room_modPos(Room* r, int index, int i, int j);
+
+Room* room_incPos(Room* r, int index, int i, int j);
+Room* room_load(FILE* f);
+
 /*-----------------------------------------------------------------*/
 /// This function adds a sprite to the background of the map.
 /// Objects that are not supposed to move should be aded to this

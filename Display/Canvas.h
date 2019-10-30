@@ -176,7 +176,7 @@ Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j);
 /// @remark     The caller must know that the canvas will fit in the screen
 void canv_print(FILE* f, const Canvas* c,int i,int j);
 
-
+Canvas* canvas_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int oj);
 /*-----------------------------------------------------------------*/
 /// Print an area of the canvas to a file
 ///

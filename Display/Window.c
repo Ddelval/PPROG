@@ -27,16 +27,16 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	}
 	win->titlef=titlef;
 	if(!win_setMargins(win, 0, 0, 0, 0)) {
-		free(win);
+		win_free(win);
 		return NULL;
 	}
 	win->title=(char*)calloc(strlen(title)+1,sizeof(char));
 	if(!win->title) {
-		free(win);
+		win_free(win);
 		return NULL;
 	}
 	if(!strcpy(win->title, title)) {
-		free(win);
+		win_free(win);
 		return NULL;
 	}
     win->num_elems_siz=max(num_elems,MIN_SIZ);
@@ -105,14 +105,9 @@ Canvas* win_render(Window* win) {
     Canvas* back=NULL;
     Canvas* c_tit=NULL;
     Canvas * ele=NULL;
-    Font * f=NULL;
+    const Font * f=NULL;
 		Canvas* r;
-	FILE* fi=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
-	if(!fi) {
-		fprintf(stderr, "%d", errno);
-		return NULL;
-	}
-	f=font_load(fi);
+	f=win->titlef;
 	if(!f) goto END;
 
 	t_lab=wl_ini(win->title, f, 4);
@@ -157,8 +152,6 @@ END:
     canv_free(back);
     canv_free(c_tit);
     canv_free(ele);
-    font_free(f);
-    if(fi)fclose(fi);
     return r;
 
 }
@@ -212,20 +205,13 @@ Window* win_scrollUp(Window* win) {
 
 Window* win_copy(Window* win) {
 	if(!win) return NULL;
-	Window* win2=(Window*)calloc(1, sizeof(Window));
-	if(!win2) return NULL;
-	if(!strcpy(win2->title, win->title)) {
-		win_free(win2);
-		return NULL;
-	}
-	win2->num_elems=win->num_elems;
-	win2->height=win->height;
-	win2->weight=win->weight;
+    Window* win2=win_ini(win->title, win->Win_elem, win->num_elems, win->width, win->height, win->weight, win->jpos, win->ipos, win->titlef);
 	win2->scroll_pos=win->scroll_pos;
-
+/*
 	for(int i=0; i<=MAX_SELECTABLE; ++i) {
 		win2->selected_elem[i]=win->selected_elem[i];
 	}
+ 
 	if(win2->num_elems<0) return win2;
 	Welem** we=(Welem**)calloc(win2->num_elems, sizeof(Welem*));
 	if(!we) win_free(win2);
@@ -239,6 +225,7 @@ Window* win_copy(Window* win) {
 		}
 	}
 	win2->Win_elem=we;
+*/
     return win2;
 }
 

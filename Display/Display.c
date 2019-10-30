@@ -6,8 +6,12 @@
 
 #include "Display.h"
 #define ARR_INC 3
+#define TITLE_MULTILINE 10
 struct _Display{
     int width, height;
+    int vdiv;
+    char* title;
+    const Font* titf;
     Room* room;
     int nLatWindow;
     int latWinalloc;
@@ -15,12 +19,23 @@ struct _Display{
     Window* popup;
 };
 
-Display* disp_ini(int wid, int hei, Room* room){
+Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* titf){
     if(!room) return NULL;
     Display* dis=(Display*)calloc(1, sizeof(Display));
     if(!dis) return NULL;
     dis->width=wid;
     dis->height=hei;
+    dis->titf=titf;
+    dis->vdiv=vdiv;
+    dis->title=calloc(strlen(tit)+1, sizeof(char));
+    if(!dis->title){
+        disp_free(dis);
+        return NULL;
+    }
+    if(!strcpy(dis->title, tit)){
+        disp_free(dis);
+        return NULL;
+    }
     dis->room=room;
     dis->nLatWindow=0;
     dis->latWinalloc=3;
@@ -34,6 +49,7 @@ Display* disp_ini(int wid, int hei, Room* room){
 void disp_free(Display* dat){
     if(!dat)return;
     free(dat->latWindow);
+    free(dat->title);
     free(dat);
 }
 Display* disp_AddLWindow(Display*dis, Window* w){
@@ -75,4 +91,27 @@ Display* disp_SetPopup(Display* dis, Window* p){
 void disp_RemPopup(Display* dis){
     if(!dis->popup) return;
     win_free(dis->popup);
+}
+Canvas* disp_Render(Display* dis){
+    Canvas* left=NULL;
+    Canvas* res=NULL;
+    Wlabel* l = wl_ini(dis->title, dis->titf, TITLE_MULTILINE);
+    Canvas* right=wl_render(l, dis->width-dis->vdiv);
+    wl_free(l);
+    for(int i=0;i<dis->nLatWindow;++i){
+        Canvas* c=win_render(dis->latWindow[i]);
+        if(!c||!canv_appendVI(right, c)){
+            canv_free(c);
+            goto CLEAN;
+        }
+    }
+    left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
+    if(!left)goto CLEAN;
+    res =canv_appendH(left, right);
+    
+CLEAN:
+    canv_free(left);
+    canv_free(right);
+    
+    return res;
 }

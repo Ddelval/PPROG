@@ -361,6 +361,8 @@ Canvas* canv_subCopy (const Canvas* bas,int i1,int i2,int j1,int j2){
     int hei,wid;
     hei=i2-i1;
     wid=j2-j1;
+    if(i1+hei>bas->hei)hei=bas->hei-i1;
+    if(j1+wid>bas->wid)wid=bas->wid-j1;
     Canvas* res=canv_ini(wid, hei);
     if(!res) return NULL;
     for(int i=0;i<hei;++i){
@@ -485,14 +487,19 @@ Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_i, int o_j){
 ///             the changes are applied to the background canvas.
 Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j){
     if(!base||!over)return NULL;
-    Canvas* c=canv_Overlay(base, over, o_i, o_j);
-    if(!c)return NULL;
-    for(int i=0;i<base->hei;++i){
-        for(int j=0;j<base->wid;++j){
-            pix_copyVals(base->data[i][j], c->data[i][j]);
+    int owid,ohei;
+    owid=over->wid;
+    ohei=over->hei;
+    if(owid+o_j>base->wid)owid=base->wid-o_j;
+    if(ohei+o_i>base->hei)ohei=base->hei-o_i;
+    for(int i=o_i;i<o_i+ohei;++i){
+        for(int j=o_j;j<o_j+owid;++j){
+            base->data[i][j]=pix_overlay(base->data[i][j], over->data[i-o_i][j-o_j]);
+            if(!base->data[i][j]){
+                return NULL;
+            }
         }
     }
-    canv_free(c);
     return base;
 }
 
@@ -508,6 +515,22 @@ Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j){
 /// @remark     The caller must know that the canvas will fit in the screen
 void canv_print(FILE* f, const Canvas* c,int i,int j){
     if(!f||!c)return;
+    bool tofree=false;
+    if(i<0&&j<0){
+        if(-i>canv_getHeight(c)||-j>canv_getWidth(c))return;
+        tofree=true;
+        c=canv_subCopy(c, -i, canv_getHeight(c)+i, -j, canv_getWidth(c)+j);
+    }
+    else if(i<0){
+        if(-i>canv_getHeight(c)||-j>canv_getWidth(c))return;
+        tofree=true;
+        c=canv_subCopy(c, -i, canv_getHeight(c)+i, 0, canv_getWidth(c));
+    }
+    else if(j<0){
+        if(-i>canv_getHeight(c)||-j>canv_getWidth(c))return;
+        tofree=true;
+        c=canv_subCopy(c, 0, canv_getHeight(c), -j, canv_getWidth(c)+j);
+    }
     char ** da=_canv_render(c,c->wid,c->hei);
     if(!da)return;
     for(int w=0;w<c->hei;++w){
@@ -543,7 +566,38 @@ void canv_printR(FILE* f, const Canvas* c,int i,int j,int wid,int hei){
     }
     free(da);
 }
-
+Canvas* canvas_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int oj){
+    if(!f||!new||!old)return NULL;
+    if(canv_getWidth(new)!=canv_getWidth(old))return NULL;
+    if(canv_getHeight(new)!=canv_getHeight(old))return NULL;
+    
+    for(int i=0;i<new->hei;++i){
+        int le=-1;
+        for(int j=0;j<new->wid;++j){
+            if(pix_equals(new->data[i][j], old->data[i][j])){
+                if(le+1!=j){
+                    char* aux=movecur(oi+i, oj+le);
+                    fprintf(f, "%s",aux);
+                    free(aux);
+                    char *res=pix_renderLine(new->data[i]+(le), -le+j);
+                    fprintf(f, "%s",res);
+                    free(res);
+                }
+                fflush(stdout);
+                le=j;
+            }
+        }
+        if(le+1!=new->wid){
+            char* aux=movecur(oi+i, oj+le);
+            fprintf(f, "%s",aux);
+            free(aux);
+            char *res=pix_renderLine(new->data[i]+(le), -le+new->wid);
+            fprintf(f, "%s",res);
+            free(res);
+        }
+    }
+    return new;
+}
 int canv_getWidth(const Canvas* c){
   if(!c)return -1;
   return c->wid;
@@ -586,7 +640,7 @@ char** _canv_render(const Canvas* c,int wid, int hei){
     if(wid>c->wid)wid=c->wid;
     if(hei>c->hei)hei=c->hei;
     if(!c)return NULL;
-    Canvas* cop=canv_backGrnd(0, 0, 0, 255, c->wid, c->hei);
+    Canvas* cop=canv_backGrnd(0, 0, 0, 0, c->wid, c->hei);
     if(!cop)return NULL;
     if(!canv_addOverlay(cop, c, 0, 0)){
         canv_free(cop);
