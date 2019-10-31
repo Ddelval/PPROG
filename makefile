@@ -1,6 +1,6 @@
 CC = gcc -g
 EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay
-DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o
+DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o Wlabic.o
 LIB= -I Display/ -I Utility/
 
 all: $(EXE)
@@ -170,6 +170,12 @@ SpriteDic.o : Display/SpriteDic.c Display/SpriteDic.h
 	$(CC) -c $< $(LIB)
 
 Welem.o : Display/Welem.c Display/Welem.h Utility.o
+	@echo "#--------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+Wlabic.o : Display/Wlabic.c Display/Wlabic.h Utility.o
 	@echo "#--------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"

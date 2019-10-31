@@ -8,13 +8,13 @@ struct _Window {
 	char* title;
 	Welem** Win_elem;
 	int num_elems;
-  int num_elems_siz;
+        int num_elems_siz;
 	int selected_elem[MAX_SELECTABLE];
 	int width, height;
 	int scroll_pos;
 	int weight;
 	int leftm, rightm, topm, botm;
-  int jpos, ipos;
+        int jpos, ipos;
 	const Font* titlef;
 };
 
@@ -63,7 +63,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->weight=weight;
 	win->ipos=ipos;
 	win->jpos=jpos;
-
+        win->scroll_pos=0;
 	return win;
 }
 
@@ -100,31 +100,31 @@ Window* win_addWindowElement(Window* win, Welem* we){
 }
 
 Canvas* win_render(Window* win) {
-	if(!win||!win->title) return NULL;
-	errno=0;
+    if(!win||!win->title) return NULL;
+    errno=0;
     Wlabel* t_lab=NULL;
     Canvas* back=NULL;
     Canvas* c_tit=NULL;
-    Canvas * ele=NULL;
-    const Font * f=NULL;
-		Canvas* r;
-	f=win->titlef;
-	if(!f) goto END;
-
-	t_lab=wl_ini(win->title, f, 4);
-	if(!t_lab) goto END;
-
+    Canvas* ele=NULL;
+    const Font* f=NULL;
+    Canvas* r;
+    f=win->titlef;
+    if(!f) goto END;
+    
+    t_lab=wl_ini(win->title, f, 4);
+    if(!t_lab) goto END;
+    
     back=canv_backGrnd(80, 85, 222, 255, win->width, win->height);
     if(!back)  goto END;
-
-
-	c_tit=wl_render(t_lab, win->width-win->leftm-win->rightm-10); //padding for the window with its title element
-	if(!c_tit) {
-		back=NULL;
+    
+    
+    c_tit=wl_render(t_lab, win->width-win->leftm-win->rightm-10); //padding for the window with its title element
+    if(!c_tit) {
+        back=NULL;
         goto END;
-	}
-
-    for(int i=0;i<win->num_elems;++i){
+    }
+    
+    for(int i=0;i<win->num_elems;++i) {
         ele=we_render(win->Win_elem[i], win->width-win->leftm-win->rightm);
         if(!ele) {
             back=NULL;
@@ -137,7 +137,6 @@ Canvas* win_render(Window* win) {
             back=NULL;
             goto END;
         }
-
     }
     if(!canv_addOverlay(back, c_tit, 0, 0)) {
         back=NULL;
@@ -145,7 +144,7 @@ Canvas* win_render(Window* win) {
     }
 
 END:
-		r=NULL;
+    r=NULL;
     if(back){
         r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height, 0, win->width);
     }
@@ -154,14 +153,13 @@ END:
     canv_free(c_tit);
     canv_free(ele);
     return r;
-
 }
 
 Window* win_redraw(Window* win, int width, int height, int weight, int i, int j) {
-	if(!win) return NULL;
-	win->width=width;
-	win->height=height;
-	win->weight=weight;
+    if(!win) return NULL;
+    win->width=width;
+    win->height=height;
+    win->weight=weight;
     win->ipos=i;
     win->jpos=j;
 	if(!win_render(win)) return NULL;
@@ -206,7 +204,8 @@ Window* win_scrollUp(Window* win) {
 
 Window* win_copy(Window* win) {
 	if(!win) return NULL;
-    Window* win2=win_ini(win->title, win->Win_elem, win->num_elems, win->width, win->height, win->weight, win->jpos, win->ipos, win->titlef);
+        Window* win2=win_ini(win->title, win->Win_elem, win->num_elems, win->width, win->height, win->weight, win->jpos, win->ipos, win->titlef);
+        if(!win2) return NULL;
 	win2->scroll_pos=win->scroll_pos;
 /*
 	for(int i=0; i<=MAX_SELECTABLE; ++i) {

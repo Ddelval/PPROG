@@ -8,7 +8,7 @@
 #define ret_free(r) {room_free(r); return NULL;}
 #define MEM_INCREMENT 1.5
 #define MEM_INI 5
-
+#define min(x,y) ((x<y)? x : y)
 typedef struct _box{
     int i,j,w,h;
 }box;

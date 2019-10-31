@@ -7,7 +7,7 @@
 #include "SpriteDic.h"
 
 int main(){
-    FILE* f = fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Worlds/s1.txt", "r");
+    FILE* f = fopen("Worlds/s1.txt", "r");
     Room* r=room_load(f);
     canv_print(stdout,room_getRender(r),0,0);
 }

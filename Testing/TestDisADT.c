@@ -10,20 +10,20 @@ int main(){
     int vdiv=800;
     int w=1200;
     int h=470;
-    FILE* f=fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Display/Fonts/Robo_Mono/06.txt", "r");
+    FILE* f=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
     Font* f6=font_load(f);
     fclose(f);
-    f=fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Display/Fonts/Robo_Mono/04.txt", "r");
+    f=fopen("Display/Fonts/Robo_Mono/04.txt", "r");
     Font* f4=font_load(f);
     fclose(f);
     
-    f = fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Worlds/s1.txt", "r");
+    f = fopen("Worlds/s1.txt", "r");
     
     Room* r=room_load(f);
     
     fclose(f);
     
-    f = fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Sprites/per.txt", "r");
+    f = fopen("Sprites/per.txt", "r");
        
     Sprite* sp= spr_load(f);
     spr_setOI(sp, 20);

@@ -4,7 +4,7 @@
 #include "Welem.h"
 #include "Wlabel.h"
 int main(int argc, const char* argv[]) {
-	FILE* fi=fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Display/Fonts/Robo_Mono/04.txt", "r");
+	FILE* fi=fopen("Display/Fonts/Robo_Mono/04.txt", "r");
 	Font* f=font_load(fi);
 	Window* win = win_ini("Inventory", NULL, 0, 300, 250, 1, 909, 0, f);
 	if(!win) {

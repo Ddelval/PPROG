@@ -11,10 +11,10 @@ int main(int argc, const char* argv[]) {
   int w=1200;
   int h=470;
   Canvas* c=canv_backGrnd(0,255,0,255,vdiv,h);
-  FILE* f=fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Display/Fonts/Robo_Mono/06.txt", "r");
+  FILE* f=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
   Font* f6=font_load(f);
   fclose(f);
-  f=fopen("/Users/delvaldavid/Documents/GitHub/Mine/PPStuff/ScapArea/Display/Fonts/Robo_Mono/04.txt", "r");
+  f=fopen("Display/Fonts/Robo_Mono/04.txt", "r");
   Font* f4=font_load(f);
   fclose(f);
   Welem* wel[3];
@@ -58,5 +58,4 @@ int main(int argc, const char* argv[]) {
   canv_free(right);
   win_free(wres);
   win_free(wact);
-  // atom://teletype/portal/17a338be-4b30-4988-a436-2bd408be4641
-}
+  }
