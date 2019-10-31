@@ -11,7 +11,7 @@ struct _SpriteDic{
     int size;
 };
 
-char c[]= "/Users/delvaldavid/Documents/GitHub/Mine/PPROG/Sprites/Dat.txt";
+char c[]= "Sprites/Dat.txt";
 SpriteDic* data=NULL;
 void sdic_free(SpriteDic* d){
     if(!d)return;
@@ -32,14 +32,14 @@ int cmpSprite(const void* s1,const void* s2){
 /*
  In the file, there should be a number with the amount of sprites
  that will be read.
- 
+
  */
 SpriteDic* sdic_ini(){
     int siz;
     FILE*f=fopen(c, "r");
     SpriteDic* s= calloc(1, sizeof(SpriteDic));
     if(!s)return NULL;
-    
+
     fscanf(f,"%d", &siz);
     s->size=siz;
     s->dat=calloc(siz, sizeof(Sprite*));
@@ -69,4 +69,3 @@ Sprite* sdic_lookup(int id){
     }
     return NULL;
 }
-

@@ -1,6 +1,6 @@
 CC = gcc -g
-EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay
-DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o Wlabic.o
+EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest
+DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o Wlabic.o Display.o
 LIB= -I Display/ -I Utility/
 
 all: $(EXE)
@@ -175,6 +175,7 @@ Welem.o : Display/Welem.c Display/Welem.h Utility.o
 	@echo "# Depends on $^"
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
+
 Wlabic.o : Display/Wlabic.c Display/Wlabic.h Utility.o
 	@echo "#--------------------------"
 	@echo "# Generating $@ "
@@ -182,7 +183,28 @@ Wlabic.o : Display/Wlabic.c Display/Wlabic.h Utility.o
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
+Display.o : Display/Display.c Display/Display.h Utility.o
+	@echo "#--------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
 Utility.o:  Utility/Utility.c Utility/Utility.h
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
+WTest: %: %.o $(DISPLAY)
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
+
+WTest.o: Testing/WTest.c Utility.o
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"
