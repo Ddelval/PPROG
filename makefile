@@ -1,5 +1,5 @@
 CC = gcc -g
-EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest
+EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug
 DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o Wlabic.o Display.o
 LIB= -I Display/ -I Utility/
 
@@ -16,6 +16,20 @@ TestFont: %: %.o $(DISPLAY)
 	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
 
 TestFont.o: Testing/TestFont.c Utility.o
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
+TestBug: %: %.o $(DISPLAY)
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
+
+TestBug.o: Testing/TestBug.c Utility.o
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"

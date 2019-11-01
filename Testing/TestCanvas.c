@@ -11,11 +11,11 @@
 int main(int argc, const char * argv[]) {
     FILE* f = fopen("dat.txt", "r");
     Canvas* can=canv_load(f);
-    Canvas* c=canv_backGrnd(255, 255, 255, 255, canv_getWidth(can), canv_getHeight(can));
-    canv_addOverlay(c, can, 0, 0);
-    canv_print(stdout, c, 0, 0);
+    //Canvas* c=canv_backGrnd(255, 255, 255, 255, canv_getWidth(can), canv_getHeight(can));
+    //canv_addOverlay(c, can, 0, 0);
+    canv_print(stdout, can, 0, 0);
     canv_free(can);
-    canv_free(c);
+    //canv_free(c);
     fclose(f);
   return 0;
 }

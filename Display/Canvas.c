@@ -494,7 +494,11 @@ Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j){
     if(ohei+o_i>base->hei)ohei=base->hei-o_i;
     for(int i=o_i;i<o_i+ohei;++i){
         for(int j=o_j;j<o_j+owid;++j){
-            base->data[i][j]=pix_overlay(base->data[i][j], over->data[i-o_i][j-o_j]);
+            Pixel* t=pix_overlay(base->data[i][j], over->data[i-o_i][j-o_j]);
+            pix_free(base->data[i][j]);
+            base->data[i][j]=pix_copy(t);
+            pix_free(t);
+            //base->data[i][j]=pix_overlay(base->data[i][j], over->data[i-o_i][j-o_j]);
             if(!base->data[i][j]){
                 return NULL;
             }
@@ -612,7 +616,7 @@ Canvas* canvas_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int
     if(!f||!new||!old)return NULL;
     if(canv_getWidth(new)!=canv_getWidth(old))return NULL;
     if(canv_getHeight(new)!=canv_getHeight(old))return NULL;
-    
+
     for(int i=0;i<new->hei;++i){
         int le=-1;
         for(int j=0;j<new->wid;++j){
@@ -694,7 +698,7 @@ char** _canv_render(const Canvas* c,int wid, int hei){
         return NULL;
     }
     for(int i=0;i<hei;++i){
-        ch[i]=pix_renderLine(cop->data[i], wid);
+        ch[i]=pix_renderLine(c->data[i], wid);
         if(!ch[i]){
             for(int j=0;j<i;++j){
                 free(ch[j]);
