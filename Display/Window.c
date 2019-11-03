@@ -8,13 +8,13 @@ struct _Window {
 	char* title;
 	Welem** Win_elem;
 	int num_elems;
-        int num_elems_siz;
+  int num_elems_siz;
 	int selected_elem[MAX_SELECTABLE];
 	int width, height;
 	int scroll_pos;
 	int weight;
 	int leftm, rightm, topm, botm;
-        int jpos, ipos;
+  int jpos, ipos;
 	const Font* titlef;
 };
 
@@ -63,7 +63,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->weight=weight;
 	win->ipos=ipos;
 	win->jpos=jpos;
-        win->scroll_pos=0;
+  win->scroll_pos=0;
 	return win;
 }
 
@@ -95,7 +95,7 @@ Window* win_addWindowElement(Window* win, Welem* we){
     }
     win->Win_elem[win->num_elems]=we_copy(we);
     if(!win->Win_elem[win->num_elems])return NULL;
-    win->num_elems++;
+    win->num_elems++;										
     return win;
 }
 
@@ -110,20 +110,20 @@ Canvas* win_render(Window* win) {
     Canvas* r;
     f=win->titlef;
     if(!f) goto END;
-    
+
     t_lab=wl_ini(win->title, f, 4);
     if(!t_lab) goto END;
-    
+
     back=canv_backGrnd(80, 85, 222, 255, win->width, win->height);
     if(!back)  goto END;
-    
-    
+
+
     c_tit=wl_render(t_lab, win->width-win->leftm-win->rightm-10); //padding for the window with its title element
     if(!c_tit) {
         back=NULL;
         goto END;
     }
-    
+
     for(int i=0;i<win->num_elems;++i) {
         ele=we_render(win->Win_elem[i], win->width-win->leftm-win->rightm);
         if(!ele) {
@@ -211,7 +211,7 @@ Window* win_copy(Window* win) {
 	for(int i=0; i<=MAX_SELECTABLE; ++i) {
 		win2->selected_elem[i]=win->selected_elem[i];
 	}
- 
+
 	if(win2->num_elems<0) return win2;
 	Welem** we=(Welem**)calloc(win2->num_elems, sizeof(Welem*));
 	if(!we) win_free(win2);

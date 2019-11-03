@@ -89,11 +89,15 @@ Welem* we_copy(Welem* w){
     void * data=NULL;
     if(w->t==LABEL){
         data= wl_copy((Wlabel*)w->dat);
-        return we_ini(w->t, data);
+				Welem* e=we_ini(w->t, data);
+				wl_free(data);
+        return e;
     }
     if(w->t==ICONLABEL){
         data= wi_copy((Wlabic*)w->dat);
-        return we_ini(w->t, data);
+				Welem* e=we_ini(w->t, data);
+				wl_free(data);
+        return e;
     }
 
 	return NULL;

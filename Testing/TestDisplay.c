@@ -58,4 +58,6 @@ int main(int argc, const char* argv[]) {
   canv_free(right);
   win_free(wres);
   win_free(wact);
+  canv_free(c);
+  canv_free(s);
   }
