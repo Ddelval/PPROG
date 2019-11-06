@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <types.h>
+
+
+typedef struct combat;
+
+/*
+Name: combat_ini
+Imputs: entity * player | entity * enemy
+Outputs: * combat
+Functioning: Creates an structure called combat that manages every aspect of the combat.
+*/
+combat * combat_ini(entity * player, entity * enemy);
+
+/*
+Name: combat_process
+Imputs: combat * state
+Outputs : None
+Funcioting: It creates a loop that ends when someone health is 0, meanwhile it executes
+the movements.
+*/
+void combat_process(combat * state);
+/*
+Name: moveset_loader(entity * fighter, combat * state)
+Imputs: entity * player | combat * state
+Outputs: None
+Functioning: It decides the four movements the player will be able to execute
+*/
+
+int player_choice();
+
+/*
+Name: IA_choice
+Imputs: combat structure
+Outputs: int
+Functioning: The computer receives the structure and manages to choose a "smart" movement*/
+
+int IA_choice(combat * state);
+
+/*
+Name: move_exe
+Imputs: int movement | combat * struct
+Outputs: None
+Functioning: This function starts deciding who atacks and who defends, then it executes the moveement
+*/
+void move_exe(int movement, combat * state);
+
+/*
+Name: combat_end
+Imputs: combat * state
+Outputs: state
+Functioning: Simply frees the combat structure
+*/
+
+//OJO HACE FALTA HACER FUNCIONES COPY COMENTAR EN CLASE
