@@ -55,4 +55,16 @@ Welem* we_copy(Welem* w);
 ///             window element
 Canvas* we_render(Welem*w, int wid);
 
+/*-----------------------------------------------------------------*/
+/// Mark this Welem as not selected according to the type of data
+/// contained on the wrapper
+/// @param w    Element to be deselected
+void we_deselect(Welem* w);
+
+/*-----------------------------------------------------------------*/
+/// Mark this Welem as selected according to the type of data
+/// contained on the wrapper
+/// @param w    Element to be selected
+void we_select(Welem* w);
+
 #endif /* Welem_h */

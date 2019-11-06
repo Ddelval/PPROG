@@ -102,3 +102,19 @@ Welem* we_copy(Welem* w){
 
 	return NULL;
 }
+
+/*-----------------------------------------------------------------*/
+/// Mark this Welem as not selected according to the type of data
+/// contained on the wrapper
+/// @param w    Element to be deselected
+void we_deselect(Welem* w) {
+	return;
+}
+
+/*-----------------------------------------------------------------*/
+/// Mark this Welem as selected according to the type of data
+/// contained on the wrapper
+/// @param w    Element to be selected
+void we_select(Welem* w) {
+	return;
+}

@@ -20,18 +20,18 @@ struct _Room{
     int hei, wid;
 
     Pixel* backcol;
-    Sprite ** backg;
+    Sprite** backg;
     int backgsiz;
     int backpos;
-    Sprite ** overs;
-    box * ov;
+    Sprite** overs;
+    box* ov;
     int overssiz;
     int overpos;
-    Canvas * map;
-    
-    bool ** colision;
-    bool ** shadows;
-    int ** trigger;
+    Canvas* map;
+
+    bool** colision;
+    bool** shadows;
+    int** trigger;
 };
 
 
@@ -53,10 +53,10 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     r->overs=calloc(MEM_INI, sizeof(Sprite*));
     if(!r->overs)ret_free(r);
     r->backpos=r->overpos=0;
-    
+
     r->ov=calloc(MEM_INI, sizeof(box));
-    
-    
+
+
     //Colission bool array
     r->colision=calloc(hei, sizeof(bool*));
     if(!r->colision)ret_free(r);
@@ -155,10 +155,10 @@ Room* room_addOSprite(Room* r, Sprite* s){
         if(!tmp)return NULL;
         r->overs=tmp;
         r->overssiz=nsiz;
-        
+
         box* bb=realloc(r->ov, nsiz);
         if(!bb) return NULL;
-        
+
     }
     r->overs[r->overpos]=spr_copy(s);
     if(!r->overs[r->overpos]){
@@ -174,7 +174,7 @@ Canvas* room_getRender(Room* r){
         const Canvas * tmpc=spr_getDispData(r->overs[i]);
         tmp=canv_addOverlay(canv, spr_getDispData(r->overs[i]), spr_getOI(r->overs[i]), spr_getOJ(r->overs[i]));
         if(!tmp)return NULL;
-        
+
         box b;
         b.i=spr_getOI(r->overs[i]);
         b.j=spr_getOJ(r->overs[i]);
@@ -212,23 +212,23 @@ Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int h
         int i1,i2,j1,j2;
         i1=max(r->ov[i].i,i);
         j1=max(r->ov[i].j,j);
-        
+
         i2=min(r->ov[i].i+r->ov[i].h,i+hei);
         j2=min(r->ov[i].j+r->ov[i].w,j+wid);
         if(i1>=i2||j1>=j2)continue;
-        
+
         Canvas* c=canv_subCopy(r->map,i1,i2,j1,j2);
         //canv_print(stdout, c, i1-i+disp_i, j1-j+disp_j+1);
         appendf(to_print, &ipos, canv_StorePrint(c, i1-i+disp_i, j1-j+disp_j+1));
     }
     for(int i=0;i<r->overpos;++i){
         /***
-         
+
          ADD CHECK FOR OUT OF BOUNDS
-         
-         
-         
-         
+
+
+
+
          */
         const Canvas* torender=spr_getDispData(r->overs[i]);
         Canvas* bb=canv_subCopy(r->map, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
@@ -291,5 +291,7 @@ void room_free(Room* r){
         free(r->trigger);
     }
     canv_free(r->map);
+    free(r->ov);
+    pix_free(r->backcol);
     free(r);
 }

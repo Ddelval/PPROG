@@ -95,7 +95,7 @@ Window* win_addWindowElement(Window* win, Welem* we){
     }
     win->Win_elem[win->num_elems]=we_copy(we);
     if(!win->Win_elem[win->num_elems])return NULL;
-    win->num_elems++;										
+    win->num_elems++;
     return win;
 }
 
@@ -168,8 +168,17 @@ Window* win_redraw(Window* win, int width, int height, int weight, int i, int j)
 
 Window* win_setSelected(Window* win, int* selected_elem) {
 	if(!win || !selected_elem) return NULL;
+
+	for(int i=0; i<=MAX_SELECTABLE; ++i) {
+		if(win->selected_elem[i]!=selected_elem[i]&&win->selected_elem[i]>=0) {
+			we_deselect(win->Win_elem[win->selected_elem[i]]);
+		}
+	}
 	for(int i=0; i<=MAX_SELECTABLE; ++i) {
 		win->selected_elem[i]=selected_elem[i];
+	}
+	for(int i=0; i<=MAX_SELECTABLE; ++i) {
+		if(win->selected_elem[i]>=0) we_select(win->Win_elem[win->selected_elem[i]]);
 	}
 	return win;
 }
@@ -180,7 +189,7 @@ Welem** win_getSelected(Window* win) {
 	if(!we) return NULL;
 	int j=0;
 	for(int i=0; i<MAX_SELECTABLE; ++i) {
-		we[j]=win->Win_elem[win->selected_elem[i]];
+		if(win->selected_elem[i]>=0) we[j]=win->Win_elem[win->selected_elem[i]];
 		j++;
 	}
 	return we;

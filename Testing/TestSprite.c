@@ -16,10 +16,12 @@ int main(){
     room_addBSprite(r, s);
     spr_setCoordinates(s, 20, 80);
     room_addBSprite(r, s);
-    canv_print(stdout, room_getRender(r),0,0);
+    Canvas* cd=room_getRender(r);
+    canv_print(stdout, cd,0,0);
     room_free(r);
     fclose(f);
     pix_free(pi);
     spr_free(s);
+    canv_free(cd);
     return 0;
 }
