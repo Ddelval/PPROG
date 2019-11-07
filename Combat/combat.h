@@ -46,6 +46,13 @@ Functioning: This function starts deciding who atacks and who defends, then it e
 */
 void move_exe(int movement, combat * state);
 
+
+/* This function will execute the hole combat, main function. */
+int combat_exe(combat *c);
+
+/* This function will apply the changes each movement makes on the receiver entity */
+int movement_exe(atb *to_attack, skill *s);
+
 /*
 Name: combat_end
 Imputs: combat * state
@@ -54,3 +61,4 @@ Functioning: Simply frees the combat structure
 */
 
 //OJO HACE FALTA HACER FUNCIONES COPY COMENTAR EN CLASE
+
