@@ -56,15 +56,13 @@ Welem* we_copy(Welem* w);
 Canvas* we_render(Welem*w, int wid);
 
 /*-----------------------------------------------------------------*/
-/// Mark this Welem as not selected according to the type of data
-/// contained on the wrapper
-/// @param w    Element to be deselected
-void we_deselect(Welem* w);
-
-/*-----------------------------------------------------------------*/
 /// Mark this Welem as selected according to the type of data
 /// contained on the wrapper
 /// @param w    Element to be selected
-void we_select(Welem* w);
+/// @param r		Red channel of the background
+/// @param g		Green channel of the background
+/// @param b		Blue channel of the background
+/// @param a		Alpha channel of the background
+Welem* we_setBackColor(Welem* w, int r,int g,int b,int a);
 
 #endif /* Welem_h */

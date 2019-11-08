@@ -66,11 +66,11 @@ Window* win_redraw(Window* win, int wid, int hei, int weight, int i, int j);
 /// Set the focus on an element
 /// @param win           Window that contains
 /// @param selected_elem Index of the element that has to be selected
-Window* win_setSelected(Window* win, int* selected_elem);
+Window* win_setSelected(Window* win, int selected_elem);
 
 /*-----------------------------------------------------------------*/
 /// Returns the index of the selected element
-Welem** win_getSelected(Window* win);
+Welem* win_getSelected(Window* win);
 
 /*-----------------------------------------------------------------*/
 /// Moves the scroll position to the next section of the window

@@ -9,7 +9,7 @@ struct _Window {
 	Welem** Win_elem;
 	int num_elems;
   int num_elems_siz;
-	int selected_elem[MAX_SELECTABLE];
+	int selected_elem;
 	int width, height;
 	int scroll_pos;
 	int weight;
@@ -166,32 +166,17 @@ Window* win_redraw(Window* win, int width, int height, int weight, int i, int j)
 	return win;
 }
 
-Window* win_setSelected(Window* win, int* selected_elem) {
-	if(!win || !selected_elem) return NULL;
+Window* win_setSelected(Window* win, int selected_elem) {
+	if(!win) return NULL;
 
-	for(int i=0; i<=MAX_SELECTABLE; ++i) {
-		if(win->selected_elem[i]!=selected_elem[i]&&win->selected_elem[i]>=0) {
-			we_deselect(win->Win_elem[win->selected_elem[i]]);
-		}
-	}
-	for(int i=0; i<=MAX_SELECTABLE; ++i) {
-		win->selected_elem[i]=selected_elem[i];
-	}
-	for(int i=0; i<=MAX_SELECTABLE; ++i) {
-		if(win->selected_elem[i]>=0) we_select(win->Win_elem[win->selected_elem[i]]);
-	}
+
 	return win;
 }
 
-Welem** win_getSelected(Window* win) {
-	if(!win || !win->selected_elem || !win->Win_elem) return NULL;
-	Welem** we=(Welem**)calloc(MAX_SELECTABLE, sizeof(Welem*));
+Welem* win_getSelected(Window* win) {
+	if(!win || win->selected_elem==-1 || !win->Win_elem) return NULL;
+	Welem* we=we_copy(win->Win_elem[win->selected_elem]);
 	if(!we) return NULL;
-	int j=0;
-	for(int i=0; i<MAX_SELECTABLE; ++i) {
-		if(win->selected_elem[i]>=0) we[j]=win->Win_elem[win->selected_elem[i]];
-		j++;
-	}
 	return we;
 }
 

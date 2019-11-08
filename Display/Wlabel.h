@@ -52,4 +52,13 @@ Wlabel* wl_copy(Wlabel* src);
 Canvas* wl_render(Wlabel* l,int width);
 
 Canvas* wl_renderSmall(Wlabel* l,int width);
+
+/*-----------------------------------------------------------------*/
+/// Change the back color of this Wlabel
+/// @param w    Element to be selected
+/// @param r		Red channel of the background
+/// @param g		Green channel of the background
+/// @param b		Blue channel of the background
+/// @param a		Alpha channel of the background
+Wlabel* wl_setBackColor(Wlabel* w, int r,int g,int b,int a);
 #endif /* Wlabel_h */

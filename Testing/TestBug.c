@@ -14,17 +14,12 @@
 #include "Pixel.h"
 
 int main(int argc, const char * argv[]) {
-  FILE* fi=fopen("Display/Fonts/Robo_Mono/04.txt", "r");
-  Font* f=font_load(fi);
-  fclose(fi);
-  Welem* we = we_createLabel("a", f, 4);
-  Welem* ws = we_copy(we);
-
-  Canvas* c = we_render(we, 40);
-
+  FILE* f = fopen("Display/Fonts/Robo_Mono/04.txt", "r");
+  Font *ff=font_load(f);
+  Canvas* c= font_renderText(ff, "Hello");
+  canv_print(stdout, c, 0, 0);
   canv_free(c);
-  we_free(we);
-  we_free(ws);
-  font_free(f);
+  font_free(ff);
+  fclose(f);
   return 0;
 }

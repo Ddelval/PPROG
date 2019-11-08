@@ -74,6 +74,7 @@ void we_free(Welem* w){
 ///             lines and an icon might be centered in the area
 /// @return      A new canvas containing all the
 Canvas* we_render(Welem*w, int wid){
+	if(!w) return NULL;
     if(w->t==LABEL){
         return wl_render((Wlabel*)w->dat, wid);
     }
@@ -86,7 +87,8 @@ Canvas* we_render(Welem*w, int wid){
 /// Returns a copy of the given window element
 /// @param w Element to be copied
 Welem* we_copy(Welem* w){
-    void * data=NULL;
+	if(!w) return NULL;
+    void *data=NULL;
     if(w->t==LABEL){
         data= wl_copy((Wlabel*)w->dat);
 				Welem* e=we_ini(w->t, data);
@@ -104,17 +106,22 @@ Welem* we_copy(Welem* w){
 }
 
 /*-----------------------------------------------------------------*/
-/// Mark this Welem as not selected according to the type of data
-/// contained on the wrapper
-/// @param w    Element to be deselected
-void we_deselect(Welem* w) {
-	return;
-}
-
-/*-----------------------------------------------------------------*/
 /// Mark this Welem as selected according to the type of data
 /// contained on the wrapper
 /// @param w    Element to be selected
-void we_select(Welem* w) {
-	return;
+/// @param r		Red channel of the background
+/// @param g		Green channel of the background
+/// @param b		Blue channel of the background
+/// @param a		Alpha channel of the background
+Welem* we_setBackColor(Welem* w, int r, int g,int b,int a) {
+	if(!w) return NULL;
+	if(w->t==LABEL) {
+		if(!wl_setBackColor((Wlabel*)w->dat, r,g,b,a)) return NULL;
+		return w;
+	}
+	if(w->t==ICONLABEL) {
+		//if(!wi_setBackColor((Wlabic*)w->dat,r,g,b,a)) return NULL;
+		return w;
+	}
+	return w;
 }
