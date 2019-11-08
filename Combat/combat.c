@@ -1,17 +1,9 @@
 #include "combat.h"
 
 struct _combat{
-  char * name1[50];
-  char * name2[50];
-  skill * moveset1[4];
-  skill * moveset2[4];
-  atb * stats1;
-  atb * stats2;
-}
-
-struct _combat2{
   entity *p, *e;
-  entity *pc, *ec;
+  char name[2][50];
+  atb * stats[2];
   skill * moveset[2][4];
 }
 
@@ -27,24 +19,20 @@ combat * combat_ini2(entity * player, entity * enemy){
   c->p = player;
   c->e = enemy;
 
-  c->pc = entity_copy(player);
-  if (!c->pc){
-    combat_destroy(c);
-    return NULL;
-  }
-  c->pe = entity_copy(enemy);
-  if (!c->pe){
-    combat_destroy(c);
-    return NULL;
-  }
+  c->name[0] = entity_getName(player);
+  c->name[1] = entity_getName(enemy);
 
-  /*Assuming that the iventory will have a pointer to
-  the selected weapon, i->aw, an int.
+  c->stats[0] = atb_allCopy(entity_getAttribute(player));
+  c->stats[1]= atb_allCopy(entity_getAttribute(enemy));
+
+  /*Assuming that the iventory will have a pointer to the selected weapon, i->aw, an int.
   We should separate objects between weapons and consumables,
   weapons should have an array of possible attacks and
   each attack is just an attribute which can modify either
   attacking entity attributes or the attacked entity
   */
+
+
   object *wp = NULL, *we = NULL;
 
   // inventory_getWeapon: Inputs: inventory, active weapon int.
@@ -69,7 +57,7 @@ combat * combat_ini2(entity * player, entity * enemy){
     aux++;
   }
 
-  return c;  
+  return c;
 }
 
 
@@ -87,7 +75,7 @@ combat * combat_ini(entity * player, entity * enemy){
   state->stats1 = atb_allCopy(entity_getAttribute(enemy));
   for(pload = 0, pload < 4, pload++){
     //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
-  }
+  }c->stats[0]->health
   for(eload = 0, eload < 4, eload++){
     //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
   }
@@ -125,7 +113,6 @@ void combat_process(combat * state){
 
 int player_choice(){
   int move = 0;
-  fprintf(stderr, "Choose your next movement:\n",);
   while(move < 1 || move > 6){
     scanf("%d", &move);
     if(move == 1 || move == 2 || move == 3 || move == 4 || move == 5 || move == 6) break;
@@ -154,17 +141,30 @@ int IA_choice(combat * state){
 
 
 int combat_exe(combat *c){
-  int i = 0;
+  int i = 0, aux = 0, move = 0;
 
   if(!c) return -1;
 
-  if (c->stats1->speed > c->stats2->speed){
-
+  if (c->stats[0]->speed < c->stats[1]->speed){
+    aux = 1;
   }
-
-
+  while(c->stats[0]->health > 0 && c->stats[1]->health > 0){
+    if(i+aux % 2 == 0){
+      fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
+      fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", c->moveset[0][0]->name,c->moveset[0][1]->name,c->moveset[0][2]->name,c->moveset[0][3]->name);
+      move = player_choice();
+      movement_exe(c, move, 0);
+    }
+    else{
+      move = IA_choice();
+      movement_exe(c, move, 1);
+    }
+    i++;
+  }
 }
 
-int movement_exe(atb *to_attack, skill *s){
-
+int movement_exe(combat * c, int action, int entity){
+  fprintf(stdout, "%s ataca con %s.\n"c->name[entity], c->moveset[entity][action]->name);
+  atb_merge(c->stat[entity], skill_getAtb(c->moveset[entity][action]));
+  
 }
