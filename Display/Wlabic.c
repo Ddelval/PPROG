@@ -9,6 +9,7 @@ struct _Wlabic{
     Wlabel* wl;
     Canvas* pic;
     Alignment l;
+    int br, bg, bb, ba;
     int hgap;
 };
 
@@ -29,6 +30,7 @@ void wi_free(Wlabic* w){
     if(!w)return;
     canv_free(w->pic);
     wl_free(w->wl);
+    free(w);
 }
 Wlabic* wi_setCanvas(Wlabic* sr, Canvas* can){
     if(!sr||!can)return NULL;
@@ -81,11 +83,33 @@ Canvas* wi_render (Wlabic* wi, int width){
         c1=cc;
         cc=c;
     }
-    
+
     canv_free(c1);
     Canvas* r=canv_AdjustCrop(cc, width, canv_getHeight(cc));
     canv_free(cc);
-    return r;
-    
+
+    Canvas* cb=canv_backGrnd(wi->br,wi->bg, wi->bb, wi->ba, canv_getWidth(r), canv_getHeight(r));
+  	if(!canv_addOverlay(cb, r, 0, 0)) {
+  		canv_free(cb);
+  		canv_free(r);
+  		return NULL;
+  	}
+  	canv_free(r);
+  	return cb;
 }
 
+/*-----------------------------------------------------------------*/
+/// Change the background color for the Wlabic element
+/// @param w    Element to be selected
+/// @param r		Red channel of the background
+/// @param g		Green channel of the background
+/// @param b		Blue channel of the background
+/// @param a		Alpha channel of the background
+Wlabic* wi_setBackColor(Wlabic* w, int r, int g,int b,int a) {
+  if(!w) return NULL;
+  w->br=r;
+  w->bg=g;
+  w->bb=b;
+  w->ba=a;
+  return w;
+}

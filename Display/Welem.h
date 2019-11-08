@@ -56,8 +56,7 @@ Welem* we_copy(Welem* w);
 Canvas* we_render(Welem*w, int wid);
 
 /*-----------------------------------------------------------------*/
-/// Mark this Welem as selected according to the type of data
-/// contained on the wrapper
+/// Change the color of this Welem
 /// @param w    Element to be selected
 /// @param r		Red channel of the background
 /// @param g		Green channel of the background

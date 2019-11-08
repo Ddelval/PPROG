@@ -37,4 +37,13 @@ Wlabic* wi_copy(const Wlabic* src);
 
 Canvas* wi_render (Wlabic* wi, int width);
 Wlabic* wi_setCanvas(Wlabic* sr, Canvas* can);
+
+/*-----------------------------------------------------------------*/
+/// Change the background color for the Wlabic element
+/// @param w    Element to be selected
+/// @param r		Red channel of the background
+/// @param g		Green channel of the background
+/// @param b		Blue channel of the background
+/// @param a		Alpha channel of the background
+Wlabic* wi_setBackColor(Wlabic* w, int r, int g,int b,int a);
 #endif /* Wlabic_h */

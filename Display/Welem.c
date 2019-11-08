@@ -106,8 +106,7 @@ Welem* we_copy(Welem* w){
 }
 
 /*-----------------------------------------------------------------*/
-/// Mark this Welem as selected according to the type of data
-/// contained on the wrapper
+/// Change the color of this Welem
 /// @param w    Element to be selected
 /// @param r		Red channel of the background
 /// @param g		Green channel of the background
@@ -120,7 +119,7 @@ Welem* we_setBackColor(Welem* w, int r, int g,int b,int a) {
 		return w;
 	}
 	if(w->t==ICONLABEL) {
-		//if(!wi_setBackColor((Wlabic*)w->dat,r,g,b,a)) return NULL;
+		if(!wi_setBackColor((Wlabic*)w->dat,r,g,b,a)) return NULL;
 		return w;
 	}
 	return w;
