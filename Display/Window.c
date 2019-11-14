@@ -140,11 +140,9 @@ Window* win_render(Window* win) {
     }
 
 END:
-
+		Canvas* r;
     if(back){
-        Canvas* r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height, 0, win->width);
-        canv_print(stdout, r, win->ipos, win->jpos);
-				canv_free(r);
+        r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height, 0, win->width);
     }
     wl_free(t_lab);
     canv_free(back);
@@ -152,7 +150,7 @@ END:
     canv_free(ele);
     font_free(f);
     if(fi)fclose(fi);
-    if(back)return win;
+    if(back)return r;
     return NULL;
 
 }

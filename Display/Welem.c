@@ -33,7 +33,7 @@ Welem* we_createLabel(char* t, const Font* f,int vgap){
 	if(!t||!f)return NULL;
 	Wlabel* wl=wl_ini(t,f,vgap);
 	if(!wl)return NULL;
-	Welem* w=(LABEL,wl);
+	Welem* w=we_ini(LABEL,wl);
 	wl_free(wl);
 	return w;
 }
