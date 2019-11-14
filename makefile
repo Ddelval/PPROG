@@ -1,6 +1,6 @@
 CC = gcc -g
-EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite
-DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o
+EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug
+DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o Wlabic.o Display.o
 LIB= -I Display/ -I Utility/
 
 all: $(EXE)
@@ -22,6 +22,20 @@ TestFont.o: Testing/TestFont.c Utility.o
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
+TestBug: %: %.o $(DISPLAY)
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
+
+TestBug.o: Testing/TestBug.c Utility.o
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
 TestLabel: %: %.o $(DISPLAY)
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
@@ -30,6 +44,20 @@ TestLabel: %: %.o $(DISPLAY)
 	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
 
 TestLabel.o: Testing/TestLabel.c Utility.o
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
+TestDisplay: %: %.o $(DISPLAY)
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
+
+TestDisplay.o: Testing/TestDisplay.c Utility.o
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"
@@ -162,7 +190,35 @@ Welem.o : Display/Welem.c Display/Welem.h Utility.o
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
+Wlabic.o : Display/Wlabic.c Display/Wlabic.h Utility.o
+	@echo "#--------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
+Display.o : Display/Display.c Display/Display.h Utility.o
+	@echo "#--------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
 Utility.o:  Utility/Utility.c Utility/Utility.h
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
+WTest: %: %.o $(DISPLAY)
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -o $@ $@.o $(DISPLAY) Utility.o -lm
+
+WTest.o: Testing/WTest.c Utility.o
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"

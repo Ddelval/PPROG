@@ -17,6 +17,7 @@
 #include "Utility.h"
 #include "Canvas.h"
 #include "Wlabel.h"
+#include "Wlabic.h"
 typedef enum {LABEL, ICONLABEL, ICON} Wtype;
 typedef struct _Welem Welem;
 /*-----------------------------------------------------------------*/
@@ -34,6 +35,7 @@ void we_free(Welem* w);
 
 Welem* we_createLabel(char* t, const Font* f,int vgap);
 
+Welem* we_createLabic(char*t, const Font*f,int vgap,int hgap, Canvas* c,Alignment l);
 /*-----------------------------------------------------------------*/
 /// Return a copy of the given window element
 /// @param w Element to be copied
@@ -52,5 +54,14 @@ Welem* we_copy(Welem* w);
 /// @return     A new canvas containing the representation of the
 ///             window element
 Canvas* we_render(Welem*w, int wid);
+
+/*-----------------------------------------------------------------*/
+/// Change the color of this Welem
+/// @param w    Element to be selected
+/// @param r		Red channel of the background
+/// @param g		Green channel of the background
+/// @param b		Blue channel of the background
+/// @param a		Alpha channel of the background
+Welem* we_setBackColor(Welem* w, int r,int g,int b,int a);
 
 #endif /* Welem_h */

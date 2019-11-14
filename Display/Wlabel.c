@@ -9,6 +9,7 @@ struct _Wlabel{
 	char* txt;
 	int tlen;
 	int vgap;
+	int br, bg, bb, ba;
 	const Font *f;
 };
 
@@ -31,6 +32,7 @@ Wlabel* wl_ini(char* t, const Font* f,int vgap){
 		return NULL;
 	}
 	w->vgap=vgap;
+	w->br=w->bg=w->bb=w->ba=0;
 	return w;
 }
 /// Frees the allocated memory
@@ -102,7 +104,14 @@ Canvas* wl_render(Wlabel* l,int width){
 		Canvas* c= font_renderText(l->f, l->txt);
         Canvas*cc=canv_AdjustCrop(c, width, canv_getHeight(c));
         canv_free(c);
-        return cc;
+				Canvas* cb=canv_backGrnd(l->br,l->bg, l->bb, l->ba, canv_getWidth(cc), canv_getHeight(cc));
+				if(!canv_addOverlay(cb, cc, 0, 0)) {
+					canv_free(cb);
+					canv_free(cc);
+					return NULL;
+				}
+				canv_free(cc);
+				return cb;
 	}
 	char* endpos=l->txt;
 	char*res;
@@ -126,5 +135,71 @@ Canvas* wl_render(Wlabel* l,int width){
 	Canvas* cc=canv_AdjustCrop(c, width, canv_getHeight(c));
 	//canv_print(stdout,cc,0,0);
 	canv_free(c);
-	return cc;
+	Canvas* cb=canv_backGrnd(l->br,l->bg, l->bb, l->ba, canv_getWidth(cc), canv_getHeight(cc));
+	if(!canv_addOverlay(cb, cc, 0, 0)) {
+		canv_free(cb);
+		canv_free(cc);
+		return NULL;
+	}
+	canv_free(cc);
+	return cb;
+}
+Canvas* wl_renderSmall(Wlabel* l,int width){
+    if(!l)return NULL;
+    if(font_calcWidth(l->f, l->txt)<width){
+        Canvas* c= font_renderText(l->f, l->txt);
+        //Canvas*cc=canv_AdjustCrop(c, width, canv_getHeight(c));
+        //canv_free(c);
+				Canvas* cb=canv_backGrnd(l->br, l->bg, l->bb, l->ba, canv_getWidth(c), canv_getHeight(c));
+				if(!canv_addOverlay(cb, c, 0, 0)) {
+					canv_free(cb);
+					canv_free(c);
+					return NULL;
+				}
+				canv_free(c);
+				return cb;
+    }
+    char* endpos=l->txt;
+    char*res;
+    Canvas* c=NULL;
+    while( ((res=_charSplit(endpos, width, l->f, &endpos)))&&(*res)){
+        if(!c){
+            c=font_renderText(l->f, res);
+        }
+        else{
+            Canvas* aux=font_renderText(l->f, res);
+            Canvas* aux2=canv_addMargin(aux, l->vgap, 0, 0, 0);
+            Canvas* aux3=canv_appendV(c, aux2);
+            canv_free(aux);
+            canv_free(aux2);
+            canv_free(c);
+            c=aux3;
+        }
+        free(res);
+        if(!strlen(endpos))break;
+    }
+		Canvas* cb=canv_backGrnd(l->br, l->bg, l->bb, l->ba, canv_getWidth(c), canv_getHeight(c));
+		if(!canv_addOverlay(cb, c, 0, 0)) {
+			canv_free(cb);
+			canv_free(c);
+			return NULL;
+		}
+		canv_free(c);
+		return cb;
+}
+
+/*-----------------------------------------------------------------*/
+/// Change the back color of this Wlabel
+/// @param w    Element to be selected
+/// @param r		Red channel of the background
+/// @param g		Green channel of the background
+/// @param b		Blue channel of the background
+/// @param a		Alpha channel of the background
+Wlabel* wl_setBackColor(Wlabel* w, int r,int g,int b,int a) {
+		if(!w) return NULL;
+		w->br=r;
+		w->bg=g;
+		w->bb=b;
+		w->ba=a;
+		return w;
 }

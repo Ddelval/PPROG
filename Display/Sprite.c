@@ -61,6 +61,7 @@ void spr_free(Sprite* sp){
     free(sp);
 }
 Sprite* spr_copy(const Sprite* spr){
+    if(!spr)return NULL;
     Sprite* sp=spr_ini(spr->id, spr->width, spr->height);
     if(!sp)ret_free(sp);
     sp->jPos=spr->jPos;

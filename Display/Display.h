@@ -23,7 +23,7 @@ typedef struct _Display Display;
 /// @param wid  Total width of the display
 /// @param hei  Total height of the display
 /// @param room Room (map) which we will be using
-Display* disp_ini(int wid, int hei, Room* room);
+Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* titf);
 
 /*-----------------------------------------------------------------*/
 /// Free the memory allocated for this display
@@ -54,4 +54,8 @@ Display* disp_SetPopup(Display* dis, Window* p);
 /// Remove the pop-up window from the display
 /// @param dis Display whose pop-up we want to remove
 void disp_RemPopup(Display* dis);
+
+
+Canvas* disp_Render(Display* dis);
+
 #endif /* Display_h */

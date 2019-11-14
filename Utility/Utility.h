@@ -18,7 +18,6 @@
 */
 typedef enum{false,true}bool;
 //extern int err=0;
-#define MAX_SELECTABLE 4
 
 void appendf(char* dest, int* spos,char* orig);
 void append (char* dest, int* spos, const char* orig);

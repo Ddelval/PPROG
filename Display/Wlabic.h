@@ -16,7 +16,7 @@
 #include "Wlabel.h"
 
 typedef struct _Wlabic Wlabic;
-
+typedef enum {TEXT_RIGHT,TEXT_LEFT} Alignment;
 /*-----------------------------------------------------------------*/
 /// Create a new Wlabic element.
 /// This function only sets the text portion of the element and the
@@ -25,7 +25,7 @@ typedef struct _Wlabic Wlabic;
 /// @param f    Font for this text. Note that it will NOT be copied
 /// @param vgap Vertical gap between lines of text
 /// @param hgap Gap between the picture and the text
-Wlabic* wi_ini(char *t, const Font* f,int vgap, int hgap);
+Wlabic* wi_ini(char *t, const Font* f,int vgap, int hgap, Alignment l);
 
 /*-----------------------------------------------------------------*/
 /// Free the memory allocated to the Wlabic element
@@ -35,5 +35,15 @@ void wi_free(Wlabic* w);
 /// Copies the given element
 Wlabic* wi_copy(const Wlabic* src);
 
+Canvas* wi_render (Wlabic* wi, int width);
+Wlabic* wi_setCanvas(Wlabic* sr, Canvas* can);
 
+/*-----------------------------------------------------------------*/
+/// Change the background color for the Wlabic element
+/// @param w    Element to be selected
+/// @param r		Red channel of the background
+/// @param g		Green channel of the background
+/// @param b		Blue channel of the background
+/// @param a		Alpha channel of the background
+Wlabic* wi_setBackColor(Wlabic* w, int r, int g,int b,int a);
 #endif /* Wlabic_h */

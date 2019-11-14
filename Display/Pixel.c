@@ -180,7 +180,7 @@ bool pix_transparent(const Pixel* a){
 /// @param a Pixel whose color will be taken
 char* pix_scapeSeq(Pixel* a){
     char* c=(char*)malloc(sizeof(char)*25);
-    sprintf(c,"%c[%d;%d;%d;%d;%dm ",27,48,2,a->r,a->g,a->b);
+    sprintf(c,"%c[%d;%d;%d;%d;%dm",27,48,2,a->r,a->g,a->b);
     return c;
 }
 
@@ -196,17 +196,20 @@ char * pix_renderLine(Pixel**a,int len){
     char * res= (char*) malloc(sizeof(char)*size);
     int ipos=0;
     appendf(res, &ipos, pix_scapeSeq(a[0]));
+    char * c =calloc(10, sizeof(char));
+    sprintf(c,"%c[1D ", 27);
+    appendf(res, &ipos,c);
+    //append(res, &ipos, " ");
     for(int i=1;i<len;++i){
         if(!pix_equals(a[i], a[i-1])){
             appendf(res, &ipos, pix_scapeSeq(a[i]));
         }
-        else{
-            append(res, &ipos, " ");
-        }
+        append(res, &ipos, " ");
+        
     }
-    Pixel* p = pix_ini(0, 0, 0, 0);
-    appendf(res,&ipos,pix_scapeSeq(p));
-    free(p);
+    //Pixel* p = pix_ini(0, 0, 0, 0);
+    //appendf(res,&ipos,pix_scapeSeq(p));
+   // free(p);
     return res;
 }
 
