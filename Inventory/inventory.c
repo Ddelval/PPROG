@@ -12,7 +12,7 @@ struct _inventory {
   object * consumable[15];
   object * permanent[15];
   int idperm = 0;
-  id idcons = 0;
+  int idcons = 0;
 }
 
 
@@ -57,7 +57,7 @@ Status object_add(inventory * inventory, char * object_id){
   }
 
 return OK;
-  
+
 }
 
 

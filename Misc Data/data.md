@@ -2,7 +2,5 @@
 ## Console size
 1209x471
 
-## Antón TO-DO
-- Window scrolling
-- Background label
-- Display implementation
+## Room ID codes
+-  **902:** combat room

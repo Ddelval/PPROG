@@ -1,10 +1,16 @@
 #include "combat.h"
+#include "Window.h"
+#include "Room.h"
+#include "Font.h"
+#include "Pixel.h"
 
 struct _combat{
   entity *p, *e;
   char name[2][50];
   atb * stats[2];
   skill * moveset[2][4];
+  window * window[3];
+  room * room;
 }
 
 combat * combat_ini2(entity * player, entity * enemy){
@@ -24,6 +30,21 @@ combat * combat_ini2(entity * player, entity * enemy){
 
   c->stats[0] = atb_allCopy(entity_getAttribute(player));
   c->stats[1]= atb_allCopy(entity_getAttribute(enemy));
+//SKILLS LOADING ??
+  for(pload = 0, pload < 4, pload++){
+    //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
+  }c->stats[0]->health
+  for(eload = 0, eload < 4, eload++){
+    //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
+  }
+  Pixel* backroom=pix_ini(134, 151, 179, 255)
+  FILE* f=fopen("Display/Fonts/Robo_Mono/08.dat");
+  Font* titlef = font_load(f);
+  combat->window[0] = win_ini(entity_getName(player), NULL, 0, 0, 0, 0, 0, 0, titlef);
+  combat->window[1] = win_ini(entity_getName(enemy), NULL, 0, 0, 0, 0, 0, 0, titlef);
+  combat->window[2] = win_ini("ACTIONS", NULL, 0, 0, 0, 0, 0, 0, titlef);
+  combat->room = room_ini(902, "COMBAT!",0, 0, backroom);
+
 
   /*Assuming that the iventory will have a pointer to the selected weapon, i->aw, an int.
   We should separate objects between weapons and consumables,
@@ -52,7 +73,31 @@ combat * combat_ini2(entity * player, entity * enemy){
     combat_destroy(c);
     return NULL;
   }
+  while(aux < 4
+  object *wp = NULL, *we = NULL;
+
+  // inventory_getWeapon: Inputs: inventory, active weapon int.
+  wp = inventory_getWeapon(entity_getInventory(player), inventory_getAW(entity_getInventory(player)));
+  if(!wp){
+    combat_destroy(c);
+    return NULL;
+  }
+  while(aux < 4 and weapon_getAtb(wp, aux)){
+    moveset[0][aux] = weapon_getAtb(wp, aux);
+    aux++;
+  }
+
+  aux = 0;
+  we = inventory_getWeapon(entity_getInventory(enemy), inventory_getAW(entity_getInventory(enemy)));
+  if(!we){
+    combat_destroy(c);
+    return NULL;
+  }
   while(aux < 4 and weapon_getAtb(we, aux)){
+    moveset[1][aux] = weapon_getAtb(we, aux);
+    aux++;
+  }
+ and weapon_getAtb(we, aux)){
     moveset[1][aux] = weapon_getAtb(we, aux);
     aux++;
   }
@@ -60,29 +105,6 @@ combat * combat_ini2(entity * player, entity * enemy){
   return c;
 }
 
-
-combat * combat_ini(entity * player, entity * enemy){
-  if(!player || !enemy) return NULL;
-
-  combat * state;
-  int pload, eload;
-  state = (combat*)calloc(1,sizeof(combat));
-  if(!state) return NULL;
-
-  state->name1 = entity_getName(player);
-  state->name2 = entity_getName(player);
-  state->stats1 = atb_allCopy(entity_getAttribute(player));
-  state->stats1 = atb_allCopy(entity_getAttribute(enemy));
-  for(pload = 0, pload < 4, pload++){
-    //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
-  }c->stats[0]->health
-  for(eload = 0, eload < 4, eload++){
-    //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
-  }
-
-
-  return combat;
-}
 
 
 
@@ -166,5 +188,5 @@ int combat_exe(combat *c){
 int movement_exe(combat * c, int action, int entity){
   fprintf(stdout, "%s ataca con %s.\n"c->name[entity], c->moveset[entity][action]->name);
   atb_merge(c->stat[entity], skill_getAtb(c->moveset[entity][action]));
-  
+
 }
