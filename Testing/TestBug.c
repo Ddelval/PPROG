@@ -51,9 +51,18 @@ int main(int argc, const char * argv[]) {
 	}
 	errno = 0;
 
-	Wlabel* w=wl_ini("5x data",f,10);
-	Welem* wel=we_ini(LABEL,w);
-	win_addWindowElement(win,wel);
+  FILE* ff = fopen("Icons/food.txt", "r");
+  Canvas* c=canv_load(ff);
+	Welem* we1=we_createLabel("5x data", f, 10);
+	win_addWindowElement(win,we1);
+  Welem* we2=we_createLabel("5x data", f, 10);
+  win_addWindowElement(win,we2);
+  Welem* we3=we_createLabel("5x data", f, 10);
+  win_addWindowElement(win,we3);
+  Welem* we4=we_createLabic("This is an example test", f, 4, 20, c, TEXT_RIGHT);
+  win_addWindowElement(win,we4);
+
+  win_setSelected(win, 0);
 	if(!win_setMargins(win, 0, 0, 0, 0)) printf("aaa");
 	Canvas* r=win_render(win);
 	canv_print(stdout, r, 0,0);
@@ -62,10 +71,32 @@ int main(int argc, const char * argv[]) {
 		win_free(win);
 		return 2;
 	}
+
+  int i=0;
+  while(1){
+    char c;
+    c=getch1();
+    //scanf("%c",&c);
+    //printf("%c\n",c);
+    if(c=='W'){
+        i--;
+    }
+    if(c=='S'){
+        i++;
+    }
+
+    win_setSelected(win, abs(i%4));
+    canv_free(r);
+    r=win_render(win);
+    canv_print(stdout, r, 0,0);
+    usleep(100000);
+  }
 	font_free(f);
 	fclose(fi);
-	wl_free(w);
-	we_free(wel);
+	we_free(we1);
+  we_free(we2);
+  we_free(we3);
+  we_free(we4);
 	win_free(win);
 	canv_free(r);
 	return 0;

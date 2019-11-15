@@ -168,8 +168,9 @@ Window* win_redraw(Window* win, int width, int height, int weight, int i, int j)
 
 Window* win_setSelected(Window* win, int selected_elem) {
 	if(!win) return NULL;
+	if(!we_setBackColor(win->Win_elem[win->selected_elem], 80, 85, 222, 255)) return NULL;
 	if(!we_setBackColor(win->Win_elem[selected_elem], 158, 158, 36, 255)) return NULL;
-	
+	win->selected_elem=selected_elem;
 	return win;
 }
 
