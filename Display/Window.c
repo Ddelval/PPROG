@@ -39,23 +39,23 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 		win_free(win);
 		return NULL;
 	}
-    win->num_elems_siz=max(num_elems,MIN_SIZ);
-		Welem** we=(Welem**)calloc(win->num_elems_siz, sizeof(Welem*));
-		if(!we) {
-			win_free(win);
-			return NULL;
-		}
-		for(int i=0; i<num_elems; i++) {
-			we[i]=we_copy(Win_elem[i]);
-			if(!we[i]) {
-				for(int j=0; j<i; ++j) {
-					we_free(we[j]);
-				}
-				free(we);
-                return NULL;
+  win->num_elems_siz=max(num_elems,MIN_SIZ);
+	Welem** we=(Welem**)calloc(win->num_elems_siz, sizeof(Welem*));
+	if(!we) {
+		win_free(win);
+		return NULL;
+	}
+	for(int i=0; i<num_elems; i++) {
+		we[i]=we_copy(Win_elem[i]);
+		if(!we[i]) {
+			for(int j=0; j<i; ++j) {
+				we_free(we[j]);
 			}
+			free(we);
+      return NULL;
 		}
-		win->Win_elem=we;
+	}
+	win->Win_elem=we;
 
 	win->num_elems=num_elems;
 	win->width=wid;
@@ -168,8 +168,8 @@ Window* win_redraw(Window* win, int width, int height, int weight, int i, int j)
 
 Window* win_setSelected(Window* win, int selected_elem) {
 	if(!win) return NULL;
-
-
+	if(!we_setBackColor(win->Win_elem[selected_elem], 158, 158, 36, 255)) return NULL;
+	
 	return win;
 }
 

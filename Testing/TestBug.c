@@ -13,44 +13,60 @@
 #include "Canvas.h"
 #include "Pixel.h"
 #include <unistd.h>
+#include <termios.h>
+
+char getch1(void)
+{
+    char buf = 0;
+    struct termios old = {0};
+    fflush(stdout);
+    tcgetattr(0, &old);
+    //if(tcgetattr(0, &old) < 0)
+        //perror("tcsetattr()");
+    old.c_lflag &= ~ICANON;
+    old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN] = 1;
+    old.c_cc[VTIME] = 0;
+    tcsetattr(0, TCSANOW, &old);
+   // if(tcsetattr(0, TCSANOW, &old) < 0)
+        //perror("tcsetattr ICANON");
+    read(0, &buf, 1);
+    //if(read(0, &buf, 1) < 0)
+        //perror("read()");
+    old.c_lflag |= ICANON;
+    old.c_lflag |= ECHO;
+    tcsetattr(0, TCSADRAIN, &old);
+    //if(tcsetattr(0, TCSADRAIN, &old) < 0)
+        //perror("tcsetattr ~ICANON");
+    return buf;
+ }
 
 int main(int argc, const char * argv[]) {
-  FILE* f = fopen("Display/Fonts/Robo_Mono/04.txt", "r");
-  Font *ff=font_load(f);
-  Wlabic* w=wi_ini("This is an example test", ff, 4, 20, TEXT_RIGHT);
-  Wlabic* w2=wi_ini("This is an example test", ff, 4, 20, TEXT_RIGHT);
-  fclose(f);
-  f = fopen("Icons/food.txt", "r");
-  Canvas* c=canv_load(f);
-  wi_setCanvas(w, c);
-  wi_setCanvas(w2, c);
-  Canvas* a;
-  Canvas* b;
-  int i=0;
-  while(true) {
-    if((i/255)%3==0)wi_setBackColor(w, (255-(i%255)),0,i%255,255);  // 255 0 0
-    if((i/255)%3==1)wi_setBackColor(w,  0,(i%255),(255-(i%255)),255); // 0 0 255
-    if((i/255)%3==2)wi_setBackColor(w,  i%255 ,255-i%255,0,255);            // 0 255 0
+  FILE* fi=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
+	Font* f=font_load(fi);
+	Window* win = win_ini("Inventory", NULL, 0, 300, 250, 1, 909, 0, f);
+	if(!win) {
+		fprintf(stderr, "NULL WINDOW");
+		return 1;
+	}
+	errno = 0;
 
-    if((i/255)%3==1)wi_setBackColor(w2, (255-(i%255)),0,i%255,255);  // 255 0 0
-    if((i/255)%3==2)wi_setBackColor(w2,  0,(i%255),(255-(i%255)),255); // 0 0 255
-    if((i/255)%3==0)wi_setBackColor(w2,  i%255 ,255-i%255,0,255);
-
-    a=wi_render(w, 1000);
-    canv_print(stdout, a, 50,10);
-    b=wi_render(w2, 1000);
-    canv_print(stdout, b, 200,10);
-    usleep(500);
-    canv_free(a);
-    canv_free(b);
-    i++;
-  }
-
-
-  canv_free(c);
-  canv_free(a);
-  wi_free(w);
-  font_free(ff);
-  fclose(f);
-  return 0;
+	Wlabel* w=wl_ini("5x data",f,10);
+	Welem* wel=we_ini(LABEL,w);
+	win_addWindowElement(win,wel);
+	if(!win_setMargins(win, 0, 0, 0, 0)) printf("aaa");
+	Canvas* r=win_render(win);
+	canv_print(stdout, r, 0,0);
+	if(!r) {
+		fprintf(stderr, "BAD RENDER");
+		win_free(win);
+		return 2;
+	}
+	font_free(f);
+	fclose(fi);
+	wl_free(w);
+	we_free(wel);
+	win_free(win);
+	canv_free(r);
+	return 0;
 }
