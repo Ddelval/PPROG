@@ -25,13 +25,11 @@ typedef struct _Window Window;
 /// @param num_elems    Amoun of Welem that are given to this constuctor
 /// @param wid          Width of the window
 /// @param hei          Height of the portion that will be rendered
-/// @param weight       A weight attribute that can be used in the
-///                     resizing process
 /// @param jpos         Column of the top-left corner of thewindow
 ///                     on the screen
 /// @param ipos         Row of the top-left corner of thewindow
 ///                     on the screen
-Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int jpos, int ipos, const Font* titlef);
+Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int jpos, int ipos, const Font* titlef);
 
 
 /*-----------------------------------------------------------------*/
@@ -57,10 +55,9 @@ Canvas* win_render(Window* win);
 /// @param win      Window to be renderd
 /// @param wid      New width value
 /// @param hei      New height value
-/// @param weight   New weight value
 /// @param i        New top limit
 /// @param j        New left limit
-Window* win_redraw(Window* win, int wid, int hei, int weight, int i, int j);
+Window* win_redraw(Window* win, int wid, int hei, int i, int j);
 
 /*-----------------------------------------------------------------*/
 /// Set the focus on an element
