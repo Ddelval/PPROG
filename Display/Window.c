@@ -12,13 +12,12 @@ struct _Window {
 	int selected_elem;
 	int width, height;
 	int scroll_pos;
-	int weight;
 	int leftm, rightm, topm, botm;
   int jpos, ipos;
 	const Font* titlef;
 };
 
-Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int jpos, int ipos, const Font* titlef) {
+Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int jpos, int ipos, const Font* titlef) {
 	Window* win=(Window*)calloc(1, sizeof(Window));
 	if(!win) return NULL;
 	if(!titlef) {
@@ -60,7 +59,6 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->num_elems=num_elems;
 	win->width=wid;
 	win->height=hei;
-	win->weight=weight;
 	win->ipos=ipos;
 	win->jpos=jpos;
   win->scroll_pos=0;
@@ -156,11 +154,10 @@ END:
    return r;
 }
 
-Window* win_redraw(Window* win, int width, int height, int weight, int i, int j) {
+Window* win_redraw(Window* win, int width, int height, int i, int j) {
     if(!win) return NULL;
     win->width=width;
     win->height=height;
-    win->weight=weight;
     win->ipos=i;
     win->jpos=j;
 	if(!win_render(win)) return NULL;
@@ -215,7 +212,7 @@ Window* win_scrollUp(Window* win) {
 
 Window* win_copy(Window* win) {
 	if(!win) return NULL;
-        Window* win2=win_ini(win->title, win->Win_elem, win->num_elems, win->width, win->height, win->weight, win->jpos, win->ipos, win->titlef);
+        Window* win2=win_ini(win->title, win->Win_elem, win->num_elems, win->width, win->height, win->jpos, win->ipos, win->titlef);
         if(!win2) return NULL;
 	win2->scroll_pos=win->scroll_pos;
 /*
@@ -265,11 +262,13 @@ int* win_getMargins(Window *win) {
 
 /// Return the widht of the canvas
 int win_getWidth(const Window* w) {
+	if(!w) return -1;
 	return w->width;
 }
 
 
 /// Return the height of the canvas
 int win_getHeight(const Window* w) {
+	if(!w) return -1;
 	return w->height;
 }

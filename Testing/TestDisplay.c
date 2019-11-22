@@ -24,7 +24,7 @@ int main(int argc, const char* argv[]) {
   Wlabel* tit=wl_ini("First Room",f6,10);
   Canvas* right=wl_render(tit,w-vdiv);
   int a=(h-canv_getHeight(right))/2;
-  Window* wres=win_ini("Resources",wel,3,w-vdiv,a,1,vdiv,canv_getHeight(right),f6);
+  Window* wres=win_ini("Resources",wel,3,w-vdiv,a,vdiv,canv_getHeight(right),f6);
   Canvas* tmp=win_render(wres);
   canv_appendVI(right,tmp);
 
@@ -35,7 +35,7 @@ int main(int argc, const char* argv[]) {
   wela[0]=we_createLabel("Title", f6, 10);
   wela[1]=we_createLabel("Build", f6, 10);
   wela[2]=we_createLabel("Attack", f6, 10);
-  Window* wact=win_ini("Actions", wela,3,w-vdiv,a,2,vdiv, canv_getHeight(right), f6);
+  Window* wact=win_ini("Actions", wela,3,w-vdiv,a,vdiv, canv_getHeight(right), f6);
   tmp=win_render(wact);
   canv_appendVI(right,tmp);
   //canv_print(stdout,c,0,0);

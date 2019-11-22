@@ -40,9 +40,9 @@ combat * combat_ini2(entity * player, entity * enemy){
   Pixel* backroom=pix_ini(134, 151, 179, 255)
   FILE* f=fopen("Display/Fonts/Robo_Mono/08.dat");
   Font* titlef = font_load(f);
-  combat->window[0] = win_ini(entity_getName(player), NULL, 0, 0, 0, 0, 0, 0, titlef);
-  combat->window[1] = win_ini(entity_getName(enemy), NULL, 0, 0, 0, 0, 0, 0, titlef);
-  combat->window[2] = win_ini("ACTIONS", NULL, 0, 0, 0, 0, 0, 0, titlef);
+  combat->window[0] = win_ini(entity_getName(player), NULL, 0, 0, 0, 0, 0, titlef);
+  combat->window[1] = win_ini(entity_getName(enemy), NULL, 0, 0, 0, 0, 0, titlef);
+  combat->window[2] = win_ini("ACTIONS", NULL, 0, 0, 0, 0, 0, titlef);
   combat->room = room_ini(902, "COMBAT!",0, 0, backroom);
 
 

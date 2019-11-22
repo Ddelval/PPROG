@@ -131,6 +131,8 @@ CLEAN:
     return res;
 }
 Display* print_Window(Display*dis, int index){
+    if(!dis) return NULL;
+    if(index<0 || index>dis->nLatWindow) return NULL;
     Canvas* c=win_render(dis->latWindow[index]);
     int ipos=dis->tithei+dis->topm;
     for(int i=0;i<index;++i){

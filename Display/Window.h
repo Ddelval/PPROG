@@ -107,11 +107,15 @@ Window* win_setMargins(Window *win, int lm, int rm, int tm, int bm);
 /// @param win Window whose margins are being fetched
 int* win_getMargins(Window *win);
 
-/// Return the widht of the canvas
+/// Returns the width of a given window.
+/// Will return a negative number if error
+/// @param w Window whose margins are being fetched
 int win_getWidth(const Window* w);
 
 
-/// Return the height of the canvas
+/// Returns the height of a given window.
+/// Will return a negative number if error
+/// @param w Window whose margins are being fetched
 int win_getHeight(const Window* w);
 
 #endif
