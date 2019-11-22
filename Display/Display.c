@@ -88,7 +88,7 @@ Display* disp_incSelIndex(Display* dis, int winIndex, int increment){
   if(win_incrementSelected(dis->latWindow[winIndex],increment)==NULL){
     return NULL;
   }
-  return print_Window(dis,winIndex);  
+  return print_Window(dis,winIndex);
 }
 Display* disp_SetPopup(Display* dis, Window* p){
     if(!dis||!p) {
@@ -128,10 +128,10 @@ CLEAN:
 
     return res;
 }
-Display* print_Window(Diplay*dis, int index){
+Display* print_Window(Display*dis, int index){
     Canvas* c=win_render(dis->latWindow[index]);
     int ipos=dis->tithei;
-    for(int i=0;i<idex;++i){
+    for(int i=0;i<index;++i){
       ipos+=win_getHeight(dis->latWindow[i]);
     }
     canv_print(stdout,c,ipos,dis->vdiv);

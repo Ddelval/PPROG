@@ -265,11 +265,11 @@ int* win_getMargins(Window *win) {
 
 /// Return the widht of the canvas
 int win_getWidth(const Window* w) {
-	return win->width;
+	return w->width;
 }
 
 
 /// Return the height of the canvas
 int win_getHeight(const Window* w) {
-	return win->height;
+	return w->height;
 }
