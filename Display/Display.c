@@ -81,7 +81,7 @@ Display* disp_RemLwindow(Display* dis, int index){
 }
 Display* disp_incSelIndex(Display* dis, int winIndex, int increment){
   if(!dis)return NULL;
-  if(winIndex>=nLatWindow) return NULL;
+  if(winIndex>=dis->nLatWindow) return NULL;
   return win_incrementSelected(dis->latWindow[winIndex],increment);
 }
 Display* disp_SetPopup(Display* dis, Window* p){
