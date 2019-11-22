@@ -3,6 +3,8 @@
 #include "Room.h"
 #include "Font.h"
 #include "Pixel.h"
+#include <stdilib.h>
+#include <time.h>
 
 struct _combat{
   entity *p, *e;
@@ -11,6 +13,7 @@ struct _combat{
   skill * moveset[2][4];
   window * window[3];
   room * room;
+  Bool stunp, stune;
 }
 
 combat * combat_ini2(entity * player, entity * enemy){
@@ -172,14 +175,31 @@ int combat_exe(combat *c){
   }
   while(c->stats[0]->health > 0 && c->stats[1]->health > 0){
     if(i+aux % 2 == 0){
+      if(c->stunp == FALSE){
+        fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
+        fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", c->moveset[0][0]->name,c->moveset[0][1]->name,c->moveset[0][2]->name,c->moveset[0][3]->name);
+        move = player_choice();
+        movement_exe(c, move, 0);
+      }
+      if(c->stunp == TRUE){
+        fprintf(stdout, "You have been stunned, meanwhile, you can have some tea.\n");
+        stunp = FALSE;
+      }
+
       fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
       fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", c->moveset[0][0]->name,c->moveset[0][1]->name,c->moveset[0][2]->name,c->moveset[0][3]->name);
       move = player_choice();
       movement_exe(c, move, 0);
     }
     else{
-      move = IA_choice();
-      movement_exe(c, move, 1);
+      if(c->stune == FALSE){
+        move = IA_choice();
+        movement_exe(c, move, 1);
+      }
+      if(c->stunp == TRUE){
+        fprintf(stdout, "THe enemy has been stunned, his damage increased by 100, just joking.\n");
+        stunp = FALSE;
+      }
     }
     i++;
   }
@@ -188,5 +208,59 @@ int combat_exe(combat *c){
 int movement_exe(combat * c, int action, int entity){
   fprintf(stdout, "%s ataca con %s.\n"c->name[entity], c->moveset[entity][action]->name);
   atb_merge(c->stat[entity], skill_getAtb(c->moveset[entity][action]));
+  int atk = atb_getter(c->stat[entity], 2);
+  int def;
+  int health;
+  if(entity == 0){
+  def = atb_getter(c->stats[1], 3);
+  health = atb_getter(c->stats[1], 1)
+  }
+  else def = atb_getter(c->stats[0], 3); health = atb_getter(c->stats[0], 1);
+  
 
+
+
+  if (attack_goes(c,c->moveset[entity][action],entity) == TRUE){
+    skill_stun(c,c->moveset[entity][action], entity);
+    atb_setter(c->stats[0], 1) = health - atk + def;
+  }
+  else fprintf(stdout, "Attack dogded");
+}
+
+
+void skill_stun(combat * c, skill * skil,int who){
+  //CONTROL ERRORES
+  if(skill_getSpecial(skil) != STUNNER) return;
+  if(skill_getSpecial(skil) == STUNNER) {    //ESA FUNCION NO EXISTE
+    if(who == 0){
+      c->stune = TRUE;
+    }
+    else{
+      c->stunp = TRUE;
+    }
+  }
+}
+
+
+
+Bool attack_goes(combat * c, skill * skil, int who){
+  //CONTROL DE ERRRORES
+  double res;
+  double random
+  p1 = atb_getter(c->stats[who], 5);
+  if(who == 0){
+  p2 = atb_getter(c->stats[1], 5);
+  }
+  else p2 = atb_getter(c->stats[0], 5);
+
+  random = (double)rand()
+  random /= MAX_RAND;
+
+res = (p1/100) - (p2/100) - random;
+
+if(skill_getSpecial(skil) == UNDOGDE){
+  res += 3;
+}
+if(res < 0) return FALSE;
+if(res >= 0) return TRUE;
 }

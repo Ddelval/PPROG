@@ -15,6 +15,7 @@
 #define SKILL_H
 
 #include "types.h"
+typedef enum {NOTHING = 0, STUNNER = 1, UNDOGDE = 2, POISON = 3} specialSkill;
 typedef struct _skill skill;
 typedef struct _entity entity;
 /*
