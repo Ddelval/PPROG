@@ -186,7 +186,7 @@ Window* win_incrementSelected(Window* win, int incr) {
 		if(!win_setSelected(win, 0)) return NULL;
 		return win;
 	}
-	if(!win_setSelected(win, (win->selected_elem+incr)%win->num_elems)) return NULL;
+	if(!win_setSelected(win, (win->selected_elem+incr+win->num_elems*(incr/win->num_elems+1))%win->num_elems)) return NULL;
 
 }
 
