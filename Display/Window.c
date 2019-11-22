@@ -176,7 +176,7 @@ Window* win_setSelected(Window* win, int selected_elem) {
 
 Window* win_incrementSelected(Window* win, int incr) {
 	if(!win) return NULL;
-	if(selected_elem<0) {
+	if(win->selected_elem<0) {
 		if(!win_setSelected(win, 0)) return NULL;
 		return win;
 	}
