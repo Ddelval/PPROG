@@ -64,6 +64,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->ipos=ipos;
 	win->jpos=jpos;
   win->scroll_pos=0;
+	win->selected_elem=-1;
 	return win;
 }
 
@@ -168,7 +169,12 @@ Window* win_redraw(Window* win, int width, int height, int weight, int i, int j)
 
 Window* win_setSelected(Window* win, int selected_elem) {
 	if(!win) return NULL;
-	if(!we_setBackColor(win->Win_elem[win->selected_elem], 80, 85, 222, 255)) return NULL;
+	if(win->selected_elem>=0) {
+		if(!we_setBackColor(win->Win_elem[win->selected_elem], 80, 85, 222, 255)) return NULL;
+	}
+	FILE* f=fopen("file", "w");
+	fprintf(f, "Hola");
+	fclose(f);
 	if(!we_setBackColor(win->Win_elem[selected_elem], 158, 158, 36, 255)) return NULL;
 	win->selected_elem=selected_elem;
 	return win;
