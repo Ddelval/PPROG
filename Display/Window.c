@@ -172,9 +172,9 @@ Window* win_setSelected(Window* win, int selected_elem) {
 	if(win->selected_elem>=0) {
 		if(!we_setBackColor(win->Win_elem[win->selected_elem], 80, 85, 222, 255)) return NULL;
 	}
-	FILE* f=fopen("file", "w");
-	fprintf(f, "Hola");
-	fclose(f);
+	// FILE* f=fopen("file", "w");
+	// fprintf(f, "Hola");
+	// fclose(f);
 	if(!we_setBackColor(win->Win_elem[selected_elem], 158, 158, 36, 255)) return NULL;
 	win->selected_elem=selected_elem;
 	return win;

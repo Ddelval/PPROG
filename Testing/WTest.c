@@ -108,11 +108,9 @@ int main(){
         }
         if(c=='O'){
             disp_incSelIndex(dis,1,-1);
-            canv_print(stdout, disp_Render(dis), 0, 0);
         }
         if(c=='L'){
             disp_incSelIndex(dis,1,1);
-            canv_print(stdout, disp_Render(dis), 0, 0);
         }
         usleep(100000);
 
