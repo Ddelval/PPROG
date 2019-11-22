@@ -12,6 +12,7 @@ struct _Display{
     int vdiv;
     bool rendered;
     int tithei;
+    int topm;
     char* title;
     const Font* titf;
     Room* room;
@@ -120,6 +121,7 @@ Canvas* disp_Render(Display* dis){
     }
     left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
     if(!left)goto CLEAN;
+    topm=(canv_getHeight(left)-canv_getHeight(right))/2;
     res =canv_appendH(left, right);
 
 CLEAN:
@@ -130,7 +132,7 @@ CLEAN:
 }
 Display* print_Window(Display*dis, int index){
     Canvas* c=win_render(dis->latWindow[index]);
-    int ipos=dis->tithei;
+    int ipos=dis->tithei+dis->topm;
     for(int i=0;i<index;++i){
       ipos+=win_getHeight(dis->latWindow[i]);
     }
