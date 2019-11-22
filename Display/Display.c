@@ -79,6 +79,11 @@ Display* disp_RemLwindow(Display* dis, int index){
     dis->nLatWindow--;
     return dis;
 }
+Display* disp_incSelIndex(Display* dis, int winIndex, int increment){
+  if(!dis)return NULL;
+  if(winIndex>=nLatWindow) return NULL;
+  return win_incrementSelected(dis->latWindow[winIndex],increment);
+}
 Display* disp_SetPopup(Display* dis, Window* p){
     if(!dis||!p) {
         return NULL;
@@ -108,10 +113,10 @@ Canvas* disp_Render(Display* dis){
     left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
     if(!left)goto CLEAN;
     res =canv_appendH(left, right);
-    
+
 CLEAN:
     canv_free(left);
     canv_free(right);
-    
+
     return res;
 }

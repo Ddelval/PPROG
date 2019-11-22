@@ -106,6 +106,12 @@ int main(){
             room_incPos(r, 0, 0, 10);
             room_printMod(r, 0, 0, 0, 0, vdiv, h);
         }
+        if(c=='O'){
+            disp_incSelIndex(dis,1,-1);
+        }
+        if(c=='L'){
+            disp_incSelIndex(dis,1,1);
+        }
         usleep(100000);
 
     }

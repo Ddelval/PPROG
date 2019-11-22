@@ -55,6 +55,8 @@ Display* disp_SetPopup(Display* dis, Window* p);
 /// @param dis Display whose pop-up we want to remove
 void disp_RemPopup(Display* dis);
 
+Display* disp_incSelIndex(Display* dis, int winIndex, int increment);
+
 
 Canvas* disp_Render(Display* dis);
 
