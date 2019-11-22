@@ -27,9 +27,40 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol);
 void room_free(Room* r);
 
 
+
+/// Render a portion of the window
+/// Since usually we will not be able to show the entire map in the screen we will have to crop
+/// it and show only a section of it at a time.
+/// @param r           Room to be rendered
+/// @param i           First row that will be rendered
+/// @param j           First column that will be rendered
+/// @param wid      Width of the portion of the window that will be rendered
+/// @param hei      Height of the portion of the window that will be rendered
+/// @return The canvas that results from rendering the selected section of the room
 Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei);
+
+
+/// Prints the modifications that have been made to the sprites stored in the top layer since
+/// the last time that the room was rendered.
+/// It should be called after the position of a sprite in the top layer is modified
+/// The first two arguments refer to the position of the top left corner of the graphical representation
+/// of the room in the display.
+/// The next four arguments will describe the subsection of the room that is being displayed
+/// @param r               Room that we want to display
+/// @param disp_i    First row that the section of the room that is displayed occupies on the screen
+/// @param disp_j    First column that the section of the room that is displayed occupies on the screen
+/// @param i               First row of the room that is displayed
+/// @param j               First column of the room that is displayed
+/// @param wid          Width of the displayed portion of the room
+/// @param hei          Height of the displayed portion of the room
 Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int hei);
 
+
+/// Modifies the position of a sprite in the top layer
+/// @param r            Room in which the sprites are
+/// @param index   Index of the spritre in the array of sprites in the top layer
+/// @param i            New row index for the sprite
+/// @param j            New column index for the sprite
 Room* room_modPos(Room* r, int index, int i, int j);
 
 Room* room_incPos(Room* r, int index, int i, int j);
