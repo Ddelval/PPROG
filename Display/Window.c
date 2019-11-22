@@ -174,6 +174,16 @@ Window* win_setSelected(Window* win, int selected_elem) {
 	return win;
 }
 
+Window* win_incrementSelected(Window* win, int incr) {
+	if(!win) return NULL;
+	if(selected_elem<0) {
+		if(!win_setSelected(win, 0)) return NULL;
+		return win;
+	}
+	if(!win_setSelected(win, (win->selected_elem+incr)%win->num_elems)) return NULL;
+
+}
+
 Welem* win_getSelected(Window* win) {
 	if(!win || win->selected_elem==-1 || !win->Win_elem) return NULL;
 	Welem* we=we_copy(win->Win_elem[win->selected_elem]);
