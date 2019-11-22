@@ -10,6 +10,8 @@
 struct _Display{
     int width, height;
     int vdiv;
+    bool rendered;
+    int tithei;
     char* title;
     const Font* titf;
     Room* room;
@@ -39,6 +41,7 @@ Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* 
     dis->room=room;
     dis->nLatWindow=0;
     dis->latWinalloc=3;
+    dis->rendered=false;
     dis->latWindow=(Window**)calloc(ARR_INC, sizeof(Window*));
     if(!dis->latWindow){
         disp_free(dis);
@@ -82,7 +85,10 @@ Display* disp_RemLwindow(Display* dis, int index){
 Display* disp_incSelIndex(Display* dis, int winIndex, int increment){
   if(!dis)return NULL;
   if(winIndex>=dis->nLatWindow) return NULL;
-  return (Display*)win_incrementSelected(dis->latWindow[winIndex],increment);
+  if(win_incrementSelected(dis->latWindow[winIndex],increment)==NULL){
+    return NULL;
+  }
+  return print_Window(dis,winIndex);  
 }
 Display* disp_SetPopup(Display* dis, Window* p){
     if(!dis||!p) {
@@ -102,6 +108,8 @@ Canvas* disp_Render(Display* dis){
     Canvas* res=NULL;
     Wlabel* l = wl_ini(dis->title, dis->titf, TITLE_MULTILINE);
     Canvas* right=wl_render(l, dis->width-dis->vdiv);
+    dis->rendered=true;
+    dis->tithei=canv_getHeight(right);
     wl_free(l);
     for(int i=0;i<dis->nLatWindow;++i){
         Canvas* c=win_render(dis->latWindow[i]);
@@ -119,4 +127,12 @@ CLEAN:
     canv_free(right);
 
     return res;
+}
+Display* print_Window(Diplay*dis, int index){
+    Canvas* c=win_render(dis->latWindow[index]);
+    int ipos=dis->tithei;
+    for(int i=0;i<idex;++i){
+      ipos+=win_getHeight(dis->latWindow[i]);
+    }
+    canv_print(stdout,c,ipos,dis->vdiv);
 }
