@@ -69,6 +69,12 @@ Window* win_redraw(Window* win, int wid, int hei, int weight, int i, int j);
 Window* win_setSelected(Window* win, int selected_elem);
 
 /*-----------------------------------------------------------------*/
+/// Increment the focused element
+/// @param win           Window that contains
+/// @param incr          Increment of the selection count
+Window* win_incrementSelected(Window* win, int selected_elem);
+
+/*-----------------------------------------------------------------*/
 /// Returns the index of the selected element
 Welem* win_getSelected(Window* win);
 
