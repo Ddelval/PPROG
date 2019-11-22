@@ -44,7 +44,7 @@ char getch1(void)
 int main(int argc, const char * argv[]) {
   FILE* fi=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
 	Font* f=font_load(fi);
-	Window* win = win_ini("Inventory", NULL, 0, 300, 250, 1, 909, 0, f);
+	Window* win = win_ini("Inventory", NULL, 0, 300, 250, 909, 0, f);
 	if(!win) {
 		fprintf(stderr, "NULL WINDOW");
 		return 1;

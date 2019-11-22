@@ -25,13 +25,11 @@ typedef struct _Window Window;
 /// @param num_elems    Amoun of Welem that are given to this constuctor
 /// @param wid          Width of the window
 /// @param hei          Height of the portion that will be rendered
-/// @param weight       A weight attribute that can be used in the
-///                     resizing process
 /// @param jpos         Column of the top-left corner of thewindow
 ///                     on the screen
 /// @param ipos         Row of the top-left corner of thewindow
 ///                     on the screen
-Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int weight, int jpos, int ipos, const Font* titlef);
+Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int jpos, int ipos, const Font* titlef);
 
 
 /*-----------------------------------------------------------------*/
@@ -57,16 +55,21 @@ Canvas* win_render(Window* win);
 /// @param win      Window to be renderd
 /// @param wid      New width value
 /// @param hei      New height value
-/// @param weight   New weight value
 /// @param i        New top limit
 /// @param j        New left limit
-Window* win_redraw(Window* win, int wid, int hei, int weight, int i, int j);
+Window* win_redraw(Window* win, int wid, int hei, int i, int j);
 
 /*-----------------------------------------------------------------*/
 /// Set the focus on an element
 /// @param win           Window that contains
 /// @param selected_elem Index of the element that has to be selected
 Window* win_setSelected(Window* win, int selected_elem);
+
+/*-----------------------------------------------------------------*/
+/// Increment the focused element
+/// @param win           Window that contains
+/// @param incr          Increment of the selection count
+Window* win_incrementSelected(Window* win, int selected_elem);
 
 /*-----------------------------------------------------------------*/
 /// Returns the index of the selected element
@@ -100,5 +103,16 @@ Window* win_setMargins(Window *win, int lm, int rm, int tm, int bm);
 /// order: top, right, bottom, left
 /// @param win Window whose margins are being fetched
 int* win_getMargins(Window *win);
+
+/// Returns the width of a given window.
+/// Will return a negative number if error
+/// @param w Window whose margins are being fetched
+int win_getWidth(const Window* w);
+
+
+/// Returns the height of a given window.
+/// Will return a negative number if error
+/// @param w Window whose margins are being fetched
+int win_getHeight(const Window* w);
 
 #endif

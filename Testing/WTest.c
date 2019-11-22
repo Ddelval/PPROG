@@ -78,8 +78,8 @@ int main(){
 
 
 
-    Window* w1=win_ini("Resources", wel, 3, w-vdiv, h/2-20, 1, 0, 0, f6);
-    Window* w2=win_ini("Actions", wela, 3, w-vdiv, h/2-20, 1, 0, 0, f6);
+    Window* w1=win_ini("Resources", wel, 3, w-vdiv, h/2-20, 0, 0, f6);
+    Window* w2=win_ini("Actions", wela, 3, w-vdiv, h/2-20, 0, 0, f6);
     disp_AddLWindow(dis, w1);
     disp_AddLWindow(dis, w2);
 
@@ -105,6 +105,12 @@ int main(){
         if(c=='D'){
             room_incPos(r, 0, 0, 10);
             room_printMod(r, 0, 0, 0, 0, vdiv, h);
+        }
+        if(c=='O'){
+            disp_incSelIndex(dis,1,-1);
+        }
+        if(c=='L'){
+            disp_incSelIndex(dis,1,1);
         }
         usleep(100000);
 
