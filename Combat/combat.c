@@ -11,11 +11,12 @@ struct _combat{
   char name[2][50];
   atb * stats[2];
   skill * moveset[2][4];
-  Display* dis;
+  window * window[3];
+  room * room;
   Bool stunp, stune;
 }
 
-combat * combat_ini2(entity * player, entity * enemy){
+combat * combat_ini(entity * player, entity * enemy){
   combat * c;
   int aux = 0;
 
@@ -32,6 +33,10 @@ combat * combat_ini2(entity * player, entity * enemy){
 
   c->stats[0] = atb_allCopy(entity_getAttribute(player));
   c->stats[1]= atb_allCopy(entity_getAttribute(enemy));
+
+  c->stunp = FALSE;
+  c->stune = FALSE;
+
 //SKILLS LOADING ??
   for(pload = 0, pload < 4, pload++){
     //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
@@ -39,87 +44,35 @@ combat * combat_ini2(entity * player, entity * enemy){
   for(eload = 0, eload < 4, eload++){
     //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
   }
+  Pixel* backroom=pix_ini(134, 151, 179, 255)
   FILE* f=fopen("Display/Fonts/Robo_Mono/08.dat");
   Font* titlef = font_load(f);
-  combat->dis=disp_ini(0, 0, Room* room, 0,"COMBAT!", f);
+  combat->window[0] = win_ini(entity_getName(player), NULL, 0, 0, 0, 0, 0, titlef);
+  combat->window[1] = win_ini(entity_getName(enemy), NULL, 0, 0, 0, 0, 0, titlef);
+  combat->window[2] = win_ini("ACTIONS", NULL, 0, 0, 0, 0, 0, titlef);
+  combat->room = room_ini(902, "COMBAT!",0, 0, backroom);
 
-
-  /*Assuming that the iventory will have a pointer to the selected weapon, i->aw, an int.
-  We should separate objects between weapons and consumables,
-  weapons should have an array of possible attacks and
-  each attack is just an attribute which can modify either
-  attacking entity attributes or the attacked entity
-  */
-
-
-  object *wp = NULL, *we = NULL;
-
-  // inventory_getWeapon: Inputs: inventory, active weapon int.
-  wp = inventory_getWeapon(entity_getInventory(player), inventory_getAW(entity_getInventory(player)));
-  if(!wp){
-    combat_destroy(c);
-    return NULL;
-  }
-  while(aux < 4 and weapon_getAtb(wp, aux)){
-    moveset[0][aux] = weapon_getAtb(wp, aux);
-    aux++;
-  }
-
-  aux = 0;
-  we = inventory_getWeapon(entity_getInventory(enemy), inventory_getAW(entity_getInventory(enemy)));
-  if(!we){
-    combat_destroy(c);
-    return NULL;
-  }
-  while(aux < 4
-  object *wp = NULL, *we = NULL;
-
-  // inventory_getWeapon: Inputs: inventory, active weapon int.
-  wp = inventory_getWeapon(entity_getInventory(player), inventory_getAW(entity_getInventory(player)));
-  if(!wp){
-    combat_destroy(c);
-    return NULL;
-  }
-  while(aux < 4 and weapon_getAtb(wp, aux)){
-    moveset[0][aux] = weapon_getAtb(wp, aux);
-    aux++;
-  }
-
-  aux = 0;
-  we = inventory_getWeapon(entity_getInventory(enemy), inventory_getAW(entity_getInventory(enemy)));
-  if(!we){
-    combat_destroy(c);
-    return NULL;
-  }
-  while(aux < 4 and weapon_getAtb(we, aux)){
-    moveset[1][aux] = weapon_getAtb(we, aux);
-    aux++;
-  }
- and weapon_getAtb(we, aux)){
-    moveset[1][aux] = weapon_getAtb(we, aux);
-    aux++;
-  }
 
   return c;
 }
 
 
 
-
-void combat_process(combat * state){
+/*
+Status combat_process(combat * state){
   int i;
 
   if(!combat){
     print("Uppss");
-    return;
+    return ERROR;
   }
 
-  if(atb_getter(state->stats1, int 4 > atb_getter(state->stats1, int 4)){
+  if(atb_getter(state->stats[0],4) > atb_getter(state->stats[1],4)){
     i = 0;
   }
   else i = 1;
 
-  while(atb_getter(state->stats1, int 1) > 0 && atb_getter(state->stats2, int 1) > 0){
+  while(atb_getter(state->stats[0],1) > 0 && atb_getter(state->stats[1],1) > 0){
     if(i % 2 == 0){
       move_exe(state, player_choice);
     }
@@ -127,8 +80,9 @@ void combat_process(combat * state){
       move_exe(state, IA_choice);
     }
   }
+  return OK;
 }
-
+*/
 
 
 int player_choice(){
@@ -161,14 +115,17 @@ int IA_choice(combat * state){
 
 
 int combat_exe(combat *c){
-  int i = 0, aux = 0, move = 0;
+  int i = 0, aux = 1, move = 0;
 
   if(!c) return -1;
 
-  if (c->stats[0]->speed < c->stats[1]->speed){
-    aux = 1;
+  if(atb_getter(state->stats[0],4) > atb_getter(state->stats[1],4)){
+    aux = 0;
   }
-  while(c->stats[0]->health > 0 && c->stats[1]->health > 0){
+
+
+
+  while(atb_getter(state->stats[0],1) > 0 && atb_getter(state->stats[1],1)>0){
     if(i+aux % 2 == 0){
       if(c->stunp == FALSE){
         fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
@@ -181,10 +138,6 @@ int combat_exe(combat *c){
         stunp = FALSE;
       }
 
-      fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
-      fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", c->moveset[0][0]->name,c->moveset[0][1]->name,c->moveset[0][2]->name,c->moveset[0][3]->name);
-      move = player_choice();
-      movement_exe(c, move, 0);
     }
     else{
       if(c->stune == FALSE){
@@ -198,26 +151,27 @@ int combat_exe(combat *c){
     }
     i++;
   }
+  //decir qn ha muerto y liberar la memoria de la strutura combat
+  return 0;
 }
 
 int movement_exe(combat * c, int action, int entity){
+  int other =0;
   fprintf(stdout, "%s ataca con %s.\n"c->name[entity], c->moveset[entity][action]->name);
-  atb_merge(c->stat[entity], skill_getAtb(c->moveset[entity][action]));
-  int atk = atb_getter(c->stat[entity], 2);
-  int def;
-  int health;
   if(entity == 0){
-  def = atb_getter(c->stats[1], 3);
-  health = atb_getter(c->stats[1], 1)
+    other = 1;
   }
-  else def = atb_getter(c->stats[0], 3); health = atb_getter(c->stats[0], 1);
-
-
-
-
   if (attack_goes(c,c->moveset[entity][action],entity) == TRUE){
     skill_stun(c,c->moveset[entity][action], entity);
-    atb_setter(c->stats[0], 1) = health - atk + def;
+
+    atb_merge(c->stats[entity], skill_getAtbSelf(c->moveset[entity][action]));
+
+    if(atb_getter(c->moveset[entity][action],2) == 0){
+      atb_merge(c->stats[entity], skill_getAtbSelf(c->moveset[entity][action]);
+    }
+    else{
+
+    }
   }
   else fprintf(stdout, "Attack dogded");
 }
@@ -241,7 +195,8 @@ void skill_stun(combat * c, skill * skil,int who){
 Bool attack_goes(combat * c, skill * skil, int who){
   //CONTROL DE ERRRORES
   double res;
-  double random
+  double random;
+  int p1, p2;
   p1 = atb_getter(c->stats[who], 5);
   if(who == 0){
   p2 = atb_getter(c->stats[1], 5);
@@ -251,7 +206,7 @@ Bool attack_goes(combat * c, skill * skil, int who){
   random = (double)rand()
   random /= MAX_RAND;
 
-res = (p1/100) - (p2/100) - random;
+res = (p1/100) * 1.8 - (p2/100) - random;
 
 if(skill_getSpecial(skil) == UNDOGDE){
   res += 3;
