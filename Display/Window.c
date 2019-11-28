@@ -14,6 +14,8 @@ struct _Window {
 	int scroll_pos;
 	int leftm, rightm, topm, botm;
   int jpos, ipos;
+	Pixel* backcol;
+	Pixel* forecol;
 	const Font* titlef;
 };
 
@@ -271,4 +273,30 @@ int win_getWidth(const Window* w) {
 int win_getHeight(const Window* w) {
 	if(!w) return -1;
 	return w->height;
+}
+
+Window* win_setBackColor(Window *win, Pixel* backcol) {
+	if (!win || !backcol) return NULL;
+	Pixel* t = pix_copy(backcol)
+	if(!t) return NULL;
+	win->backcol=t;
+	return win;
+}
+
+Window* win_setForeColor(Window *win, Pixel* forecol) {
+	if (!win || !forecol) return NULL;
+	Pixel* t = pix_copy(forecol)
+	if(!t) return NULL;
+	win->forecol=t;
+	return win;
+}
+
+Pixel* win_getBackColor(Window *win) {
+	if (!win) return NULL;
+	return win->backcol;
+}
+
+Pixel* win_getForeColor(Window *win) {
+	if (!win) return NULL;
+	return win->forecol;
 }

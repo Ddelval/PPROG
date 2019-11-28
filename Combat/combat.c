@@ -11,8 +11,7 @@ struct _combat{
   char name[2][50];
   atb * stats[2];
   skill * moveset[2][4];
-  window * window[3];
-  room * room;
+  Display* dis;
   Bool stunp, stune;
 }
 
@@ -40,13 +39,9 @@ combat * combat_ini2(entity * player, entity * enemy){
   for(eload = 0, eload < 4, eload++){
     //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
   }
-  Pixel* backroom=pix_ini(134, 151, 179, 255)
   FILE* f=fopen("Display/Fonts/Robo_Mono/08.dat");
   Font* titlef = font_load(f);
-  combat->window[0] = win_ini(entity_getName(player), NULL, 0, 0, 0, 0, 0, titlef);
-  combat->window[1] = win_ini(entity_getName(enemy), NULL, 0, 0, 0, 0, 0, titlef);
-  combat->window[2] = win_ini("ACTIONS", NULL, 0, 0, 0, 0, 0, titlef);
-  combat->room = room_ini(902, "COMBAT!",0, 0, backroom);
+  combat->dis=disp_ini(0, 0, Room* room, 0,"COMBAT!", f);
 
 
   /*Assuming that the iventory will have a pointer to the selected weapon, i->aw, an int.
@@ -216,7 +211,7 @@ int movement_exe(combat * c, int action, int entity){
   health = atb_getter(c->stats[1], 1)
   }
   else def = atb_getter(c->stats[0], 3); health = atb_getter(c->stats[0], 1);
-  
+
 
 
 
