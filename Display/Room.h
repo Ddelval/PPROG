@@ -61,9 +61,9 @@ Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int h
 /// @param index   Index of the spritre in the array of sprites in the top layer
 /// @param i            New row index for the sprite
 /// @param j            New column index for the sprite
-Room* room_modPos(Room* r, int index, int i, int j);
+int room_modPos(Room* r, int index, int i, int j);
 
-Room* room_incPos(Room* r, int index, int i, int j);
+int room_incPos(Room* r, int index, int i, int j);
 Room* room_load(FILE* f);
 
 /*-----------------------------------------------------------------*/

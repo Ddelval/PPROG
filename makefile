@@ -1,4 +1,4 @@
-CC = gcc -g
+CC = gcc -Ofast
 EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom
 DISPLAY = Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o Wlabic.o Display.o
 LIB= -I Display/ -I Utility/
