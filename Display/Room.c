@@ -197,12 +197,30 @@ Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei){
     canv_free(c);
     return ccc;
 }
-Room* room_modPos(Room* r, int index, int i, int j){
+/*
+-1:error
+ 0: ok
+ 1: top border
+ 2: right border
+ 3: bottom border
+ 4: left border
+ */
+int room_modPos(Room* r, int index, int i, int j){
+    if(!r||index>=r->overpos){
+        return -1;
+    }
+    if(i<0)return 1;
+    if(j<0)return 4;
+
+    spr_setOJ(r->overs[index], j);
+    spr_setOI(r->overs[index], i);
+    return 0;
+}
+int room_incPos(Room* r, int index, int i, int j){
     if(!r||index>=r->overpos){
         return NULL;
     }
-    spr_setOJ(r->overs[index], j);
-    spr_setOI(r->overs[index], i);
+    room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]));
     return r;
 }
 Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int hei){
@@ -225,7 +243,7 @@ Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int h
         /***
 
          ADD CHECK FOR OUT OF BOUNDS
-
+        
 
 
 
@@ -247,14 +265,6 @@ Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int h
     }
     fprintf(stdout, "%s",to_print);
     fflush(stdout);
-    return r;
-}
-Room* room_incPos(Room* r, int index, int i, int j){
-    if(!r||index>=r->overpos){
-        return NULL;
-    }
-    spr_setOJ(r->overs[index], j+spr_getOJ(r->overs[index]));
-    spr_setOI(r->overs[index], i+spr_getOI(r->overs[index]));
     return r;
 }
 void room_free(Room* r){
