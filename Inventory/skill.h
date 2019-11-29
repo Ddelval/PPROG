@@ -40,5 +40,6 @@ Function name: skill_load
  */
 skill * skill_activate(skill*skill, entity * entity);
 
+skill * skill_getSpecial(skill *s);
 
 #endif /* SKILL_H */
