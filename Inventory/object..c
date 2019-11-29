@@ -18,7 +18,7 @@ struct _object {
     objType class;
     int amount;
     atb * atb;
-    skill * special;
+    skill ** attacks;
     Bool destroyable;
 };
 
@@ -61,7 +61,7 @@ Function name: object_load
  Inputs: object pointer, file pointer, name of the file.
  Outputs: object pointer
  */
-object * object_load( char * name){
+object * object_load(char * name){
     FILE * f;
     int a,b,c,d,e;
     object * object;

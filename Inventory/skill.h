@@ -15,6 +15,7 @@
 #define SKILL_H
 
 #include "types.h"
+#include "atb.h"
 typedef enum {NOTHING = 0, STUNNER = 1, UNDOGDE = 2, POISON = 3} specialSkill;
 typedef struct _skill skill;
 typedef struct _entity entity;
@@ -40,6 +41,18 @@ Function name: skill_load
  */
 skill * skill_activate(skill*skill, entity * entity);
 
-skill * skill_getSpecial(skill *s);
+char * skill_getSpecial(skill *s);
+
+int skill_getId(skill *s);
+
+char * skill_getName(skill *s);
+
+char * skill_getDesc(skill *s);
+
+char * skill_getSpecial(skill *s);
+
+atb * skill_getAtbself(skill *s);
+
+atb * skill_getAtbatk(skill *s);
 
 #endif /* SKILL_H */

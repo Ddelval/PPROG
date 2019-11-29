@@ -160,11 +160,11 @@ atb *atb_allCopy(atb *a){
 
   if(!a) return NULL;
 
-  cpy->health = atb->health;
-  cpy->attack = atb->attack;
-  cpy->defense = atb->defense;
-  cpy->speed = atb->speed;
-  cpy->agility = atb->agility;
+  cpy->health = a->health;
+  cpy->attack = a->attack;
+  cpy->defense = a->defense;
+  cpy->speed = a->speed;
+  cpy->agility = a->agility;
 
   return cpy;
 }
