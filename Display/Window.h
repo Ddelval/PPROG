@@ -115,4 +115,8 @@ int win_getWidth(const Window* w);
 /// @param w Window whose margins are being fetched
 int win_getHeight(const Window* w);
 
+Window* win_setBackColor(Window *win, Pixel* backcol);
+
+Window* win_setForeColor(Window *win, Pixel* forecol);
+
 #endif
