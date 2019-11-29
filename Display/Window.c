@@ -277,7 +277,7 @@ int win_getHeight(const Window* w) {
 
 Window* win_setBackColor(Window *win, Pixel* backcol) {
 	if (!win || !backcol) return NULL;
-	Pixel* t = pix_copy(backcol)
+	Pixel* t = pix_copy(backcol);
 	if(!t) return NULL;
 	win->backcol=t;
 	return win;
@@ -285,7 +285,7 @@ Window* win_setBackColor(Window *win, Pixel* backcol) {
 
 Window* win_setForeColor(Window *win, Pixel* forecol) {
 	if (!win || !forecol) return NULL;
-	Pixel* t = pix_copy(forecol)
+	Pixel* t = pix_copy(forecol);
 	if(!t) return NULL;
 	win->forecol=t;
 	return win;

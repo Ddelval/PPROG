@@ -496,8 +496,8 @@ Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j){
         for(int j=o_j;j<o_j+owid;++j){
             Pixel* t=pix_overlay(base->data[i][j], over->data[i-o_i][j-o_j]);
             pix_free(base->data[i][j]);
-            base->data[i][j]=pix_copy(t);
-            pix_free(t);
+            base->data[i][j]=t;
+            t=NULL;
             //base->data[i][j]=pix_overlay(base->data[i][j], over->data[i-o_i][j-o_j]);
             if(!base->data[i][j]){
                 return NULL;
