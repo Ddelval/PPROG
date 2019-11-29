@@ -65,6 +65,16 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->jpos=jpos;
   win->scroll_pos=0;
 	win->selected_elem=-1;
+	win->backcol = pix_ini(80, 85, 222, 255);
+	if(!win->backcol) {
+		win_free(win);
+		return NULL;
+	}
+	win->forecol = pix_ini(158, 158, 36, 255);
+	if(!win->forecol) {
+		win_free(win);
+		return NULL;
+	}
 	return win;
 }
 
@@ -76,6 +86,8 @@ void win_free(Window* win) {
 		we_free(win->Win_elem[i]);
 	}
 	free(win->Win_elem);
+	pix_free(win->forecol);
+	pix_free(win->backcol);
 	free(win);
 }
 
@@ -115,7 +127,7 @@ Canvas* win_render(Window* win) {
     t_lab=wl_ini(win->title, f, 4);
     if(!t_lab) goto END;
 
-    back=canv_backGrnd(80, 85, 222, 255, win->width, win->height);
+    back=canv_backGrnd(pix_retR(win->backcol), pix_retG(win->backcol), pix_retB(win->backcol), pix_retA(win->backcol), win->width, win->height);
     if(!back)  goto END;
 
 
