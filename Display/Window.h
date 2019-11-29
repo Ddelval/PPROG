@@ -119,4 +119,8 @@ Window* win_setBackColor(Window *win, Pixel* backcol);
 
 Window* win_setForeColor(Window *win, Pixel* forecol);
 
+Pixel* win_getBackColor(Window *win);
+
+Pixel* win_getForeColor(Window *win);
+
 #endif
