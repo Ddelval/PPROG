@@ -169,12 +169,12 @@ Window* win_redraw(Window* win, int width, int height, int i, int j) {
 Window* win_setSelected(Window* win, int selected_elem) {
 	if(!win) return NULL;
 	if(win->selected_elem>=0) {
-		if(!we_setBackColor(win->Win_elem[win->selected_elem], 80, 85, 222, 255)) return NULL;
+		if(!we_setBackColor(win->Win_elem[win->selected_elem], pix_retR(win->backcol), pix_retG(win->backcol), pix_retB(win->backcol), pix_retA(win->backcol))) return NULL;
 	}
 	// FILE* f=fopen("file", "w");
 	// fprintf(f, "Hola");
 	// fclose(f);
-	if(!we_setBackColor(win->Win_elem[selected_elem], 158, 158, 36, 255)) return NULL;
+	if(!we_setBackColor(win->Win_elem[selected_elem], pix_retR(win->forecol), pix_retG(win->forecol), pix_retB(win->forecol), pix_retA(win->forecol))) return NULL;
 	win->selected_elem=selected_elem;
 	return win;
 }
