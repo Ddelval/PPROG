@@ -11,7 +11,7 @@ struct _SpriteDic{
     int size;
 };
 
-char c[]= "Sprites/Dat.txt";
+char c[]= "Sprites/dic.txt";
 SpriteDic* data=NULL;
 void sdic_free(SpriteDic* d){
     if(!d)return;
