@@ -67,7 +67,7 @@ Status atb_setter(atb * atb, int value, int id) {
         return ERROR;
     }
     if (id < 1 || id > 5) return ERROR;
-    
+
     if (id == 1) {
         atb->health = value;
     }
@@ -128,7 +128,7 @@ atb * atb_merge(atb * primary, atb * secondary){
     primary->defense += secondary->defense;
     primary->speed += secondary->speed;
     primary->agility += secondary->agility;
-    
+
     return primary;
 }
 /*
@@ -138,7 +138,7 @@ atb * atb_merge(atb * primary, atb * secondary){
  Outputs: int that contains the number of characters that have been printed
  */
 int atb_print(FILE *pf, atb * atb){
-    
+
     int i = 0;
          if (!atb || !pf) {
      fprintf(stderr, "%s", strerror(errno));
@@ -153,4 +153,18 @@ int atb_print(FILE *pf, atb * atb){
     }
 
     return i;
+}
+
+atb *atb_allCopy(atb *a){
+  atb * cpy = NULL;
+
+  if(!a) return NULL;
+
+  cpy->health = atb->health;
+  cpy->attack = atb->attack;
+  cpy->defense = atb->defense;
+  cpy->speed = atb->speed;
+  cpy->agility = atb->agility;
+
+  return cpy;
 }
