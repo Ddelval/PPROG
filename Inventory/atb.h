@@ -71,7 +71,7 @@ atb * atb_merge(atb * primary, atb * secondary);
  */
 int atb_print(FILE *pf, atb * atb);
 
-
+atb *atb_allCopy(atb *a);
 
 
 
