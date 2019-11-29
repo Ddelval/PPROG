@@ -134,7 +134,7 @@ Room* room_addBSprite(Room* r, Sprite* s){
     if(!r||!s)return NULL;
     if(r->backpos==r->backgsiz){
         int nsiz=(int)ceil(r->backgsiz*MEM_INCREMENT);
-        Sprite** tmp=realloc(r->backg,nsiz);
+        Sprite** tmp=realloc(r->backg,nsiz*sizeof(Sprite*));
         if(!tmp)return NULL;
         r->backg=tmp;
         r->backgsiz=nsiz;
@@ -151,12 +151,12 @@ Room* room_addOSprite(Room* r, Sprite* s){
     if(!r||!s)return NULL;
     if(r->overpos==r->overssiz){
         int nsiz=(int)ceil(r->overssiz*MEM_INCREMENT);
-        Sprite** tmp=realloc(r->overs,nsiz);
+        Sprite** tmp=realloc(r->overs,nsiz*sizeof(Sprite*));
         if(!tmp)return NULL;
         r->overs=tmp;
         r->overssiz=nsiz;
 
-        box* bb=realloc(r->ov, nsiz);
+        box* bb=realloc(r->ov, nsiz*sizeof(box));
         if(!bb) return NULL;
 
     }
