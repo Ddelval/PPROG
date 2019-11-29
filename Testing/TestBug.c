@@ -45,7 +45,7 @@ int main(int argc, const char * argv[]) {
   FILE* fi=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
 	Font* f=font_load(fi);
 	Window* win = win_ini("Inventory", NULL, 0, 300, 250, 909, 0, f);
-  Pixel* pt = pix_ini(60,70,166,255);
+  Pixel* pt = pix_ini(200,70,16,255);
   if(!win_setBackColor(win, pt)) return -1;
   pix_free(pt);
 	if(!win) {
