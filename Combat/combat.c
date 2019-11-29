@@ -104,11 +104,10 @@ int IA_choice(combat * state){
   if(!state) return -1;
 
   while(moveset2[i]){
-    if(state->moveset2(i)->attack > state->moveset2[max_attack]->attack){
-      max_attack = i;
-    }
+    if(atb_getter(state->moveset[i], 2) > atb_getter(state->moveset[max_attack], 2)) max_attack = i;
     i++;
   }
+
   return max_attack;
 }
 
@@ -177,16 +176,14 @@ int movement_exe(combat * c, int action, int entity){
 }
 
 
-void skill_stun(combat * c, skill * skil,int who){
+void skill_stun(combat * c, skill * skil, int who){
   //CONTROL ERRORES
-  if(skill_getSpecial(skil) != STUNNER) return;
-  if(skill_getSpecial(skil) == STUNNER) {    //ESA FUNCION NO EXISTE
-    if(who == 0){
-      c->stune = TRUE;
-    }
-    else{
-      c->stunp = TRUE;
-    }
+  if(strcmp(skill_getSpecial(skil), "STUNNER") != 0) return;
+  if(who == 0){
+    c->stune = TRUE;
+  }
+  else{
+    c->stunp = TRUE;
   }
 }
 
@@ -206,11 +203,11 @@ Bool attack_goes(combat * c, skill * skil, int who){
   random = (double)rand()
   random /= MAX_RAND;
 
-res = (p1/100) * 1.8 - (p2/100) - random;
+  res = (p1/100) * 1.8 - (p2/100) - random;
 
-if(skill_getSpecial(skil) == UNDOGDE){
-  res += 3;
-}
-if(res < 0) return FALSE;
-if(res >= 0) return TRUE;
+  if(strcmp(skill_getSpecial(skil), "UNDOGDE") == 0){
+    res += 3;
+  }
+  if(res < 0) return FALSE;
+  if(res >= 0) return TRUE;
 }
