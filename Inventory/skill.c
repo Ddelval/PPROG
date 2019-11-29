@@ -14,7 +14,7 @@ struct _skill {
     char desc[200];
     atb * atbself;
     atb * atbatk;
-    specialSkill special;
+    char *special_skill[30];
 };
 /*
  Function name: skill_ini
@@ -66,4 +66,11 @@ skill * skill_load(skill* skill, char * name){
    atb_setter(skill->atb,d,4);
    atb_setter(skill->atb,e,5);
     fclose(f);
+}
+
+skill * skill_getSpecial(skill *s){
+  char name[30];
+  if(!s) return NULL;
+  strcpy(name, s->special_skill);
+  return name;
 }
