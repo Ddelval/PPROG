@@ -175,7 +175,34 @@ Canvas* canv_appendH(const Canvas* west, const Canvas* east){
     return res;
 
 }
+Canvas* canv_appendHNL(const Canvas* west, const Canvas* east){
+    if(!west||!east)return NULL;
+    int hei=max(west->hei, east->hei);
+    Canvas* res=canv_ini(east->wid+west->wid, hei);
+    if(!res) return NULL;
+    
+    for(int i=0;i<hei;++i){
+        for(int j=0;j<west->wid;++j){
+            if(i<west->hei)res->data[i][j]=pix_copy(west->data[i][j]);
+            else res->data[i][j]=pix_newTransparent();
+            if(!res->data[i][j]){
+                canv_free(res);
+                return NULL;
+            }
+        }
+        for(int j=0;j<east->wid;++j){
+            if(i<east->hei)res->data[i][j+west->wid]=pix_copy(east->data[i][j]);
+            else res->data[i][j+west->wid]=pix_newTransparent();
+            if(!res->data[i][j+west->wid]){
+                canv_free(res);
+                return NULL;
 
+            }
+        }
+    }
+    return res;
+
+}
 /// Get a new canvas that contains both canvases appended vertically
 /// @param north Canvas that will be in the northern region of the result
 /// @param south Canvas that will be in the southern region of the result
@@ -361,12 +388,16 @@ Canvas* canv_subCopy (const Canvas* bas,int i1,int i2,int j1,int j2){
     int hei,wid;
     hei=i2-i1;
     wid=j2-j1;
+    int i0,j0;
+    j0=i0=0;
+    if(i1<0)i0=-i1;
+    if(j1<0)j0=-j1;
     if(i1+hei>bas->hei)hei=bas->hei-i1;
     if(j1+wid>bas->wid)wid=bas->wid-j1;
     Canvas* res=canv_ini(wid, hei);
     if(!res) return NULL;
-    for(int i=0;i<hei;++i){
-        for(int j=0;j<wid;++j){
+    for(int i=i0;i<hei;++i){
+        for(int j=j0;j<wid;++j){
             res->data[i][j]=pix_copy(bas->data[i1+i][j1+j]);
             if(!(res->data[i][j])){
                 canv_free(res);
@@ -539,11 +570,11 @@ void canv_print(FILE* f, Canvas* c,int i,int j){
     if(!da)return;
     for(int w=0;w<c->hei;++w){
         char * aux=movecur(i+w, j);
-        //fprintf(f,"%s",aux);
-        puts(aux);
+        ///////////////////fprintf(f,"%s",aux);
+        //puts(aux);
         free(aux);
-        //fprintf(f, "%s",da[w]);
-        puts(da[w]);
+        //////////////////fprintf(f, "%s",da[w]);
+        //puts(da[w]);
         free(da[w]);
     }
     if(tofree) canv_free(c);
@@ -614,6 +645,7 @@ void canv_printR(FILE* f, const Canvas* c,int i,int j,int wid,int hei){
     fflush(f);
     free(da);
 }
+
 Canvas* canvas_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int oj){
     if(!f||!new||!old)return NULL;
     if(canv_getWidth(new)!=canv_getWidth(old))return NULL;
@@ -712,4 +744,12 @@ char** _canv_render(const Canvas* c,int wid, int hei){
     }
     canv_free(cop);
     return ch;
+}
+Canvas* canv_setPixel(Canvas* c,Pixel* p, int i,int j){
+    if(!p||!c)return NULL;
+    if(i>canv_getHeight(c)||j>canv_getWidth(c)){
+        return NULL;
+    }
+    pix_copyVals(c->data[i][j],p);
+    return c;
 }

@@ -23,6 +23,7 @@ char getch1(void)
    // if(tcsetattr(0, TCSANOW, &old) < 0)
         //perror("tcsetattr ICANON");
     read(0, &buf, 1);
+    fflush(stdin);
     //if(read(0, &buf, 1) < 0)
         //perror("read()");
     old.c_lflag |= ICANON;
@@ -54,7 +55,7 @@ int main(){
 
     Sprite* sp= spr_load(f);
     spr_setOI(sp, 20);
-    spr_setOJ(sp,30);
+    spr_setOJ(sp,330);
     fclose(f);
     room_addOSprite(r, sp);
     //canv_print(stdout, spr_getDispData(sp), 10, 10);
@@ -82,9 +83,8 @@ int main(){
     Window* w2=win_ini("Actions", wela, 3, w-vdiv, h/2-20, 0, 0, f6);
     disp_AddLWindow(dis, w1);
     disp_AddLWindow(dis, w2);
-
     canv_print(stdout, disp_Render(dis), 0, 0);
-
+    room_setBounds(r,0,0,h,vdiv);
     while(1){
         char c;
         c=getch1();
@@ -92,19 +92,19 @@ int main(){
         //printf("%c\n",c);
         if(c=='W'){
             room_incPos(r, 0, -10, 0);
-            room_printMod(r, 0, 0, 0, 0, vdiv, h);
+            room_printMod(r, 0, 0);
         }
         if(c=='S'){
             room_incPos(r, 0, 10, 0);
-            room_printMod(r, 0, 0, 0, 0, vdiv, h);
+            room_printMod(r, 0, 0);
         }
         if(c=='A'){
             room_incPos(r, 0, 0, -10);
-            room_printMod(r, 0, 0, 0, 0, vdiv, h);
+            room_printMod(r, 0, 0);
         }
         if(c=='D'){
             room_incPos(r, 0, 0, 10);
-            room_printMod(r, 0, 0, 0, 0, vdiv, h);
+            room_printMod(r, 0, 0);
         }
         if(c=='O'){
             disp_incSelIndex(dis,1,-1);

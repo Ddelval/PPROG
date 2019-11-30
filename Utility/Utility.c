@@ -18,6 +18,7 @@ void append(char* dest, int* spos, const char* orig){
     dest[*spos]=0;
 }
 void appendf(char* dest, int* spos, char* orig){
+    assert(dest&&spos&&orig);
     if(!dest||!spos||!orig){
         fprintf(stderr,"NULL pointer in append function\n");
         return;

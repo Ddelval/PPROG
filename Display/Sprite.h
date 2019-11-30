@@ -40,7 +40,7 @@ Sprite* spr_copy(const Sprite* spr);
 /*-----------------------------------------------------------------*/
 ///Load the sprite from a file
 /// File format:
-/// id format (0 if the collision canvas is the canvas, 1 otherwise)
+/// id format (0 if the collision canvas is the canvas, 1 otherwise) shadow
 /// Canvas
 /// Collision_canvas>
 /// nº triggers
@@ -83,4 +83,11 @@ void spr_setOI(Sprite* spr,int ipos);
 /*-----------------------------------------------------------------*/
 /// Get the id of the sprite
 int spr_getId(const Sprite* sp);
+
+
+int spr_getHeight(Sprite* spr);
+int spr_getWidth(Sprite* spr);
+Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei);
+int spr_checkCollisions(Sprite*s,bool**rarr,int rwid,int rhei, int ni, int nj);
+Sprite* spr_processShadows(Sprite* s,Canvas* shad);
 #endif /* Sprite_h */

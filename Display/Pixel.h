@@ -108,4 +108,10 @@ char * pix_renderLine(Pixel**a,int len);
 /// @param f    file from which the information will be read
 /// @return     A new pixel with the color specified in the file
 Pixel* pix_load(FILE* f);
+
+
+
+Pixel* pix_newTransparent();
+bool pix_halfTransparent(const Pixel* a);
+
 #endif /* Pixel_h */

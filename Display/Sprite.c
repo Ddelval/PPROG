@@ -13,6 +13,7 @@ struct _Sprite{
   bool existstrigger;
   int ** trigger;
   bool** collision;
+  bool** shadow;
   Canvas* canvas;
 };
 Sprite* spr_ini(int id, int width, int height){
@@ -34,6 +35,13 @@ Sprite* spr_ini(int id, int width, int height){
     for(int i=0;i<height;++i){
         spr->collision[i]=calloc(width, sizeof(bool));
         if(!spr->collision[i])ret_free(spr);
+    }
+
+    spr->shadow=calloc(height, sizeof(int*));
+    if(!spr->shadow)ret_free(spr);
+    for(int i=0;i<height;++i){
+        spr->shadow[i]=calloc(width, sizeof(bool));
+        if(!spr->shadow[i])ret_free(spr);
     }
     spr->iPos=spr->jPos=-1;
     return spr;
@@ -95,8 +103,8 @@ Sprite* spr_copy(const Sprite* spr){
 Sprite* spr_load(FILE* f){
     if(!f)return NULL;
     int w,h,id;
-    int ff;
-    fscanf(f,"%d %d",&id,&ff);
+    int ff, sh;
+    fscanf(f,"%d %d %d",&id,&ff,&sh);
 
     Canvas* c=canv_load(f);
     if(!c){
@@ -110,25 +118,30 @@ Sprite* spr_load(FILE* f){
         return NULL;
     }
     res->canvas=c;
-    Canvas* colldata=NULL;
-    if(ff){
-        colldata=canv_load(f);
+    
+    if(ff==1){
+        Canvas* colldata=canv_load(f);
+        for(int i=0;i<h;++i){
+            for(int j=0;j<w;++j){
+                if(((double)i)/h<=((double)sh)/100)res->collision[i][j]=!pix_halfTransparent(canv_getPixel(colldata,i,j));
+                else res->shadow[i][j]=!pix_halfTransparent(canv_getPixel(colldata,i,j));
+                
+            }
+        }
+        free(colldata);
     }
-    else{
-        colldata=canv_copy(c);
-    }
-
-    for(int i=0;i<h;++i){
-        for(int j=0;j<w;++j){
-            res->collision[i][j]=pix_transparent(canv_getPixel(colldata,i,j));
+    else if(ff==0){
+        for(int i=0;i<h;++i){
+            for(int j=0;j<w;++j){
+                if(((double)i)/h<=((double)sh)/100)res->collision[i][j]=!pix_halfTransparent(canv_getPixel(c,i,j));
+                else res->shadow[i][j]=!pix_halfTransparent(canv_getPixel(c,i,j));
+            }
         }
     }
-
     int n=0;
     fscanf(f, "%d",&n);
     if(n==0){
         res->existstrigger=false;
-        canv_free(colldata);
         return res;
     }
     int i1,i2,j1,j2;
@@ -146,9 +159,68 @@ Sprite* spr_load(FILE* f){
             }
         }
     }
-    canv_free(colldata);
     return res;
 }
+Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei){
+    if(!rarr)return NULL;
+    int i2,j2;
+    for(int i=0;i<s->height;++i){
+        i2=i+s->iPos;
+        if(i2>=rhei)break;
+        for(int j=0;j<s->width;++j){
+            j2=j+s->jPos;
+            if(j2>=rwid)break;
+            rarr[i2][j2]= rarr[i2][j2]||s->collision[i][j];
+        }
+    }
+    return s;
+}
+int spr_checkCollisions(Sprite*s,bool**rarr,int rwid,int rhei, int ni,int nj){
+    FILE*f=fopen("datasss.txt","w");
+    for(int i=0;i<s->height;++i){
+        for(int j=0;j<s->width;++j){
+            fprintf(f,"%2d ",s->collision[i][j]);
+        }
+        fprintf(f,"\n");
+    }
+    fclose(f);
+    if(!rarr)return -1;
+    int i2,j2;
+    for(int i=0;i<s->height;++i){
+        i2=i+ni;
+        if(i2>=rhei)break;
+        for(int j=0;j<s->width;++j){
+            j2=j+nj;
+            if(j2>=rwid)break;
+            if(!s->collision[i][j])continue;
+            if(rarr[i2][j2]){
+                
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+Sprite* spr_processShadows(Sprite* s,Canvas* shad){
+    if(!s||!shad)return NULL;
+    int i2,j2;
+    int rhei=canv_getHeight(shad);
+    int rwid=canv_getWidth(shad);
+    for(int i=0;i<s->height;++i){
+        i2=i+s->iPos;
+        if(i2>=rhei)break;
+        for(int j=0;j<s->width;++j){
+            j2=j+s->jPos;
+            if(j2>=rwid)break;
+            if(s->shadow[i][j]){
+                canv_setPixel(shad,canv_getPixel(s->canvas,i,j),i2,j2);
+            }
+        }
+    }
+    return s;
+}
+
 const Canvas* spr_getDispData(Sprite* spr){
     if(!spr)return NULL;
     return spr->canvas;
@@ -161,7 +233,14 @@ int spr_getOJ(Sprite* spr){
     if(!spr)return 0;
     return spr->jPos;
 }
-
+int spr_getWidth(Sprite* spr){
+    if(!spr)return -1;
+    return spr->width;
+}
+int spr_getHeight(Sprite* spr){
+    if(!spr) return -1;
+    return spr->height;
+}
 void spr_setOI(Sprite* spr,int ipos){
     if(!spr)return;
     spr->iPos=ipos;

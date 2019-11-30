@@ -205,4 +205,9 @@ int canv_getHeight(const Canvas* c);
 /// @return  Reference to the pixel in the canvas
 const Pixel* canv_getPixel(const Canvas* c,int i,int j);
 
+
+Canvas* canv_appendHNL(const Canvas* west, const Canvas* east);
+
+Canvas* canv_setPixel(Canvas* c,Pixel* p, int i,int j);
+
 #endif /* Canvas_h */

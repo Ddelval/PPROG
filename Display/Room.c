@@ -18,7 +18,8 @@ struct _Room{
     int id;
     char* name;
     int hei, wid;
-
+    //Top and left are included, right and bottom are excluded
+    int c_t, c_l, c_r, c_b;
     Pixel* backcol;
     Sprite** backg;
     int backgsiz;
@@ -28,9 +29,9 @@ struct _Room{
     int overssiz;
     int overpos;
     Canvas* map;
-
+    Canvas* shadows;
     bool** colision;
-    bool** shadows;
+    
     int** trigger;
 };
 
@@ -44,7 +45,10 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     strcpy(r->name, name);
     r->hei=hei;
     r->wid=wid;
-
+    r->c_t=0;
+    r->c_b=hei;
+    r->c_l=0;
+    r->c_r=wid;
     r->backgsiz=MEM_INI;
     r->backg=calloc(MEM_INI, sizeof(Sprite*));
     if(!r->backg)ret_free(r);
@@ -64,13 +68,9 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
         r->colision[i]=calloc(wid, sizeof(bool));
         if(!r->colision[i])ret_free(r);
     }
-    //Shadow bool array
-    r->shadows=calloc(hei, sizeof(bool*));
-    if(!r->shadows)ret_free(r);
-    for(int i=0;i<hei;++i){
-        r->shadows[i]=calloc(wid, sizeof(bool));
-        if(!r->shadows[i])ret_free(r);
-    }
+    //Shadow 
+    r->shadows=canv_backGrnd(0,0,0,0,wid,hei);
+
     //Trigger int array
        r->trigger=calloc(hei, sizeof(int*));
        if(!r->trigger)ret_free(r);
@@ -145,6 +145,8 @@ Room* room_addBSprite(Room* r, Sprite* s){
     }
     r->backpos++;
     canv_addOverlay(r->map, spr_getDispData(s), spr_getOI(s), spr_getOJ(s));
+    spr_processCollisions(s,r->colision,r->wid,r->hei);
+    spr_processShadows(s,r->shadows);
     return r;
 }
 Room* room_addOSprite(Room* r, Sprite* s){
@@ -174,7 +176,6 @@ Canvas* room_getRender(Room* r){
         const Canvas * tmpc=spr_getDispData(r->overs[i]);
         tmp=canv_addOverlay(canv, spr_getDispData(r->overs[i]), spr_getOI(r->overs[i]), spr_getOJ(r->overs[i]));
         if(!tmp)return NULL;
-
         box b;
         b.i=spr_getOI(r->overs[i]);
         b.j=spr_getOJ(r->overs[i]);
@@ -182,6 +183,8 @@ Canvas* room_getRender(Room* r){
         b.h=canv_getHeight(tmpc);
         r->ov[i]=b;
     }
+    //Canvas* res=canv_subCopy(canv,r->c_t,r->c_b,r->c_l,r->c_r);
+    //canv_free(canv);
     return canv;
 }
 Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei){
@@ -192,10 +195,10 @@ Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei){
         return NULL;
     }
     Canvas *cc=canv_subCopy(c, i, i+hei, j, j+wid);
-    Canvas *ccc=canv_AdjustCrop(cc, wid, hei);
-    canv_free(cc);
+    //Canvas *ccc=canv_AdjustCrop(cc, wid, hei);
+    //canv_free(cc);
     canv_free(c);
-    return ccc;
+    return cc;
 }
 /*
 -1:error
@@ -204,14 +207,25 @@ Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei){
  2: right border
  3: bottom border
  4: left border
+ 5: collison 
  */
 int room_modPos(Room* r, int index, int i, int j){
     if(!r||index>=r->overpos){
         return -1;
     }
-    if(i<0)return 1;
-    if(j<0)return 4;
-
+    int aux;
+    if(i<r->c_t)return 1;
+    if(j<r->c_l)return 4;
+    aux=spr_getHeight(r->overs[index]);
+    if(aux==-1)return -1;
+    if(aux+i>=r->c_b)return 3;
+    aux=spr_getWidth(r->overs[index]);
+    if(aux==-1)return -1;
+    if(aux+j>=r->c_r)return 2;
+    //Fits:
+    aux=spr_checkCollisions(r->overs[index],r->colision,r->wid,r->hei,i,j);
+    if(aux==-1)return -1;
+    if(aux==1)return 5;
     spr_setOJ(r->overs[index], j);
     spr_setOI(r->overs[index], i);
     return 0;
@@ -223,37 +237,50 @@ int room_incPos(Room* r, int index, int i, int j){
     room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]));
     return r;
 }
-Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int hei){
+/**
+ * @brief Sets the are of the window that will be rendered when the rendering functions are called
+ * This should be used when the player moves to another section of the map or when 
+ * 
+ * @param ro Room
+ * @param t  Top limit,      included
+ * @param l  Left limit,     included 
+ * @param b  Bottom limit,   excluded
+ * @param r  Right limit,    excluded
+ * @return   NULL if error, the given room otherwise 
+ */
+Room* room_setBounds(Room*ro, int t, int l, int b, int r){
+    if(!ro)return NULL;
+    ro->c_t=t;
+    ro->c_l=l;
+    ro->c_b=b;
+    ro->c_r=r;
+    return ro;
+}
+
+Room* room_printMod(Room* r,int disp_i, int disp_j){
+    int wid=r->c_r-r->c_l;
+    int hei=r->c_b-r->c_t;
     char * to_print=calloc(2*wid*hei, sizeof(char));
     int ipos=0;
     for(int i=0;i<r->overpos;++i){
         int i1,i2,j1,j2;
-        i1=max(r->ov[i].i,i);
-        j1=max(r->ov[i].j,j);
+        i1=max(r->ov[i].i,r->c_t);
+        j1=max(r->ov[i].j,r->c_l);
 
-        i2=min(r->ov[i].i+r->ov[i].h,i+hei);
-        j2=min(r->ov[i].j+r->ov[i].w,j+wid);
+        i2=min(r->ov[i].i+r->ov[i].h,r->c_b);
+        j2=min(r->ov[i].j+r->ov[i].w,r->c_r);
         if(i1>=i2||j1>=j2)continue;
-
-        Canvas* c=canv_subCopy(r->map,i1,i2,j1,j2);
-        //canv_print(stdout, c, i1-i+disp_i, j1-j+disp_j+1);
-        appendf(to_print, &ipos, canv_StorePrint(c, i1-i+disp_i, j1-j+disp_j+1));
+        Canvas* c=canv_subCopy(r->map,i1-1,i2,j1,j2);
+        appendf(to_print, &ipos, canv_StorePrint(c, i1-r->c_t+disp_i, j1-r->c_l+disp_j+1));
+        //appendf(to_print, &ipos, canv_StorePrint(c, i1-r->c_t+disp_i, j1-r->c_l+disp_j));
     }
     for(int i=0;i<r->overpos;++i){
-        /***
-
-         ADD CHECK FOR OUT OF BOUNDS
-        
-
-
-
-         */
         const Canvas* torender=spr_getDispData(r->overs[i]);
-        Canvas* bb=canv_subCopy(r->map, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
-        Canvas* rb=canv_Overlay(bb, torender, 0, 0);
-        //canv_print(stdout, rb, -i+disp_i+spr_getOI(r->overs[i]), -j+disp_j+spr_getOJ(r->overs[j])+1);
-        appendf(to_print, &ipos, canv_StorePrint(rb, -i+disp_i+spr_getOI(r->overs[i]), -j+disp_j+spr_getOJ(r->overs[j])+1));
-        //canv_print(stdout, rb, -i+disp_i+spr_getOI(r->overs[i]), 1000);
+        Canvas* bb=canv_subCopy(r->map, spr_getOI(r->overs[i])-1, spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+        Canvas* b2=canv_subCopy(r->shadows, spr_getOI(r->overs[i])-1, spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+        canv_addOverlay(bb,torender,0,0);
+        canv_addOverlay(bb,b2,0,0);
+        appendf(to_print, &ipos, canv_StorePrint(bb, disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1));
         box b;
         b.i=spr_getOI(r->overs[i]);
         b.j=spr_getOJ(r->overs[i]);
@@ -261,7 +288,6 @@ Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int h
         b.h=canv_getHeight(spr_getDispData(r->overs[i]));
         r->ov[i]=b;
         canv_free(bb);
-        canv_free(rb);
     }
     fprintf(stdout, "%s",to_print);
     fflush(stdout);
@@ -290,11 +316,8 @@ void room_free(Room* r){
         for(int i=0;i<r->hei;++i)free(r->colision[i]);
         free(r->colision);
     }
-    //Shadow bool array
-    if(r->shadows){
-        for(int i=0;i<r->hei;++i)free(r->shadows[i]);
-        free(r->shadows);
-    }
+    //Shadow 
+    canv_free(r->shadows);
     //Trigger array
     if(r->trigger){
         for(int i=0;i<r->hei;++i)free(r->trigger[i]);

@@ -35,7 +35,9 @@ Pixel* pix_ini(int r,int g, int b, int a){
     p->a=_filter(a);
     return p;
 }
-
+Pixel* pix_newTransparent(){
+    return pix_ini(0,0,0,0);
+}
 /*-----------------------------------------------------------------*/
 /// Frees the memory allocated for this pixel
 void pix_free(Pixel* p){
@@ -219,4 +221,8 @@ Pixel* pix_load(FILE* f){
     fscanf(f,"%d, %d, %d, %d]",&a,&r,&g,&b);
     return pix_ini(r, g, b, a);
     
+}
+
+bool pix_halfTransparent(const Pixel* a){
+    return a->a<=255/2+1;
 }

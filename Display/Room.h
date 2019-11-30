@@ -53,7 +53,7 @@ Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei);
 /// @param j               First column of the room that is displayed
 /// @param wid          Width of the displayed portion of the room
 /// @param hei          Height of the displayed portion of the room
-Room* room_printMod(Room* r,int disp_i, int disp_j, int i, int j, int wid, int hei);
+Room* room_printMod(Room* r,int disp_i, int disp_j);
 
 
 /// Modifies the position of a sprite in the top layer
@@ -93,4 +93,7 @@ Canvas* room_getRender(Room* r);
  are still being designed and the implementation is still not
  completely clear so they have not been included in this file */
 
+
+
+Room* room_setBounds(Room*ro, int t, int l, int b, int r);
 #endif /* Room_h */

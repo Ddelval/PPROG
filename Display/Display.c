@@ -122,7 +122,7 @@ Canvas* disp_Render(Display* dis){
     left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
     if(!left)goto CLEAN;
     dis->topm=(canv_getHeight(left)-canv_getHeight(right))/2;
-    res =canv_appendH(left, right);
+    res =canv_appendHNL(left, right);
 
 CLEAN:
     canv_free(left);
