@@ -6,4 +6,5 @@
 *.o
 .DS_Store
 *.xcodeproj/
+*.vs*
 DerivedData/
