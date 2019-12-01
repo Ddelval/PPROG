@@ -119,6 +119,7 @@ Canvas* disp_Render(Display* dis){
             goto CLEAN;
         }
     }
+    room_setBounds(dis->room,0,0,dis->height,dis->vdiv);
     left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
     if(!left)goto CLEAN;
     dis->topm=(canv_getHeight(left)-canv_getHeight(right))/2;

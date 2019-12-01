@@ -170,6 +170,7 @@ Room* room_addOSprite(Room* r, Sprite* s){
     return r;
 }
 Canvas* room_getRender(Room* r){
+    if(!r)return NULL;
     Canvas* canv=canv_copy(r->map);
     Canvas* tmp;
     for(int i=0;i<r->overpos;++i){
@@ -183,9 +184,9 @@ Canvas* room_getRender(Room* r){
         b.h=canv_getHeight(tmpc);
         r->ov[i]=b;
     }
-    //Canvas* res=canv_subCopy(canv,r->c_t,r->c_b,r->c_l,r->c_r);
-    //canv_free(canv);
-    return canv;
+    Canvas* res=canv_subCopy(canv,r->c_t,r->c_b,r->c_l,r->c_r);
+    canv_free(canv);
+    return res;
 }
 Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei){
     if(!r)return NULL;
@@ -263,6 +264,10 @@ int room_incPos(Room* r, int index, int i, int j){
  */
 Room* room_setBounds(Room*ro, int t, int l, int b, int r){
     if(!ro)return NULL;
+    if(t<0)t=0;
+    if(l<0)l=0;
+    if(b>=ro->hei)b=ro->hei;
+    if(r>=ro->wid)b=ro->wid;
     ro->c_t=t;
     ro->c_l=l;
     ro->c_b=b;
