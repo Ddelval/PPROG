@@ -55,7 +55,7 @@ int main(){
 
     Sprite* sp= spr_load(f);
     spr_setOI(sp, 20);
-    spr_setOJ(sp,330);
+    spr_setOJ(sp,600);
     fclose(f);
     room_addOSprite(r, sp);
     //canv_print(stdout, spr_getDispData(sp), 10, 10);
@@ -102,8 +102,15 @@ int main(){
             room_printMod(r, 0, 0);
         }
         if(c=='D'){
-            room_incPos(r, 0, 0, 10);
-            room_printMod(r, 0, 0);
+            if(room_incPos(r, 0, 0, 10)==2){
+                fprintf(stderr,"sss");
+                disp_scroll(dis,0,0.5);
+                canv_print(stdout,room_getRender(r),0,0);
+            }
+            else{
+                room_printMod(r, 0, 0);
+            }
+            
         }
         if(c=='O'){
             disp_incSelIndex(dis,1,-1);

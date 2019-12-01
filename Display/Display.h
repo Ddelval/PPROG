@@ -61,5 +61,5 @@ Display* print_Window(Display*dis, int index);
 
 
 Canvas* disp_Render(Display* dis);
-
+Display* disp_scroll(Display* dis,double i,double j);
 #endif /* Display_h */

@@ -215,7 +215,7 @@ int room_modPos(Room* r, int index, int i, int j){
         return -1;
     }
     int aux;
-    int retval;
+    int retval=0;
     if(i<=r->c_t){
         i=1;
         retval=1;
@@ -242,14 +242,13 @@ int room_modPos(Room* r, int index, int i, int j){
     if(aux==1)return 5;
     spr_setOJ(r->overs[index], j);
     spr_setOI(r->overs[index], i);
-    return 0;
+    return retval;
 }
 int room_incPos(Room* r, int index, int i, int j){
     if(!r||index>=r->overpos){
         return NULL;
     }
-    room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]));
-    return r;
+    return room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]));
 }
 /**
  * @brief Sets the are of the window that will be rendered when the rendering functions are called
@@ -264,10 +263,24 @@ int room_incPos(Room* r, int index, int i, int j){
  */
 Room* room_setBounds(Room*ro, int t, int l, int b, int r){
     if(!ro)return NULL;
-    if(t<0)t=0;
-    if(l<0)l=0;
-    if(b>=ro->hei)b=ro->hei;
-    if(r>=ro->wid)b=ro->wid;
+    int wi=r-l;
+    int he=b-t;
+    if(t<0){
+        t=0;
+        b=min(t+he,ro->hei);
+    }
+    if(l<0){
+        l=0;
+        r=min(l+wi,ro->wid);
+    }
+    if(b>ro->hei){
+        b=ro->hei;
+        t=max(0,b-he);
+    }
+    if(r>ro->wid){
+        r=ro->wid;
+        l=max(0,r-wi);
+    }
     ro->c_t=t;
     ro->c_l=l;
     ro->c_b=b;
@@ -311,6 +324,13 @@ Room* room_printMod(Room* r,int disp_i, int disp_j){
     fprintf(stdout, "%s",to_print);
     fflush(stdout);
     return r;
+}
+Room* room_scroll(Room* r, double i, double j){
+    if(!r)return NULL;
+    int di,dj;
+    di=i*(r->c_b-r->c_t);
+    dj=j*(r->c_r-r->c_l);
+    room_setBounds(r,r->c_t+di,r->c_l+dj,r->c_b+di,r->c_r+dj);
 }
 void room_free(Room* r){
     if(!r)return;

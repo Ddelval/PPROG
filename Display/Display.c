@@ -87,6 +87,7 @@ Display* disp_incSelIndex(Display* dis, int winIndex, int increment){
   if(!dis)return NULL;
   if(winIndex>=dis->nLatWindow) return NULL;
   if(win_incrementSelected(dis->latWindow[winIndex],increment)==NULL){
+    
     return NULL;
   }
   return print_Window(dis,winIndex);
@@ -132,6 +133,11 @@ CLEAN:
 
     return res;
 }
+Display* disp_scroll(Display* dis,double i,double j){
+    if(!dis)return NULL;
+    return room_scroll(dis->room,i,j);
+    
+}
 Display* print_Window(Display*dis, int index){
     if(!dis) return NULL;
     if(index<0 || index>dis->nLatWindow) return NULL;
@@ -142,4 +148,5 @@ Display* print_Window(Display*dis, int index){
       ipos+=win_getHeight(dis->latWindow[i]);
     }
     canv_print(stdout,c,ipos,dis->vdiv+1);
+    return dis;
 }
