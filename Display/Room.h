@@ -95,5 +95,5 @@ Canvas* room_getRender(Room* r);
 
 
 
-Room* room_setBounds(Room*ro, int t, int l, int b, int r);
+Room* room_setBounds(Room*ro, int t, int l,int b,int r);
 #endif /* Room_h */

@@ -120,7 +120,8 @@ Canvas* disp_Render(Display* dis){
         }
     }
     room_setBounds(dis->room,0,0,dis->height,dis->vdiv);
-    left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
+    left=room_getRender(dis->room);
+    //left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
     if(!left)goto CLEAN;
     dis->topm=(canv_getHeight(left)-canv_getHeight(right))/2;
     res =canv_appendHNL(left, right);
@@ -135,9 +136,10 @@ Display* print_Window(Display*dis, int index){
     if(!dis) return NULL;
     if(index<0 || index>dis->nLatWindow) return NULL;
     Canvas* c=win_render(dis->latWindow[index]);
-    int ipos=dis->tithei+dis->topm;
+    //int ipos=dis->tithei+dis->topm;
+    int ipos=dis->tithei;
     for(int i=0;i<index;++i){
       ipos+=win_getHeight(dis->latWindow[i]);
     }
-    canv_print(stdout,c,ipos,dis->vdiv);
+    canv_print(stdout,c,ipos,dis->vdiv+1);
 }

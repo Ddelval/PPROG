@@ -79,12 +79,11 @@ int main(){
 
 
 
-    Window* w1=win_ini("Resources", wel, 3, w-vdiv, h/2-20, 0, 0, f6);
-    Window* w2=win_ini("Actions", wela, 3, w-vdiv, h/2-20, 0, 0, f6);
+    Window* w1=win_ini("Resources", wel, 3, w-vdiv-1, h/2-20, 0, 0, f6);
+    Window* w2=win_ini("Actions", wela, 3, w-vdiv-1, h/2-20, 0, 0, f6);
     disp_AddLWindow(dis, w1);
     disp_AddLWindow(dis, w2);
     canv_print(stdout, disp_Render(dis), 0, 0);
-    room_setBounds(r,0,0,h,vdiv);
     while(1){
         char c;
         c=getch1();

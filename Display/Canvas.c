@@ -570,11 +570,11 @@ void canv_print(FILE* f, Canvas* c,int i,int j){
     if(!da)return;
     for(int w=0;w<c->hei;++w){
         char * aux=movecur(i+w, j);
-        ///////////////////fprintf(f,"%s",aux);
-        puts(aux);
+        fprintf(f,"%s",aux);
+        //puts(aux);
         free(aux);
-        //////////////////fprintf(f, "%s",da[w]);
-        puts(da[w]);
+        fprintf(f, "%s",da[w]);
+        //puts(da[w]);
         free(da[w]);
     }
     if(tofree) canv_free(c);

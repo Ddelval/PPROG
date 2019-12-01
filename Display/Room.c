@@ -288,14 +288,14 @@ Room* room_printMod(Room* r,int disp_i, int disp_j){
         i2=min(r->ov[i].i+r->ov[i].h,r->c_b);
         j2=min(r->ov[i].j+r->ov[i].w,r->c_r);
         if(i1>=i2||j1>=j2)continue;
-        Canvas* c=canv_subCopy(r->map,i1-1,i2,j1,j2);
+        Canvas* c=canv_subCopy(r->map,i1,i2,j1,j2);
         appendf(to_print, &ipos, canv_StorePrint(c, i1-r->c_t+disp_i, j1-r->c_l+disp_j+1));
         //appendf(to_print, &ipos, canv_StorePrint(c, i1-r->c_t+disp_i, j1-r->c_l+disp_j));
     }
     for(int i=0;i<r->overpos;++i){
         const Canvas* torender=spr_getDispData(r->overs[i]);
-        Canvas* bb=canv_subCopy(r->map, spr_getOI(r->overs[i])-1, spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
-        Canvas* b2=canv_subCopy(r->shadows, spr_getOI(r->overs[i])-1, spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+        Canvas* bb=canv_subCopy(r->map, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+        Canvas* b2=canv_subCopy(r->shadows, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
         canv_addOverlay(bb,torender,0,0);
         canv_addOverlay(bb,b2,0,0);
         appendf(to_print, &ipos, canv_StorePrint(bb, disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1));
