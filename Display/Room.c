@@ -214,14 +214,27 @@ int room_modPos(Room* r, int index, int i, int j){
         return -1;
     }
     int aux;
-    if(i<r->c_t)return 1;
-    if(j<r->c_l)return 4;
+    int retval;
+    if(i<=r->c_t){
+        i=1;
+        retval=1;
+    }
+    if(j<r->c_l){
+        j=1;
+        retval=4;
+    }
     aux=spr_getHeight(r->overs[index]);
     if(aux==-1)return -1;
-    if(aux+i>=r->c_b)return 3;
+    if(aux+i>=r->c_b){
+        retval= 3;
+        i=r->c_b-aux-1;
+    }
     aux=spr_getWidth(r->overs[index]);
     if(aux==-1)return -1;
-    if(aux+j>=r->c_r)return 2;
+    if(aux+j>=r->c_r){
+        retval= 2;
+        j=r->c_r-aux-1;
+    }
     //Fits:
     aux=spr_checkCollisions(r->overs[index],r->colision,r->wid,r->hei,i,j);
     if(aux==-1)return -1;
@@ -288,6 +301,7 @@ Room* room_printMod(Room* r,int disp_i, int disp_j){
         b.h=canv_getHeight(spr_getDispData(r->overs[i]));
         r->ov[i]=b;
         canv_free(bb);
+        canv_free(b2);
     }
     fprintf(stdout, "%s",to_print);
     fflush(stdout);

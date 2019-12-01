@@ -571,10 +571,10 @@ void canv_print(FILE* f, Canvas* c,int i,int j){
     for(int w=0;w<c->hei;++w){
         char * aux=movecur(i+w, j);
         ///////////////////fprintf(f,"%s",aux);
-        //puts(aux);
+        puts(aux);
         free(aux);
         //////////////////fprintf(f, "%s",da[w]);
-        //puts(da[w]);
+        puts(da[w]);
         free(da[w]);
     }
     if(tofree) canv_free(c);
@@ -585,6 +585,7 @@ void canv_print(FILE* f, Canvas* c,int i,int j){
 char * canv_StorePrint(Canvas* c, int i, int j){
     if(!c)return NULL;
     bool tofree=false;
+    
     if(i<0&&j<0){
         if(-i>canv_getHeight(c)||-j>canv_getWidth(c))return NULL;
         tofree=true;
@@ -720,7 +721,7 @@ char** _canv_render(const Canvas* c,int wid, int hei){
     if(wid>c->wid)wid=c->wid;
     if(hei>c->hei)hei=c->hei;
     if(!c)return NULL;
-    Canvas* cop=canv_backGrnd(0, 0, 0, 0, c->wid, c->hei);
+    Canvas* cop=canv_backGrnd(0, 0, 0, 0, wid, hei);
     if(!cop)return NULL;
     if(!canv_addOverlay(cop, c, 0, 0)){
         canv_free(cop);

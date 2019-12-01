@@ -79,6 +79,7 @@ Sprite* spr_copy(const Sprite* spr){
         for(int j=0;j<spr->width;++j){
             sp->trigger[i][j]=spr->trigger[i][j];
             sp->collision[i][j]=spr->collision[i][j];
+            sp->shadow[i][j]=spr->shadow[i][j];
         }
     }
     canv_free(sp->canvas);
@@ -119,11 +120,12 @@ Sprite* spr_load(FILE* f){
     }
     res->canvas=c;
     
+    
     if(ff==1){
         Canvas* colldata=canv_load(f);
         for(int i=0;i<h;++i){
             for(int j=0;j<w;++j){
-                if(((double)i)/h<=((double)sh)/100)res->collision[i][j]=!pix_halfTransparent(canv_getPixel(colldata,i,j));
+                if(((double)i)/h>((double)sh)/100)res->collision[i][j]=!pix_halfTransparent(canv_getPixel(colldata,i,j));
                 else res->shadow[i][j]=!pix_halfTransparent(canv_getPixel(colldata,i,j));
                 
             }
@@ -132,9 +134,14 @@ Sprite* spr_load(FILE* f){
     }
     else if(ff==0){
         for(int i=0;i<h;++i){
+            
             for(int j=0;j<w;++j){
-                if(((double)i)/h<=((double)sh)/100)res->collision[i][j]=!pix_halfTransparent(canv_getPixel(c,i,j));
-                else res->shadow[i][j]=!pix_halfTransparent(canv_getPixel(c,i,j));
+                if(i*100>h*sh)res->collision[i][j]=!pix_halfTransparent(canv_getPixel(c,i,j));
+                else {
+                    
+                    res->shadow[i][j]=!pix_halfTransparent(canv_getPixel(c,i,j));
+                    //fprintf(stderr,"-%d %d %d %d \n",id,i,j,res->shadow[i][j]);
+                }
             }
         }
     }
@@ -176,14 +183,14 @@ Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei){
     return s;
 }
 int spr_checkCollisions(Sprite*s,bool**rarr,int rwid,int rhei, int ni,int nj){
-    FILE*f=fopen("datasss.txt","w");
+    /*FILE*f=fopen("datasss.txt","w");
     for(int i=0;i<s->height;++i){
         for(int j=0;j<s->width;++j){
             fprintf(f,"%2d ",s->collision[i][j]);
         }
         fprintf(f,"\n");
-    }
-    fclose(f);
+    }*/
+    //fclose(f);
     if(!rarr)return -1;
     int i2,j2;
     for(int i=0;i<s->height;++i){
@@ -213,8 +220,9 @@ Sprite* spr_processShadows(Sprite* s,Canvas* shad){
         for(int j=0;j<s->width;++j){
             j2=j+s->jPos;
             if(j2>=rwid)break;
+                //fprintf(stderr,"%d %d %d %d \n",s->id,i,j,s->shadow[i][j]);
             if(s->shadow[i][j]){
-                canv_setPixel(shad,canv_getPixel(s->canvas,i,j),i2,j2);
+                assert(canv_setPixel(shad,canv_getPixel(s->canvas,i,j),i2,j2)!=NULL);
             }
         }
     }
