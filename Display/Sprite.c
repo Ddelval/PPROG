@@ -95,7 +95,7 @@ Sprite* spr_copy(const Sprite* spr){
  <Collision_canvas>
  <nº triggers>
  <list of triggers>
- The format of a trigger has to be: i1, i2, j1, j2
+ The format of a trigger has to be: i1, i2, j1, j2 id
  where i1 is the initial row, i2 is the last row,
  j1 is the first row, j2 is the last row
  (All included)

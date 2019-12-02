@@ -20,6 +20,7 @@ struct _Display{
     int latWinalloc;
     Window** latWindow;
     Window* popup;
+    bool dialog;
 };
 
 Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* titf){
@@ -162,5 +163,14 @@ Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f){
     Canvas* ren=wl_render(wl, dis->width-100);
     canv_addOverlay(bckg,ren,10,10);
     canv_print(stdout,bckg,canv_getHeight(c)-h,0);
+    dis->dialog=true;
+    return dis;
+}
+Display* disp_remDialog(Display* dis){
+    if(!dis)return NULL;
+    Canvas* c=disp_Render(dis);
+    canv_print(stdout,c,0,0);
+    canv_free(c);
+    dis->dialog=false;
     return dis;
 }

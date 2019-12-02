@@ -41,6 +41,9 @@ int main(){
     FILE* f=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
     Font* f6=font_load(f);
     fclose(f);
+    f=fopen("Display/Fonts/Robo_Mono/08.txt", "r");
+    Font* f8=font_load(f);
+    fclose(f);
     f=fopen("Display/Fonts/Robo_Mono/04.txt", "r");
     Font* f4=font_load(f);
     fclose(f);
@@ -60,17 +63,20 @@ int main(){
     room_addOSprite(r, sp);
     //canv_print(stdout, spr_getDispData(sp), 10, 10);
     char* c="Room 1";
-    Display* dis= disp_ini(w, h, r, vdiv, c, f6);
+    Display* dis= disp_ini(w, h, r, vdiv, c, f8);
 
-    f=fopen("Icons/food.txt", "r");
-    Canvas* canvv=canv_load(f);
-    fclose(f);
+    Sprite* ic=sdic_lookup(101);
+    Canvas* canvv=spr_getDispData(ic);
 
     Welem* wel[3];
   //  wel[0]=we_createLabel("6 x Food", f4, 10);
-    wel[0]=we_createLabic("5", f6, 10, 10, canvv, TEXT_LEFT);
-    wel[1]=we_createLabel("5 x Water", f4, 10);
-    wel[2]=we_createLabel("5 x Stone", f4, 10);
+    wel[0]=we_createLabic("  5", f6, 10, 10, canvv, TEXT_RIGHT);
+    ic=sdic_lookup(102);
+    canvv=spr_getDispData(ic);
+    wel[1]=we_createLabic(" 10", f6, 10, 10, canvv, TEXT_RIGHT);
+    ic=sdic_lookup(102);
+    canvv=spr_getDispData(ic);
+    wel[2]=we_createLabic(" 15", f6, 10, 10, canvv, TEXT_RIGHT);
 
     Welem* wela[3];
     wela[0]=we_createLabel("Title", f6, 10);
@@ -79,12 +85,12 @@ int main(){
 
 
 
-    Window* w1=win_ini("Resources", wel, 3, w-vdiv-1, h/2-20, 0, 0, f6);
-    Window* w2=win_ini("Actions", wela, 3, w-vdiv-1, h/2-20, 0, 0, f6);
+    Window* w1=win_ini("Resources", wel, 3, w-vdiv-1, h/2-20, 0, 0, f8);
+    Window* w2=win_ini("Actions", wela, 3, w-vdiv-1, h/2-20, 0, 0, f8);
     disp_AddLWindow(dis, w1);
     disp_AddLWindow(dis, w2);
     canv_print(stdout, disp_Render(dis), 0, 0);
-    disp_DiaglogWindow(dis,"Hello, my name is Pepe. I am going to be your annoying friend in this game. If at some point I am too anoying, you can always press ALT + F4 and I will stop.",f4);
+    disp_DiaglogWindow(dis,"Hello, my name is Pepe. I am going to be your annoying friend in this game. If at some point I get too anoying, you can always press ALT + F4 and I will stop.",f4);
     while(1){
         char c;
         c=getch1();
