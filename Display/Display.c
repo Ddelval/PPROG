@@ -134,8 +134,8 @@ CLEAN:
 
     return res;
 }
-Display* disp_scroll(Display* dis,double i,double j){
-    if(!dis)return NULL;
+int disp_scroll(Display* dis,double i,double j){
+    if(!dis)return -1;
     return room_scroll(dis->room,i,j);
     
 }

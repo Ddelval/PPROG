@@ -97,22 +97,44 @@ int main(){
         //scanf("%c",&c);
         //printf("%c\n",c);
         if(c=='W'){
-            room_incPos(r, 0, -10, 0);
-            room_printMod(r, 0, 0);
+            if(room_incPos(r, 0, -10, 0)==1){
+                //disp_scroll(dis,-0.5,0);
+                if(disp_scroll(dis,-0.5,0)==1){
+                    canv_print(stdout,room_getRender(r),0,0);
+                }
+            }
+            else{
+                room_printMod(r, 0, 0);
+            }
         }
         if(c=='S'){
-            room_incPos(r, 0, 10, 0);
-            room_printMod(r, 0, 0);
+            if(room_incPos(r, 0, 10, 0)==3){
+                if(disp_scroll(dis,0.5,0)==1){
+                    canv_print(stdout,room_getRender(r),0,0);
+                }
+                
+            }
+            else{
+                room_printMod(r, 0, 0);
+            }
         }
         if(c=='A'){
-            room_incPos(r, 0, 0, -10);
-            room_printMod(r, 0, 0);
+            if(room_incPos(r, 0, 0, -10)==4){
+                //disp_scroll(dis,0,0.5);
+                if(disp_scroll(dis,0,-0.5)==1){
+                    canv_print(stdout,room_getRender(r),0,0);
+                }
+            }
+            else{
+                room_printMod(r, 0, 0);
+            }
         }
         if(c=='D'){
             if(room_incPos(r, 0, 0, 10)==2){
-                fprintf(stderr,"sss");
-                disp_scroll(dis,0,0.5);
-                canv_print(stdout,room_getRender(r),0,0);
+                //disp_scroll(dis,0,0.5);
+                if(disp_scroll(dis,0,0.5)==1){
+                    canv_print(stdout,room_getRender(r),0,0);
+                }
             }
             else{
                 room_printMod(r, 0, 0);
@@ -125,7 +147,7 @@ int main(){
         if(c=='L'){
             disp_incSelIndex(dis,1,1);
         }
-        usleep(100000);
+        //usleep(100000);
 
     }
     return 0;
