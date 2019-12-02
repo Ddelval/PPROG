@@ -62,4 +62,5 @@ Display* print_Window(Display*dis, int index);
 
 Canvas* disp_Render(Display* dis);
 Display* disp_scroll(Display* dis,double i,double j);
+Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f);
 #endif /* Display_h */

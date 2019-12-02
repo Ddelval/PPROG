@@ -150,3 +150,17 @@ Display* print_Window(Display*dis, int index){
     canv_print(stdout,c,ipos,dis->vdiv+1);
     return dis;
 }
+
+Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f){
+    if(!dis||!txt)return NULL;
+    Canvas* c=disp_Render(dis);
+    int h=150;
+    Canvas* bottom=canv_subCopy(c,canv_getHeight(c)-h,canv_getHeight(c),0,canv_getWidth(c));
+    Canvas* bckg=canv_blur(bottom,10);
+    canv_darken(bckg,0.40);
+    Wlabel* wl= wl_ini(txt,f,10);
+    Canvas* ren=wl_render(wl, dis->width-100);
+    canv_addOverlay(bckg,ren,10,10);
+    canv_print(stdout,bckg,canv_getHeight(c)-h,0);
+    return dis;
+}

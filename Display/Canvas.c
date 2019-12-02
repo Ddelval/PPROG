@@ -746,11 +746,82 @@ char** _canv_render(const Canvas* c,int wid, int hei){
     canv_free(cop);
     return ch;
 }
+
 Canvas* canv_setPixel(Canvas* c,Pixel* p, int i,int j){
     if(!p||!c)return NULL;
     if(i>canv_getHeight(c)||j>canv_getWidth(c)){
         return NULL;
     }
     pix_copyVals(c->data[i][j],p);
+    return c;
+}
+
+
+
+Canvas* canv_blur(Canvas* c,int rad){
+    if(!c)return NULL;
+    Canvas* c2=canv_ini(canv_getWidth(c),canv_getHeight(c));
+    for(int i=0;i<canv_getHeight(c);++i){
+        for(int j=0;j<canv_getWidth(c);++j){
+            int r,g,b,a;
+            r=g=a=b=0;
+            for(int k=-rad;k<=rad;++k){
+                if(j+k>=0&&j+k<canv_getWidth(c)){
+                    r+=pix_retR(c->data[i][j+k]);
+                    g+=pix_retG(c->data[i][j+k]);
+                    b+=pix_retB(c->data[i][j+k]);
+                    a+=pix_retA(c->data[i][j+k]);
+                }
+            }
+            c2->data[i][j]=pix_ini(r/(2*rad),g/(2*rad),b/(2*rad),a/(2*rad));
+            if(!c2->data[i][j]){
+                canv_free(c2);
+                return NULL;
+            }
+        }
+    }
+    int rad2=rad/2;
+    Canvas* c3=canv_copy(c2);
+    for(int i=0;i<canv_getWidth(c);++i){
+        for(int j=0;j<canv_getHeight(c);++j){
+            int r,g,b,a;
+            r=g=a=b=0;
+            for(int k=-rad2;k<=rad2;++k){
+                if(j+k>=0&&j+k<canv_getHeight(c)){
+                    r+=pix_retR(c2->data[j+k][i]);
+                    g+=pix_retG(c2->data[j+k][i]);
+                    b+=pix_retB(c2->data[j+k][i]);
+                    a+=pix_retA(c2->data[j+k][i]);
+                }
+            }
+            c3->data[j][i]=pix_ini(r/(2*rad2),g/(2*rad2),b/(2*rad2),a/(2*rad2));
+            if(!c3->data[j][i]){
+                canv_free(c2);
+                canv_free(c3);
+                return NULL;
+            }
+        }
+    }
+    canv_free(c2);
+    return c3;
+}
+/**
+ * @brief Darkens the pixels in the canvas
+ * It will not create a new canvas, the Canvas* return value
+ * will only indicate wheter or not the process was successful
+ * 
+ * @param c     Canvas to be darken
+ * @param light Percentage of light that the canvas will have 
+ *              relative to its current brightness
+ * @return  c if the process was successful
+ *          NULL if there was any error
+ */
+Canvas* canv_darken(Canvas* c,double light){
+    if(!c)return NULL;
+    for(int i=0;i<c->hei;++i){
+        for(int j=0;j<c->wid;++j){
+            pix_darken(c->data[i][j],light);
+        }
+    }
     return c;
 }

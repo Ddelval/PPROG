@@ -226,3 +226,10 @@ Pixel* pix_load(FILE* f){
 bool pix_halfTransparent(const Pixel* a){
     return a->a<=255/2+1;
 }
+Pixel* pix_darken(Pixel* p,double light){
+    if(!p)return NULL;
+    p->r*=light;
+    p->g*=light;
+    p->b*=light;
+    return p;
+}
