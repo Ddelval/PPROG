@@ -107,10 +107,7 @@ table_t* table_open(char* path) {
 								fread(table->types, sizeof(type_t),table->n_cols,table->f);
 								table->fpos = ftell(table->f);
 								table->value = (void **) calloc(table->n_cols, sizeof(void *));
-								for(int i = 0; i < table->n_cols; i++) {
-																table->value[i] = (void *) calloc(1, sizeof(void));
-								}
-
+								table->value[0] = malloc(4*sizeof(int));
 
 								return table;
 }
@@ -139,15 +136,10 @@ void table_close(table_t* table) {
 								fclose(table->f);
 								table->f = NULL;
 								table->types = NULL;
-								free(table);
-
-								while(table->value[i]) {
-																printf("table->value[%d]: %p\n", i, table->value[i]);
-																free(table->value[i]);
-																i++;
-								}
+								free(table->value[0]);
 
 								free(table->value);
+								free(table);
 								return;
 }
 
@@ -211,6 +203,7 @@ type_t*table_types(table_t* table) {
  */
 long table_first_pos(table_t* table) {
 								if(!table) return -1;
+								printf("return %d\n", table->fpos);
 								return table->fpos;
 }
 
@@ -262,10 +255,11 @@ long table_read_record(table_t *t, long pos) {
 								int i = 0, record_size = 0;
 
 								if(!t || !(t->f) || pos < (t->fpos)) return -1;
-
 								fseek(t->f, pos, SEEK_SET);
-								fread(&record_size, sizeof(int), 1, t->f);
+								if (fread(&record_size, sizeof(int), 1, t->f) < 1)
+									return -1;
 
+								free(t->value[0]);
 								buf = (char*) calloc(1, record_size);
 								fread(buf, record_size, 1, t->f);
 
@@ -274,7 +268,7 @@ long table_read_record(table_t *t, long pos) {
 																t->value[i] = (void *) pt;
 																pt += value_length(t->types[i], pt);
 								}
-								fseek(t->f, 0, SEEK_END);
+//								fseek(t->f, 0, SEEK_END);
 								return ftell(t->f);
 }
 
@@ -299,7 +293,7 @@ long table_read_record(table_t *t, long pos) {
     of the file).
  */
 void *table_get_col(table_t* table, int col) {
-								if(!table || !(table->f) || !(table->value) || !(table->value[col])) return NULL;
+								if(!table || !(table->f) || !(table->value) || !(table->value[col]) || col >= table->n_cols) return NULL;
 								return table->value[col];
 }
 

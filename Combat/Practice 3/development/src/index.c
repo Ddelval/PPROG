@@ -2,14 +2,21 @@
 #include <stdio.h>
 #include <string.h>
 #include "index.h"
-
+/*
 struct index_ {
+  int n_rec;
+  record_t **recs;
 };
 
+typedef struct{
+  int key;
+  int n_rec;
+  long * rec;
+} record_t;
+*/
 
 
-
-/* 
+/*
    Function: int index_create(char *path, int type)
 
    Creates a file for saving an empty index. The index is initialized
@@ -30,10 +37,10 @@ int index_create(char *path, type_t type) {
 
 
 
-/* 
+/*
    Opens a previously created index: reads the contents of the index
    in an index_t structure that it allocates, and returns a pointer to
-   it (or NULL if the files doesn't exist or there is an error). 
+   it (or NULL if the files doesn't exist or there is an error).
 
    NOTE: the index is stored in memory, so you can open and close the
    file in this function. However, when you are asked to save the
@@ -43,7 +50,7 @@ int index_create(char *path, type_t type) {
    again).
 
    Parameters:
-   path:  the file where the index is 
+   path:  the file where the index is
 
    Returns:
    pt:   index opened
@@ -55,12 +62,12 @@ index_t* index_open(char* path) {
 }
 
 
-/* 
+/*
    int index_save(index_t* index);
 
    Saves the current state of index in the file it came from. Note
    that the name of the file in which the index is to be saved is not
-   given.  See the NOTE to index_open.  
+   given.  See the NOTE to index_open.
 
    Parameters:
    index:  the index the function operates upon
@@ -75,7 +82,7 @@ int index_save(index_t* idx) {
 }
 
 
-/* 
+/*
    Function: int index_put(index_t *index, int key, long pos);
 
    Puts a pair key-position in the index. Note that the key may be
@@ -100,21 +107,21 @@ int index_put(index_t *idx, int key, long pos) {
 }
 
 
-/* 
+/*
    Function: long *index_get(index_t *index, int key, int* nposs);
 
-   Retrieves all the positions associated with the key in the index. 
+   Retrieves all the positions associated with the key in the index.
 
    Parameters:
    index:  the index the function operates upon
    key: the key of the record to be searched
    nposs: output paramters: the number of positions associated to this key
-   
+
    Returns:
 
    pos: an array of *nposs long integers with the positions associated
         to this key
-   NULL: the key was not found   
+   NULL: the key was not found
 
    NOTE: the parameter nposs is not an array of integers: it is
    actually an integer variable that is passed by reference. In it you
@@ -141,9 +148,9 @@ long *index_get(index_t *idx, int key, int* nposs) {
 }
 
 
-/* 
+/*
    Closes the index by freeing the allocated resources. No operation
-   on the index will be possible after calling this function. 
+   on the index will be possible after calling this function.
 
    Parameters:
    index:  the index the function operates upon
@@ -170,12 +177,12 @@ void index_close(index_t *idx) {
    index:  the index the function operates upon
    n: number of the record to be returned
    nposs: output paramters: the number of positions associated to this key
-   
+
    Returns:
 
    pos: an array of *nposs long integers with the positions associated
         to this key
-   NULL: the key was not found   
+   NULL: the key was not found
 
 
    See index_get for explanation on nposs and pos: they are the same stuff
@@ -183,4 +190,3 @@ void index_close(index_t *idx) {
 long *index_get_order(index_t *idx, int n, int* nposs) {
   return NULL;
 }
-
