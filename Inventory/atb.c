@@ -6,7 +6,7 @@
 
 #include "atb.h"
 #include "types.h"
-
+#include "errno.h"
 extern int errno;
 
 struct _atb {
@@ -132,6 +132,7 @@ atb * atb_merge(atb * primary, atb * secondary){
     return primary;
 }
 /*
+NO USAR!!!
  Function name: atb_print
  Utility: it prints the attribute values in a string format into a file.
  Inputs: FILE pointer, atb pointer
@@ -157,7 +158,7 @@ int atb_print(FILE *pf, atb * atb){
 
 atb *atb_allCopy(atb *a){
   atb * cpy = NULL;
-
+  cpy = atb_ini();
   if(!a) return NULL;
 
   cpy->health = a->health;
