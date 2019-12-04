@@ -68,14 +68,29 @@ Canvas* wi_render (Wlabic* wi, int width){
         return NULL;
     }
     canv_free(c);
-    if(wi->l==TEXT_RIGHT){
+    if(wi->l==TEXT_EAST){
         if(canv_appendHI(cc, c1)==NULL){
             canv_free(cc);
             canv_free(c1);
         }
     }
-    else{
+    else if(wi->l==TEXT_WEST){
         if(canv_appendHI(c1, cc)==NULL){
+            canv_free(cc);
+            canv_free(c1);
+        }
+        Canvas * c=c1;
+        c1=cc;
+        cc=c;
+    }
+    else if(wi->l==TEXT_NORTH){
+        if(canv_appendVI(cc, c1)==NULL){
+            canv_free(cc);
+            canv_free(c1);
+        }
+    }
+    else{
+        if(canv_appendVI(c1, cc)==NULL){
             canv_free(cc);
             canv_free(c1);
         }

@@ -16,7 +16,7 @@
 #include "Wlabel.h"
 
 typedef struct _Wlabic Wlabic;
-typedef enum {TEXT_RIGHT,TEXT_LEFT} Alignment;
+typedef enum {TEXT_EAST,TEXT_WEST,TEXT_NORTH,TEXT_SOUTH} Alignment;
 /*-----------------------------------------------------------------*/
 /// Create a new Wlabic element.
 /// This function only sets the text portion of the element and the

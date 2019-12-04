@@ -70,13 +70,13 @@ int main(){
 
     Welem* wel[3];
   //  wel[0]=we_createLabel("6 x Food", f4, 10);
-    wel[0]=we_createLabic("  5", f6, 10, 10, canvv, TEXT_RIGHT);
+    wel[0]=we_createLabic("  5", f6, 10, 10, canvv, TEXT_EAST);
     ic=sdic_lookup(102);
     canvv=spr_getDispData(ic);
-    wel[1]=we_createLabic(" 10", f6, 10, 10, canvv, TEXT_RIGHT);
+    wel[1]=we_createLabic(" 10", f6, 10, 10, canvv, TEXT_EAST);
     ic=sdic_lookup(102);
     canvv=spr_getDispData(ic);
-    wel[2]=we_createLabic(" 15", f6, 10, 10, canvv, TEXT_RIGHT);
+    wel[2]=we_createLabic(" 15", f6, 10, 10, canvv, TEXT_EAST);
 
     Welem* wela[3];
     wela[0]=we_createLabel("Title", f6, 10);

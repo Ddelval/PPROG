@@ -62,7 +62,7 @@ int main(int argc, const char * argv[]) {
   win_addWindowElement(win,we2);
   Welem* we3=we_createLabel("5x data", f, 10);
   win_addWindowElement(win,we3);
-  Welem* we4=we_createLabic("This is an example test", f, 4, 20, c, TEXT_RIGHT);
+  Welem* we4=we_createLabic("This is an example test", f, 4, 20, c, TEXT_EAST);
   win_addWindowElement(win,we4);
 
   win_setSelected(win, 0);
