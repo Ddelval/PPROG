@@ -90,7 +90,7 @@ int main(){
     disp_AddLWindow(dis, w1);
     disp_AddLWindow(dis, w2);
     canv_print(stdout, disp_Render(dis), 0, 0);
-    disp_DiaglogWindow(dis,"Hello, my name is Pepe. I am going to be your annoying friend in this game. If at some point I get too anoying, you can always press ALT + F4 and I will stop.",f4);
+    //disp_DiaglogWindow(dis,"Hello, my name is Pepe. I am going to be your annoying friend in this game. If at some point I get too anoying, you can always press ALT + F4 and I will stop.",f4);
     while(1){
         char c;
         c=getch1();

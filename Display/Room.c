@@ -217,22 +217,26 @@ int room_modPos(Room* r, int index, int i, int j){
     int aux;
     int retval=0;
     if(i<=r->c_t+1){
+        i=r->c_t;
         if(spr_getOI(r->overs[index])!=r->c_t+1) i=r->c_t+1;
         else retval=1;
     }
     if(j<=r->c_l+1){
+        j=r->c_l;
         if(spr_getOJ(r->overs[index])!=r->c_l+1) j=r->c_l+1;
         else retval=4;
     }
     aux=spr_getHeight(r->overs[index]);
     if(aux==-1)return -1;
     if(aux+i>=r->c_b-1){
+        i=r->c_b-aux;
         if(spr_getOI(r->overs[index])+spr_getHeight(r->overs[index])!=r->c_b-1) i=r->c_b-aux-1;
         else retval= 3;
     }
     aux=spr_getWidth(r->overs[index]);
     if(aux==-1)return -1;
     if(aux+j>=r->c_r-1){
+        j=r->c_r-aux;
         if(spr_getOJ(r->overs[index])+spr_getWidth(r->overs[index])!=r->c_r-1) j=r->c_r-aux-1;
         else retval= 2;
     }
@@ -241,6 +245,7 @@ int room_modPos(Room* r, int index, int i, int j){
     if(aux==-1)return -1;
     if(aux==1)return 5;
     spr_setOJ(r->overs[index], j);
+    fprintf(stderr,"%d\n",j);
     spr_setOI(r->overs[index], i);
     return retval;
 }
