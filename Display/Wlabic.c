@@ -10,20 +10,20 @@ struct _Wlabic{
     Canvas* pic;
     Alignment l;
     int br, bg, bb, ba;
-    int hgap;
+    int gap;
 };
 
-Wlabic* wi_ini(char *t, const Font* f,int vgap, int hgap, Alignment l){
+Wlabic* wi_ini(char *t, const Font* f,int lgap, int igap, Alignment l){
     if(!t||!f)return NULL;
     Wlabic* v = calloc(1, sizeof(Wlabic));
     if(!v)return NULL;
-    v->wl=wl_ini(t, f, vgap);
+    v->wl=wl_ini(t, f, lgap);
     v->l=l;
     if(!v->wl){
         wi_free(v);
         return NULL;
     }
-    v->hgap=hgap;
+    v->gap=igap;
     return v;
 }
 void wi_free(Wlabic* w){
@@ -54,7 +54,16 @@ Wlabic* wi_copy(const Wlabic* src){
 Canvas* wi_render (Wlabic* wi, int width){
     if(!wi)return NULL;
     if(!wi->wl||!wi->pic)return NULL;
-    Canvas *c=wl_renderSmall(wi->wl, width-canv_getWidth(wi->pic)-wi->hgap);
+    Canvas *c=NULL;
+    if(wi->l==TEXT_EAST||wi->l==TEXT_WEST)c=wl_renderSmall(wi->wl, width-canv_getWidth(wi->pic)-wi->gap);
+    else if(wi->l==TEXT_NORTH){
+        c=wl_renderSmall(wi->wl, width-canv_getWidth(wi->pic));
+        canv_addMargin(c,0,0,0,wi->gap);
+    }
+    else{
+        c=wl_renderSmall(wi->wl, width-canv_getWidth(wi->pic));
+        canv_addMargin(c,wi->gap,0,0,0);
+    }
     int nhei=max(canv_getHeight(c),canv_getHeight(wi->pic));
     Canvas* cc=canv_AdjustCrop(wi->pic, canv_getWidth(wi->pic), nhei);
     if(!cc){
@@ -88,6 +97,7 @@ Canvas* wi_render (Wlabic* wi, int width){
             canv_free(cc);
             canv_free(c1);
         }
+        
     }
     else{
         if(canv_appendVI(c1, cc)==NULL){

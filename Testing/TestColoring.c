@@ -17,8 +17,8 @@
 int main(int argc, const char * argv[]) {
   FILE* f = fopen("Display/Fonts/Robo_Mono/04.txt", "r");
   Font *ff=font_load(f);
-  Wlabic* w=wi_ini("This is an example test", ff, 4, 20, TEXT_EAST);
-  Wlabic* w2=wi_ini("This is an example test", ff, 4, 20, TEXT_EAST);
+  Wlabic* w=wi_ini("This is an example test", ff, 4, 20, TEXT_NORTH);
+  Wlabic* w2=wi_ini("This is an example test", ff, 4, 20, TEXT_SOUTH);
   fclose(f);
   f = fopen("Icons/food.txt", "r");
   Canvas* c=canv_load(f);
