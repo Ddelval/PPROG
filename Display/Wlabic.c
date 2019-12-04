@@ -8,12 +8,12 @@
 struct _Wlabic{
     Wlabel* wl;
     Canvas* pic;
-    Alignment l;
+    wi_align l;
     int br, bg, bb, ba;
     int gap;
 };
 
-Wlabic* wi_ini(char *t, const Font* f,int lgap, int igap, Alignment l){
+Wlabic* wi_ini(char *t, const Font* f,int lgap, int igap, wi_align l){
     if(!t||!f)return NULL;
     Wlabic* v = calloc(1, sizeof(Wlabic));
     if(!v)return NULL;

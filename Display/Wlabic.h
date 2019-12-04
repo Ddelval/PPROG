@@ -16,7 +16,7 @@
 #include "Wlabel.h"
 
 typedef struct _Wlabic Wlabic;
-typedef enum {TEXT_EAST,TEXT_WEST,TEXT_NORTH,TEXT_SOUTH} Alignment;
+typedef enum {TEXT_EAST,TEXT_WEST,TEXT_NORTH,TEXT_SOUTH} wi_align;
 /*-----------------------------------------------------------------*/
 /// Create a new Wlabic element.
 /// This function only sets the text portion of the element and the
@@ -25,7 +25,7 @@ typedef enum {TEXT_EAST,TEXT_WEST,TEXT_NORTH,TEXT_SOUTH} Alignment;
 /// @param f    Font for this text. Note that it will NOT be copied
 /// @param vgap Vertical gap between lines of text
 /// @param hgap Gap between the picture and the text
-Wlabic* wi_ini(char *t, const Font* f,int vgap, int hgap, Alignment l);
+Wlabic* wi_ini(char *t, const Font* f,int vgap, int hgap, wi_align l);
 
 /*-----------------------------------------------------------------*/
 /// Free the memory allocated to the Wlabic element
