@@ -1,5 +1,6 @@
 #include "types.h"
 #include "object.h"
+#include "inventory.h"
 #include "atb.h"
 #include <stdlib.h>
 #include <string.h>
@@ -13,10 +14,10 @@ struct _inventory {
   object * permanent[15];
   int idperm = 0;
   int idcons = 0;
-}
+};
 
 
-inventory * inventory_ini(){
+inventory* inventory_ini(){
   inventory * inv = NULL;
 
   inv = (inventory *) calloc(1, sizeof(inventory));

@@ -18,6 +18,7 @@ typedef struct _inventory inventory;
 #include "types.h"
 #include "object.h"
 #include "atb.h"
+#include "Sprite.h"
 /*
  Function name: inventory_ini
  Utility: It creates a new inventory structure with NULL in each camp
