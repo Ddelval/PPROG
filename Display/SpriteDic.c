@@ -6,14 +6,15 @@
 
 #include "SpriteDic.h"
 
-struct _SpriteDic{
+typedef struct{
     Sprite** dat;
     int size;
-};
+} SpriteDic;
 
 char c[]= "Sprites/dic.txt";
 SpriteDic* data=NULL;
-void sdic_free(SpriteDic* d){
+void sdic_free(){
+    d=data;
     if(!d)return;
     if(d->dat){
         for(int i=0;i<d->size;++i){

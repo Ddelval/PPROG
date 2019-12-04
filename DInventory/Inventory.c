@@ -1,3 +1,8 @@
+//  PPROG
+//	Inventory.c
+//  Created by David del Val on 05/12/2019
+//
+//
 
 #include "Inventory.h"
 #define INITIAL_SIZE 10

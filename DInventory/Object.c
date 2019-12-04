@@ -1,6 +1,9 @@
 //  PPROG
-//	Canvas.h
-//  Created by David del Val on 04/12/2019
+//	Object.c
+//  Created by David del Val on 05/12/2019
+//
+//
+
 #include "Object.h"
 
 #define NAME_SIZE 20
@@ -119,7 +122,9 @@ char* obj_getName(Object* ob){
     return ch;
 }
 obj_type obj_getType(Object* ob){
-    if(!ob)return -1;
-    return ob->type;
+    return ob? ob->type: -1;
+}
+int obj_getId(Object* ob){
+    return ob? ob->id: -1;
 }
 

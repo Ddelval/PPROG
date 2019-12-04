@@ -16,17 +16,10 @@
 
 #include "Utility.h"
 #include "Sprite.h"
-typedef struct _SpriteDic SpriteDic;
-
-/*-----------------------------------------------------------------*/
-/// Initialise the sprite dictionary by fetching the description
-/// from a file.
-SpriteDic* sdic_ini(void);
-
 /*-----------------------------------------------------------------*/
 /// Free all the memory allocated to this structure.
 /// It has to be called before the program exits
-void sdic_free(SpriteDic* d);
+void sdic_free();
 
 /*-----------------------------------------------------------------*/
 /// Fetch the sprite with this id
