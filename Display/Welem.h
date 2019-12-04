@@ -35,7 +35,7 @@ void we_free(Welem* w);
 
 Welem* we_createLabel(char* t, const Font* f,int vgap);
 
-Welem* we_createLabic(char*t, const Font*f,int vgap,int hgap, Canvas* c,Alignment l);
+Welem* we_createLabic(char*t, const Font*f,int vgap,int hgap, Canvas* c,wi_align l);
 /*-----------------------------------------------------------------*/
 /// Return a copy of the given window element
 /// @param w Element to be copied

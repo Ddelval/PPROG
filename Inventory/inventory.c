@@ -1,5 +1,6 @@
 #include "types.h"
 #include "object.h"
+#include "inventory.h"
 #include "atb.h"
 #include <stdlib.h>
 #include <string.h>
@@ -13,10 +14,10 @@ struct _inventory {
   object * permanent[15];
   int idperm = 0;
   int idcons = 0;
-}
+};
 
 
-inventory * inventory_ini(){
+inventory* inventory_ini(){
   inventory * inv = NULL;
 
   inv = (inventory *) calloc(1, sizeof(inventory));
@@ -29,31 +30,31 @@ void inventory_destroy(inventory * inv){
 }
 
 Bool inventorycons_full(inventory* inv){
-  if(idcons == 14) return TRUE
+  if(inv->idcons == 14) return TRUE;
   return FALSE;
 }
 Bool inventoryperm_full(inventory* inv){
-  if(idperm == 14) return TRUE
+  if(inv->idperm == 14) return TRUE;
   return FALSE;
 }
 
 
-Status object_add(inventory * inventory, char * object_id){
-  if (!inventory || !object_id || object_id < 0) return ERROR;
+Status object_add(inventory * inv, char * object_id){
+  if (!inv || !object_id || object_id < 0) return ERROR;
 
-  object * obj
+  object * obj;
   obj = object_load(object_id);
 
   if(object_class(obj) == TRUE){
-    if(inventorycons_full(inventory) == TRUE) return ERROR;
-    inventory->consumable[idcons] = obj;
-    idcons++;
+    if(inventorycons_full(inv) == TRUE) return ERROR;
+    inv->consumable[inv->idcons] = obj;
+    inv->idcons++;
   }
 
   else{
-    if(inventoryperm_full(inventory) == TRUE) return ERROR;
-    inventory->permanent[idperm] = obj;
-    idperm++;
+    if(inventoryperm_full(inv) == TRUE) return ERROR;
+    inv->permanent[inv->idperm] = obj;
+    inv->idperm++;
   }
 
 return OK;

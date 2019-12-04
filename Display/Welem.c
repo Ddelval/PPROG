@@ -42,7 +42,7 @@ Welem* we_createLabel(char* t, const Font* f,int vgap){
 	return w;
 }
 
-Welem* we_createLabic(char*t, const Font*f,int vgap,int hgap, Canvas* c,Alignment l){
+Welem* we_createLabic(char*t, const Font*f,int vgap,int hgap, Canvas* c,wi_align l){
     if(!t||!f||!c)return NULL;
     Wlabic* w=wi_ini(t, f , vgap, hgap,l);
     if(!w)return NULL;

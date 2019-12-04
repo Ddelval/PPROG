@@ -5,7 +5,9 @@
 #include <stdio.h>
 
 #include "atb.h"
+#include "skill.h"
 #include "types.h"
+#include "Sprite.h"
 #include "object.h"
 extern int errno;
 
@@ -14,7 +16,7 @@ typedef enum {WEAPON = 1, CONSUMABLE = 2} objType;
 struct _object {
     int id;
     char name[20];
-    sprite * image;
+    Sprite * image;
     objType class;
     int amount;
     atb * atb;
@@ -29,19 +31,17 @@ struct _object {
  Outputs: object pointer
  */
 object * object_ini(){
-    object * object = NULL;
-    object = (object *)calloc(1,sizeof(object));
+    object * obj = NULL;
+    obj = (object*)calloc(1,sizeof(object));
 
-     if (object== NULL) {
+     if (obj== NULL) {
         printf("Error: calloc.\n");
         return NULL;
     }
-    object->atb = atb_ini();
-    object->special = NULL;
-    object->amount = 0;
-
-
-
+    obj->atb = atb_ini();
+    obj->attacks = NULL;
+    obj->amount = 0;
+    return obj;
 }
 /*
 Function name: object_destroy
@@ -61,14 +61,11 @@ Function name: object_load
  Inputs: object pointer, file pointer, name of the file.
  Outputs: object pointer
  */
-object * object_load(char * name){
-    FILE * f;
+object * object_load(FILE* f){
+    if(!f)return NULL;
     int a,b,c,d,e;
     object * object;
     object = object_ini();
-    f = fopen(name ,"r");
-
-
     fscanf(f,"%d %s %d %d %d %d %d %d\n",object->id,object->name,object->class,a,b,c,d,e);
    atb_setter(object->atb,a,1);
    atb_setter(object->atb,b,2);
@@ -82,13 +79,13 @@ object * object_load(char * name){
 }
 
 int consumable_decrease(object * obj){
-  if(!obj) return -1
+  if(!obj) return -1;
   obj->amount--;
   return obj->amount;
 }
 
 int consumable_increase(object * obj){
-  if(!obj) return -1
+  if(!obj) return -1;
   obj->amount++;
   return obj->amount;
 }

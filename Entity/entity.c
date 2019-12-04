@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "entity.h"
+#include "Room.h"
 
 #define MAX_NAME_LENGTH 30
 #define HORIZONTAL_STEP 30

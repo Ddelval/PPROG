@@ -36,7 +36,7 @@ Function name: object_load
  Inputs: object pointer, file pointer, name of the file.
  Outputs: object pointer
  */
-object * object_load(object* object, FILE * pf, char * name);
+object * object_load(FILE * pf);
 
 Bool object_class(object * object);
 
