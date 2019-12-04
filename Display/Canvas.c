@@ -706,6 +706,80 @@ bool _transparentColumn(const Canvas * c, int j){
 }
 
 
+/**
+ * @brief Prints the solid section of the canvas
+ * Note that all pixel that are transparent will not be printed
+ * @param c     Canvas to be printed
+ * @param backg Background canvas, it will be used when pixels are not completely opaque.
+ *              It must have the same width and height
+ * @param oi    Top row
+ * @param oj    Left column
+ */
+void canv_printSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj){
+    if(!c||!f||!backg)return;
+    Pixel** buff=calloc(canv_getWidth(c),sizeof(Pixel*));
+    char** str=calloc(canv_getWidth(c)*canv_getHeight(c),sizeof(char*));
+    int strpos=0;
+    if(!str||!buff){
+        free(str);
+        free(buff);
+        return;
+    }
+    int l=0;
+    int jj=0;
+    for(int i=0;i<canv_getHeight(c);++i){
+        int j=0;
+        while(j<canv_getWidth(c)){
+            jj=-1;
+            while(j<canv_getWidth(c)&&pix_retA(c->data[i][j])){
+                if(jj==-1)jj=j;
+                if(pix_retA(c->data[i][j])==255){
+                    buff[l]=pix_copy(c->data[i][j]);
+                }
+                else{
+                    buff[l]=pix_overlay(backg->data[i][j],c->data[i][j]);
+                }
+                l++;
+                j++;
+            }
+            if(!l){
+                j++;
+                continue;
+            }
+            char* c=pix_renderLine(buff,l);
+            l=0;
+            char* c2=movecur(oi+i,oj+jj);
+            char* segment=calloc(strlen(c)+strlen(c2)+1,sizeof(char));
+            if(!c||!c2||!segment){
+                free(c);
+                free(c2);
+                free(segment);
+                free(buff);
+                return;
+            }
+            int pos=0;
+            append(segment,&pos,c2);
+            append(segment,&pos,c);
+            free(c);
+            free(c2);
+            str[strpos]=segment;
+            strpos++;
+
+
+            j++;
+        }
+    }
+    int flen=0;
+    for(int i=0;i<strpos;++i){
+        flen+=strlen(str[i]);
+    }
+    char* rend=calloc(flen+1,sizeof(char*));
+    int rpos=0;
+    for(int i=0;i<strpos;++i)appendf(rend,&rpos,str[i]);
+    free(str);
+    fprintf(f,"%s",rend);
+}
+
 /// Create the array of strings that contain the ansi scape sequences
 /// required to display the colors on the screen.
 ///

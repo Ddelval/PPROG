@@ -96,5 +96,5 @@ Canvas* room_getRender(Room* r);
 
 
 Room* room_setBounds(Room*ro, int t, int l,int b,int r);
-Room* room_scroll(Room* r, double i, double j);
+int room_scroll(Room* r, double i, double j);
 #endif /* Room_h */

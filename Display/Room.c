@@ -216,25 +216,25 @@ int room_modPos(Room* r, int index, int i, int j){
     }
     int aux;
     int retval=0;
-    if(i<=r->c_t){
-        i=1;
-        retval=1;
+    if(i<=r->c_t+1){
+        if(spr_getOI(r->overs[index])!=r->c_t+1) i=r->c_t+1;
+        else retval=1;
     }
-    if(j<r->c_l){
-        j=1;
-        retval=4;
+    if(j<=r->c_l+1){
+        if(spr_getOJ(r->overs[index])!=r->c_l+1) j=r->c_l+1;
+        else retval=4;
     }
     aux=spr_getHeight(r->overs[index]);
     if(aux==-1)return -1;
-    if(aux+i>=r->c_b){
-        retval= 3;
-        i=r->c_b-aux-1;
+    if(aux+i>=r->c_b-1){
+        if(spr_getOI(r->overs[index])+spr_getHeight(r->overs[index])!=r->c_b-1) i=r->c_b-aux-1;
+        else retval= 3;
     }
     aux=spr_getWidth(r->overs[index]);
     if(aux==-1)return -1;
-    if(aux+j>=r->c_r){
-        retval= 2;
-        j=r->c_r-aux-1;
+    if(aux+j>=r->c_r-1){
+        if(spr_getOJ(r->overs[index])+spr_getWidth(r->overs[index])!=r->c_r-1) j=r->c_r-aux-1;
+        else retval= 2;
     }
     //Fits:
     aux=spr_checkCollisions(r->overs[index],r->colision,r->wid,r->hei,i,j);
@@ -302,35 +302,39 @@ Room* room_printMod(Room* r,int disp_i, int disp_j){
         j2=min(r->ov[i].j+r->ov[i].w,r->c_r);
         if(i1>=i2||j1>=j2)continue;
         Canvas* c=canv_subCopy(r->map,i1,i2,j1,j2);
-        appendf(to_print, &ipos, canv_StorePrint(c, i1-r->c_t+disp_i, j1-r->c_l+disp_j+1));
-        //appendf(to_print, &ipos, canv_StorePrint(c, i1-r->c_t+disp_i, j1-r->c_l+disp_j));
+        canv_print(stdout,c,i1-r->c_t+disp_i, j1-r->c_l+disp_j+1);
+        fflush(stdout);
+        canv_free(c);
     }
     for(int i=0;i<r->overpos;++i){
-        const Canvas* torender=spr_getDispData(r->overs[i]);
-        Canvas* bb=canv_subCopy(r->map, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+        Canvas* torender=canv_copy(spr_getDispData(r->overs[i]));
+        Canvas* bc=canv_subCopy(r->map, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
         Canvas* b2=canv_subCopy(r->shadows, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
-        canv_addOverlay(bb,torender,0,0);
-        canv_addOverlay(bb,b2,0,0);
-        appendf(to_print, &ipos, canv_StorePrint(bb, disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1));
+        canv_addOverlay(torender,b2,0,0);
+        canv_printSolid(stdout,torender,bc,disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1);
         box b;
         b.i=spr_getOI(r->overs[i]);
         b.j=spr_getOJ(r->overs[i]);
         b.w=canv_getWidth(spr_getDispData(r->overs[i]));
         b.h=canv_getHeight(spr_getDispData(r->overs[i]));
         r->ov[i]=b;
-        canv_free(bb);
+        canv_free(bc);
+        canv_free(torender);
         canv_free(b2);
     }
-    fprintf(stdout, "%s",to_print);
-    fflush(stdout);
     return r;
 }
-Room* room_scroll(Room* r, double i, double j){
+int room_scroll(Room* r, double i, double j){
     if(!r)return NULL;
     int di,dj;
+    if(r->c_t==0&&i<0)       return 0;
+    if(r->c_l==0&&j<0)       return 0;
+    if(r->c_r==r->wid&&j>0)  return 0;
+    if(r->c_b==r->hei&&i>0)  return 0;
     di=i*(r->c_b-r->c_t);
     dj=j*(r->c_r-r->c_l);
     room_setBounds(r,r->c_t+di,r->c_l+dj,r->c_b+di,r->c_r+dj);
+    return 1;
 }
 void room_free(Room* r){
     if(!r)return;

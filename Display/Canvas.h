@@ -211,4 +211,5 @@ Canvas* canv_appendHNL(const Canvas* west, const Canvas* east);
 Canvas* canv_setPixel(Canvas* c,Pixel* p, int i,int j);
 Canvas* canv_blur(Canvas* c,int rad);
 Canvas* canv_darken(Canvas* c,double light);
+void canv_printSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);
 #endif /* Canvas_h */
