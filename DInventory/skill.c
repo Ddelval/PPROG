@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "skill.h"
+#include "Skill.h"
 extern int errno;
 
 
@@ -109,4 +109,10 @@ Attributes * skill_getAtbself(skill *s){
 
 Attributes * skill_getAtbatk(skill *s){
         return s->atbatk;
+}
+
+void skill_free(skill * s){
+    attb_free(s->atbatk);
+    attb_free(s->atbself);
+    free(s);
 }
