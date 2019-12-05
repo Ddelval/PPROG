@@ -9,17 +9,21 @@
 struct _combat{
   entity *p, *e;
   char name[2][50];
-  atb * stats[2];
+  Attributes * stats[2];
   skill * moveset[2][4];
   window * window[3];
   room * room;
   Bool stunp, stune;
 }
 
+
+
+/*Funcion de inicialización de la estructura combate */
+//REVISADA NO COMPILA
 combat * combat_ini(entity * player, entity * enemy){
   combat * c;
   int aux = 0;
-
+  int load;
   if(!player || !enemy) return NULL;
 
   c = (combat*)calloc(1,sizeof(combat));
@@ -38,12 +42,11 @@ combat * combat_ini(entity * player, entity * enemy){
   c->stune = FALSE;
 
 //SKILLS LOADING ??
-  for(pload = 0, pload < 4, pload++){
-    //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
-  }c->stats[0]->health
-  for(eload = 0, eload < 4, eload++){
-    //SELECT SKILLS BASED ON WEAPON , WE NEED TO WORK THROUGH THIS URGENTLY
+  for(load = 0, load < 3, load++){
+    c->moveset[0][i]= skill_readFromFile("",entity_getSelected(c->p));//OJO
+    c->moveset[1][i]= skill_readFromFile("",entity_getSelected(c->e));
   }
+
   Pixel* backroom=pix_ini(134, 151, 179, 255)
   FILE* f=fopen("Display/Fonts/Robo_Mono/08.dat");
   Font* titlef = font_load(f);
@@ -56,40 +59,12 @@ combat * combat_ini(entity * player, entity * enemy){
   return c;
 }
 
-
-
-/*
-Status combat_process(combat * state){
-  int i;
-
-  if(!combat){
-    print("Uppss");
-    return ERROR;
-  }
-
-  if(atb_getter(state->stats[0],4) > atb_getter(state->stats[1],4)){
-    i = 0;
-  }
-  else i = 1;
-
-  while(atb_getter(state->stats[0],1) > 0 && atb_getter(state->stats[1],1) > 0){
-    if(i % 2 == 0){
-      move_exe(state, player_choice);
-    }
-    if(i % 2 == 1){
-      move_exe(state, IA_choice);
-    }
-  }
-  return OK;
-}
-*/
-
-
+//REVISADA, NO COMPILA
 int player_choice(){
   int move = 0;
   while(move < 1 || move > 6){
     scanf("%d", &move);
-    if(move == 1 || move == 2 || move == 3 || move == 4 || move == 5 || move == 6) break;
+    if(move < 6 && move > 1) break;
     fprintf(stderr, "Please use a valid movement:\n",);
   }
   return move;
@@ -97,14 +72,15 @@ int player_choice(){
 
 
 // For now the IA will just choose the attack with the highest attack field.
+//REVISADA, NO COMPILA
 int IA_choice(combat * state){
   int max_attack = 0;
-  int i = 1;
+  int i = 0;
 
   if(!state) return -1;
-
-  while(moveset2[i]){
-    if(atb_getter(state->moveset[i], 2) > atb_getter(state->moveset[max_attack], 2)) max_attack = i;
+//ESTAMOS ASUMIENDO QUE EL ENEMIGO TIENE 4 ATAQUES SINO QUIERES QUE ESTO OCURRA AÑADE UN CAMPO A LA ESTRUCTURA SKILL
+  while(i <= 3){
+    if(attb_get(state->moveset[i], 1) > attb_get(state->moveset[max_attack], 1)) max_attack = i;
     i++;
   }
 
@@ -118,13 +94,13 @@ int combat_exe(combat *c){
 
   if(!c) return -1;
 
-  if(atb_getter(state->stats[0],4) > atb_getter(state->stats[1],4)){
+  if(attb_get(state->stats[0],3) > attb_get(state->stats[1],3)){
     aux = 0;
   }
 
 
 
-  while(atb_getter(state->stats[0],1) > 0 && atb_getter(state->stats[1],1)>0){
+  while(attb_get(state->stats[0],0) > 0 && attb_get(state->stats[1],0)>0){
     if(i+aux % 2 == 0){
       if(c->stunp == FALSE){
         fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
@@ -150,35 +126,45 @@ int combat_exe(combat *c){
     }
     i++;
   }
+
+  combat_destroy(c);
   //decir qn ha muerto y liberar la memoria de la strutura combat
   return 0;
 }
-
+//ESTA FUNCION REQUERE DE UNA ACTUALIZACION DEL ATB.H
 int movement_exe(combat * c, int action, int entity){
   int other =0;
+  int dmgout;
+  Attributes * aux1;
+  Attributes * aux2;
   fprintf(stdout, "%s ataca con %s.\n"c->name[entity], c->moveset[entity][action]->name);
   if(entity == 0){
     other = 1;
   }
   if (attack_goes(c,c->moveset[entity][action],entity) == TRUE){
-    skill_stun(c,c->moveset[entity][action], entity);
+      skill_stun(c,c->moveset[entity][action], entity);
 
-    atb_merge(c->stats[entity], skill_getAtbSelf(c->moveset[entity][action]));
+      aux = attb_merge(c->stats[entity], skill_getAtbAtk(c->moveset[entity][action]));
 
-    if(atb_getter(c->moveset[entity][action],2) == 0){
-      atb_merge(c->stats[entity], skill_getAtbSelf(c->moveset[entity][action]);
+      if(attb_get(skill_getAtbAtk(c->moveset[entity][action]),1) == 0){
+      aux2 = attb_merge(c->stats[entity], skill_getAtbself(c->moveset[entity][action]);
+      attb_setAll(c->stats[entity],attb_getAll(aux2));
+      attb_free(aux2);
     }
     else{
-
+      dmgout = attb_get(aux1,1) - attb_get(c->stats[other], 2);
+      attb_set(c->stats[other],attb_get(c->stats[other],0) - dmgout,0);
     }
+    attb_free(aux1);
   }
   else fprintf(stdout, "Attack dogded");
+  return 0;
 }
 
-
+//REVISADA, NO COMPILA
 void skill_stun(combat * c, skill * skil, int who){
-  //CONTROL ERRORES
-  if(strcmp(skill_getSpecial(skil), "STUNNER") != 0) return;
+  if(!c || !skil ) return;
+  if(skill_getSpecial(skil) != 0) return;
   if(who == 0){
     c->stune = TRUE;
   }
@@ -188,26 +174,45 @@ void skill_stun(combat * c, skill * skil, int who){
 }
 
 
-
+//REVISADA, NO COMPILA
 Bool attack_goes(combat * c, skill * skil, int who){
-  //CONTROL DE ERRRORES
+  if(!c || !skil){
+    printf("FATAL ERROR FUNTCION ATTACK_GOES");
+    return FALSE;
+  };
   double res;
   double random;
   int p1, p2;
-  p1 = atb_getter(c->stats[who], 5);
+  p1 = attb_get(c->stats[who], 5);
   if(who == 0){
-  p2 = atb_getter(c->stats[1], 5);
+  p2 = attb_get(c->stats[1], 5);
   }
-  else p2 = atb_getter(c->stats[0], 5);
+  else p2 = attb_get(c->stats[0], 5);
 
   random = (double)rand()
   random /= MAX_RAND;
 
   res = (p1/100) * 1.8 - (p2/100) - random;
 
-  if(strcmp(skill_getSpecial(skil), "UNDOGDE") == 0){
+  if(skill_getSpecial(skil) == 1){
     res += 3;
   }
   if(res < 0) return FALSE;
   if(res >= 0) return TRUE;
 }
+
+//REVISADA, NO COMPILA
+void combat_destroy(combat * c){
+  if(!c) return;
+  int i;
+  room_free(c->room);
+  attb_free(c->stats[0]);
+  attb_free(c->stats[1]);
+  win_free(c->window[0]);
+  win_free(c->window[1]);
+  win_free(c->window[2]);
+
+  for(i=0; i<3, i++){
+    skill_free(c->moveset[0][i]);
+    skill_free(c->moveset[1][i]);
+  }

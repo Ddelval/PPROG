@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <types.h>
+
 
 
 typedef struct combat;
@@ -53,12 +53,8 @@ int combat_exe(combat *c);
 /* This function will apply the changes each movement makes on the receiver entity */
 int movement_exe(atb *to_attack, skill *s);
 
-/*
-Name: combat_end
-Imputs: combat * state
-Outputs: state
-Functioning: Simply frees the combat structure
-*/
+/*This funciton frees everything related to struct combat*/
+void combat_destroy(combat * c);
+
 
 //OJO HACE FALTA HACER FUNCIONES COPY COMENTAR EN CLASE
-
