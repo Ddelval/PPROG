@@ -164,11 +164,11 @@ Sprite* spr_load(FILE* f){
     int i1,i2,j1,j2;
     for(int i=0;i<n;++i){
         scanf("%d %d %d %d %d",&i1,&i2,&j1,&j2,&id);
-        spr_addTriggger(res,id,i1,i2,j1,j2);
+        spr_addTrigger(res,id,i1,i2,j1,j2);
     }
     return res;
 }
-Sprite* spr_addTriggger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
+Sprite* spr_addTrigger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
     int jj1;
     while(i1<=i2){
         jj1=j1;

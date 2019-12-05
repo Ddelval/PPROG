@@ -1,6 +1,6 @@
 
 #ifndef TRIGGER_H
-#define TRIGGER
+#define TRIGGER_H
 
 #include "Utility.h"
 typedef struct _Trigger Trigger;

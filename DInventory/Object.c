@@ -6,7 +6,7 @@
 
 #include "Object.h"
 
-#define NAME_SIZE 20
+#define NAME_SIZE 50
 #define MAX_ATTACKS 4
 
 struct _Object
