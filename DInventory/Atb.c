@@ -128,7 +128,6 @@ Attributes *attb_copy(Attributes *a){
         int i = 0;
         Attributes * b = attb_ini();
         if(!a || !b) return NULL;
-
         while(i < ATTRIBUTE_SIZE) {
                 if(attb_set(b, attb_get(a, i), i) == ERROR) return NULL;
                 i++;

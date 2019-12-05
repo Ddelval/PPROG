@@ -19,6 +19,7 @@
 #define Canvas_h
 #include "Pixel.h"
 typedef struct _Canvas Canvas;
+
 /*-----------------------------------------------------------------*/
 /// Free the allocated memory
 void canv_free(Canvas* c);
@@ -62,7 +63,17 @@ Canvas* canv_backGrnd(int r, int g, int b, int a, int width, int height);
 /// @param east Canvas that will be in the eastern region of the result
 Canvas* canv_appendH(const Canvas* west, const Canvas* east);
 
-    
+/**
+ * @brief Second version of canv_appendH that does not allign both canvases
+ * 
+ * The return of this function is a canvas that contains both of the canvases
+ * appended horizontally and aligned with their top limit. 
+ * 
+ * @param west Canvas that will be in the western region of the result
+ * @param east Canvas that will be in the eastern region of the result
+ * @return Canvas* 
+ */
+Canvas* canv_appendHNL(const Canvas* west, const Canvas* east);
 /*-----------------------------------------------------------------*/
 /// Get a new canvas that contains both canvases appended vertically
 /// 
@@ -175,7 +186,34 @@ Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j);
 ///
 /// @remark     The caller must know that the canvas will fit in the screen
 void canv_print(FILE* f, Canvas* c,int i,int j);
+
+/**
+ * @brief Prepares the printing of the canvas
+ * 
+ * This function will render the canvas and store in a string all
+ * the characters that are requried to print this canvas.
+ * This includes all the characters used to move the cursor around and 
+ * to print the pixels.
+ * 
+ * @param c Canvas to be processed
+ * @param i Position of the top of the canvas in the screen
+ * @param j Position of the left of the canvas in the screen 
+ * @return char* 
+ */
 char * canv_StorePrint(Canvas* c, int i, int j);
+
+/**
+ * @brief Prints only the differences between two canvases
+ * 
+ * This function operates in exactly the same way as canvas_print but
+ * it will only print the differences between both canvases
+ * @param f     File where the canvas will be printed
+ * @param new   New canvas
+ * @param old 
+ * @param oi 
+ * @param oj 
+ * @return Canvas* 
+ */
 Canvas* canvas_printDiff(FILE* f, const Canvas* new,const Canvas* old,int oi, int oj);
 /*-----------------------------------------------------------------*/
 /// Print an area of the canvas to a file
@@ -206,7 +244,7 @@ int canv_getHeight(const Canvas* c);
 const Pixel* canv_getPixel(const Canvas* c,int i,int j);
 
 
-Canvas* canv_appendHNL(const Canvas* west, const Canvas* east);
+
 
 Canvas* canv_setPixel(Canvas* c,Pixel* p, int i,int j);
 Canvas* canv_blur(Canvas* c,int rad);

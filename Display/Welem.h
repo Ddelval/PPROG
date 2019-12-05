@@ -33,15 +33,29 @@ Welem* we_ini(Wtype t, void* data);
 /// Free the allocated memory
 void we_free(Welem* w);
 /**
- * @brief Creates a window element with the
+ * @brief Creates a Welem that contains a label.
+ * Note that this function takes exactly the same arguments as the 
+ * constructor of the label 
  * 
- * @param t 
- * @param f 
- * @param vgap 
- * @return Welem* 
+ * @param t     String of text that will be rendered in the label  
+ * @param f     Font that will be used to render the label 
+ * @param vgap  Vertical gap between several lines of the label
+ * @return      Welem* New welem with the label in it
  */
 Welem* we_createLabel(char* t, const Font* f,int vgap);
 
+/**
+ * @brief Creates a Welem that contains a labic (text+ icon). 
+ * 
+ * @param t     Text for the labic
+ * @param f     Font that will be used to render the text
+ * @param vgap  Vertical gap between serveral lines of text
+ * @param hgap  Gap between the icon and the text
+ * @param c     Canvas that will be used as the icon
+ * @param l     Alignment of the labic. That is to say relative positon
+ *              of the icon and text
+ * @return Welem* 
+ */
 Welem* we_createLabic(char*t, const Font*f,int vgap,int hgap, Canvas* c,wi_align l);
 /*-----------------------------------------------------------------*/
 /// Return a copy of the given window element
