@@ -263,7 +263,7 @@ int room_modPos(Room* r, int index, int i, int j){
 }
 int room_incPos(Room* r, int index, int i, int j){
     if(!r||index>=r->overpos){
-        return NULL;
+        return -1;
     }
     return room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]));
 }
@@ -342,7 +342,7 @@ Room* room_printMod(Room* r,int disp_i, int disp_j){
     return r;
 }
 int room_scroll(Room* r, double i, double j){
-    if(!r)return NULL;
+    if(!r)return -1;
     int di,dj;
     if(r->c_t==0&&i<0)       return 0;
     if(r->c_l==0&&j<0)       return 0;

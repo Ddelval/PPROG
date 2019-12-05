@@ -69,7 +69,7 @@ SpriteDic* sdic_ini(){
         fscanf(f,"%d %d %d %d %d %d",&s_id, &t_id, &i1, &i2, &j1, &j2);
         for(int j=0;j<siz;++j){
             if(spr_getId(s->dat[i])==s_id){
-                spr_addTrigger(t_id,i1,i2,j1,j2);
+                spr_addTrigger(s->dat[i],t_id,i1,i2,j1,j2);
             }
         }
     }
