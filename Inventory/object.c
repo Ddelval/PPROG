@@ -1,99 +1,163 @@
-/*File creator : Jaime Pons Garrido*/
+//  PPROG
+//	Object.c
+//  Created by David del Val on 05/12/2019
+//
+//
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#include "Object.h"
 
-#include "atb.h"
-#include "skill.h"
-#include "types.h"
-#include "Sprite.h"
-#include "object.h"
-extern int errno;
+#define NAME_SIZE 50
+#define MAX_ATTACKS 4
 
-typedef enum {WEAPON = 1, CONSUMABLE = 2} objType;
-
-struct _object {
+struct _Object
+{
     int id;
-    char name[20];
-    Sprite * image;
-    objType class;
-    int amount;
-    atb * atb;
-    skill ** attacks;
-    Bool destroyable;
+    char name[NAME_SIZE];
+    int icon_id;
+    int spr_id;
+    obj_type type;
+    Attributes* atb;
+    skill * attacks[MAX_ATTACKS];
+    int n_attacks;
+    bool destroyable;
 };
+char** obj_type_def(){
+    char** c=calloc(2,sizeof(char*));
+    c[0]=calloc(10,sizeof(char));
+    c[1]=calloc(10,sizeof(char));
+    char* cc="Weapons";
+    strcpy(c[0],cc);
+    cc="Consumables";
+    strcpy(c[1],cc);
+    return c;
+}
+Object* obj_ini(){
+    Object* ob = calloc(1,sizeof(Object));
+    if(!ob)return NULL;
+    ob->icon_id=ob->spr_id=-1;
+    return ob;
+}
 
-/*
- Function name: object_ini
- Utility: It creates a new object structure with NULL in each camp
- Inputs:
- Outputs: object pointer
- */
-object * object_ini(){
-    object * obj = NULL;
-    obj = (object*)calloc(1,sizeof(object));
-
-     if (obj== NULL) {
-        printf("Error: calloc.\n");
-        return NULL;
+void obj_free(Object* ob){
+    if(!ob)return;
+    //atb_free(ob->atb);
+    if(ob->attacks){
+        for(int i=0;i<ob->n_attacks;++i){
+            //skill_free(ob->attack[i]);
+        }
+        free(ob->attacks);
     }
-    obj->atb = atb_ini();
-    obj->attacks = NULL;
-    obj->amount = 0;
-    return obj;
+    free(ob);
 }
-/*
-Function name: object_destroy
- Utility: Destroys an object struct
- Inputs: object to destroy (pointer)
- Outputs: object pointer
+/**
+ * @brief Loads an object from a file
+ * The format is the following:
+ * id
+ * name
+ * icon_id
+ * sprite_id
+ * type
+ * attributes
+ * number of attacks
+ * attacks
+ * destroyable
+ * @param f File from where the object will be read
+ * @return Object* New object with the data
  */
-void object_destroy(object* object){
-    //FALTAN COSAS POR AÑADIR (CAMPOS TODAVIA NO CREADOS)
-
-    atb_destroy(object->atb);
-    free(object);
-}
-/*
-Function name: object_load
- Utility: It takes a file with objects camps and inserts them into an object struct
- Inputs: object pointer, file pointer, name of the file.
- Outputs: object pointer
- */
-object * object_load(FILE* f){
+Object* obj_load(FILE* f){
     if(!f)return NULL;
-    int a,b,c,d,e;
-    object * object;
-    object = object_ini();
-    fscanf(f,"%d %s %d %d %d %d %d %d\n",object->id,object->name,object->class,a,b,c,d,e);
-   atb_setter(object->atb,a,1);
-   atb_setter(object->atb,b,2);
-   atb_setter(object->atb,c,3);
-   atb_setter(object->atb,d,4);
-   atb_setter(object->atb,e,5);
-    if(object->class == 2){
-        object->destroyable = TRUE;
+    
+    Object* ob=obj_ini();
+    if(!ob)return NULL;
+    fscanf(f,"%d",&ob->id);
+    ob->name[0]='\n';
+    while(ob->name[0]=='\n')fgets(ob->name,NAME_SIZE,f);
+    ob->name[strlen(ob->name)-1]=0;
+
+    fscanf(f, "%d %d %d",(int*)(&ob->icon_id),(int*)(&ob->spr_id),(int*)(&ob->type));
+    //ob->atb=atb_load(f);
+    fscanf(f,"%d",&ob->n_attacks);
+    for(int i=0;i<ob->n_attacks;++i){
+        //ob->attacks[i]=skill_load(f);
     }
-    fclose(f);
+    fscanf(f,"%d",(int*)(&ob->destroyable));
+    return ob;
+}
+/**
+ * @brief Compares two objects
+ * 
+ * @param ob1 First object to be compared
+ * @param ob2 Second object to be compared
+ * @return int  >0 if ob1>ob2
+ *              =0 if ob1=ob2
+ *              <0 if ob1<ob2
+ */
+int obj_cmp(Object* ob1, Object* ob2){
+    if(!ob1||!ob2)return 0;
+    return ob1->id-ob2->id;
 }
 
-int consumable_decrease(object * obj){
-  if(!obj) return -1;
-  obj->amount--;
-  return obj->amount;
+
+Object* obj_copy(Object* ob){
+    if(!ob)return NULL;
+    Object* res= obj_ini();
+    res->id         = ob->id;
+    res->n_attacks  = ob->n_attacks;
+    res->icon_id    = ob->icon_id;
+    res->spr_id     = ob->spr_id;
+    res->type       = ob->type;
+    res->destroyable= ob->destroyable;
+    //res->atb=atb_copy(ob->atb);
+    strcpy(res->name,ob->name);
+    for(int i=0;i<ob->n_attacks;++i){
+        //res->attacks[i]=skill_copy(ob->attacks[i]);
+    }
+    return res;
 }
 
-int consumable_increase(object * obj){
-  if(!obj) return -1;
-  obj->amount++;
-  return obj->amount;
+Sprite* obj_getIcon(Object* ob){
+    if(!ob||ob->icon_id==-1)return NULL;
+    return sdic_lookup(ob->icon_id);
 }
 
-char * object_getname(object * obj){
-  return obj->name;
+Sprite* obj_getSprite(Object* ob){
+    if(!ob||ob->spr_id==-1)return NULL;
+    return sdic_lookup(ob->spr_id);
 }
 
-
-
-//CONTINUAMOS EN DESARROLLO A LA ESPERA DE LA INTERFAZ Y EL TAD INVENTORY GRACIAS!!
+char* obj_getName(Object* ob){
+    if(!ob)return NULL;
+    char* ch=calloc(strlen(ob->name)+1,sizeof(char));
+    if(!ch)return NULL;
+    strcpy(ch,ob->name);
+    return ch;
+}
+obj_type obj_getType(Object* ob){
+    return ob? ob->type: -1;
+}
+int obj_getId(Object* ob){
+    return ob? ob->id: -1;
+}
+Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum){
+    if(!ob)return 0;
+    Sprite* sp=sdic_lookup(ob->icon_id);
+    Canvas* c=canv_copy(spr_getDispData(sp));
+    spr_free(sp);
+    Wlabel* nam=wl_ini(ob->name,ftext,10);
+    char snum[10];
+    sprintf(snum,"%d",number);
+    Wlabel* num=wl_ini(snum,fnum,10);
+    Canvas* c2=wl_render(nam,canv_getWidth(c));
+    canv_appendVI(c,c2);
+    canv_free(c2);
+    c2=wl_render(num,canv_getWidth(c));
+    canv_appendVI(c,c2);
+    
+    Canvas* bb=canv_backGrnd(50,50,150,255,canv_getWidth(c)+4,canv_getHeight(c)+2);
+    canv_addOverlay(bb,c,1,2);
+    canv_free(c);
+    Canvas* back=canv_backGrnd(255,255,255,255,canv_getWidth(bb)+4,canv_getHeight(bb)+2);
+    canv_addOverlay(back,bb,1,2);
+    canv_free(bb);
+    return back;
+}

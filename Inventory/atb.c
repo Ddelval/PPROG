@@ -4,168 +4,172 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "atb.h"
+#include "Atb.h"
 #include "types.h"
 #include "errno.h"
 extern int errno;
 
-struct _atb {
-    int health;
-    int attack;
-    int defense;
-    int speed;
-    int agility;
+
+
+#define ATTRIBUTE_SIZE 5
+struct _Attributes {
+        int data[ATTRIBUTE_SIZE];
 };
+
 /*
- Function name: atb_ini
- Utility: It creates a new atb structure with 0 in each camp
- Inputs:
- Outputs: atb pointer
+   Function name: attb_ini
+   Utility: It creates a new attb structure with 0 in each camp
+   Inputs:
+   Outputs: attb pointer
  */
-atb * atb_ini() {
-    atb * a = NULL;
-    int aux = 1;
-    a = (atb *) calloc(1,sizeof (atb));
-    if (a == NULL) {
-        printf("Error: calloc.\n");
-        return NULL;
-    }
+Attributes * attb_ini(){
+        Attributes * a = NULL;
+        int aux = 1;
+        a = (Attributes *) calloc(1,sizeof (Attributes));
+        if (a == NULL) {
+                printf("Error: calloc.\n");
+                return NULL;
+        }
 
-    for (aux; aux <= 5; aux++) {
-        atb_setter(a, 0, aux);
-    }
+        for (aux = 0; aux <= ATTRIBUTE_SIZE; aux++) {
+                attb_set(a, 0, aux);
+        }
 
-    return a;
+        return a;
 }
 /*
- Function name: atb_destroy
- Utility: It destroys an atb structure
- Inputs: atb pointer
- Outputs:
+   Function name: attb_destroy
+   Utility: It destroys an attb structure
+   Inputs: attb pointer
+   Outputs:
  */
-void atb_destroy(atb* atb) {
-       if (!atb) {
-        fprintf(stderr, "%s\n", strerror(errno));
-        return ;
-    }
-    free(atb);
+void attb_destroy(Attributes* attb) {
+        if (!attb) {
+                fprintf(stderr, "%s\n", strerror(errno));
+                return;
+        }
+        free(attb);
 }
 /*
- Function name: atb_setter
- Utility: This function can be used to set an atb camp to an int value
+   Function name: attb_setter
+   Utility: This function can be used to set an attb camp to an int value
  * GUIDE:
  * 1 = HEALTH
  * 2 = ATTACK
  * 3 = DEFENSE
  * 4 = SPEED
  * 5 = AGILITY
- Inputs: atb pointer, int value (the value t set), int id (the camp you will choose to edit)
- Outputs: Status (OK/ERROR)
+   Inputs: attb pointer, int value (the value t set), int id (the camp you will choose to edit)
+   Outputs: Status (OK/ERROR)
  */
-Status atb_setter(atb * atb, int value, int id) {
-    if (atb == NULL) {
-        return ERROR;
-    }
-    if (id < 1 || id > 5) return ERROR;
 
-    if (id == 1) {
-        atb->health = value;
-    }
-    else if (id == 2) {
-        atb->attack = value;
-    } else if (id == 3) {
-        atb->defense = value;
-    } else if (id == 4) {
-        atb->speed = value;
-    } else if (id == 5) {
-        atb->agility = value;
-    }
 
-    return OK;
+
+int attb_get(Attributes* attb, attb_type index){
+        if (attb == NULL || index < 0) return -1;
+
+        return attb->data[index];
 }
+
+Status attb_set(Attributes* attb, int p, attb_type index){
+        if(!attb || p < 0 || index < 0) return ERROR;
+
+        attb->data[index] = p;
+
+        return OK;
+}
+
+int * attb_getAll(Attributes * attb){
+        if(!attb) return NULL;
+
+        int * a;
+        
+        a = (int*)calloc(ATTRIBUTE_SIZE,sizeof(int));
+        
+        memcpy(a, attb->data, ATTRIBUTE_SIZE * sizeof(int));
+        
+        return a;
+}
+
+Status attb_setAll(Attributes * attb, int *p){
+        if (attb == NULL || !p) return ERROR;
+
+        for (int i = 0; i < ATTRIBUTE_SIZE; i++) {
+                attb->data[i] = p[i];
+        }
+
+        return OK;
+}
+
+
 /*
- Function name: atb_getter
- Utility: Allows you to obtain the value of a certain atb camp you will bee able to choose
- *  * GUIDE:
- * 1 = HEALTH
- * 2 = ATTACK
- * 3 = DEFENSE
- * 4 = SPEED
- * 5 = AGILITY
- Inputs: atb pointer, int id
- Outputs: int value
+   Function name: attb_merge
+   Utility: Simply adds the values of two attb structures. The primary one is the one which will be returned.
+   Inputs: two attb pointers
+   Outputs: the primary attb pointer. Usually the one attached to the entity.
  */
-int atb_getter(atb * atb, int id) {
-    if (atb == NULL) return ERROR;
-    if (id < 1 || id > 5) return ERROR;
-    if (id == 1) {
-        return atb->health;
-    }
-    else if (id == 2) {
-        return atb->attack;
-    }
-    else if (id == 3) {
-        return atb->defense;
-    }
-    else if (id == 4) {
-        return atb->speed;
-    }
-    else if (id == 5) {
-        return atb->agility;
-    }
+Attributes * attb_merge(Attributes * primary, Attributes * secondary){
+        int i = 0;
+        Attributes * a = attb_ini();
+        if(!a || !primary || !secondary) return NULL;
 
-    return OK;
+        while(i < ATTRIBUTE_SIZE) {
+                if(attb_set(a, attb_get(secondary, i) + attb_get(primary, i), i) == ERROR) return NULL;
+                i++;
+        }
+        return a;
 }
+
+Attributes *attb_copy(Attributes *a){
+        int i = 0;
+        Attributes * b = attb_ini();
+        if(!a || !b) return NULL;
+        while(i < ATTRIBUTE_SIZE) {
+                if(attb_set(b, attb_get(a, i), i) == ERROR) return NULL;
+                i++;
+        }
+        return b;
+}
+
+
+
+Attributes* attb_load(FILE* f){
+        int i = 0;
+        if(!f) return NULL;
+        Attributes * a = attb_ini();
+        if(!a) return NULL;
+
+        while(i < ATTRIBUTE_SIZE) {
+                fscanf(f, "%d", &a->data[i]);
+                i++;
+        }
+
+        return a;
+}
+
+
+
 /*
- Function name: atb_merge
- Utility: Simply adds the values of two atb structures. The primary one is the one which will be returned.
- Inputs: two atb pointers
- Outputs: the primary atb pointer. Usually the one attached to the entity.
+   NO USAR!!!
+   Function name: attb_print
+   Utility: it prints the attribute values in a string format into a file.
+   Inputs: FILE pointer, attb pointer
+   Outputs: int that contains the number of characters that have been printed
  */
-atb * atb_merge(atb * primary, atb * secondary){
-    primary->health += secondary->health;
-    primary->attack += secondary->attack;
-    primary->defense += secondary->defense;
-    primary->speed += secondary->speed;
-    primary->agility += secondary->agility;
+int attb_print(FILE *pf, Attributes * attb){
 
-    return primary;
-}
-/*
-NO USAR!!!
- Function name: atb_print
- Utility: it prints the attribute values in a string format into a file.
- Inputs: FILE pointer, atb pointer
- Outputs: int that contains the number of characters that have been printed
- */
-int atb_print(FILE *pf, atb * atb){
+        int i = 0;
+        if (!attb || !pf) {
+                fprintf(stderr, "%s", strerror(errno));
+                return -1;
+        }
 
-    int i = 0;
-         if (!atb || !pf) {
-     fprintf(stderr, "%s", strerror(errno));
-    return -1;
- }
+        i = fprintf(pf, "[Health: %d,Attack: %d,Defense: %d,Speed: %d,Agility: %d]", attb_get(attb, 1),attb_get(attb, 2),attb_get(attb, 3),attb_get(attb, 4),attb_get(attb, 5));
 
-    i = fprintf(pf, "[Health: %d,Attack: %d,Defense: %d,Speed: %d,Agility: %d]", atb_getter(atb, 1),atb_getter(atb, 2),atb_getter(atb, 3),atb_getter(atb, 4),atb_getter(atb, 5));
+        if (ferror(pf) || i < 0) {
+                fprintf(stderr, "%s\n", strerror(errno));
+                return -1;
+        }
 
-    if (ferror(pf) || i < 0) {
-        fprintf(stderr, "%s\n", strerror(errno));
-        return -1;
-    }
-
-    return i;
-}
-
-atb *atb_allCopy(atb *a){
-  atb * cpy = NULL;
-  cpy = atb_ini();
-  if(!a) return NULL;
-
-  cpy->health = a->health;
-  cpy->attack = a->attack;
-  cpy->defense = a->defense;
-  cpy->speed = a->speed;
-  cpy->agility = a->agility;
-
-  return cpy;
+        return i;
 }

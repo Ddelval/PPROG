@@ -1,67 +1,23 @@
-
-
-/*
- * File:   inventory.h
- * Author: jaime
- *
- * Created on 18 de octubre de 2019
- */
-
+//  PPROG
+//	Inventory.h
+//  Created by David del Val on 05/12/2019
+//
+//
 
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
+#include "Utility.h"
+#include "Object.h"
+
+typedef struct _Inventory Inventory;
 
 
-typedef struct _inventory inventory;
+Inventory* inv_ini();
+void inv_free(Inventory* inv);
+Inventory* inv_insert(Inventory* inv, Object* ob);
+Inventory* inv_remove(Inventory* inv, Object* ob);
+Inventory* inv_decrease(Inventory* inv, Object* ob);
+Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Font* ftext, Font* fnum);
 
-#include "types.h"
-#include "object.h"
-#include "atb.h"
-#include "Sprite.h"
-/*
- Function name: inventory_ini
- Utility: It creates a new inventory structure with NULL in each camp
- Inputs:
- Outputs: inventory pointer
- */
-inventory * inventory_ini();
-/*
-Function name: inventory_destroy
- Utility: Destroys an inventory struct
- Inputs: inventory to destroy (pointer)
- Outputs: inventory pointer
- */
-void inventory_destroy(inventory * inventory);
-/*
-Function name: object_add
-Utility: The function receives the id of an object so it creates it and
-then places it into the inventory alphabetically sorted
-Imputs: inventory pointer, int (object id)
-Outputs: ERROR code or Ok code if everything goes as expected
-*/
-Status object_add(inventory * inventory, int object_id);
-/*
-Function name: object_remove
-Utility: The function receives the id of an object if it is weapon it deletes it
-if not it decreseases a counter placed in the inventory structure.
-Imputs: inventory pointer, int (object id)
-Outputs: ERROR code or Ok code if everything goes as expected
-*/
-Status object_remove(inventory * inventory, int object_id);
-/*
-Function name: object_select
-Utility: The function goes into the array of the inventory and finds
-the desired object, then applies its effects and calls object_remove if necessary
-Imputs: inventory pointer, int (object id)
-Outputs: ERROR code or Ok code if everything goes as expected
-*/
-Status object_select (inventory * inv, int object_id);
-
-
-
-
-
-
-
-#endif /* INVENTORY_H*/
+#endif

@@ -1,88 +1,153 @@
-#include "types.h"
-#include "object.h"
-#include "inventory.h"
-#include "atb.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <string.h>
+//  PPROG
+//	Inventory.c
+//  Created by David del Val on 05/12/2019
+//
+//
 
-extern int errno;
-
-struct _inventory {
-  object * consumable[15];
-  object * permanent[15];
-  int idperm = 0;
-  int idcons = 0;
+#include "Inventory.h"
+#define INITIAL_SIZE 10
+#define INCREMENT 1.5  
+/**
+ * @brief Structure that holds all the items that an entity has.
+ * The macro OBJ_TYPE_SIZE is the amount of different types of objects
+ * that are defined.
+ * For each type of object we have the follwowing:
+ *  - Object* items: Array of pointers to objects.
+ *  - int*    times: Int array that stores the amount of each object
+ *  - int      size: Int that stores the amount of different objets stored in items
+ *  - int     alloc: Int that stores the space that has been allocated.
+ *  - int  selected: The object that is being selected in each type
+ * 
+ * alloc and size will be compared to decide when is it necessary to increment the size of the array
+ * 
+ */
+struct _Inventory
+{
+    Object** items[OBJ_TYPE_SIZE];
+    int* times[OBJ_TYPE_SIZE];
+    int size[OBJ_TYPE_SIZE];
+    int alloc[OBJ_TYPE_SIZE];
+    int selected[OBJ_TYPE_SIZE];
 };
 
-
-inventory* inventory_ini(){
-  inventory * inv = NULL;
-
-  inv = (inventory *) calloc(1, sizeof(inventory));
-  if ( !inv) return NULL;
+Inventory* inv_ini(){
+    Inventory* inv = calloc(1,sizeof(Inventory));
+    if(!inv)return NULL;
+    for(int i=0;i<OBJ_TYPE_SIZE;++i){
+        inv->items[i]=calloc(INITIAL_SIZE,sizeof(Object*));
+        inv->times[i]=calloc(INITIAL_SIZE,sizeof(int));
+        if(!inv->times[i]||!inv->items[i]){
+            inv_free(inv);
+            return NULL;
+        }
+        inv->size[i]=0;
+        inv->alloc[i]=INITIAL_SIZE;
+    }
+    return inv;
 }
 
-void inventory_destroy(inventory * inv){
-  if(!inv) return NULL;
-  free(inv);
+void inv_free(Inventory* inv){
+    if(!inv)return;
+    for(int i=0;i<INITIAL_SIZE;++i){
+        if(inv->items[i]){
+            for(int j=0;j<inv->size[i];++j)obj_free(inv->items[i][j]);
+        }
+        free(inv->items[i]);
+        free(inv->times[i]);
+    }
+    free(inv);
 }
+Inventory* inv_insert(Inventory* inv, Object* ob){
+    if(!inv||!ob)return NULL;
+    obj_type ob_ty=obj_getType(ob);
 
-Bool inventorycons_full(inventory* inv){
-  if(inv->idcons == 14) return TRUE;
-  return FALSE;
-}
-Bool inventoryperm_full(inventory* inv){
-  if(inv->idperm == 14) return TRUE;
-  return FALSE;
-}
-
-
-Status object_add(inventory * inv, char * object_id){
-  if (!inv || !object_id || object_id < 0) return ERROR;
-
-  object * obj;
-  obj = object_load(object_id);
-
-  if(object_class(obj) == TRUE){
-    if(inventorycons_full(inv) == TRUE) return ERROR;
-    inv->consumable[inv->idcons] = obj;
-    inv->idcons++;
-  }
-
-  else{
-    if(inventoryperm_full(inv) == TRUE) return ERROR;
-    inv->permanent[inv->idperm] = obj;
-    inv->idperm++;
-  }
-
-return OK;
-
-}
-
-
-Status object_remove(inventory * inventory, int position, Bool class){
-  if (!inventory || !position || position < 0) return ERROR;
-
-  if(class == TRUE){
-
-    consumable_decrease(inventory->consumable[position]
-  }
-
-  if(class == FALSE){
-    free(inventory->permanent[position]);
-    inventory->permanent[position] = NULL;
-    for(i = position; i<15; i++){
-      inventory->permanent[i] = inventory->permanent[i+1];
+    for(int i=0;i<inv->size[ob_ty];++i){
+        if(obj_cmp(inv->items[ob_ty][i],ob)==0){
+            inv->times[ob_ty][i]++;
+            return inv;
+        }
+    }
+    
+    // We already now that the object is not in the inventory    
+    if(inv->size[ob_ty]==inv->alloc[ob_ty]){
+        int nsiz=inv->alloc[ob_ty]*INCREMENT;
+        Object** tmp=realloc(inv->items[ob_ty],nsiz*sizeof(Object*));
+        int * itmp =realloc(inv->times,nsiz*sizeof(int));
+        if(!tmp||!itmp){
+            return NULL;
+        }
+        inv->alloc[ob_ty]=nsiz;
+        inv->times[ob_ty]=itmp;
+        inv->items[ob_ty]=tmp;
     }
 
-  }
+    inv->items[ob_ty][inv->size[ob_ty]]=obj_copy(ob);
+    inv->times[ob_ty][inv->size[ob_ty]]++;
+    inv->size[ob_ty]++;
+    return inv;    
+}
+Inventory* inv_remove(Inventory* inv, Object* ob){
+    if(!inv||!ob)return NULL;
+    obj_type ob_ty=obj_getType(ob);
+    bool found=false;
+    for(int i=0;i<inv->size[ob_ty];++i){
+        if(found){
+            inv->items[ob_ty][i-1]=inv->items[ob_ty][i];
+            inv->times[ob_ty][i-1]=inv->times[ob_ty][i];
 
+            inv->times[ob_ty][i]=0;
+            inv->items[ob_ty][i]=0;
+        }
+        if(!found && obj_cmp(inv->items[ob_ty][i],ob)==0){
+            obj_free(inv->items[ob_ty][i]);
+            inv->items[ob_ty][i]=NULL;
+            inv->times[ob_ty][i]=0;
+            found=true;
+        }
+    }
+    return found? inv: NULL;
+}
+Inventory* inv_decrease(Inventory* inv, Object* ob){
+    if(!inv||!ob)return NULL;
+    obj_type ob_ty=obj_getType(ob);
 
-
-
-
-
-
+    for(int i=0;i<inv->size[ob_ty];++i){
+        if(obj_cmp(inv->items[ob_ty][i],ob)==0){
+            inv->times[ob_ty][i]--;
+            if(inv->times[ob_ty][i]==0){
+                inv_remove(inv,ob);
+            }
+            return inv;
+        }
+    }
+}
+Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Font* ftext, Font* fnum){
+    if(!inv)return NULL;
+    *dim=OBJ_TYPE_SIZE;
+    *texts=obj_type_def();
+    Canvas*** tot=calloc(OBJ_TYPE_SIZE,sizeof(Canvas**));
+    *dimens=calloc(OBJ_TYPE_SIZE,sizeof(int));
+    if(!tot||!(*dimens)||!texts){
+        free(dimens);
+        free(tot);
+        free(texts);
+        return NULL;
+    }
+    for(int ty=0;ty<OBJ_TYPE_SIZE;++ty){
+        tot[ty]=calloc(inv->size[ty],sizeof(Canvas*));
+        (*dimens)[ty]=inv->size[ty];
+        for(int el=0;el<inv->size[ty];++el){
+            tot[ty][el]=obj_render(inv->items[ty][el],inv->times[ty][el],ftext,fnum);
+            if(!tot[ty][el]){
+                for(int z=0;z<ty;++z)for(int j=0;j<inv->size[z];++j)canv_free(tot[z][j]);
+                for(int j=0;j<el;++j)canv_free(tot[ty][j]);
+                for(int j=0;j<=ty;++j)free(tot[ty]);
+                free(dimens);
+                free(tot);
+                free(*texts);
+                return NULL;
+            }
+        }
+    }
+    return tot;
 }

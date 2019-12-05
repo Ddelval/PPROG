@@ -1,83 +1,73 @@
 
 /*
- * File:   atb.h
+ * File:   attb.h
  * Author: jaime
  *
  * Created on 30 de septiembre de 2019, 9:48
  */
 
 
-#ifndef ATB_H
-#define ATB_H
+#ifndef atb_H
+#define atb_H
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-typedef struct _atb atb;
+typedef struct _Attributes Attributes;
+typedef enum {HEALTH,ATTACK,DEFENSE,SPEED,AGILITY} attb_type;
+
+
 
 #include "types.h"
 
 /*
- Function name: atb_ini
- Utility: It creates a new atb structure with 0 in each camp
- Inputs:
- Outputs: atb pointer
+   Function name: attb_ini
+   Utility: It creates a new attb structure with 0 in each camp
+   Inputs:
+   Outputs: attb pointer
  */
-atb * atb_ini();
+Attributes * attb_ini();
 /*
- Function name: atb_destroy
- Utility: It destroys an atb structure
- Inputs: atb pointer
- Outputs:
+   Function name: attb_destroy
+   Utility: It destroys an attb structure
+   Inputs: attb pointer
+   Outputs:
  */
-void atb_destroy(atb * atb);
+void attb_free(Attributes * attb);
+
+Status attb_set(Attributes* attb, int p, attb_type index);
+
+int attb_get(Attributes* attb, attb_type index);
+
+int * attb_getAll(Attributes * attb);
+
+Status attb_setAll(Attributes * attb, int *p);
+
+
+
+Attributes* attb_load(FILE* f);
+
+
 /*
- Function name: atb_setter
- Utility: This function can be used to set an atb camp to an int value
- * GUIDE:
- * 1 = HEALTH
- * 2 = ATTACK
- * 3 = DEFENSE
- * 4 = SPEED
- * 5 = AGILITY
- Inputs: atb pointer, int value (the value t set), int id (the camp you will choose to edit)
- Outputs: Status (OK/ERROR)
+   Function name: attb_merge
+   Utility: Simply adds the values of two attb structures. The primary one is the one which will be returned.
+   Inputs: two attb pointers
+   Outputs: the primary attb pointer. Usually the one attached to the entity.
  */
-Status atb_setter(atb * atb, int value, int id);
+Attributes * attb_merge(Attributes * primary, Attributes * secondary);
 /*
- Function name: atb_getter
- Utility: Allows you to obtain the value of a certain atb camp you will bee able to choose
- *  * GUIDE:
- * 1 = HEALTH
- * 2 = ATTACK
- * 3 = DEFENSE
- * 4 = SPEED
- * 5 = AGILITY
- Inputs: atb pointer, int id
- Outputs: int value
+   Function name: attb_print
+   Utility: it prints the attribute values in a string format into a file.
+   Inputs: FILE pointer, attb pointer
+   Outputs: int that contains the number of characters that have been printed
  */
-int atb_getter(atb * atb, int id);
-/*
- Function name: atb_merge
- Utility: Simply adds the values of two atb structures. The primary one is the one which will be returned.
- Inputs: two atb pointers
- Outputs: the primary atb pointer. Usually the one attached to the entity.
- */
-atb * atb_merge(atb * primary, atb * secondary);
-/*
- Function name: atb_print
- Utility: it prints the attribute values in a string format into a file.
- Inputs: FILE pointer, atb pointer
- Outputs: int that contains the number of characters that have been printed
- */
-int atb_print(FILE *pf, atb * atb);
 
-atb *atb_allCopy(atb *a);
+Attributes *attb_copy(Attributes *a);
 
 
 
 
 
 
-#endif /* ATB_H */
+#endif /* attb_H */
