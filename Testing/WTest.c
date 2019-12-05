@@ -96,7 +96,7 @@ int main(){
     inv_insert(inv,o);
     o =odic_lookup(2);
     inv_insert(inv,o);
-    disp_InventoryWindow(dis,inv,f8,f6,f4,f6);
+    //disp_InventoryWindow(dis,inv,f8,f6,f4,f6);
     
 
 
