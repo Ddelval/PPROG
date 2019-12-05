@@ -174,3 +174,7 @@ Display* disp_remDialog(Display* dis){
     dis->dialog=false;
     return dis;
 }
+
+Room* disp_getrefRoom(Display* dis){
+    return dis? dis->room:NULL;
+}
