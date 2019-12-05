@@ -16,6 +16,7 @@
 
 #include "Utility.h"
 #include "Sprite.h"
+#include "Trigger.h"
 /*-----------------------------------------------------------------*/
 /// Free all the memory allocated to this structure.
 /// It has to be called before the program exits

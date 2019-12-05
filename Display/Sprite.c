@@ -3,7 +3,7 @@
 //  Created by David del Val on 06/10/2019
 //
 //
-
+#define NTRIGGERS 10
 #include "Sprite.h"
 #define ret_free(spr) {spr_free(spr); return NULL;}
 struct _Sprite{
@@ -11,7 +11,7 @@ struct _Sprite{
   int iPos, jPos;
   int width, height;
   bool existstrigger;
-  int ** trigger;
+  int *** trigger;
   bool** collision;
   bool** shadow;
   Canvas* canvas;
@@ -23,10 +23,17 @@ Sprite* spr_ini(int id, int width, int height){
     spr->width=width;
     spr->height=height;
 
-    spr->trigger=calloc(height, sizeof(int*));
+    spr->trigger=calloc(height, sizeof(int**));
     if(!spr->trigger)ret_free(spr);
     for(int i=0;i<height;++i){
-        spr->trigger[i]=calloc(width, sizeof(int));
+        spr->trigger[i]=calloc(width, sizeof(int*));
+        for(int j=0;j<width;++j){
+            spr->trigger[i][j]=calloc(NTRIGGERS,sizeof(int));
+            if(!spr->trigger[i][j])ret_free(spr);
+            for(int w=0;w<NTRIGGERS;++w){
+                spr->trigger[i][j][w]=-1;
+            }
+        }
         if(!spr->trigger[i])ret_free(spr);
     }
 
@@ -55,6 +62,9 @@ void spr_free(Sprite* sp){
     if(!sp)return;
     if(sp->trigger){
         for(int i=0;i<sp->height;++i){
+            for(int j=0;j<sp->width;++j){
+                free(sp->trigger[i][j]);
+            }
             free(sp->trigger[i]);
         }
         free(sp->trigger);
@@ -154,19 +164,27 @@ Sprite* spr_load(FILE* f){
     int i1,i2,j1,j2;
     for(int i=0;i<n;++i){
         scanf("%d %d %d %d %d",&i1,&i2,&j1,&j2,&id);
-        int jj1;
-        while(i1<=i2){
-            jj1=j1;
-            while(jj1<=j2){
-                if(jj1>=res->width||i1>=res->height){
-                    spr_free(res);
-                    return NULL;
+        spr_addTriggger(res,id,i1,i2,j1,j2);
+    }
+    return res;
+}
+Sprite* spr_addTriggger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
+    int jj1;
+    while(i1<=i2){
+        jj1=j1;
+        while(jj1<=j2){
+            if(jj1>=s->width||i1>=s->height){
+                spr_free(s);
+                return NULL;
+            }
+            for(int w=0;w<NTRIGGERS;++w){
+                if(s->trigger[i1][jj1][w]==-1){
+                    s->trigger[i1][jj1][w]=tr_id;
                 }
-                res->trigger[i1][jj1]=id;
             }
         }
     }
-    return res;
+    return s;
 }
 Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei){
     if(!rarr)return NULL;

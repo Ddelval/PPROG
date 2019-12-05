@@ -1,4 +1,4 @@
-//  ppro
+//  PPROG
 //	SpriteDic.c
 //  Created by David del Val on 20/10/2019
 //
@@ -12,6 +12,7 @@ typedef struct{
 } SpriteDic;
 
 char sdic_c[]= "Sprites/dic.txt";
+char* sdic_tr = "Dictionaries/trsp.txt";
 SpriteDic* sdic_data=NULL;
 void sdic_free(){
     if(!sdic_data)return;
@@ -51,9 +52,27 @@ SpriteDic* sdic_ini(){
         s->dat[i]=spr_load(f);
         if(!s->dat[i]){
             sdic_free(s);
+            return NULL;
         }
     }
-    //qsort(s->dat,siz,sizeof(Sprite*),cmpSprite);
+    fclose(f);
+    f=fopen(sdic_tr,"r");
+    if(!f){
+        sdic_free(s);
+        return NULL;
+    }
+    
+    int num;
+    fscanf(f,"%d", &num);
+    for(int i=0;i<num;++i){
+        int s_id, t_id, i1,i2,j1,j2;
+        fscanf(f,"%d %d %d %d %d %d",&s_id, &t_id, &i1, &i2, &j1, &j2);
+        for(int j=0;j<siz;++j){
+            if(spr_getId(s->dat[i])==s_id){
+                spr_addTrigger(t_id,i1,i2,j1,j2);
+            }
+        }
+    }
     return s;
 }
 
