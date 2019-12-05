@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "atb.h"
+#include "Atb.h"
 #include "types.h"
 #include "errno.h"
 extern int errno;
@@ -79,19 +79,15 @@ Status attb_set(Attributes* attb, int p, attb_type index){
         return OK;
 }
 
-Attributes * attb_getAll(Attributes * attb){
+int * attb_getAll(Attributes * attb){
         if(!attb) return NULL;
 
-        Attributes *a = NULL;
-        int i = 0;
-
-        a = attb_ini();
-        if(!a) return NULL;
-
-        while(i < ATTRIBUTE_SIZE) {
-                if(attb_set(a, attb_get(attb, i), i) == ERROR) return NULL;
-                i++;
-        }
+        int * a;
+        
+        a = (int*)calloc(ATTRIBUTE_SIZE,sizeof(int));
+        
+        memcpy(a, attb->data, ATTRIBUTE_SIZE * sizeof(int));
+        
         return a;
 }
 

@@ -7,7 +7,7 @@
 #define OBJECT_H
 
 #include "Utility.h"
-#include "Attributes.h"
+#include "Atb.h"
 #include "SpriteDic.h"
 #include "Sprite.h"
 #include "Skill.h"

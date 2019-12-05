@@ -17,7 +17,7 @@ struct _Object
     int spr_id;
     obj_type type;
     Attributes* atb;
-    Skill * attacks[MAX_ATTACKS];
+    skill * attacks[MAX_ATTACKS];
     int n_attacks;
     bool destroyable;
 };
@@ -74,13 +74,13 @@ Object* obj_load(FILE* f){
     while(ob->name[0]=='\n')fgets(ob->name,NAME_SIZE,f);
     ob->name[strlen(ob->name)-1]=0;
 
-    fscanf(f, "%d %d %d",&ob->icon_id,&ob->spr_id,&ob->type);
+    fscanf(f, "%d %d %d",(int*)(&ob->icon_id),(int*)(&ob->spr_id),(int*)(&ob->type));
     //ob->atb=atb_load(f);
     fscanf(f,"%d",&ob->n_attacks);
     for(int i=0;i<ob->n_attacks;++i){
         //ob->attacks[i]=skill_load(f);
     }
-    fscanf(f,"%d",&ob->destroyable);
+    fscanf(f,"%d",(int*)(&ob->destroyable));
     return ob;
 }
 /**
