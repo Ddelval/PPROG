@@ -11,9 +11,12 @@
 #include "SpriteDic.h"
 #include "Sprite.h"
 #include "Skill.h"
+#include "Window.h"
 typedef struct _Object Object;
 #define OBJ_TYPE_SIZE 2
 typedef enum {WEAPON, CONSUMABLE} obj_type;
+
+char** obj_type_def();
 
 Object* obj_ini();
 
@@ -51,6 +54,6 @@ Sprite* obj_getSprite(Object* ob);
 
 char* obj_getName(Object* ob);
 obj_type obj_getType(Object* ob);
-
+Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum);
 
 #endif

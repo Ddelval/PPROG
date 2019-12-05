@@ -196,57 +196,23 @@ Inventory *entity_getInventory(Entity* p){
 
 
 Entity* entity_moveUp(Entity* p){
-        if(!p) return NULL;
-        Room* r=disp_getrefRoom(p->dis); 
-        if(room_incPos(r, p->room_index, -VERTICAL_STEP, 0)==1){
-                //disp_scroll(dis,-0.5,0);
-                if(disp_scroll(p->dis,-0.5,0)==1){
-                    canv_print(stdout,room_getRender(r),0,0);
-                }
-            }
-            else{
-                room_printMod(r, 0, 0);
-            }
+        if(!p||!p->dis) return NULL;
+        disp_incPos(p->dis,p->room_index,-VERTICAL_STEP,0,&p->i,&p->j);
         return p;
 }
 Entity* entity_moveDown(Entity* p){
-        if(!p) return NULL;
-        Room* r=disp_getrefRoom(p->dis); 
-        if(room_incPos(r, p->room_index, 0, VERTICAL_STEP)==2){
-                if(disp_scroll(p->dis,0,0.5)==1){
-                    canv_print(stdout,room_getRender(r),0,0);
-                }
-            }
-            else{
-                room_printMod(r, 0, 0);
-            }
-
+        if(!p||!p->dis) return NULL;
+        disp_incPos(p->dis,p->room_index,VERTICAL_STEP,0,&p->i,&p->j);
         return p;
 }
 Entity* entity_moveLeft(Entity* p){
-        if(!p) return NULL;
-        Room* r=disp_getrefRoom(p->dis); 
-        if(room_incPos(r, p->room_index, 0, -HORIZONTAL_STEP)==4){
-                if(disp_scroll(p->dis,0,-0.5)==1){
-                    canv_print(stdout,room_getRender(r),0,0);
-                }
-            }
-            else{
-                room_printMod(r, 0, 0);
-            }
+        if(!p||!p->dis) return NULL;
+        disp_incPos(p->dis,p->room_index,0,-HORIZONTAL_STEP,&p->i,&p->j);
         return p;
 }
 Entity* entity_moveRight(Entity* p){
-        if(!p) return NULL;
-        Room* r=disp_getrefRoom(p->dis); 
-        if(room_incPos(r, p->room_index, 0, HORIZONTAL_STEP)==2){
-                if(disp_scroll(p->dis,0,0.5)==1){
-                    canv_print(stdout,room_getRender(r),0,0);
-                }
-            }
-            else{
-                room_printMod(r, 0, 0);
-            }
+        if(!p||!p->dis) return NULL;
+        disp_incPos(p->dis,p->room_index,0,HORIZONTAL_STEP,&p->i,&p->j);
         return p;
 }
 

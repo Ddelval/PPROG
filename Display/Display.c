@@ -175,6 +175,55 @@ Display* disp_remDialog(Display* dis){
     return dis;
 }
 
+Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers){
+    if(!dis||!inv)return NULL;
+    int dim;
+    int *dimens;
+    char ** text;
+    Canvas *** dat=inv_render(inv,&dim,&dimens,&text,ftext,fnumbers);
+    Wlabel* tit=wl_ini("Inventory",ftitle,10);
+    Canvas* c=wl_render(tit,dis->width);
+    for(int i=0;i<dim;++i){
+        //Iterate through each type of element
+        if(dimens[i]>0){
+            Wlabel* w=wl_ini(text[i],fsubtitle,10);
+            Canvas * c2=wl_render(w,dis->width);
+            canv_appendVI(c,c2);
+        }
+        else continue;
+        Canvas * b=dat[i][0];
+        for(int j=1;j<dimens[i];++j){
+            Canvas*bc=canv_backGrnd(0,0,0,0,10,10);
+            canv_appendHI(b,bc);
+            canv_appendHI(b,dat[i][j]);
+        }
+        canv_appendVI(c,b);
+    }
+    Canvas* back=disp_Render(dis);
+    Canvas* back2=canv_blur(back,10);
+    canv_free(back);
+    canv_darken(back2,0.40);
+    canv_addOverlay(back2,c,10,0);
+    canv_print(stdout,back2,0,0);
+    return dis;
+}
+
+
 Room* disp_getrefRoom(Display* dis){
     return dis? dis->room:NULL;
+}
+
+int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
+    int a=room_incPos(d->room, index, i, j);
+    if(a==-1)return -1;
+    if(a!=0&&a!=5){
+        if(disp_scroll(d,0.5*(i!=0),0.5*(j!=0))==1){
+            canv_print(stdout,room_getRender(d->room),0,0);
+        }
+    }
+    else{
+        room_printMod(d->room, 0, 0);
+    }
+    room_getBSpritePos(d->room,index,f_i,f_j);
+    return 0;
 }

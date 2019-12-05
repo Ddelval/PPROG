@@ -9,10 +9,15 @@
 #define MEM_INCREMENT 1.5
 #define MEM_INI 5
 #define min(x,y) ((x<y)? x : y)
+
 typedef struct _box{
     int i,j,w,h;
 }box;
 
+typedef struct _trigger{
+    int code;
+    int spindex;
+}trigger;
 
 struct _Room{
     int id;
@@ -32,7 +37,8 @@ struct _Room{
     Canvas* shadows;
     bool** colision;
     
-    int** trigger;
+    trigger** trig;
+    trigger** active;
 };
 
 
@@ -59,7 +65,7 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     r->backpos=r->overpos=0;
 
     r->ov=calloc(MEM_INI, sizeof(box));
-
+    if(!r->ov) ret_free(r);
 
     //Colission bool array
     r->colision=calloc(hei, sizeof(bool*));
@@ -71,12 +77,12 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     //Shadow 
     r->shadows=canv_backGrnd(0,0,0,0,wid,hei);
 
-    //Trigger int array
-       r->trigger=calloc(hei, sizeof(int*));
-       if(!r->trigger)ret_free(r);
+    //Trigger array
+       r->trig=calloc(hei, sizeof(trigger*));
+       if(!r->trig)ret_free(r);
        for(int i=0;i<hei;++i){
-           r->trigger[i]=calloc(wid, sizeof(int));
-           if(!r->trigger[i])ret_free(r);
+           r->trig[i]=calloc(wid, sizeof(trigger));
+           if(!r->trig[i])ret_free(r);
        }
     r->map=canv_backGrnd(pix_retR(backcol), pix_retG(backcol), pix_retB(backcol), pix_retA(backcol), wid, hei);
     return r;
@@ -168,6 +174,12 @@ int room_addOSprite(Room* r, Sprite* s){
     }
     r->overpos++;
     return r->overpos-1;
+}
+Room* room_getBSpritePos(Room *r, int index, int* i, int *j){
+    if(!r||index<0||index>=r->backpos||!i||!j)return NULL;
+    *i=spr_getOI(r->backg[index]);
+    *j=spr_getOJ(r->backg[index]);
+    return r;
 }
 Canvas* room_getRender(Room* r){
     if(!r)return NULL;
@@ -367,9 +379,9 @@ void room_free(Room* r){
     //Shadow 
     canv_free(r->shadows);
     //Trigger array
-    if(r->trigger){
-        for(int i=0;i<r->hei;++i)free(r->trigger[i]);
-        free(r->trigger);
+    if(r->trig){
+        for(int i=0;i<r->hei;++i)free(r->trig[i]);
+        free(r->trig);
     }
     canv_free(r->map);
     free(r->ov);

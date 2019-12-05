@@ -12,7 +12,7 @@ typedef struct
     int size;
 }ObjectDic;
 
-char* odic_c="Objects/dic.txt";
+char* odic_c="Dictionaries/obj.txt";
 ObjectDic* odic=NULL;
 
 void odic_free(){
@@ -50,7 +50,8 @@ Object* odic_lookup(int id){
     if(!odic)return NULL;
     for(int i=0;i<odic->size;++i){
         if(obj_getId(odic->obj[i])==id){
-            return obj_copy(odic->obj[i]);
+            Object* bc=obj_copy(odic->obj[i]);
+            return bc;
         }
     }
     return NULL;

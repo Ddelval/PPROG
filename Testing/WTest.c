@@ -8,6 +8,7 @@
 #include <termios.h>
 #include "Room.h"
 #include "Entity.h"
+#include "ObjectDic.h"
 char getch1(void)
 {
     char buf = 0;
@@ -89,6 +90,13 @@ int main(){
     
     canv_print(stdout, disp_Render(dis), 0, 0);
 
+    Object* o =odic_lookup(1);
+    Inventory *inv=inv_ini();
+    inv_insert(inv,o);
+    inv_insert(inv,o);
+    o =odic_lookup(2);
+    inv_insert(inv,o);
+    disp_InventoryWindow(dis,inv,f6,f6,f4,f6);
     
 
 

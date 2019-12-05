@@ -106,3 +106,33 @@ Inventory* inv_decrease(Inventory* inv, Object* ob){
         }
     }
 }
+Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Font* ftext, Font* fnum){
+    if(!inv)return NULL;
+    *dim=OBJ_TYPE_SIZE;
+    *texts=obj_type_def();
+    Canvas*** tot=calloc(OBJ_TYPE_SIZE,sizeof(Canvas**));
+    *dimens=calloc(OBJ_TYPE_SIZE,sizeof(int));
+    if(!tot||!(*dimens)||!texts){
+        free(dimens);
+        free(tot);
+        free(texts);
+        return NULL;
+    }
+    for(int ty=0;ty<OBJ_TYPE_SIZE;++ty){
+        tot[ty]=calloc(inv->size[ty],sizeof(Canvas*));
+        (*dimens)[ty]=inv->size[ty];
+        for(int el=0;el<inv->size[ty];++el){
+            tot[ty][el]=obj_render(inv->items[ty][el],inv->times[ty][el],ftext,fnum);
+            if(!tot[ty][el]){
+                for(int z=0;z<ty;++z)for(int j=0;j<inv->size[z];++j)canv_free(tot[z][j]);
+                for(int j=0;j<el;++j)canv_free(tot[ty][j]);
+                for(int j=0;j<=ty;++j)free(tot[ty]);
+                free(dimens);
+                free(tot);
+                free(*texts);
+                return NULL;
+            }
+        }
+    }
+    return tot;
+}

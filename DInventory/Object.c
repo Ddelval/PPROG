@@ -21,11 +21,21 @@ struct _Object
     int n_attacks;
     bool destroyable;
 };
-
+char** obj_type_def(){
+    char** c=calloc(2,sizeof(char*));
+    c[0]=calloc(10,sizeof(char));
+    c[1]=calloc(10,sizeof(char));
+    char* cc="Weapons";
+    strcpy(c[0],cc);
+    cc="Consumables";
+    strcpy(c[1],cc);
+    return c;
+}
 Object* obj_ini(){
     Object* ob = calloc(1,sizeof(Object));
     if(!ob)return NULL;
     ob->icon_id=ob->spr_id=-1;
+    return ob;
 }
 
 void obj_free(Object* ob){
@@ -60,16 +70,17 @@ Object* obj_load(FILE* f){
     Object* ob=obj_ini();
     if(!ob)return NULL;
     fscanf(f,"%d",&ob->id);
-    ob->name[0]=0;
-    while(ob->name[0]!='\n')fgets(ob->name,NAME_SIZE,f);
+    ob->name[0]='\n';
+    while(ob->name[0]=='\n')fgets(ob->name,NAME_SIZE,f);
+    ob->name[strlen(ob->name)-1]=0;
 
     fscanf(f, "%d %d %d",&ob->icon_id,&ob->spr_id,&ob->type);
     //ob->atb=atb_load(f);
-    fscanf(f,"%d",ob->n_attacks);
+    fscanf(f,"%d",&ob->n_attacks);
     for(int i=0;i<ob->n_attacks;++i){
         //ob->attacks[i]=skill_load(f);
     }
-    fscanf(f,"%d",ob->destroyable);
+    fscanf(f,"%d",&ob->destroyable);
     return ob;
 }
 /**
@@ -127,4 +138,26 @@ obj_type obj_getType(Object* ob){
 int obj_getId(Object* ob){
     return ob? ob->id: -1;
 }
-
+Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum){
+    if(!ob)return 0;
+    Sprite* sp=sdic_lookup(ob->icon_id);
+    Canvas* c=canv_copy(spr_getDispData(sp));
+    spr_free(sp);
+    Wlabel* nam=wl_ini(ob->name,ftext,10);
+    char snum[10];
+    sprintf(snum,"%d",number);
+    Wlabel* num=wl_ini(snum,fnum,10);
+    Canvas* c2=wl_render(nam,canv_getWidth(c));
+    canv_appendVI(c,c2);
+    canv_free(c2);
+    c2=wl_render(num,canv_getWidth(c));
+    canv_appendVI(c,c2);
+    
+    Canvas* bb=canv_backGrnd(50,50,150,255,canv_getWidth(c)+4,canv_getHeight(c)+2);
+    canv_addOverlay(bb,c,1,2);
+    canv_free(c);
+    Canvas* back=canv_backGrnd(255,255,255,255,canv_getWidth(bb)+4,canv_getHeight(bb)+2);
+    canv_addOverlay(back,bb,1,2);
+    canv_free(bb);
+    return back;
+}

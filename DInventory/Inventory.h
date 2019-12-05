@@ -18,6 +18,6 @@ void inv_free(Inventory* inv);
 Inventory* inv_insert(Inventory* inv, Object* ob);
 Inventory* inv_remove(Inventory* inv, Object* ob);
 Inventory* inv_decrease(Inventory* inv, Object* ob);
-
+Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Font* ftext, Font* fnum);
 
 #endif
