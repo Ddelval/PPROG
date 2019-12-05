@@ -149,25 +149,25 @@ Room* room_addBSprite(Room* r, Sprite* s){
     spr_processShadows(s,r->shadows);
     return r;
 }
-Room* room_addOSprite(Room* r, Sprite* s){
-    if(!r||!s)return NULL;
+int room_addOSprite(Room* r, Sprite* s){
+    if(!r||!s)return -1;
     if(r->overpos==r->overssiz){
         int nsiz=(int)ceil(r->overssiz*MEM_INCREMENT);
         Sprite** tmp=realloc(r->overs,nsiz*sizeof(Sprite*));
-        if(!tmp)return NULL;
+        if(!tmp)return -1;
         r->overs=tmp;
         r->overssiz=nsiz;
 
         box* bb=realloc(r->ov, nsiz*sizeof(box));
-        if(!bb) return NULL;
+        if(!bb) return -1;
 
     }
     r->overs[r->overpos]=spr_copy(s);
     if(!r->overs[r->overpos]){
-        return NULL;
+        return -1;
     }
     r->overpos++;
-    return r;
+    return r->overpos-1;
 }
 Canvas* room_getRender(Room* r){
     if(!r)return NULL;

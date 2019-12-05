@@ -21,8 +21,8 @@ struct _Entity {
         char name[MAX_NAME_LENGTH];
         Sprite *s;
         entType t;
-        int x;
-        int y;
+        int i;
+        int j;
         Attributes* *attr;
         Inventory *inv;
         int room_index;
@@ -31,26 +31,27 @@ struct _Entity {
 };
 
 
-Entity *entity_ini (char *name, entType t, int x, int y){
+Entity *entity_ini (char *name, entType t, int i, int j){
         Entity* e = NULL;
-        e = (Entity*) malloc(sizeof(Entity));
+        e = (Entity*) calloc(1,sizeof(Entity));
         if(!e) return NULL;
         if(name && strlen(name)+1 < MAX_NAME_LENGTH) strcpy(e->name, name);
 
         e->t = t;
-        e->x = x;
-        e->y = y;
+        e->i = i;
+        e->j = j;
 
         e->attr = atb_ini();
-        if (e->attr == NULL) {
+        /*if (e->attr == NULL) {
                 entity_free(e);
                 return NULL;
-        }
+        }*/
         e->inv = inv_ini();
+        /*
         if (e->inv == NULL) {
                 entity_free(e);
                 return NULL;
-        }
+        }*/
         return e;
 }
 /** 
@@ -74,17 +75,15 @@ Entity *entity_load(FILE* f, Display *d){
         }
         int sid;
         fscanf(f,"%d",&sid);
-        e->s=sdic_lookup(sid);
-
-        e->dis=d;
-        Room * r=disp_getrefRoom(d);
-        aux = room_addOSprite(r, e->s);
-        if(aux < 0) {
+        if(entity_setSprite(e,sid)==NULL){
                 entity_free(e);
                 return NULL;
         }
-        e->room_index = aux;
-
+        
+        if(entity_addtoDisplay(e,d)==NULL){
+                entity_free(e);
+                return NULL;
+        }
         if(entity_setName(e, name) == NULL) {
                 entity_free(e);
                 return NULL;
@@ -95,12 +94,12 @@ Entity *entity_load(FILE* f, Display *d){
                 return NULL;
         }
 
-        if(entity_setCoordX(e,  x) == NULL) {
+        if(entity_setCoordI(e,  x) == NULL) {
                 entity_free(e);
                 return NULL;
         }
 
-        if(entity_setCoordY(e,  y) == NULL) {
+        if(entity_setCoordJ(e,  y) == NULL) {
                 entity_free(e);
                 return NULL;
         }
@@ -118,10 +117,13 @@ Entity* entity_setName(Entity* p, char* c){
         return p;
 }
 
-Entity* entity_setSprite(Entity* p, Sprite *s){
-        if(!p || !s) return NULL;
+Entity* entity_setSprite(Entity* p,int d){
+        if(!p) return NULL;
         if(p->s) spr_free(p->s);
-        p->s = s;
+        p->s = sdic_lookup(d);
+        if(!p->s)return NULL;
+        spr_setOI(p->s,1);
+        spr_setOJ(p->s,1);
         return p;
 }
 
@@ -131,15 +133,15 @@ Entity* entity_setEntType(Entity* p, entType t){
         return p;
 }
 
-Entity* entity_setCoordX(Entity* p, int x){
-        if(!p || x < 0) return NULL;
-        p->x = x;
+Entity* entity_setCoordI(Entity* p, int i){
+        if(!p || i < 0) return NULL;
+        p->i = i;
         return p;
 }
 
-Entity* entity_setCoordY(Entity* p, int y){
-        if(!p  || y < 0) return NULL;
-        p->y = y;
+Entity* entity_setCoordJ(Entity* p, int j){
+        if(!p  || j < 0) return NULL;
+        p->j = j;
         return p;
 }
 
@@ -173,12 +175,12 @@ entType entity_getEntType(Entity* p){
 
 int entity_getCoordX(Entity* p){
         if(!p) return -1;
-        return p->x;
+        return p->i;
 }
 
 int entity_getCoordY(Entity* p){
         if(!p) return -1;
-        return p->y;
+        return p->j;
 }
 
 Attributes *entity_getAttribute(Entity* p){
@@ -196,7 +198,7 @@ Inventory *entity_getInventory(Entity* p){
 Entity* entity_moveUp(Entity* p){
         if(!p) return NULL;
         Room* r=disp_getrefRoom(p->dis); 
-        if(room_incPos(r, 0, -VERTICAL_STEP, 0)==1){
+        if(room_incPos(r, p->room_index, -VERTICAL_STEP, 0)==1){
                 //disp_scroll(dis,-0.5,0);
                 if(disp_scroll(p->dis,-0.5,0)==1){
                     canv_print(stdout,room_getRender(r),0,0);
@@ -210,7 +212,7 @@ Entity* entity_moveUp(Entity* p){
 Entity* entity_moveDown(Entity* p){
         if(!p) return NULL;
         Room* r=disp_getrefRoom(p->dis); 
-        if(room_incPos(r, 0, 0, VERTICAL_STEP)==2){
+        if(room_incPos(r, p->room_index, 0, VERTICAL_STEP)==2){
                 if(disp_scroll(p->dis,0,0.5)==1){
                     canv_print(stdout,room_getRender(r),0,0);
                 }
@@ -224,7 +226,7 @@ Entity* entity_moveDown(Entity* p){
 Entity* entity_moveLeft(Entity* p){
         if(!p) return NULL;
         Room* r=disp_getrefRoom(p->dis); 
-        if(room_incPos(r, 0, 0, -HORIZONTAL_STEP)==4){
+        if(room_incPos(r, p->room_index, 0, -HORIZONTAL_STEP)==4){
                 if(disp_scroll(p->dis,0,-0.5)==1){
                     canv_print(stdout,room_getRender(r),0,0);
                 }
@@ -237,7 +239,7 @@ Entity* entity_moveLeft(Entity* p){
 Entity* entity_moveRight(Entity* p){
         if(!p) return NULL;
         Room* r=disp_getrefRoom(p->dis); 
-        if(room_incPos(r, 0, 0, HORIZONTAL_STEP)==2){
+        if(room_incPos(r, p->room_index, 0, HORIZONTAL_STEP)==2){
                 if(disp_scroll(p->dis,0,0.5)==1){
                     canv_print(stdout,room_getRender(r),0,0);
                 }
@@ -252,11 +254,24 @@ void entity_free(Entity *p){
         if(!p) return;
         if(p->s) spr_free(p->s);
         p->s = NULL;
-        if (p->attr) atb_destroy(p->attr);
+        if (p->attr) atb_free(p->attr);
         p->attr = NULL;
-        if(p->inv) inventory_destroy(p->inv);
+        if(p->inv) inv_free(p->inv);
         p->inv = NULL;
         free(p);
         p = NULL;
         return;
+}
+Entity* entity_addtoDisplay(Entity* e, Display* dis){
+        if(!e||!dis)return NULL;
+        int aux;
+        e->dis=dis;
+        Room * r=disp_getrefRoom(dis);
+        aux = room_addOSprite(r, e->s);
+        if(aux < 0) {
+                entity_free(e);
+                return NULL;
+        }
+        e->room_index = aux;
+        return e;
 }

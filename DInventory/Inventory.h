@@ -11,4 +11,13 @@
 #include "Object.h"
 
 typedef struct _Inventory Inventory;
+
+
+Inventory* inv_ini();
+void inv_free(Inventory* inv);
+Inventory* inv_insert(Inventory* inv, Object* ob);
+Inventory* inv_remove(Inventory* inv, Object* ob);
+Inventory* inv_decrease(Inventory* inv, Object* ob);
+
+
 #endif

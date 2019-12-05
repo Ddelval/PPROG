@@ -80,7 +80,7 @@ Room* room_addBSprite(Room* r, Sprite*s);
 /// This layer is used for sprites that change frequently
 /// @param r    Room in which the sprite will be added
 /// @param s    Sprite to be added
-Room* room_addOSprite(Room* r, Sprite*s);
+int room_addOSprite(Room* r, Sprite* s);
 
 /*-----------------------------------------------------------------*/
 /// Generates the canvas that represents the map

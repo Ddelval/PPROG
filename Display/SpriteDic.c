@@ -11,18 +11,17 @@ typedef struct{
     int size;
 } SpriteDic;
 
-char c[]= "Sprites/dic.txt";
-SpriteDic* data=NULL;
+char sdic_c[]= "Sprites/dic.txt";
+SpriteDic* sdic_data=NULL;
 void sdic_free(){
-    d=data;
-    if(!d)return;
-    if(d->dat){
-        for(int i=0;i<d->size;++i){
-            spr_free(d->dat[i]);
+    if(!sdic_data)return;
+    if(sdic_data->dat){
+        for(int i=0;i<sdic_data->size;++i){
+            spr_free(sdic_data->dat[i]);
         }
-        free(d->dat);
+        free(sdic_data->dat);
     }
-    free(d);
+    free(sdic_data);
 }
 
 int cmpSprite(const void* s1,const void* s2){
@@ -37,7 +36,7 @@ int cmpSprite(const void* s1,const void* s2){
  */
 SpriteDic* sdic_ini(){
     int siz;
-    FILE*f=fopen(c, "r");
+    FILE*f=fopen(sdic_c, "r");
     SpriteDic* s= calloc(1, sizeof(SpriteDic));
     if(!s)return NULL;
 
@@ -60,12 +59,12 @@ SpriteDic* sdic_ini(){
 
 
 Sprite* sdic_lookup(int id){
-    if(data==NULL){
-        data=sdic_ini();
+    if(sdic_data==NULL){
+        sdic_data=sdic_ini();
     }
-    for(int i=0;i<data->size;++i){
-        if(spr_getId(data->dat[i])==id){
-            return spr_copy(data->dat[i]);
+    for(int i=0;i<sdic_data->size;++i){
+        if(spr_getId(sdic_data->dat[i])==id){
+            return spr_copy(sdic_data->dat[i]);
         }
     }
     return NULL;

@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <termios.h>
 #include "Room.h"
-#include "Entity.h"
 char getch1(void)
 {
     char buf = 0;
@@ -54,9 +53,18 @@ int main(){
     Room* r=room_load(f);
 
     fclose(f);
+
+    f = fopen("Sprites/per.txt", "r");
+
+    Sprite* sp= spr_load(f);
+    spr_setOI(sp, 20);
+    spr_setOJ(sp,600);
+    fclose(f);
+    room_addOSprite(r, sp);
     //canv_print(stdout, spr_getDispData(sp), 10, 10);
     char* c="Room 1";
     Display* dis= disp_ini(w, h, r, vdiv, c, f8);
+
     Sprite* ic=sdic_lookup(101);
     Canvas* canvv=spr_getDispData(ic);
 
@@ -81,17 +89,7 @@ int main(){
     Window* w2=win_ini("Actions", wela, 3, w-vdiv-1, h/2-20, 0, 0, f8);
     disp_AddLWindow(dis, w1);
     disp_AddLWindow(dis, w2);
-
-
-    Entity* e=entity_ini("Pepe",PLAYER,20,600);
-    entity_setSprite(e,1000);
-    entity_addtoDisplay(e,dis);
-    
     canv_print(stdout, disp_Render(dis), 0, 0);
-
-    
-
-
     //disp_DiaglogWindow(dis,"Hello, my name is Pepe. I am going to be your annoying friend in this game. If at some point I get too anoying, you can always press ALT + F4 and I will stop.",f4);
     while(1){
         char c;

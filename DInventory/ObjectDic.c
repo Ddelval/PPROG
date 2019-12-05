@@ -12,7 +12,7 @@ typedef struct
     int size;
 }ObjectDic;
 
-char* c="Objects/dic.txt";
+char* odic_c="Objects/dic.txt";
 ObjectDic* odic=NULL;
 
 void odic_free(){
@@ -26,7 +26,7 @@ void odic_free(){
     free(odic);
 }
 void odic_ini(){
-    FILE* f=fopen(c,"r");
+    FILE* f=fopen(odic_c,"r");
     odic=calloc(1,sizeof(ObjectDic));
     if(!odic)return;
 
