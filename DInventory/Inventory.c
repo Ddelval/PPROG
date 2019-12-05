@@ -7,12 +7,27 @@
 #include "Inventory.h"
 #define INITIAL_SIZE 10
 #define INCREMENT 1.5  
+/**
+ * @brief Structure that holds all the items that an entity has.
+ * The macro OBJ_TYPE_SIZE is the amount of different types of objects
+ * that are defined.
+ * For each type of object we have the follwowing:
+ *  - Object* items: Array of pointers to objects.
+ *  - int*    times: Int array that stores the amount of each object
+ *  - int      size: Int that stores the amount of different objets stored in items
+ *  - int     alloc: Int that stores the space that has been allocated.
+ *  - int  selected: The object that is being selected in each type
+ * 
+ * alloc and size will be compared to decide when is it necessary to increment the size of the array
+ * 
+ */
 struct _Inventory
 {
     Object** items[OBJ_TYPE_SIZE];
     int* times[OBJ_TYPE_SIZE];
     int size[OBJ_TYPE_SIZE];
     int alloc[OBJ_TYPE_SIZE];
+    int selected[OBJ_TYPE_SIZE];
 };
 
 Inventory* inv_ini(){

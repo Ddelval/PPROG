@@ -32,7 +32,14 @@ Welem* we_ini(Wtype t, void* data);
 /*-----------------------------------------------------------------*/
 /// Free the allocated memory
 void we_free(Welem* w);
-
+/**
+ * @brief Creates a window element with the
+ * 
+ * @param t 
+ * @param f 
+ * @param vgap 
+ * @return Welem* 
+ */
 Welem* we_createLabel(char* t, const Font* f,int vgap);
 
 Welem* we_createLabic(char*t, const Font*f,int vgap,int hgap, Canvas* c,wi_align l);
