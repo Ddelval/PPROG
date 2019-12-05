@@ -45,4 +45,8 @@ Entity* entity_setCoordJ(Entity* p, int j);
 
 Entity* entity_addtoDisplay(Entity* e, Display* dis);
 
+char * entity_getName(Entity* p);
+
+Attributes *entity_getAttribute(Entity* p);
+
 #endif

@@ -7,8 +7,8 @@
  */
 
 
-#ifndef attb_H
-#define attb_H
+#ifndef atb_H
+#define atb_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -40,7 +40,7 @@ Status attb_set(Attributes* attb, int p, attb_type index);
 
 int attb_get(Attributes* attb, attb_type index);
 
-Attributes * attb_getAll(Attributes * attb);
+int * attb_getAll(Attributes * attb);
 
 Status attb_setAll(Attributes * attb, int *p);
 

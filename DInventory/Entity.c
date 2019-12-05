@@ -23,7 +23,7 @@ struct _Entity {
         entType t;
         int i;
         int j;
-        Attributes* *attr;
+        Attributes* attr;
         Inventory *inv;
         int room_index;
         Display *dis;
@@ -41,7 +41,7 @@ Entity *entity_ini (char *name, entType t, int i, int j){
         e->i = i;
         e->j = j;
 
-        e->attr = atb_ini();
+        e->attr = attb_ini();
         /*if (e->attr == NULL) {
                 entity_free(e);
                 return NULL;
@@ -147,8 +147,8 @@ Entity* entity_setCoordJ(Entity* p, int j){
 
 
 
-char *entity_getName(Entity* p){
-        char *name = NULL;
+char * entity_getName(Entity* p){
+        char * name = NULL;
 
         if(!p) return NULL;
         if(!(p->name)) return NULL;
@@ -220,7 +220,7 @@ void entity_free(Entity *p){
         if(!p) return;
         if(p->s) spr_free(p->s);
         p->s = NULL;
-        if (p->attr) atb_free(p->attr);
+        if (p->attr) attb_free(p->attr);
         p->attr = NULL;
         if(p->inv) inv_free(p->inv);
         p->inv = NULL;

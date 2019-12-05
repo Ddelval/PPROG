@@ -15,10 +15,10 @@
 #define SKILL_H
 
 #include "types.h"
-#include "atb.h"
+#include "Atb.h"
 typedef enum {STUNNER = 0, UNDOGDE = 1, POISON = 2} specialSkill;
 typedef struct _skill skill;
-typedef struct _entity entity;
+//typedef struct _entity entity;
 /*
  Function name: skill_ini
  Utility: It creates a new skill structure with NULL in each camp
@@ -39,7 +39,7 @@ Function name: skill_load
  Inputs: skill pointer, file pointer, name of the file.
  Outputs: skill pointer
  */
-skill * skill_activate(skill*skill, entity * entity);
+//skill * skill_activate(skill*skill, entity * entity);
 
 int skill_getId(skill *s);
 
@@ -48,6 +48,8 @@ char * skill_getName(skill *s);
 char * skill_getDesc(skill *s);
 
 int skill_getSpecial(skill *s);
+
+void skill_free(skill * s);
 
 Attributes * skill_getAtbself(skill *s);
 
