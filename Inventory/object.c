@@ -17,7 +17,7 @@ struct _Object
     int spr_id;
     obj_type type;
     Attributes* atb;
-    skill * attacks[MAX_ATTACKS];
+    Skill * attacks[MAX_ATTACKS];
     int n_attacks;
     bool destroyable;
 };

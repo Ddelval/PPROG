@@ -15,9 +15,9 @@
 #define SKILL_H
 
 #include "types.h"
-#include "Atb.h"
+#include "Attributes.h"
 typedef enum {STUNNER = 0, UNDOGDE = 1, POISON = 2} specialSkill;
-typedef struct _skill skill;
+typedef struct _skill Skill;
 //typedef struct _entity entity;
 /*
  Function name: skill_ini
@@ -25,14 +25,14 @@ typedef struct _skill skill;
  Inputs:
  Outputs: skill pointer
  */
-skill * skill_ini();
+Skill * skill_ini();
 /*
 Function name: skill_destroy
  Utility: Destroys a skill struct
  Inputs: skill to destroy (pointer)
  Outputs: skill pointer
  */
-void skill_destroy(skill* skill);
+void skill_destroy(Skill* skill);
 /*
 Function name: skill_load
  Utility: It takes a file with skill camps and inserts them into an object struct
@@ -41,18 +41,18 @@ Function name: skill_load
  */
 //skill * skill_activate(skill*skill, entity * entity);
 
-int skill_getId(skill *s);
+int skill_getId(Skill *s);
 
-char * skill_getName(skill *s);
+char * skill_getName(Skill *s);
 
-char * skill_getDesc(skill *s);
+char * skill_getDesc(Skill *s);
 
-int skill_getSpecial(skill *s);
+int skill_getSpecial(Skill *s);
 
-void skill_free(skill * s);
+void skill_free(Skill * s);
 
-Attributes * skill_getAtbself(skill *s);
+Attributes * skill_getAtbself(Skill *s);
 
-Attributes * skill_getAtbatk(skill *s);
+Attributes * skill_getAtbatk(Skill *s);
 
 #endif /* SKILL_H */

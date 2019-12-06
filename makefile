@@ -2,7 +2,7 @@ CC = gcc -g
 EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest
 OBJECTS = Attributes.o Skill.o Object.o ObjectDic.o Inventory.o Entity.o Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o Wlabic.o Display.o
 ENGINE = 
-LIB= -I Display/ -I Utility/ -I DInventory/
+LIB= -I Display/ -I Utility/ -I Inventory/ -I Entity/
 
 all: $(EXE)
 
@@ -285,42 +285,42 @@ Utility.o:  Utility/Utility.c Utility/Utility.h
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
-Attributes.o:  DInventory/Attributes.c DInventory/Attributes.h
+Entity.o:  Entity/Entity.c Entity/Entity.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
-Entity.o:  DInventory/Entity.c DInventory/Entity.h
+Inventory.o:  Inventory/Inventory.c Inventory/Inventory.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
-Inventory.o:  DInventory/Inventory.c DInventory/Inventory.h
+Attributes.o:  Inventory/Attributes.c Inventory/Attributes.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
-Object.o:  DInventory/Object.c DInventory/Object.h
+Object.o:  Inventory/Object.c Inventory/Object.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
-ObjectDic.o:  DInventory/ObjectDic.c DInventory/ObjectDic.h
+ObjectDic.o:  Inventory/ObjectDic.c Inventory/ObjectDic.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
-Skill.o:  DInventory/Skill.c DInventory/Skill.h
+Skill.o:  Inventory/Skill.c Inventory/Skill.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"

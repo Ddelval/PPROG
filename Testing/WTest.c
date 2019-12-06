@@ -39,7 +39,7 @@ char getch1(void)
 int main(){
     int vdiv=800;
     int w=1200;
-    int h=470;
+    int h=400;
     FILE* f=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
     Font* f6=font_load(f);
     fclose(f);
@@ -101,7 +101,35 @@ int main(){
 
 
     //disp_DiaglogWindow(dis,"Hello, my name is Pepe. I am going to be your annoying friend in this game. If at some point I get too anoying, you can always press ALT + F4 and I will stop.",f4);
+    
     while(1){
+        char c=getch1();
+        if(c=='W'){
+            entity_moveUp(e);
+        }
+        if(c=='S'){
+            entity_moveDown(e);
+        }
+        if(c=='A'){
+            entity_moveLeft(e);
+        }
+        if(c=='D'){
+            entity_moveRight(e);
+            
+        }
+        if(c=='O'){
+            disp_incSelIndex(dis,1,-1);
+        }
+        if(c=='L'){
+            disp_incSelIndex(dis,1,1);
+        }
+        //usleep(100000);
+
+    }
+    
+    
+    
+    /*while(1){
         char c;
         c=getch1();
         //scanf("%c",&c);
@@ -160,5 +188,6 @@ int main(){
         //usleep(100000);
 
     }
+    */
     return 0;
 }

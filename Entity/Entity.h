@@ -49,4 +49,9 @@ char * entity_getName(Entity* p);
 
 Attributes *entity_getAttribute(Entity* p);
 
+
+Entity* entity_moveUp(Entity* p);
+Entity* entity_moveDown(Entity* p);
+Entity* entity_moveLeft(Entity* p);
+Entity* entity_moveRight(Entity* p);
 #endif

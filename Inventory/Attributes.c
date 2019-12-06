@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "Atb.h"
+#include "Attributes.h"
 #include "types.h"
 #include "errno.h"
 extern int errno;
@@ -43,7 +43,7 @@ Attributes * attb_ini(){
    Inputs: attb pointer
    Outputs:
  */
-void attb_destroy(Attributes* attb) {
+void attb_free(Attributes* attb) {
         if (!attb) {
                 fprintf(stderr, "%s\n", strerror(errno));
                 return;

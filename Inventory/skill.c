@@ -24,10 +24,10 @@ struct _skill {
    Inputs:
    Outputs: skill pointer
  */
-skill * skill_ini(){
-        skill * skil = NULL;
+Skill * skill_ini(){
+        Skill * skil = NULL;
 
-        skil = (skill *) calloc(1,sizeof(skill));
+        skil = (Skill *) calloc(1,sizeof(Skill));
         if (skil == NULL) {
                 printf("Error: calloc.\n");
                 return NULL;
@@ -47,11 +47,11 @@ skill * skill_ini(){
             atb * atbself;
             atb * atbatk;
  */
-skill * skill_readFromFile(char *file, int id){
+Skill * skill_readFromFile(char *file, int id){
         if(!file) return NULL;
         FILE *f = fopen(file, "r");
         if(!f) return NULL;
-        skill *s = NULL;
+        Skill *s = NULL;
 
         s = skill_ini();
         if(!s) return NULL;
@@ -84,34 +84,34 @@ skill * skill_readFromFile(char *file, int id){
 
 
 
-int skill_getSpecial(skill *s){
+int skill_getSpecial(Skill *s){
         if(!s) return -1;
         return s->special_skill;
 }
 
-int skill_getId(skill *s){
+int skill_getId(Skill *s){
         return s->id;
 }
 
-char * skill_getName(skill *s){
+char * skill_getName(Skill *s){
         if(!s) return NULL;
         return s->name;
 }
 
-char * skill_getDesc(skill *s){
+char * skill_getDesc(Skill *s){
         if(!s) return NULL;
         return s->desc;
 }
 
-Attributes * skill_getAtbself(skill *s){
+Attributes * skill_getAtbself(Skill *s){
         return s->atbself;
 }
 
-Attributes * skill_getAtbatk(skill *s){
+Attributes * skill_getAtbatk(Skill *s){
         return s->atbatk;
 }
 
-void skill_free(skill * s){
+void skill_free(Skill * s){
     attb_free(s->atbatk);
     attb_free(s->atbself);
     free(s);

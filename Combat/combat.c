@@ -14,7 +14,7 @@ struct _Combat{
   Entity *p, *e;
   char * name[2];
   Attributes * stats[2];
-  skill * moveset[2][4];
+  Skill * moveset[2][4];
   Window * window[3];
   Room * room;
   Bool stunp, stune;
@@ -140,7 +140,7 @@ int combat_exe(Combat *c){
 }
 
 //REVISADA, NO COMPILA
-Bool attack_goes(Combat * c, skill * skil, int who){
+Bool attack_goes(Combat * c, Skill * skil, int who){
   if(!c || !skil){
     printf("FATAL ERROR FUNCTION ATTACK_GOES");
     return FALSE;
@@ -168,7 +168,7 @@ Bool attack_goes(Combat * c, skill * skil, int who){
 
 
 //REVISADA, NO COMPILA
-void skill_stun(Combat * c, skill * skil, int who){
+void skill_stun(Combat * c, Skill * skil, int who){
   if(!c || !skil ) return;
   if(skill_getSpecial(skil) != 0) return;
   if(who == 0){
