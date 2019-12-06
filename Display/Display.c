@@ -215,9 +215,16 @@ Room* disp_getrefRoom(Display* dis){
 
 int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
     int a=room_incPos(d->room, index, i, j);
+    int b=-1;
+    int c=-1;
+    if(i>0)b=3;
+    else if(i<0)b=1;
+    if(j>0)c=2;
+    else if(j<0)c=4;
+
     if(a==-1)return -1;
-    if(a!=0&&a!=5){
-        if(disp_scroll(d,0.5*(i!=0),0.5*(j!=0))==1){
+    if(a==b||a==c){
+        if(disp_scroll(d,0.5*(i>0)-0.5*(i<0),0.5*(j>0)-0.5*(j<0))==1){
             canv_print(stdout,room_getRender(d->room),0,0);
         }
     }
