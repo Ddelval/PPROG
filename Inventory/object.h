@@ -55,5 +55,7 @@ Sprite* obj_getSprite(Object* ob);
 char* obj_getName(Object* ob);
 obj_type obj_getType(Object* ob);
 Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum);
+int obj_getId(Object* ob);
+
 
 #endif
