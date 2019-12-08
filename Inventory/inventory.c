@@ -159,7 +159,7 @@ int inv_getQuantity(Inventory* inv, int obj_id){
         for(i=0; i < INITIAL_SIZE && flag == 0; ++i) {
                 if(inv->items[i]) {
                         for(j=0; j < inv->size[i] && flag == 0; j++) {
-                                if(obj_getId(items[i][j]) == obj_id) {
+                                if(obj_getId(inv->items[i][j]) == obj_id) {
                                         flag = 1;
                                 }
                         }
@@ -170,3 +170,4 @@ int inv_getQuantity(Inventory* inv, int obj_id){
 
         return inv->times[i][j];
 }
+
