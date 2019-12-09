@@ -10,5 +10,5 @@ Trigger* tr_ini();
 void tr_free(Trigger* tr);
 Trigger* tr_load(FILE* f);
 Trigger* tr_copy(const Trigger* t);
-
+Trigger* tr_setSpr(Trigger* tr, int i);
 #endif

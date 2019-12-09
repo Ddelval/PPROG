@@ -17,7 +17,7 @@
 
 #ifndef Sprite_h
 #define Sprite_h
-
+#define SPR_NTRIGGERS 15
 #include "Utility.h"
 #include "Trigger.h"
 #include "Canvas.h"
@@ -92,4 +92,5 @@ Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei);
 int spr_checkCollisions(Sprite*s,bool**rarr,int rwid,int rhei, int ni, int nj);
 Sprite* spr_processShadows(Sprite* s,Canvas* shad);
 Sprite* spr_addTrigger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2);
+const int *** spr_getTriggerRef(Sprite* spr);
 #endif /* Sprite_h */

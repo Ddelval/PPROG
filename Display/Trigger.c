@@ -14,6 +14,7 @@ struct _Trigger
     
     /* Obtain resources */
     int obj_id;
+    int sprite_index;
     int quantity;
     bool spr_remove;
 
@@ -31,7 +32,11 @@ Trigger* tr_ini(){
 void tr_free(Trigger* t){
     free(t);
 }
-
+Trigger* tr_setSpr(Trigger* tr, int i){
+    if(!tr)return NULL;
+    tr->sprite_index=i;
+    return tr;
+}
 Trigger * tr_load(FILE* f){
     if(!f)return NULL;
     Trigger * t=trig_ini();

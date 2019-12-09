@@ -3,7 +3,7 @@
 //  Created by David del Val on 06/10/2019
 //
 //
-#define NTRIGGERS 10
+
 #include "Sprite.h"
 #define ret_free(spr) {spr_free(spr); return NULL;}
 struct _Sprite{
@@ -28,9 +28,9 @@ Sprite* spr_ini(int id, int width, int height){
     for(int i=0;i<height;++i){
         spr->trigger[i]=calloc(width, sizeof(int*));
         for(int j=0;j<width;++j){
-            spr->trigger[i][j]=calloc(NTRIGGERS,sizeof(int));
+            spr->trigger[i][j]=calloc(SPR_NTRIGGERS,sizeof(int));
             if(!spr->trigger[i][j])ret_free(spr);
-            for(int w=0;w<NTRIGGERS;++w){
+            for(int w=0;w<SPR_NTRIGGERS;++w){
                 spr->trigger[i][j][w]=-1;
             }
         }
@@ -177,7 +177,7 @@ Sprite* spr_addTrigger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
                 spr_free(s);
                 return NULL;
             }
-            for(int w=0;w<NTRIGGERS;++w){
+            for(int w=0;w<SPR_NTRIGGERS;++w){
                 if(s->trigger[i1][jj1][w]==-1){
                     s->trigger[i1][jj1][w]=tr_id;
                 }
@@ -246,7 +246,9 @@ Sprite* spr_processShadows(Sprite* s,Canvas* shad){
     }
     return s;
 }
-
+const int *** spr_getTriggerRef(Sprite* spr){
+    return spr? (const int ****)spr->trigger: NULL;
+}
 const Canvas* spr_getDispData(Sprite* spr){
     if(!spr)return NULL;
     return spr->canvas;

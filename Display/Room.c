@@ -85,6 +85,7 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
            for(int j=0;j<wid;++j){
                r->trig[i][j]=calloc(MAX_TRIG,sizeof(trigger));
                if(!r->trig[i][j])ret_free(r);
+               for(int w=0;w<MAX_TRIG;++w)r->trig[i][j][w].code=-1;
            }
        }
     r->map=canv_backGrnd(pix_retR(backcol), pix_retG(backcol), pix_retB(backcol), pix_retA(backcol), wid, hei);
@@ -138,6 +139,20 @@ Room* room_load(FILE* f){
         }
     }
     return r;
+}
+Trigger** room_getTriggers(Room*r, int i,int j){
+    if(!r)return NULL;
+    Trigger ** res= calloc(MAX_TRIG,sizeof(Trigger*));
+    for(int w=0;w<MAX_TRIG;++w){
+        if(r->trig[i][j][w].code==-1)return res;
+        res[w]=trdic_lookup(r->trig[i][j][w].code);
+        if(!res[w]){
+            free(res);
+            return NULL;
+        }
+        tr_setSpr(res[w],r->trig[i][j][w].spindex);
+    }
+    return res;
 }
 Room* room_addBSprite(Room* r, Sprite* s){
     if(!r||!s)return NULL;
@@ -356,6 +371,7 @@ int room_scroll(Room* r, double i, double j){
     room_setBounds(r,r->c_t+di,r->c_l+dj,r->c_b+di,r->c_r+dj);
     return 1;
 }
+
 void room_free(Room* r){
     if(!r)return;
     free(r->name);
@@ -399,4 +415,28 @@ void room_free(Room* r){
     free(r->ov);
     pix_free(r->backcol);
     free(r);
+}
+
+Room* room_processTriggers(Room * r, Sprite * sp, int index){
+    if(!r||!sp)return NULL;
+    int i0,j0;
+    const int *** dat=spr_getTriggerRef(sp);
+    for(int i=0;i<spr_getHeight(sp);++i){
+        i0=i+spr_getOI(sp);
+        if (i0<0||i0>r->hei)continue;
+        for(int j=0;j<spr_getWidth(sp);++j){
+            j0= j+spr_getOJ(sp);
+            if(j0<0||j0>r->wid)continue;
+            int w;
+            for(w=0;w<MAX_TRIG;++w){
+                if(r->trig[i][j][w].code==-1)break;
+            }
+            for(int u=0;u<SPR_NTRIGGERS&&u+w<MAX_TRIG;++u){
+                if(dat[i][j][u]==-1)break;
+                r->trig[i][j][w].code=dat[i][j][u];
+                r->trig[i][j][w].spindex=index;
+            }
+        }
+    }
+    return r;
 }
