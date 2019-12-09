@@ -154,20 +154,12 @@ Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Fon
 
 
 int inv_getQuantity(Inventory* inv, int obj_id){
-        int i = 0, j = 0, flag = 0;
-
-        for(i=0; i < INITIAL_SIZE && flag == 0; ++i) {
-                if(inv->items[i]) {
-                        for(j=0; j < inv->size[i] && flag == 0; j++) {
-                                if(obj_getId(inv->items[i][j]) == obj_id) {
-                                        flag = 1;
-                                }
-                        }
-                }
+    if(!inv)return NULL;
+    for (int i=0;i<OBJ_TYPE_SIZE;++i){
+        for(int j=0;j<inv->size[i];++j){
+            if(obj_getId(inv->items[i][j])==obj_id) return inv->times[i][j];
         }
-
-        if(flag == 0) return -1;
-
-        return inv->times[i][j];
+    }
+    return -1;
 }
 
