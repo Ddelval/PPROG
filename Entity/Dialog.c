@@ -3,6 +3,8 @@
 #include "Dialog.h"
 #include <string.h>
 
+#define BUFFER_SIZE 1000
+#define NUMBER_TXT 10
 
 struct _DialogMan{
     FILE * f;  
@@ -42,7 +44,7 @@ int dman_getCounter(DialogMan * dman){
 Bool dman_available(DialogMan * dman){
     int i;
    char * q = NULL;
-   char buf[1000];    
+   char buf[BUFFER_SIZE];    
     
     if(!dman){
         fprintf(stdout, "ERROR invalid pointer dman_available");
@@ -55,12 +57,16 @@ Bool dman_available(DialogMan * dman){
 
 
         do {
-                q  = fgets(buf, 1000, dman->f);
+                q  = fgets(buf, BUFFER_SIZE, dman->f);
                 if (atoi(buf) == dman->counter) {
                        //CREO QUE ESTO ESTA BIEN PREGUNTAR
                         return TRUE;
                 }
-                  q = fgets(buf, 1000, dman->f);
+                if(atoi(buf) >= dman->counter){
+                    fseek(dman->f, strlen(buf), SEEK_CUR); //DONT COMPLETELY TRUST THIS SOLUTION TILL ITS TESTED
+                    return FALSE;
+                }
+                  q = fgets(buf, BUFFER_SIZE, dman->f);
     
         }while(q);
         return FALSE;
@@ -73,7 +79,7 @@ Bool dman_available(DialogMan * dman){
 
 DialogMan* dman_getDialog(int entity_id){
     DialogMan * dman;
-    char str[10];
+    char str[NUMBER_TXT];
 
     sprintf(str, "%d.txt", entity_id);
     
@@ -85,12 +91,12 @@ DialogMan* dman_getDialog(int entity_id){
 }
 
 char* dman_nextLine(DialogMan* dman){
-    char buf[1000];
+    char buf[BUFFER_SIZE];
     char * q;
     if(!dman) return 0;
     
     if(dman_available(dman) == TRUE){
-      q = fgets(buf, 1000, dman->f);
+      q = fgets(buf, BUFFER_SIZE, dman->f);
     }
     return q;
 }
