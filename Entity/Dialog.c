@@ -62,7 +62,7 @@ Bool dman_available(DialogMan * dman){
                        //CREO QUE ESTO ESTA BIEN PREGUNTAR
                         return TRUE;
                 }
-                if(atoi(buf) >= dman->counter){
+                if(atoi(buf) > dman->counter){
                     fseek(dman->f, strlen(buf), SEEK_CUR); //DONT COMPLETELY TRUST THIS SOLUTION TILL ITS TESTED
                     return FALSE;
                 }
