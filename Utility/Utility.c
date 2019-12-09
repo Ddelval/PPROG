@@ -42,6 +42,9 @@ char* movecur(int x,int y){
 int max(int a,int b){
     return a>b? a:b;
 }
+int min(int a,int b){
+    return a<b? a:b;
+}
 /*
 void handle_winch(Display* dis) {
     signal(SIGWINCH, SIG_IGN);

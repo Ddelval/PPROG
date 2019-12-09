@@ -8,7 +8,7 @@
 #define ret_free(r) {room_free(r); return NULL;}
 #define MEM_INCREMENT 1.5
 #define MEM_INI 5
-#define min(x,y) ((x<y)? x : y)
+#define MAX_TRIG 20
 
 typedef struct _box{
     int i,j,w,h;
@@ -37,8 +37,7 @@ struct _Room{
     Canvas* shadows;
     bool** colision;
     
-    trigger** trig;
-    trigger** active;
+    trigger*** trig;
 };
 
 
@@ -78,11 +77,15 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     r->shadows=canv_backGrnd(0,0,0,0,wid,hei);
 
     //Trigger array
-       r->trig=calloc(hei, sizeof(trigger*));
+       r->trig=calloc(hei, sizeof(trigger**));
        if(!r->trig)ret_free(r);
        for(int i=0;i<hei;++i){
-           r->trig[i]=calloc(wid, sizeof(trigger));
+           r->trig[i]=calloc(wid, sizeof(trigger*));
            if(!r->trig[i])ret_free(r);
+           for(int j=0;j<wid;++j){
+               r->trig[i][j]=calloc(MAX_TRIG,sizeof(trigger));
+               if(!r->trig[i][j])ret_free(r);
+           }
        }
     r->map=canv_backGrnd(pix_retR(backcol), pix_retG(backcol), pix_retB(backcol), pix_retA(backcol), wid, hei);
     return r;
@@ -383,6 +386,15 @@ void room_free(Room* r){
         for(int i=0;i<r->hei;++i)free(r->trig[i]);
         free(r->trig);
     }
+
+       for(int i=0;i<r->hei;++i){
+           for(int j=0;j<r->wid;++j){
+               free(r->trig[i][j]);
+           }
+           free(r->trig[i]);
+       }
+    free(r->trig);
+
     canv_free(r->map);
     free(r->ov);
     pix_free(r->backcol);

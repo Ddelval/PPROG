@@ -24,5 +24,6 @@ void appendf(char* dest, int* spos,char* orig);
 void append (char* dest, int* spos, const char* orig);
 char* movecur(int x,int y);
 int max(int a,int b);
+int min(int a,int b);
 //void handle_winch(Display* dis);
 #endif /* Utility_h */

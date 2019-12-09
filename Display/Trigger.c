@@ -4,45 +4,47 @@
 //
 //
 #include "Trigger.h"
-
+#define MAX_NAME 150
 struct _Trigger
 {
-    int id;
-    trig_type typ;
-    /* Talking */
+    int trig_id;
+    trig_type type;
+
+    char name[MAX_NAME];
+    
+    /* Obtain resources */
+    int obj_id;
+    int quantity;
+    bool spr_remove;
+
+    /* Change place */
+    int room_id;
+
+    /* Engage in conversation */
     int entity_id;
-
-    /* Enable*/
-    int spr_id;
-    bool remove_spr;
-    int object_id;
 };
-
-
 Trigger* tr_ini(){
-    Trigger * tr=calloc(1,sizeof(Trigger));
-    if(!tr)return NULL;
-    tr->id=tr->spr_id=tr->entity_id=tr->object_id=-1;
-    return tr;
-}
-Trigger* tr_free(Trigger* tr){
-    free(tr);
-}
-
-Trigger* tr_load(FILE* f){
-    Trigger * t=tr_ini();
-    fscanf(f,"%d %d",&t->id,&t->typ);
-    if(t->typ=ALLOW){
-        fscanf("%d %d",&t->object_id, &t->remove_spr);
-    }
+    Trigger* t=calloc(1,sizeof(Trigger));
     return t;
 }
-Trigger* tr_copy(Trigger* t){
+
+void tr_free(Trigger* t){
+    free(t);
+}
+
+Trigger * tr_load(FILE* f){
+    if(!f)return NULL;
+    Trigger * t=trig_ini();
     if(!t)return NULL;
+    fscanf(f,"%d %d\n",t->trig_id,t->type);
+    fgets(t->name,MAX_NAME,f);
+    fscanf(f,"%d %d %d %d %d", t->obj_id, t->quantity,t->spr_remove, t->room_id, t->entity_id);
+    return t;
+}
+Trigger* tr_copy(const Trigger * src){
+    if(!src)return NULL;
     Trigger* t2=tr_ini();
-    memcpy(t2,t,sizeof(Trigger));
+    memcpy(t2,src,sizeof(Trigger));
     return t2;
 }
-int tr_getId(Trigger* t){
-    return t? t->id: -1;
-}
+
