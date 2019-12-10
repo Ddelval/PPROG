@@ -239,6 +239,6 @@ Display* disp_execute(Display* dis, int index, Entity* en){
     func_trig f =win_getSelectedAction(dis->latWindow[index]);
     trig_type t=win_getSelectedTrigType(dis->latWindow[index]);
     Trigger** dat =room_getTriggers(dis->room,t,entity_getRoomIndex(en));
-    f(dat[0],en);
+    f(dat[0],en,dis->room);
     return dis;
 }

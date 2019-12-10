@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include "Display.h"
 #include "Object.h"
+#include "ObjectDic.h"
 #include "Utility.h"
 
 typedef struct _Entity Entity;
@@ -55,4 +56,5 @@ Entity* entity_moveDown(Entity* p);
 Entity* entity_moveLeft(Entity* p);
 Entity* entity_moveRight(Entity* p);
 int entity_getRoomIndex(const Entity* en);
+Entity* entity_addItem(Entity* en,int itemId, int quantity);
 #endif

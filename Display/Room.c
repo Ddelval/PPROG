@@ -444,3 +444,29 @@ Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index){
         }
     }
 }
+Room* room_removeB(Room* r, int index){
+    if(!r||index>=r->backpos)return NULL;
+    spr_free(r->backg[index]);
+    for(int i=index;i<r->backpos-1;++i){
+        r->backg[i]=r->backg[i+1];
+    }
+    r->backg[r->backpos]=NULL;
+    return r;
+}
+Canvas* room_redrawMap(Room*r){
+    Canvas* b=canv_backGrnd(pix_getR(r->backcol),pix_getG(r->backcol),pix_getB(r->backcol),pix_getA(r->backcol),r->wid,r->hei);
+    for(int i=0;i<r->backpos;++i){
+        if(canv_addOverlay(b,spr_getDispData(r->backg[i]),0,0)==NULL)return NULL;
+    }
+    canv_free(r->map);
+    r->map=b;
+    return b;
+}
+Room* room_printModBackg(Room* r, int disp_i, int disp_j){
+    if(!r)return NULL;
+    Canvas* p=room_getRender(r);
+    if(room_redrawMap(r)==NULL)return NULL;
+    Canvas * c=room_getRender(r);
+    canvas_printDiff(stdout,c,p,disp_i,disp_j);
+    return r;
+}

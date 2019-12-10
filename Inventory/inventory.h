@@ -20,5 +20,5 @@ Inventory* inv_remove(Inventory* inv, Object* ob);
 Inventory* inv_decrease(Inventory* inv, Object* ob);
 Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Font* ftext, Font* fnum);
 int inv_getQuantity(Inventory* inv, int obj_id);
-
+Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity);
 #endif

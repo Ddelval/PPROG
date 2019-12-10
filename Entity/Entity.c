@@ -244,3 +244,9 @@ Entity* entity_addtoDisplay(Entity* e, Display* dis){
 int entity_getRoomIndex(const Entity* en){
         return en? en->room_index: -1;
 }
+Entity* entity_addItem(Entity* en,int itemId, int quantity){
+        Object* ob=odic_lookup(itemId);
+        if(!ob)return NULL;
+        inv_insertSeveral(en->inv,ob,quantity);
+        return en;
+}

@@ -57,6 +57,35 @@ void inv_free(Inventory* inv){
     }
     free(inv);
 }
+Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity){
+    if(!inv||!ob)return NULL;
+    obj_type ob_ty=obj_getType(ob);
+
+    for(int i=0;i<inv->size[ob_ty];++i){
+        if(obj_cmp(inv->items[ob_ty][i],ob)==0){
+            inv->times[ob_ty][i]+=quantity;
+            return inv;
+        }
+    }
+    
+    // We already now that the object is not in the inventory    
+    if(inv->size[ob_ty]==inv->alloc[ob_ty]){
+        int nsiz=inv->alloc[ob_ty]*INCREMENT;
+        Object** tmp=realloc(inv->items[ob_ty],nsiz*sizeof(Object*));
+        int * itmp =realloc(inv->times,nsiz*sizeof(int));
+        if(!tmp||!itmp){
+            return NULL;
+        }
+        inv->alloc[ob_ty]=nsiz;
+        inv->times[ob_ty]=itmp;
+        inv->items[ob_ty]=tmp;
+    }
+
+    inv->items[ob_ty][inv->size[ob_ty]]=obj_copy(ob);
+    inv->times[ob_ty][inv->size[ob_ty]]+=quantity;
+    inv->size[ob_ty]++;
+    return inv;    
+}
 Inventory* inv_insert(Inventory* inv, Object* ob){
     if(!inv||!ob)return NULL;
     obj_type ob_ty=obj_getType(ob);
