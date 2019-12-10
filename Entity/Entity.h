@@ -7,6 +7,7 @@
 #include "Object.h"
 #include "ObjectDic.h"
 #include "Utility.h"
+#include "Trigger.h"
 
 typedef struct _Entity Entity;
 
