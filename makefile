@@ -1,8 +1,8 @@
 CC = gcc -g
 EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest
-OBJECTS = Attributes.o Skill.o Object.o ObjectDic.o Inventory.o Entity.o Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Trigger.o TriggerDic.o Room.o SpriteDic.o Wlabic.o Display.o
+OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Character.o SpriteDic.o Trigger.o TriggerDic.o Sprite.o Font.o Wlabel.o Welem.o Room.o Inventory.o Wlabic.o Window.o Entity.o Display.o Object.o ObjectDic.o
 ENGINE = 
-LIB= -I Display/ -I Utility/ -I Inventory/ -I Entity/
+LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/
 
 all: $(EXE)
 
@@ -306,13 +306,6 @@ Entity.o:  Entity/Entity.c Entity/Entity.h
 	@echo "# Has changed $<"
 	$(CC) -c $< $(LIB)
 
-Inventory.o:  Inventory/Inventory.c Inventory/Inventory.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
-	$(CC) -c $< $(LIB)
-
 Attributes.o:  Inventory/Attributes.c Inventory/Attributes.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
@@ -321,6 +314,13 @@ Attributes.o:  Inventory/Attributes.c Inventory/Attributes.h
 	$(CC) -c $< $(LIB)
 
 Object.o:  Inventory/Object.c Inventory/Object.h
+	@echo "#---------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
+Inventory.o:  Inventory/Inventory.c Inventory/Inventory.h
 	@echo "#---------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"

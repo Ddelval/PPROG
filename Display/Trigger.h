@@ -3,6 +3,7 @@
 #define TRIGGER_H
 
 #include "Utility.h"
+#include "Entity.h"
 typedef struct _Trigger Trigger;
 typedef enum{ALLOW, CAUSE} trig_type;
 typedef void (*func_trig)(Trigger* t, Entity* en);

@@ -14,6 +14,7 @@
 #include "Sprite.h"
 #include "SpriteDic.h"
 #include "TriggerDic.h"
+#include "Trigger.h"
 typedef struct _Room Room;
 /*-----------------------------------------------------------------*/
 /// Creates a new room with a solid background

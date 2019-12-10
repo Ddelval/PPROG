@@ -9,6 +9,8 @@
 
 #include "Utility.h"
 #include "Object.h"
+#include "Canvas.h"
+#include "Font.h"
 
 typedef struct _Inventory Inventory;
 
