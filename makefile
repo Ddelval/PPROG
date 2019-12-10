@@ -1,6 +1,6 @@
 CC = gcc -g
 EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest
-OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Character.o SpriteDic.o Trigger.o TriggerDic.o Sprite.o Font.o Wlabel.o Welem.o Room.o Inventory.o Wlabic.o Window.o Entity.o Display.o Object.o ObjectDic.o
+OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Character.o Entity.o SpriteDic.o Trigger.o TriggerDic.o Sprite.o Font.o Wlabel.o Welem.o Room.o Inventory.o Wlabic.o Window.o Display.o Object.o ObjectDic.o
 ENGINE = 
 LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/
 

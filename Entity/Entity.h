@@ -6,6 +6,7 @@
 #include "Display.h"
 #include "Object.h"
 #include "Utility.h"
+#include "Trigger.h"
 
 typedef struct _Entity Entity;
 
