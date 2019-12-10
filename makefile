@@ -3,346 +3,198 @@ EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay W
 OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o Wlabel.o Welem.o Room.o Inventory.o Wlabic.o Window.o Display.o Object.o ObjectDic.o TrigReact.o
 ENGINE = 
 LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/
-
+MIDDLE = @printf "\033[1m\033[1;34m $@ \033[0;30m\033[0m\t"
 all: $(EXE)
 
 clean:
 	rm -f *.o core $(EXE)
 
 TestFont: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
 TestFont.o: Testing/TestFont.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-TestColoring: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestColoring: %: %.o $(OBJECTS) 
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
-TestColoring.o: Testing/TestColoring.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestColoring.o: Testing/TestColoring.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-TestBug: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestBug: %: %.o $(OBJECTS) 
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
-TestBug.o: Testing/TestBug.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestBug.o: Testing/TestBug.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-TestLabel: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestLabel: %: %.o $(OBJECTS) 
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
-TestLabel.o: Testing/TestLabel.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestLabel.o: Testing/TestLabel.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-TestDisplay: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestDisplay: %: %.o $(OBJECTS) 
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
-TestDisplay.o: Testing/TestDisplay.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestDisplay.o: Testing/TestDisplay.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-TestWindow: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestWindow: %: %.o $(OBJECTS) 
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
-TestWindow.o: Testing/TestWindow.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestWindow.o: Testing/TestWindow.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-TestCanvas: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestCanvas: %: %.o $(OBJECTS) 
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
-TestCanvas.o: Testing/TestCanvas.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestCanvas.o: Testing/TestCanvas.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-TestSprite: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestSprite: %: %.o $(OBJECTS) 
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
-TestSprite.o: Testing/TestSprite.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestSprite.o: Testing/TestSprite.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-TestSize: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestSize: %: %.o $(OBJECTS) 
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm -lncurses
 
-TestSize.o: Testing/TestSize.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestSize.o: Testing/TestSize.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-TestRoom: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestRoom: %: %.o $(OBJECTS) 
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm -lncurses
 
-TestRoom.o: Testing/TestRoom.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+TestRoom.o: Testing/TestRoom.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-WTest: %: %.o  $(OBJECTS) 
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+WTest: %: %.o  $(OBJECTS)  
+	$(MIDDLE)
 	$(CC) -o $@ $@.o  $(OBJECTS)  Utility.o -lm
 
-WTest.o: Testing/WTest.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+WTest.o: Testing/WTest.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-WTestOld: %: %.o $(OBJECTS)
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+WTestOld: %: %.o $(OBJECTS) 
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
-WTestOld.o: Testing/WTestOld.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+WTestOld.o: Testing/WTestOld.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-InvTest: %: %.o $(OBJECTS) 
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+InvTest: %: %.o $(OBJECTS)  
 	$(CC) -o $@ $@.o $(OBJECTS)  Utility.o -lm
 
-InvTest.o: Testing/InvTest.c Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+InvTest.o: Testing/InvTest.c Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # # # # # # # # # # # 				 Source Files 			# # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
-Canvas.o : Display/Canvas.c Display/Canvas.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Canvas.o : Display/Canvas.c Display/Canvas.h 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Character.o : Display/Character.c Display/Character.h Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Character.o : Display/Character.c Display/Character.h Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Font.o : Display/Font.c Display/Font.h Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Font.o : Display/Font.c Display/Font.h Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Pixel.o : Display/Pixel.c Display/Pixel.h Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Pixel.o : Display/Pixel.c Display/Pixel.h Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Wlabel.o : Display/Wlabel.c Display/Wlabel.h Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Wlabel.o : Display/Wlabel.c Display/Wlabel.h Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Window.o : Display/Window.c Display/Window.h Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Window.o : Display/Window.c Display/Window.h Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Sprite.o : Display/Sprite.c Display/Sprite.h Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Sprite.o : Display/Sprite.c Display/Sprite.h Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Room.o : Display/Room.c Display/Room.h Utility.o
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Room.o : Display/Room.c Display/Room.h Utility.o 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
 SpriteDic.o : Display/SpriteDic.c Display/SpriteDic.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
 Welem.o : Display/Welem.c Display/Welem.h Utility.o
-	@echo "#--------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
 Wlabic.o : Display/Wlabic.c Display/Wlabic.h Utility.o
-	@echo "#--------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
 Display.o : Display/Display.c Display/Display.h Utility.o
-	@echo "#--------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
 Trigger.o : Display/Trigger.c Display/Trigger.h Utility.o
-	@echo "#--------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
 TriggerDic.o : Display/TriggerDic.c Display/TriggerDic.h Utility.o
-	@echo "#--------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
 TrigReact.o : Display/TrigReact.c Display/TrigReact.h Utility.o
-	@echo "#--------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
-Utility.o:  Utility/Utility.c Utility/Utility.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Utility.o:  Utility/Utility.c Utility/Utility.h 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Entity.o:  Entity/Entity.c Entity/Entity.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Entity.o:  Entity/Entity.c Entity/Entity.h 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Attributes.o:  Inventory/Attributes.c Inventory/Attributes.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Attributes.o:  Inventory/Attributes.c Inventory/Attributes.h 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Object.o:  Inventory/Object.c Inventory/Object.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Object.o:  Inventory/Object.c Inventory/Object.h 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Inventory.o:  Inventory/Inventory.c Inventory/Inventory.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Inventory.o:  Inventory/Inventory.c Inventory/Inventory.h 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-ObjectDic.o:  Inventory/ObjectDic.c Inventory/ObjectDic.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+ObjectDic.o:  Inventory/ObjectDic.c Inventory/ObjectDic.h 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Skill.o:  Inventory/Skill.c Inventory/Skill.h
-	@echo "#---------------------------"
-	@echo "# Generating $@ "
-	@echo "# Depends on $^"
-	@echo "# Has changed $<"
+Skill.o:  Inventory/Skill.c Inventory/Skill.h 
+	$(MIDDLE)
 	$(CC) -c $< $(LIB)

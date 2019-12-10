@@ -41,7 +41,7 @@ Object* obj_ini(){
 void obj_free(Object* ob){
     if(!ob)return;
     //atb_free(ob->atb);
-    if(ob->attacks){
+    if(ob->n_attacks){
         for(int i=0;i<ob->n_attacks;++i){
             //skill_free(ob->attack[i]);
         }

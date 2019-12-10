@@ -34,6 +34,7 @@ Skill * skill_ini(){
         }
         skil->atbself = attb_ini();
         skil->atbatk = attb_ini();
+        return skil;
 }
 
 

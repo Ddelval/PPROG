@@ -51,14 +51,14 @@ SpriteDic* sdic_ini(){
     for(int i=0;i<siz;++i){
         s->dat[i]=spr_load(f);
         if(!s->dat[i]){
-            sdic_free(s);
+            sdic_free();
             return NULL;
         }
     }
     fclose(f);
     f=fopen(sdic_tr,"r");
     if(!f){
-        sdic_free(s);
+        sdic_free();
         return NULL;
     }
     

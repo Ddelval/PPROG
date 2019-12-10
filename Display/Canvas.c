@@ -821,7 +821,7 @@ char** _canv_render(const Canvas* c,int wid, int hei){
     return ch;
 }
 
-Canvas* canv_setPixel(Canvas* c,Pixel* p, int i,int j){
+Canvas* canv_setPixel(Canvas* c,const Pixel* p, int i,int j){
     if(!p||!c)return NULL;
     if(i>canv_getHeight(c)||j>canv_getWidth(c)){
         return NULL;

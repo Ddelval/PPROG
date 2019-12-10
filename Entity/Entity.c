@@ -151,7 +151,6 @@ char * entity_getName(Entity* p){
         char * name = NULL;
 
         if(!p) return NULL;
-        if(!(p->name)) return NULL;
 
         name = (char*) calloc (MAX_NAME_LENGTH, sizeof(char));
         if(!name) return NULL;

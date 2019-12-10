@@ -246,7 +246,7 @@ const Pixel* canv_getPixel(const Canvas* c,int i,int j);
 
 
 
-Canvas* canv_setPixel(Canvas* c,Pixel* p, int i,int j);
+Canvas* canv_setPixel(Canvas* c,const Pixel* p, int i,int j);
 Canvas* canv_blur(Canvas* c,int rad);
 Canvas* canv_darken(Canvas* c,double light);
 void canv_printSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);

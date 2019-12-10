@@ -41,9 +41,9 @@ Trigger * tr_load(FILE* f){
     if(!f)return NULL;
     Trigger * t=tr_ini();
     if(!t)return NULL;
-    fscanf(f,"%d %d\n",t->trig_id,t->type);
+    fscanf(f,"%d %d\n",&t->trig_id,&t->type);
     fgets(t->name,MAX_NAME,f);
-    fscanf(f,"%d %d %d %d %d", t->obj_id, t->quantity,t->spr_remove, t->room_id, t->entity_id);
+    fscanf(f,"%d %d %d %d %d", &t->obj_id, &t->quantity,&t->spr_remove, &t->room_id, &t->entity_id);
     return t;
 }
 Trigger* tr_copy(const Trigger * src){

@@ -443,6 +443,7 @@ Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index){
             tr_free(t[j]);
         }
     }
+    return t;
 }
 Room* room_removeB(Room* r, int index){
     if(!r||index>=r->backpos)return NULL;

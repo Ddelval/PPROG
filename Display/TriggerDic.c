@@ -46,7 +46,7 @@ TriggerDic* trdic_ini(){
     for(int i=0;i<siz;++i){
         s->dat[i]=tr_load(f);
         if(!s->dat[i]){
-            trdic_free(s);
+            trdic_free();
             return NULL;
         }
     }

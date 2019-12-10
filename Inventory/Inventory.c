@@ -149,6 +149,7 @@ Inventory* inv_decrease(Inventory* inv, Object* ob){
             return inv;
         }
     }
+    return inv;
 }
 Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Font* ftext, Font* fnum){
     if(!inv)return NULL;
@@ -183,12 +184,12 @@ Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Fon
 
 
 int inv_getQuantity(Inventory* inv, int obj_id){
-    if(!inv)return NULL;
+    if(!inv)return -1;
     for (int i=0;i<OBJ_TYPE_SIZE;++i){
         for(int j=0;j<inv->size[i];++j){
             if(obj_getId(inv->items[i][j])==obj_id) return inv->times[i][j];
         }
     }
-    return -1;
+    return 0;
 }
 

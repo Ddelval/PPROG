@@ -137,7 +137,7 @@ func_trig win_getAction(Window* win, int index){
 	return win->actions[index];
 }
 trig_type win_getSelectedTrigType(Window * win){
-	if(!win||win->selected_elem==-1||win->selected_elem>=win->action_size)return NULL;
+	if(!win||win->selected_elem==-1||win->selected_elem>=win->action_size)return -1;
 	return win->act_type[win->selected_elem];
 }
 Canvas* win_render(Window* win) {
@@ -226,7 +226,7 @@ Window* win_incrementSelected(Window* win, int incr) {
 		return win;
 	}
 	if(!win_setSelected(win, (win->selected_elem+incr+win->num_elems*(incr/win->num_elems+1))%win->num_elems)) return NULL;
-
+	return win;
 }
 
 Welem* win_getSelected(Window* win) {

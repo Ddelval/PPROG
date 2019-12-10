@@ -247,7 +247,7 @@ Sprite* spr_processShadows(Sprite* s,Canvas* shad){
     return s;
 }
 const int *** spr_getTriggerRef(Sprite* spr){
-    return spr? (const int ****)spr->trigger: NULL;
+    return spr? (const int ***)spr->trigger: NULL;
 }
 const Canvas* spr_getDispData(Sprite* spr){
     if(!spr)return NULL;
