@@ -10,8 +10,9 @@
 #include "Attributes.h"
 #include "SpriteDic.h"
 #include "Sprite.h"
+#include "Welem.h"
 #include "Skill.h"
-#include "Window.h"
+#include "Font.h"
 typedef struct _Object Object;
 #define OBJ_TYPE_SIZE 2
 typedef enum {WEAPON, CONSUMABLE} obj_type;

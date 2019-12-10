@@ -454,7 +454,7 @@ Room* room_removeB(Room* r, int index){
     return r;
 }
 Canvas* room_redrawMap(Room*r){
-    Canvas* b=canv_backGrnd(pix_getR(r->backcol),pix_getG(r->backcol),pix_getB(r->backcol),pix_getA(r->backcol),r->wid,r->hei);
+    Canvas* b=canv_backGrnd(pix_retR(r->backcol),pix_retG(r->backcol),pix_retB(r->backcol),pix_retA(r->backcol),r->wid,r->hei);
     for(int i=0;i<r->backpos;++i){
         if(canv_addOverlay(b,spr_getDispData(r->backg[i]),0,0)==NULL)return NULL;
     }

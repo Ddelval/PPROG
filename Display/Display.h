@@ -15,9 +15,8 @@
 
 #include "Utility.h"
 #include "Room.h"
+#include "Inventory.h"+
 #include "Window.h"
-#include "Entity.h"
-#include "Inventory.h"
 
 typedef struct _Display Display;
 /*-----------------------------------------------------------------*/
@@ -69,5 +68,5 @@ Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f);
 Room* disp_getrefRoom(Display* dis);
 int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j);
 Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers);
-Display* disp_execute(Display* dis, int index, Entity* en);
+Display* disp_execute(Display* dis, int index, int room_index, void* en);
 #endif /* Display_h */

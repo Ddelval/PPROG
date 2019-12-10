@@ -8,6 +8,7 @@
 #include <termios.h>
 #include "Room.h"
 #include "Trigger.h"
+#include "TrigReact.h"
 #include "Entity.h"
 #include "ObjectDic.h"
 char getch1(void)
@@ -126,7 +127,7 @@ int main(){
             disp_incSelIndex(dis,1,1);
         }
         if(c=='J'){
-            disp_execute(dis,1);
+            disp_execute(dis,1,entity_getRoomIndex(e),e);
         }
         //usleep(100000);
 

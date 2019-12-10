@@ -59,14 +59,3 @@ int tr_getId(const Trigger* tr){
 trig_type tr_getType(const Trigger* tr){
     return tr? tr->type:-1;
 }
-/*** Functions to process triggers ***/
-
-void trig_give(Trigger* t, Entity* e, Room* r){
-    if(!t||!e)return NULL;
-    if(t->type!=OBTAIN)return;
-    entity_addItem(e,t->obj_id,t->quantity);
-    if(t->spr_remove){
-        room_removeB(r,t->sprite_index);
-    }
-    room_printModBackg(r,0,0);
-} 

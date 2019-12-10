@@ -14,7 +14,6 @@
 #include "Wlabel.h"
 #include "Welem.h"
 #include "Trigger.h"
-#include "Entity.h"
 #include <stdlib.h>
 #include <stdio.h>
 
