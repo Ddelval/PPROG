@@ -140,20 +140,6 @@ Room* room_load(FILE* f){
     }
     return r;
 }
-Trigger** room_getTriggers(Room*r, int i,int j){
-    if(!r)return NULL;
-    Trigger ** res= calloc(MAX_TRIG,sizeof(Trigger*));
-    for(int w=0;w<MAX_TRIG;++w){
-        if(r->trig[i][j][w].code==-1)return res;
-        res[w]=trdic_lookup(r->trig[i][j][w].code);
-        if(!res[w]){
-            free(res);
-            return NULL;
-        }
-        tr_setSpr(res[w],r->trig[i][j][w].spindex);
-    }
-    return res;
-}
 Room* room_addBSprite(Room* r, Sprite* s){
     if(!r||!s)return NULL;
     if(r->backpos==r->backgsiz){

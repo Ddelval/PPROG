@@ -241,3 +241,6 @@ Entity* entity_addtoDisplay(Entity* e, Display* dis){
         e->room_index = aux;
         return e;
 }
+int entity_getRoomIndex(const Entity* en){
+        return en? en->room_index: -1;
+}

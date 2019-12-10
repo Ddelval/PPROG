@@ -17,7 +17,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef void (*func_trig)(int spid, int trig);
 typedef struct _Window Window;
 
 /*-----------------------------------------------------------------*/

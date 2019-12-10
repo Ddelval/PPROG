@@ -54,4 +54,5 @@ Entity* entity_moveUp(Entity* p);
 Entity* entity_moveDown(Entity* p);
 Entity* entity_moveLeft(Entity* p);
 Entity* entity_moveRight(Entity* p);
+int entity_getRoomIndex(const Entity* en);
 #endif

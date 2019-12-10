@@ -99,5 +99,5 @@ Canvas* room_getRender(Room* r);
 Room* room_setBounds(Room*ro, int t, int l,int b,int r);
 int room_scroll(Room* r, double i, double j);
 Room* room_getBSpritePos(Room *r, int index, int* i, int *j);
-Trigger** room_getTriggers(Room*r, int i,int j);
+Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index);
 #endif /* Room_h */

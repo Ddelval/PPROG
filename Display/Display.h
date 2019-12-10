@@ -16,6 +16,7 @@
 #include "Utility.h"
 #include "Room.h"
 #include "Window.h"
+#include "Entity.h"
 #include "Inventory.h"
 
 typedef struct _Display Display;

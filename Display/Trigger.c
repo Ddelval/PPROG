@@ -60,3 +60,4 @@ trig_type tr_getType(const Trigger* tr){
     return tr? tr->type:-1;
 }
 /*** Functions to process triggers ***/
+

@@ -5,6 +5,7 @@
 #include "Utility.h"
 typedef struct _Trigger Trigger;
 typedef enum{ALLOW, CAUSE} trig_type;
+typedef void (*func_trig)(Trigger* t, Entity* en);
 
 Trigger* tr_ini();
 void tr_free(Trigger* tr);
