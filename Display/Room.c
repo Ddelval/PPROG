@@ -440,3 +440,21 @@ Room* room_processTriggers(Room * r, Sprite * sp, int index){
     }
     return r;
 }
+Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index){
+    if(!r||sp_index>=r->overpos)return NULL;
+    trigger* dat=r->trig[spr_getOI(r->overs[sp_index])][spr_getOJ(r->overs[sp_index])];
+    int cnt;
+    for(cnt=0;cnt<MAX_TRIG&&dat[cnt].code!=-1;++cnt);
+    Trigger** t=calloc(cnt,sizeof(Trigger*));
+    int j=0;
+    for(int i=0;i<MAX_TRIG&&dat[cnt].code!=-1;++i){
+        t[j]=trdic_lookup(dat[cnt].code);
+        if(tr_getType(t[j])==tt){
+            tr_setSpr(t[j],dat[cnt].spindex);
+            j++;
+        }
+        else{
+            tr_free(t[j]);
+        }
+    }
+}

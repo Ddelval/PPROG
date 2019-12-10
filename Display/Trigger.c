@@ -39,7 +39,7 @@ Trigger* tr_setSpr(Trigger* tr, int i){
 }
 Trigger * tr_load(FILE* f){
     if(!f)return NULL;
-    Trigger * t=trig_ini();
+    Trigger * t=tr_ini();
     if(!t)return NULL;
     fscanf(f,"%d %d\n",t->trig_id,t->type);
     fgets(t->name,MAX_NAME,f);
@@ -52,4 +52,11 @@ Trigger* tr_copy(const Trigger * src){
     memcpy(t2,src,sizeof(Trigger));
     return t2;
 }
+int tr_getId(const Trigger* tr){
+    return tr? tr->trig_id: -1;
+}
 
+trig_type tr_getType(const Trigger* tr){
+    return tr? tr->type:-1;
+}
+/*** Functions to process triggers ***/

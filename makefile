@@ -1,6 +1,6 @@
 CC = gcc -g
 EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest
-OBJECTS = Attributes.o Skill.o Object.o ObjectDic.o Inventory.o Entity.o Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Room.o SpriteDic.o Wlabic.o Display.o
+OBJECTS = Attributes.o Skill.o Object.o ObjectDic.o Inventory.o Entity.o Pixel.o Canvas.o Character.o Font.o Wlabel.o Welem.o Window.o Sprite.o Trigger.o TriggerDic.o Room.o SpriteDic.o Wlabic.o Display.o
 ENGINE = 
 LIB= -I Display/ -I Utility/ -I Inventory/ -I Entity/
 
@@ -272,6 +272,20 @@ Wlabic.o : Display/Wlabic.c Display/Wlabic.h Utility.o
 	$(CC) -c $< $(LIB)
 
 Display.o : Display/Display.c Display/Display.h Utility.o
+	@echo "#--------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
+Trigger.o : Display/Trigger.c Display/Trigger.h Utility.o
+	@echo "#--------------------------"
+	@echo "# Generating $@ "
+	@echo "# Depends on $^"
+	@echo "# Has changed $<"
+	$(CC) -c $< $(LIB)
+
+TriggerDic.o : Display/TriggerDic.c Display/TriggerDic.h Utility.o
 	@echo "#--------------------------"
 	@echo "# Generating $@ "
 	@echo "# Depends on $^"

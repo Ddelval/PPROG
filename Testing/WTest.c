@@ -72,9 +72,9 @@ int main(){
     wel[2]=we_createLabic(" 15", f6, 10, 10, canvv, TEXT_EAST);
 
     Welem* wela[3];
-    wela[0]=we_createLabel("Title", f6, 10);
+    wela[0]=we_createLabel("Collect", f6, 10);
     wela[1]=we_createLabel("Build", f6, 10);
-    wela[2]=we_createLabel("Attack", f6, 10);
+    wela[2]=we_createLabel("Enter", f6, 10);
 
 
 
@@ -122,6 +122,9 @@ int main(){
         }
         if(c=='L'){
             disp_incSelIndex(dis,1,1);
+        }
+        if(c=='J'){
+            disp_execute(dis,1);
         }
         //usleep(100000);
 

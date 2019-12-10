@@ -8,15 +8,18 @@ struct _Window {
 	char* title;
 	Welem** Win_elem;
 	int num_elems;
-  int num_elems_siz;
+  	int num_elems_siz;
 	int selected_elem;
 	int width, height;
 	int scroll_pos;
 	int leftm, rightm, topm, botm;
-  int jpos, ipos;
+  	int jpos, ipos;
 	Pixel* backcol;
 	Pixel* forecol;
 	const Font* titlef;
+	func_trig* actions;
+	trig_type* act_type;
+	int action_size;
 };
 
 Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int jpos, int ipos, const Font* titlef) {
@@ -63,7 +66,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->height=hei;
 	win->ipos=ipos;
 	win->jpos=jpos;
-  win->scroll_pos=0;
+    win->scroll_pos=0;
 	win->selected_elem=-1;
 	win->backcol = pix_ini(80, 85, 222, 255);
 	if(!win->backcol) {
@@ -111,7 +114,32 @@ Window* win_addWindowElement(Window* win, Welem* we){
     win->num_elems++;
     return win;
 }
-
+Window* win_addAction(Window* win,func_trig f, int index,trig_type t){
+	if(!win)return NULL;
+	if(!win->actions){
+		win->actions=calloc(win->num_elems,sizeof(func_trig));
+		win->act_type=calloc(win->num_elems,sizeof(trig_type));
+	}
+	else{
+		win->actions=realloc(win->actions,sizeof(func_trig)*win->num_elems);
+		win->act_type=realloc(win->act_type,sizeof(trig_type)*win->num_elems);
+	}
+	win->actions[index]=f;
+	win->action_size=win->num_elems;
+	return win;
+}
+func_trig win_getSelectedAction(Window* win){
+	if(!win||win->selected_elem==-1||win->selected_elem>=win->action_size)return NULL;
+	return win->actions[win->selected_elem];
+}
+func_trig win_getAction(Window* win, int index){
+	if(!win||index>=win->action_size)return NULL;
+	return win->actions[index];
+}
+trig_type win_getSelectedTrigType(Window * win){
+	if(!win||win->selected_elem==-1||win->selected_elem>=win->action_size)return NULL;
+	return win->act_type[win->selected_elem];
+}
 Canvas* win_render(Window* win) {
     if(!win||!win->title) return NULL;
     errno=0;

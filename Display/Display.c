@@ -234,3 +234,9 @@ int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
     room_getBSpritePos(d->room,index,f_i,f_j);
     return 0;
 }
+Display* disp_execute(Display* dis, int index, int spr_pos){
+    if(!dis)return NULL;
+    func_trig f =win_getSelectedAction(dis->latWindow[index]);
+    trig_type t=win_getSelectedTrigType(dis->latWindow[index]);
+
+}
