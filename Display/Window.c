@@ -254,28 +254,18 @@ Window* win_scrollUp(Window* win) {
 
 Window* win_copy(Window* win) {
 	if(!win) return NULL;
-        Window* win2=win_ini(win->title, win->Win_elem, win->num_elems, win->width, win->height, win->jpos, win->ipos, win->titlef);
-        if(!win2) return NULL;
+    Window* win2=win_ini(win->title, win->Win_elem, win->num_elems, win->width, win->height, win->jpos, win->ipos, win->titlef);
+    if(!win2) return NULL;
 	win2->scroll_pos=win->scroll_pos;
-/*
-	for(int i=0; i<=MAX_SELECTABLE; ++i) {
-		win2->selected_elem[i]=win->selected_elem[i];
-	}
 
-	if(win2->num_elems<0) return win2;
-	Welem** we=(Welem**)calloc(win2->num_elems, sizeof(Welem*));
-	if(!we) win_free(win2);
-	for(int i=0; i<win2->num_elems; i++) {
-		we[i]=we_copy(win->Win_elem[i]);
-		if(!we[i]) {
-			for(int j=0; j<i; ++j) {
-				we_free(we[j]);
-			}
-			free(we);
-		}
-	}
-	win2->Win_elem=we;
-*/
+	win2->act_type=calloc(win->action_size,sizeof(trig_type));
+	memcpy(win2->act_type,win->act_type,win->action_size*sizeof(trig_type));
+
+	win2->actions=calloc(win->action_size,sizeof(func_trig));
+	memcpy(win2->act_type,win->act_type,win->action_size*sizeof(func_trig));
+
+	win2->action_size=win->action_size;
+	
     return win2;
 }
 

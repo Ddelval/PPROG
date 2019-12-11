@@ -87,7 +87,7 @@ Sprite* spr_copy(const Sprite* spr){
     sp->existstrigger=spr->existstrigger;
     for(int i=0;i<spr->height;++i){
         for(int j=0;j<spr->width;++j){
-            sp->trigger[i][j]=spr->trigger[i][j];
+            for(int w=0;w<SPR_NTRIGGERS;++w)sp->trigger[i][j][w]=spr->trigger[i][j][w];
             sp->collision[i][j]=spr->collision[i][j];
             sp->shadow[i][j]=spr->shadow[i][j];
         }
@@ -173,18 +173,28 @@ Sprite* spr_addTrigger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
     while(i1<=i2){
         jj1=j1;
         while(jj1<=j2){
-            if(jj1>=s->width||i1>=s->height){
-                spr_free(s);
-                return NULL;
+            if(jj1>=s->width||i1>=s->height||i1<0||jj1<0){
+                continue;
             }
             for(int w=0;w<SPR_NTRIGGERS;++w){
                 if(s->trigger[i1][jj1][w]==-1){
                     s->trigger[i1][jj1][w]=tr_id;
                 }
             }
+            jj1++;
         }
+        i1++;
     }
     return s;
+}
+Sprite* spr_printTrigger(Sprite* s){
+    fprintf(stderr,"\n\n\n-----------\n%d\n",spr_getId(s));
+    for(int i=0;i<s->height;++i){
+        for(int j=0;j<s->width;++j){
+            fprintf(stderr,"%d ",s->trigger[i][j][0]);
+        }
+        fprintf(stderr,"\n");
+    }
 }
 Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei){
     if(!rarr)return NULL;

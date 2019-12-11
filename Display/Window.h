@@ -125,7 +125,11 @@ Pixel* win_getBackColor(Window *win);
 Pixel* win_getForeColor(Window *win);
 
 Window* win_addAction(Window* win,func_trig f, int index, trig_type t);
+
 func_trig win_getAction(Window* win, int index);
+
 func_trig win_getSelectedAction(Window* win);
+
 trig_type win_getSelectedTrigType(Window * win);
+
 #endif

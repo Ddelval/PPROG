@@ -35,7 +35,7 @@ void appendf(char* dest, int* spos, char* orig){
 
 char* movecur(int x,int y){
     char* c=(char*)malloc(sizeof(char)*16);
-    sprintf(c,"%c[%d;%dH ",27,x,y);
+    sprintf(c,"%c[%d;%dH ",27,x,max(y,0));
     return c;
 }
 

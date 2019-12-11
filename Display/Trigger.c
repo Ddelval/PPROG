@@ -1,6 +1,6 @@
 //  PPROG
-//	SpriteDic.c
-//  Created by David del Val on 05/12/2019
+//	Trigger.c
+//  Created by David del Val on 09/12/2019
 //
 //
 #include "Trigger.h"
@@ -58,4 +58,16 @@ int tr_getId(const Trigger* tr){
 
 trig_type tr_getType(const Trigger* tr){
     return tr? tr->type:-1;
+}
+int tr_getObj_id(const Trigger* tr){
+    return tr? tr->obj_id:-1;
+}
+int tr_getSpr_index(const Trigger* tr){
+    return tr? tr->sprite_index: -1;
+}
+bool tr_getSpr_remove(const Trigger* tr){
+    return tr? tr->spr_remove:-1;
+}
+int tr_getQuantity(const Trigger* tr){
+    return tr? tr->quantity:-1;
 }

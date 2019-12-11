@@ -11,7 +11,7 @@ typedef struct{
     int size;
 } TriggerDic;
 
-char trdic_c[]= "Ditionaries/trig.txt";
+char trdic_c[]= "Dictionaries/trig.txt";
 TriggerDic* trdic_data=NULL;
 
 void trdic_free(){
@@ -34,7 +34,7 @@ TriggerDic* trdic_ini(){
     int siz;
     FILE*f=fopen(trdic_c, "r");
     TriggerDic* s= calloc(1, sizeof(TriggerDic));
-    if(!s)return NULL;
+    if(!s||!f)return NULL;
 
     fscanf(f,"%d", &siz);
     s->size=siz;

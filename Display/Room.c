@@ -153,10 +153,12 @@ Room* room_addBSprite(Room* r, Sprite* s){
     if(!r->backg[r->backpos]){
         return NULL;
     }
+    //spr_printTrigger(s);
     r->backpos++;
     canv_addOverlay(r->map, spr_getDispData(s), spr_getOI(s), spr_getOJ(s));
     spr_processCollisions(s,r->colision,r->wid,r->hei);
     spr_processShadows(s,r->shadows);
+    room_processTriggers(r,s,r->backpos-1);
     return r;
 }
 int room_addOSprite(Room* r, Sprite* s){
@@ -200,6 +202,7 @@ Canvas* room_getRender(Room* r){
         b.h=canv_getHeight(tmpc);
         r->ov[i]=b;
     }
+    canv_addOverlay(canv,r->shadows,0,0);
     Canvas* res=canv_subCopy(canv,r->c_t,r->c_b,r->c_l,r->c_r);
     canv_free(canv);
     return res;
@@ -385,18 +388,14 @@ void room_free(Room* r){
     canv_free(r->shadows);
     //Trigger array
     if(r->trig){
-        for(int i=0;i<r->hei;++i)free(r->trig[i]);
-        free(r->trig);
-    }
-
-       for(int i=0;i<r->hei;++i){
+        for(int i=0;i<r->hei;++i){
            for(int j=0;j<r->wid;++j){
                free(r->trig[i][j]);
            }
            free(r->trig[i]);
        }
     free(r->trig);
-
+    }
     canv_free(r->map);
     free(r->ov);
     pix_free(r->backcol);
@@ -409,41 +408,109 @@ Room* room_processTriggers(Room * r, Sprite * sp, int index){
     const int *** dat=spr_getTriggerRef(sp);
     for(int i=0;i<spr_getHeight(sp);++i){
         i0=i+spr_getOI(sp);
-        if (i0<0||i0>r->hei)continue;
+        if (i0<0||i0>=r->hei)continue;
         for(int j=0;j<spr_getWidth(sp);++j){
             j0= j+spr_getOJ(sp);
-            if(j0<0||j0>r->wid)continue;
+            if(j0<0||j0>=r->wid)continue;
             int w;
             for(w=0;w<MAX_TRIG;++w){
-                if(r->trig[i][j][w].code==-1)break;
+                if(r->trig[i0][j0][w].code==-1)break;
             }
             for(int u=0;u<SPR_NTRIGGERS&&u+w<MAX_TRIG;++u){
                 if(dat[i][j][u]==-1)break;
-                r->trig[i][j][w].code=dat[i][j][u];
-                r->trig[i][j][w].spindex=index;
+                r->trig[i0][j0][u+w].code=dat[i][j][u];
+                r->trig[i0][j0][u+w].spindex=index;
+                
             }
         }
     }
     return r;
 }
-Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index){
+Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){
     if(!r||sp_index>=r->overpos)return NULL;
     trigger* dat=r->trig[spr_getOI(r->overs[sp_index])][spr_getOJ(r->overs[sp_index])];
     int cnt;
     for(cnt=0;cnt<MAX_TRIG&&dat[cnt].code!=-1;++cnt);
-    Trigger** t=calloc(cnt,sizeof(Trigger*));
+    Trigger** t=calloc(cnt+1,sizeof(Trigger*));
     int j=0;
-    for(int i=0;i<MAX_TRIG&&dat[cnt].code!=-1;++i){
-        t[j]=trdic_lookup(dat[cnt].code);
+    for(int i=0;i<MAX_TRIG&&dat[i].code!=-1;++i){
+        t[j]=trdic_lookup(dat[i].code);
         if(tr_getType(t[j])==tt){
-            tr_setSpr(t[j],dat[cnt].spindex);
+            tr_setSpr(t[j],dat[i].spindex);
             j++;
         }
         else{
             tr_free(t[j]);
         }
     }
+    *siz=j;
     return t;
+}
+Canvas* room_redrawMap(Room*r){
+    Canvas* b=canv_backGrnd(pix_retR(r->backcol),pix_retG(r->backcol),pix_retB(r->backcol),pix_retA(r->backcol),r->wid,r->hei);
+    for(int i=0;i<r->backpos;++i){
+        if(canv_addOverlay(b,spr_getDispData(r->backg[i]),spr_getOI(r->backg[i]),spr_getOJ(r->backg[i]))==NULL)return NULL;
+    }
+    canv_free(r->map);
+    r->map=b;
+    return b;
+}
+Room* room_updateData(Room*r){
+
+    if(r->colision){
+        for(int i=0;i<r->hei;++i)free(r->colision[i]);
+        free(r->colision);
+    }
+    canv_free(r->shadows);
+    if(r->trig){
+        for(int i=0;i<r->hei;++i){
+           for(int j=0;j<r->wid;++j){
+               free(r->trig[i][j]);
+           }
+           free(r->trig[i]);
+       }
+    free(r->trig);
+    }
+
+
+    r->colision=calloc(r->hei, sizeof(bool*));
+    if(!r->colision)ret_free(r);
+    for(int i=0;i<r->hei;++i){
+        r->colision[i]=calloc(r->wid, sizeof(bool));
+        if(!r->colision[i])ret_free(r);
+    }
+    r->shadows=canv_backGrnd(0,0,0,0,r->wid,r->hei);
+    r->trig=calloc(r->hei, sizeof(trigger**));
+    if(!r->trig)ret_free(r);
+    for(int i=0;i<r->hei;++i){
+        r->trig[i]=calloc(r->wid, sizeof(trigger*));
+        if(!r->trig[i])ret_free(r);
+        for(int j=0;j<r->wid;++j){
+            r->trig[i][j]=calloc(MAX_TRIG,sizeof(trigger));
+            if(!r->trig[i][j])ret_free(r);
+            for(int w=0;w<MAX_TRIG;++w)r->trig[i][j][w].code=-1;
+        }
+    }
+    
+
+    for(int i=0;i<r->backpos;++i){
+        spr_processCollisions(r->backg[i],r->colision,r->wid,r->hei);
+        spr_processShadows(r->backg[i],r->shadows);
+        room_processTriggers(r,r->backg[i],i);
+    }
+
+
+}
+
+
+Room* room_printModBackg(Room* r, int disp_i, int disp_j){
+    if(!r)return NULL;
+    Canvas* p=room_getRender(r);
+    if(!room_updateData(r))return NULL;
+    if(room_redrawMap(r)==NULL)return NULL;
+    Canvas * c=room_getRender(r);
+    canvas_printDiff(stdout,c,p,disp_i,disp_j);
+    return r;
 }
 Room* room_removeB(Room* r, int index){
     if(!r||index>=r->backpos)return NULL;
@@ -452,22 +519,7 @@ Room* room_removeB(Room* r, int index){
         r->backg[i]=r->backg[i+1];
     }
     r->backg[r->backpos]=NULL;
-    return r;
-}
-Canvas* room_redrawMap(Room*r){
-    Canvas* b=canv_backGrnd(pix_retR(r->backcol),pix_retG(r->backcol),pix_retB(r->backcol),pix_retA(r->backcol),r->wid,r->hei);
-    for(int i=0;i<r->backpos;++i){
-        if(canv_addOverlay(b,spr_getDispData(r->backg[i]),0,0)==NULL)return NULL;
-    }
-    canv_free(r->map);
-    r->map=b;
-    return b;
-}
-Room* room_printModBackg(Room* r, int disp_i, int disp_j){
-    if(!r)return NULL;
-    Canvas* p=room_getRender(r);
-    if(room_redrawMap(r)==NULL)return NULL;
-    Canvas * c=room_getRender(r);
-    canvas_printDiff(stdout,c,p,disp_i,disp_j);
+    r->backpos--;
+    
     return r;
 }

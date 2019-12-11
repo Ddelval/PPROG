@@ -1,4 +1,8 @@
-
+//  PPROG
+//	Trigger.c
+//  Created by David del Val on 09/12/2019
+//
+//
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
@@ -16,6 +20,11 @@ Trigger* tr_setSpr(Trigger* tr, int i);
 trig_type tr_getType(const Trigger* tr);
 int tr_getId(const Trigger* tr);
 trig_type tr_getType(const Trigger* tr);
+
+int tr_getObj_id(const Trigger* tr);
+int tr_getSpr_index(const Trigger* tr);
+bool tr_getSpr_remove(const Trigger* tr);
+int tr_getQuantity(const Trigger* tr);
 
 void trig_give(Trigger* t, void* e, void* r);
 #endif

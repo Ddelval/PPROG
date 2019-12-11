@@ -2,12 +2,14 @@
 /*** Functions to process triggers ***/
 
 void trig_give(Trigger* t, void* e, void* r){
+
     if(!t||!e)return;
-    /*if(t->type!=OBTAIN)return;
-    entity_addItem(e,t->obj_id,t->quantity);
-    if(t->spr_remove){
-        room_removeB(r,t->sprite_index);
+    if(tr_getType(t)!=OBTAIN)return;
+    entity_addItem(e,tr_getObj_id(t),tr_getQuantity(t));
+    if(tr_getSpr_remove(t)){
+        room_removeB(r,tr_getSpr_index(t));
+        room_printModBackg(r,0,0);
     }
-    room_printModBackg(r,0,0);
-    */
+    
+    
 } 

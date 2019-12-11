@@ -651,33 +651,17 @@ Canvas* canvas_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int
     if(!f||!new||!old)return NULL;
     if(canv_getWidth(new)!=canv_getWidth(old))return NULL;
     if(canv_getHeight(new)!=canv_getHeight(old))return NULL;
-
-    for(int i=0;i<new->hei;++i){
-        int le=-1;
-        for(int j=0;j<new->wid;++j){
-            if(pix_equals(new->data[i][j], old->data[i][j])){
-                if(le+1!=j){
-                    char* aux=movecur(oi+i, oj+le);
-                    fprintf(f, "%s",aux);
-                    free(aux);
-                    char *res=pix_renderLine(new->data[i]+(le), -le+j);
-                    fprintf(f, "%s",res);
-                    free(res);
-                }
-                fflush(stdout);
-                le=j;
+    Canvas* canv=canv_backGrnd(0,0,0,0,canv_getWidth(new),canv_getHeight(new));
+    for(int i=0;i<canv_getHeight(new);++i){
+        for(int j=0;j<canv_getWidth(new);++j){
+            if(!pix_equals(new->data[i][j],old->data[i][j])){
+                pix_free(canv->data[i][j]);
+                canv->data[i][j]=pix_copy(new->data[i][j]);
             }
         }
-        if(le+1!=new->wid){
-            char* aux=movecur(oi+i, oj+le);
-            fprintf(f, "%s",aux);
-            free(aux);
-            char *res=pix_renderLine(new->data[i]+(le), -le+new->wid);
-            fprintf(f, "%s",res);
-            free(res);
-        }
     }
-    return (Canvas*)new;
+    canv_printAllNonTransparent(f,canv,old,oi,oj);
+    canv_free(canv);
 }
 int canv_getWidth(const Canvas* c){
   if(!c)return -1;
@@ -779,6 +763,67 @@ void canv_printSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj)
     free(str);
     fprintf(f,"%s",rend);
 }
+
+void canv_printAllNonTransparent(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj){
+    if(!c||!f||!backg)return;
+    Pixel** buff=calloc(canv_getWidth(c),sizeof(Pixel*));
+    char** str=calloc(canv_getWidth(c)*canv_getHeight(c),sizeof(char*));
+    int strpos=0;
+    if(!str||!buff){
+        free(str);
+        free(buff);
+        return;
+    }
+    int l=0;
+    int jj=0;
+    for(int i=0;i<canv_getHeight(c);++i){
+        int j=0;
+        while(j<canv_getWidth(c)){
+            jj=-1;
+            while(j<canv_getWidth(c)&&pix_retA(c->data[i][j])){
+                if(jj==-1)jj=j;
+                buff[l]=pix_copy(c->data[i][j]);
+                l++;
+                j++;
+            }
+            if(!l){
+                j++;
+                continue;
+            }
+            char* c=pix_renderLine(buff,l);
+            l=0;
+            char* c2=movecur(oi+i,oj+jj+1);
+            char* segment=calloc(strlen(c)+strlen(c2)+1,sizeof(char));
+            if(!c||!c2||!segment){
+                free(c);
+                free(c2);
+                free(segment);
+                free(buff);
+                return;
+            }
+            int pos=0;
+            append(segment,&pos,c2);
+            append(segment,&pos,c);
+            free(c);
+            free(c2);
+            str[strpos]=segment;
+            strpos++;
+
+
+            j++;
+        }
+    }
+    int flen=0;
+    for(int i=0;i<strpos;++i){
+        flen+=strlen(str[i]);
+    }
+    char* rend=calloc(flen+1,sizeof(char*));
+    int rpos=0;
+    for(int i=0;i<strpos;++i)appendf(rend,&rpos,str[i]);
+    free(str);
+    fprintf(f,"%s",rend);
+}
+
 
 /// Create the array of strings that contain the ansi scape sequences
 /// required to display the colors on the screen.
