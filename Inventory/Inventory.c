@@ -48,7 +48,7 @@ Inventory* inv_ini(){
 
 void inv_free(Inventory* inv){
     if(!inv)return;
-    for(int i=0;i<INITIAL_SIZE;++i){
+    for(int i=0;i<OBJ_TYPE_SIZE;++i){
         if(inv->items[i]){
             for(int j=0;j<inv->size[i];++j)obj_free(inv->items[i][j]);
         }

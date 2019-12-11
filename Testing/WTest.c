@@ -75,7 +75,7 @@ int main(){
 
     Welem* wela[3];
     wela[0]=we_createLabel("Collect", f6, 10);
-    wela[1]=we_createLabel("Build", f6, 10);
+    wela[1]=we_createLabel("Inventory", f6, 10);
     wela[2]=we_createLabel("Enter", f6, 10);
 
 
@@ -83,6 +83,7 @@ int main(){
     Window* w1=win_ini("Resources", wel, 3, w-vdiv-1, h/2-20, 0, 0, f8);
     Window* w2=win_ini("Actions", wela, 3, w-vdiv-1, h/2-20, 0, 0, f8);
     win_addAction(w2,trig_give,0,OBTAIN);
+    win_addAction(w2,trig_showInv,1,SHOW);
     disp_AddLWindow(dis, w1); 
     disp_AddLWindow(dis, w2);
 
@@ -128,6 +129,10 @@ int main(){
         }
         if(c=='J'){
             disp_execute(dis,1,entity_getRoomIndex(e),e);
+        }
+        if(c=='Q'){
+            disp_remInventory(dis);
+            disp_remDialog(dis);
         }
         //usleep(100000);
 

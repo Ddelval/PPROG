@@ -8,7 +8,7 @@
 
 #include "Utility.h"
 typedef struct _Trigger Trigger;
-typedef enum{OBTAIN, ENTER,TALK} trig_type;
+typedef enum{OBTAIN, ENTER,TALK,SHOW} trig_type;
 typedef void (*func_trig)(Trigger* t, void* en, void* r);
 
 Trigger* tr_ini();
@@ -26,5 +26,5 @@ int tr_getSpr_index(const Trigger* tr);
 bool tr_getSpr_remove(const Trigger* tr);
 int tr_getQuantity(const Trigger* tr);
 
-void trig_give(Trigger* t, void* e, void* r);
+bool tr_needsTrigger(trig_type t);
 #endif

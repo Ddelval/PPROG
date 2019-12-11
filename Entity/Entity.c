@@ -249,3 +249,6 @@ Entity* entity_addItem(Entity* en,int itemId, int quantity){
         inv_insertSeveral(en->inv,ob,quantity);
         return en;
 }
+const Inventory* entity_getInvRef(Entity*en){
+        return en? en->inv:NULL;
+}

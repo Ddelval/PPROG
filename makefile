@@ -1,6 +1,6 @@
 CC = gcc -g
 EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest
-OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o Wlabel.o Welem.o Room.o Inventory.o Wlabic.o Window.o Display.o Object.o ObjectDic.o TrigReact.o
+OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o FontCatalog.o Wlabel.o Welem.o Room.o Inventory.o Wlabic.o Window.o Display.o Object.o ObjectDic.o TrigReact.o
 ENGINE = 
 LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/
 MIDDLE = @printf "\033[1m\033[1;34m $@ \033[0;30m\033[0m\t"
@@ -121,6 +121,10 @@ Character.o : Display/Character.c Display/Character.h Utility.o
 	$(CC) -c $< $(LIB)
 
 Font.o : Display/Font.c Display/Font.h Utility.o 
+	$(MIDDLE)
+	$(CC) -c $< $(LIB)
+
+FontCatalog.o : Display/FontCatalog.c Display/FontCatalog.h Utility.o 
 	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 

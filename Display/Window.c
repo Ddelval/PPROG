@@ -125,6 +125,7 @@ Window* win_addAction(Window* win,func_trig f, int index,trig_type t){
 		win->act_type=realloc(win->act_type,sizeof(trig_type)*win->num_elems);
 	}
 	win->actions[index]=f;
+	win->act_type[index]=t;
 	win->action_size=win->num_elems;
 	return win;
 }

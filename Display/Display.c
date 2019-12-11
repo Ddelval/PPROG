@@ -20,7 +20,8 @@ struct _Display{
     int latWinalloc;
     Window** latWindow;
     Window* popup;
-    bool dialog;
+    bool pop_dial;
+    bool pop_inv;
 };
 
 Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* titf){
@@ -163,15 +164,16 @@ Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f){
     Canvas* ren=wl_render(wl, dis->width-100);
     canv_addOverlay(bckg,ren,10,10);
     canv_print(stdout,bckg,canv_getHeight(c)-h,0);
-    dis->dialog=true;
+    dis->pop_dial=true;
     return dis;
 }
 Display* disp_remDialog(Display* dis){
     if(!dis)return NULL;
+    if(!dis->pop_dial)return dis;
     Canvas* c=disp_Render(dis);
     canv_print(stdout,c,0,0);
     canv_free(c);
-    dis->dialog=false;
+    dis->pop_dial=false;
     return dis;
 }
 
@@ -205,7 +207,17 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     canv_darken(back2,0.40);
     canv_addOverlay(back2,c,10,0);
     canv_print(stdout,back2,0,0);
+    dis->pop_inv=true;
     return dis;
+}
+Display* disp_remInventory(Display* d){
+    if(!d)return NULL;
+    if(!d->pop_inv)return d;
+    d->pop_inv=false;
+    Canvas* c=disp_Render(d);
+    if(!c)return NULL;
+    canv_print(stdout,c,0,0);
+    return d;
 }
 
 
@@ -214,6 +226,10 @@ Room* disp_getrefRoom(Display* dis){
 }
 
 int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
+
+    if(d->pop_dial||d->pop_inv)return 0;
+
+
     int a=room_incPos(d->room, index, i, j);
     int b=-1;
     int c=-1;
@@ -238,9 +254,15 @@ Display* disp_execute(Display* dis, int index, int room_index, void* en){
     if(!dis)return NULL;
     func_trig f =win_getSelectedAction(dis->latWindow[index]);
     trig_type t=win_getSelectedTrigType(dis->latWindow[index]);
-    int a;
-    Trigger** dat =room_getTriggers(dis->room,t,room_index,&a);
+    if(tr_needsTrigger(t)){
+        int a;
+        Trigger** dat =room_getTriggers(dis->room,t,room_index,&a);
+        
+        if(a)trig_give(dat[0],en,dis);
+    }
+    else{
+        trig_showInv(NULL,en,dis);
+    }
     
-    if(a)trig_give(dat[0],en,dis->room);
     return dis;
 }

@@ -71,3 +71,7 @@ bool tr_getSpr_remove(const Trigger* tr){
 int tr_getQuantity(const Trigger* tr){
     return tr? tr->quantity:-1;
 }
+bool tr_needsTrigger(trig_type t){
+    if(t==SHOW)return false;
+    return true;
+}
