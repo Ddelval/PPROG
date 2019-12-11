@@ -662,6 +662,7 @@ Canvas* canvas_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int
     }
     canv_printAllNonTransparent(f,canv,old,oi,oj);
     canv_free(canv);
+    return canv;
 }
 int canv_getWidth(const Canvas* c){
   if(!c)return -1;

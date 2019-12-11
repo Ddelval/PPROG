@@ -102,5 +102,6 @@ int room_scroll(Room* r, double i, double j);
 Room* room_getBSpritePos(Room *r, int index, int* i, int *j);
 Room* room_processTriggers(Room * r, Sprite * sp, int index);
 Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz);
+Room* room_removeB(Room* r, int index);
 Room* room_printModBackg(Room* r, int disp_i, int disp_j);
 #endif /* Room_h */

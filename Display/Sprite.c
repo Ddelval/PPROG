@@ -187,6 +187,7 @@ Sprite* spr_addTrigger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
     }
     return s;
 }
+/*
 Sprite* spr_printTrigger(Sprite* s){
     fprintf(stderr,"\n\n\n-----------\n%d\n",spr_getId(s));
     for(int i=0;i<s->height;++i){
@@ -195,7 +196,7 @@ Sprite* spr_printTrigger(Sprite* s){
         }
         fprintf(stderr,"\n");
     }
-}
+*/
 Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei){
     if(!rarr)return NULL;
     int i2,j2;

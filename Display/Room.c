@@ -499,7 +499,7 @@ Room* room_updateData(Room*r){
         room_processTriggers(r,r->backg[i],i);
     }
 
-
+    return r;
 }
 
 
