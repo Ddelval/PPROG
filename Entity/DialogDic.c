@@ -25,7 +25,7 @@ DialogDic* ddic_ini(FILE* df) {
   for(int i=0;i<si;i++) {
     ddic->d[i]=diag_load(df);
     if(!ddic->d[i]) {
-      ddic_free();
+      ddic_free(ddic);
       return NULL;
     }
   }
@@ -34,7 +34,7 @@ DialogDic* ddic_ini(FILE* df) {
 
 void ddic_free(DialogDic* ddic) {
   if(!ddic) return;
-  for(int i=0;i<si;i++) {
+  for(int i=0;i<ddic->size;i++) {
     diag_free(ddic->d[i]);
   }
   free(ddic->d);
@@ -45,7 +45,7 @@ void ddic_free(DialogDic* ddic) {
 Dialog* ddic_lookup(DialogDic* ddic, int did) {
   if(!ddic) return NULL;
   for(int i=0;i<ddic->size;i++) {
-    if(diag_getId(dic->d[i])==did) return diag_copy(ddic->d[i]);
+    if(diag_getId(ddic->d[i])==did) return diag_copy(ddic->d[i]);
   }
   return NULL;
 }

@@ -1,6 +1,6 @@
 CC = gcc -g
 EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest
-OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o FontCatalog.o Wlabel.o Welem.o Room.o Inventory.o Wlabic.o Window.o Display.o Object.o ObjectDic.o TrigReact.o
+OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o Dialog.o DialogDic.o SpriteDic.o TriggerDic.o Sprite.o Font.o FontCatalog.o Wlabel.o Welem.o Room.o Inventory.o Wlabic.o Window.o Display.o Object.o ObjectDic.o TrigReact.o
 ENGINE = 
 LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/
 MIDDLE = @printf "\033[1m\033[1;34m $@ \033[0;30m\033[0m\t"
@@ -175,11 +175,20 @@ TriggerDic.o : Display/TriggerDic.c Display/TriggerDic.h Utility.o
 TrigReact.o : Display/TrigReact.c Display/TrigReact.h Utility.o
 	$(MIDDLE)
 	$(CC) -c $< $(LIB)
+
 Utility.o:  Utility/Utility.c Utility/Utility.h 
 	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
 Entity.o:  Entity/Entity.c Entity/Entity.h 
+	$(MIDDLE)
+	$(CC) -c $< $(LIB)
+
+Dialog.o:  Entity/Dialog.c Entity/Dialog.h 
+	$(MIDDLE)
+	$(CC) -c $< $(LIB)
+
+DialogDic.o:  Entity/DialogDic.c Entity/DialogDic.h 
 	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 

@@ -21,8 +21,8 @@ Dialog* diag_ini() {
 
 void diag_free(Dialog* diag){
   if(!diag) return;
-  for(int i=0;i<nlines;i++) if(diag->lines[i]) free(diag->lines[i]);
-  free(lines);
+  for(int i=0;i<diag->nlines;i++) if(diag->lines[i]) free(diag->lines[i]);
+  free(diag->lines);
   free(diag);
 }
 
@@ -40,9 +40,10 @@ Dialog* diag_copy(Dialog* diag) {
       diag_free(d);
       return NULL;
     }
-    if(!strcpy(d->lines[i],diag->lines[i]) {
+    if(!strcpy(d->lines[i],diag->lines[i])) {
       diag_free(d);
       return NULL;
+    }
   }
   return d;
 }
