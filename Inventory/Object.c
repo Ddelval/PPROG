@@ -164,3 +164,18 @@ Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum){
     canv_free(bb);
     return back;
 }
+
+Object* obj_getObject(int id){
+        if(id < 0) return NULL;
+
+        if(!odic) odic_ini();
+        if(!odic) return NULL;
+
+        int i = 0;
+        while(obj_getId(odic->obj[i]) != id && i < odic->size) i++;
+        if(obj_getId(odic->obj[i]) == id) {
+                Object* o = obj_copy(odic->obj[i]);
+                return o;
+        }
+        return NULL;
+}
