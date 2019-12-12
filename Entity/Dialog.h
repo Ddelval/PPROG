@@ -1,15 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   Dialog.h
- * Author: jaime
- *
- * Created on 6 de diciembre de 2019, 17:01
- */
+/*  Dialog.h  */
 
 #ifndef DIALOG_H
 #define DIALOG_H
@@ -17,48 +6,58 @@
 #include "Entity.h"
 
 
-
-typedef struct _DialogMan DialogMan;
-
-/*
-  Purpose: To create a new DialogMan struct
- Inputs: Nothing
- Outputs: DialogMan struct pointer
- */
-DialogMan * dman_ini();
+typedef struct _Dialog Dialog;
 
 /*
-  Purpose: To destroy DialogMan struct
- Inputs: DialogMan Struct
- Outputs: void
- */
-void dman_destroy(DialogMan * dman);
+    Initializes a new empty Dialog.
+*/
+Dialog* diag_ini();
 
 /*
- Purpose: To check if there are more lines avaible for a counter
- Inputs: DialogMan pointer struct
- Outputs: Bool
- */
-Bool dman_available(DialogMan * dman);
+    Frees a given Dialog.
+*/
+void diag_free(Dialog* diag);
 
 /*
-  Purpose: New dialog instance for an entity
- Inputs: int id
- Outputs: DialogMan struct pointer
- */
-DialogMan* dman_getDialog(int entity_id);
+    Returns a copy of the given Dialog.
+*/
+Dialog* diag_copy(Dialog* diag);
+
 /*
-  Purpose: Returns the next dialog line if there is one
- Inputs: DialogMan struct pointer
- Outputs: char pointer
- */
-char* dman_nextLine(DialogMan* d);
+    Gets the next line in the dialog, incrementing the line position.
+*/
+const char* diag_getNext(Dialog* diag);
 
-int dman_getCounter(DialogMan * dman);
+/*
+    Returns the ID of the given Dialog.
+*/
+int diag_getId(Dialog* diag);
 
-void dman_setCounter(DialogMan * dman, int counter);
+/*
+    Returns the number of lines in a given Dialog. The larger the number, the
+    more you'll want the guy who is talking to shut up.
+*/
+int diag_getLength(Dialog* diag);
 
+/*
+    Gets the current line in a given Dialog.
+*/
+int diag_getCurrentLine(Dialog* diag);
+
+/*
+    Jumps to a given line in a Dialog.
+*/
+Dialog* diag_setLine(Dialog* diag, int newline);
+
+/*
+    Jumps 'lines' lines (forwards or backwards) in the given Dialog.
+*/
+Dialog* diag_jumpLines(Dialog* diag, int lines);
+
+/*
+    Loads a dialog from file.
+*/
+Dialog* diag_load(FILE* f);
 
 
 #endif /* DIALOG_H */
-
