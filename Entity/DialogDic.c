@@ -17,7 +17,7 @@ DialogDic* ddic_ini(FILE* df) {
   int si;
   fscanf(df,"%d", &si);
   ddic->size=si;
-  ddic->d=(Dialog**)calloc(si, sizeof(Trigger*));
+  ddic->d=(Dialog**)calloc(si, sizeof(Dialog*));
   if(!ddic->d){
     free(ddic);
     return NULL;
