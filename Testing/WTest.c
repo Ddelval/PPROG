@@ -11,32 +11,7 @@
 #include "TrigReact.h"
 #include "Entity.h"
 #include "ObjectDic.h"
-char getch1(void)
-{
-    char buf = 0;
-    struct termios old = {0};
-    fflush(stdout);
-    tcgetattr(0, &old);
-    //if(tcgetattr(0, &old) < 0)
-        //perror("tcsetattr()");
-    old.c_lflag &= ~ICANON;
-    old.c_lflag &= ~ECHO;
-    old.c_cc[VMIN] = 1;
-    old.c_cc[VTIME] = 0;
-    tcsetattr(0, TCSANOW, &old);
-   // if(tcsetattr(0, TCSANOW, &old) < 0)
-        //perror("tcsetattr ICANON");
-    read(0, &buf, 1);
-    fflush(stdin);
-    //if(read(0, &buf, 1) < 0)
-        //perror("read()");
-    old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
-    tcsetattr(0, TCSADRAIN, &old);
-    //if(tcsetattr(0, TCSADRAIN, &old) < 0)
-        //perror("tcsetattr ~ICANON");
-    return buf;
- }
+
 
 int main(){
     int vdiv=800;
@@ -100,12 +75,7 @@ int main(){
     inv_insert(inv,o);
     o =odic_lookup(2);
     inv_insert(inv,o);
-    //disp_InventoryWindow(dis,inv,f8,f6,f4,f6);
-    
-
-
-    //disp_DiaglogWindow(dis,"Hello, my name is Pepe. I am going to be your annoying friend in this game. If at some point I get too anoying, you can always press ALT + F4 and I will stop.",f4);
-    
+    room_buildingInterface(r,10,0,0,0,0);
     while(1){
         char c=getch1();
         if(c=='W'){
@@ -137,68 +107,5 @@ int main(){
         //usleep(100000);
 
     }
-    
-    
-    
-    /*while(1){
-        char c;
-        c=getch1();
-        //scanf("%c",&c);
-        //printf("%c\n",c);
-        if(c=='W'){
-            if(room_incPos(r, 0, -10, 0)==1){
-                //disp_scroll(dis,-0.5,0);
-                if(disp_scroll(dis,-0.5,0)==1){
-                    canv_print(stdout,room_getRender(r),0,0);
-                }
-            }
-            else{
-                room_printMod(r, 0, 0);
-            }
-        }
-        if(c=='S'){
-            if(room_incPos(r, 0, 10, 0)==3){
-                if(disp_scroll(dis,0.5,0)==1){
-                    canv_print(stdout,room_getRender(r),0,0);
-                }
-                
-            }
-            else{
-                room_printMod(r, 0, 0);
-            }
-        }
-        if(c=='A'){
-            if(room_incPos(r, 0, 0, -10)==4){
-                //disp_scroll(dis,0,0.5);
-                if(disp_scroll(dis,0,-0.5)==1){
-                    canv_print(stdout,room_getRender(r),0,0);
-                }
-            }
-            else{
-                room_printMod(r, 0, 0);
-            }
-        }
-        if(c=='D'){
-            if(room_incPos(r, 0, 0, 10)==2){
-                //disp_scroll(dis,0,0.5);
-                if(disp_scroll(dis,0,0.5)==1){
-                    canv_print(stdout,room_getRender(r),0,0);
-                }
-            }
-            else{
-                room_printMod(r, 0, 0);
-            }
-            
-        }
-        if(c=='O'){
-            disp_incSelIndex(dis,1,-1);
-        }
-        if(c=='L'){
-            disp_incSelIndex(dis,1,1);
-        }
-        //usleep(100000);
-
-    }
-    */
     return 0;
 }

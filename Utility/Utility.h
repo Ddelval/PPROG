@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
+#include <termios.h>
 #include <assert.h>
 /*
 #include <signal.h>
@@ -25,5 +27,8 @@ void append (char* dest, int* spos, const char* orig);
 char* movecur(int x,int y);
 int max(int a,int b);
 int min(int a,int b);
+
+char getch1(void);
+
 //void handle_winch(Display* dis);
 #endif /* Utility_h */

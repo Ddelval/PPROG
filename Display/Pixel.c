@@ -228,8 +228,8 @@ bool pix_halfTransparent(const Pixel* a){
 }
 Pixel* pix_darken(Pixel* p,double light){
     if(!p)return NULL;
-    p->r*=light;
-    p->g*=light;
-    p->b*=light;
+    p->r=min(p->r*light,255);
+    p->g=min(p->g*light,255);
+    p->b=min(p->b*light,255);
     return p;
 }

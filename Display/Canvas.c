@@ -647,7 +647,7 @@ void canv_printR(FILE* f, const Canvas* c,int i,int j,int wid,int hei){
     free(da);
 }
 
-Canvas* canvas_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int oj){
+Canvas* canv_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int oj){
     if(!f||!new||!old)return NULL;
     if(canv_getWidth(new)!=canv_getWidth(old))return NULL;
     if(canv_getHeight(new)!=canv_getHeight(old))return NULL;
@@ -944,4 +944,28 @@ Canvas* canv_darken(Canvas* c,double light){
         }
     }
     return c;
+}
+Canvas* canv_filter(Canvas* c,Pixel* p){
+    if(!c||!p)return NULL;
+    Canvas* cc=canv_copy(c);
+    int r,g,b;
+    r=pix_retR(p);
+    g=pix_retG(p);
+    b=pix_retB(p);
+    int m=max(r,max(g,b));
+    for(int i=0;i<cc->hei;++i){
+        for(int j=0;j<cc->wid;++j){
+            int rr,gg,bb,aa;
+            rr=pix_retR(c->data[i][j]);
+            gg=pix_retG(c->data[i][j]);
+            bb=pix_retB(c->data[i][j]);
+            aa=pix_retA(c->data[i][j]);
+            rr*=((double)r)/m;
+            gg*=((double)g)/m;
+            bb*=((double)b)/m;
+            pix_free(cc->data[i][j]);
+            cc->data[i][j]=pix_ini(rr,gg,bb,aa);
+        }
+    }
+    return cc;
 }

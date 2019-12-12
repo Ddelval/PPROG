@@ -214,7 +214,7 @@ char * canv_StorePrint(Canvas* c, int i, int j);
  * @param oj 
  * @return Canvas* 
  */
-Canvas* canvas_printDiff(FILE* f, const Canvas* new,const Canvas* old,int oi, int oj);
+Canvas* canv_printDiff(FILE* f, const Canvas* new,const Canvas* old,int oi, int oj);
 /*-----------------------------------------------------------------*/
 /// Print an area of the canvas to a file
 ///
@@ -251,4 +251,5 @@ Canvas* canv_blur(Canvas* c,int rad);
 Canvas* canv_darken(Canvas* c,double light);
 void canv_printSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);
 void canv_printAllNonTransparent(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);
+Canvas* canv_filter(Canvas* c,Pixel* p);
 #endif /* Canvas_h */

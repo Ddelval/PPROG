@@ -509,7 +509,7 @@ Room* room_printModBackg(Room* r, int disp_i, int disp_j){
     if(!room_updateData(r))return NULL;
     if(room_redrawMap(r)==NULL)return NULL;
     Canvas * c=room_getRender(r);
-    canvas_printDiff(stdout,c,p,disp_i,disp_j);
+    canv_printDiff(stdout,c,p,disp_i,disp_j);
     return r;
 }
 Room* room_removeB(Room* r, int index){
@@ -522,4 +522,90 @@ Room* room_removeB(Room* r, int index){
     r->backpos--;
     
     return r;
+}
+
+Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int room_j){
+    if(!r)return NULL;
+    Sprite* s=sdic_lookup(spid);
+    Canvas* base=room_getRender(r);
+
+    int ipos,jpos;
+    ipos = ai-r->c_t;
+    jpos = aj-r->c_l;
+
+    Pixel*p;
+    Pixel* red=pix_ini(255,150,150,255);
+    Pixel* green=pix_ini(150,255,150,255);
+    Pixel* rred=pix_ini(255,0,0,255);
+
+    int ** placement=calloc(r->hei,sizeof(int*));
+    if(!placement){
+        //ERROR
+    }
+    for(int i=0;i<r->hei;++i){
+        placement[i]=calloc(r->wid,sizeof(int));
+        if(!placement[i]){
+        //ERROR
+        }
+        for(int j=0;j<r->wid;++j)placement[i][j]=!pix_transparent(canv_getPixel(r->shadows,i,j));
+    }
+
+
+    p= spr_checkCollisions(s,placement,r->wid,r->hei,ipos+r->c_t,jpos+r->c_l)? red:green;
+    Canvas* aux=canv_filter(spr_getDispData(s),p);
+    canv_darken(aux,1.2);
+
+    Canvas* c=canv_Overlay(base,aux,ipos,jpos);
+    canv_print(stdout,c,0,0);
+    while(1){
+        char ch=getch1();
+        if(ch=='D'){
+            jpos+=10;
+        }
+        if(ch=='A'){
+            jpos-=10;
+        }
+        if(ch=='S'){
+            ipos+=10;
+        }
+        if(ch=='W'){
+            ipos-=10;
+        }
+        if(ch=='J'){
+            if(!spr_checkCollisions(s,placement,r->wid,r->hei,ipos+r->c_t,jpos+r->c_l)){
+                spr_setOI(s,ipos+r->c_t);
+                spr_setOJ(s,jpos+r->c_l);
+                room_addBSprite(r,s);
+                break;
+            }
+            else{
+                p= rred;
+                Canvas* aux=canv_filter(spr_getDispData(s),p);
+                canv_darken(aux,1.2);
+                Canvas*cc =canv_Overlay(base,aux,ipos,jpos);
+                canv_printDiff(stdout,cc,c,room_i,room_j);
+                canv_free(c);
+                c=cc;
+            }
+        }
+        if(ch=='Q')break;
+
+        p= spr_checkCollisions(s,placement,r->wid,r->hei,ipos+r->c_t,jpos+r->c_l)? red:green;
+        canv_free(aux);
+        aux=canv_filter(spr_getDispData(s),p);
+        canv_darken(aux,1.2);
+        Canvas*cc =canv_Overlay(base,aux,ipos,jpos);
+        canv_printDiff(stdout,cc,c,room_i,room_j);
+        canv_free(c);
+        c=cc;
+    }
+    Canvas* res=room_getRender(r);
+    canv_printDiff(stdout,res,c,room_i,room_j);
+    pix_free(red);
+    pix_free(rred);
+    pix_free(green);
+    canv_free(c);
+    canv_free(aux);
+    return r;
+
 }

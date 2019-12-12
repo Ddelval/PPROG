@@ -15,31 +15,7 @@
 #include <unistd.h>
 #include <termios.h>
 
-char getch1(void)
-{
-    char buf = 0;
-    struct termios old = {0};
-    fflush(stdout);
-    tcgetattr(0, &old);
-    //if(tcgetattr(0, &old) < 0)
-        //perror("tcsetattr()");
-    old.c_lflag &= ~ICANON;
-    old.c_lflag &= ~ECHO;
-    old.c_cc[VMIN] = 1;
-    old.c_cc[VTIME] = 0;
-    tcsetattr(0, TCSANOW, &old);
-   // if(tcsetattr(0, TCSANOW, &old) < 0)
-        //perror("tcsetattr ICANON");
-    read(0, &buf, 1);
-    //if(read(0, &buf, 1) < 0)
-        //perror("read()");
-    old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
-    tcsetattr(0, TCSADRAIN, &old);
-    //if(tcsetattr(0, TCSADRAIN, &old) < 0)
-        //perror("tcsetattr ~ICANON");
-    return buf;
- }
+
 
 int main(int argc, const char * argv[]) {
   FILE* fi=fopen("Display/Fonts/Robo_Mono/06.txt", "r");

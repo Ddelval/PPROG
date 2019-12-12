@@ -243,7 +243,7 @@ Sprite* spr_processShadows(Sprite* s,Canvas* shad){
             j2=j+s->jPos;
             if(j2>=rwid)break;
                 //fprintf(stderr,"%d %d %d %d \n",s->id,i,j,s->shadow[i][j]);
-            if(s->shadow[i][j]){
+            if(s->shadow[i][j]||s->collision[i][j]){
                 assert(canv_setPixel(shad,canv_getPixel(s->canvas,i,j),i2,j2)!=NULL);
             }
         }
