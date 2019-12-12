@@ -263,7 +263,7 @@ Window* win_copy(Window* win) {
 	memcpy(win2->act_type,win->act_type,win->action_size*sizeof(trig_type));
 
 	win2->actions=calloc(win->action_size,sizeof(func_trig));
-	memcpy(win2->act_type,win->act_type,win->action_size*sizeof(func_trig));
+	memcpy(win2->actions,win->actions,win->action_size*sizeof(func_trig));
 
 	win2->action_size=win->action_size;
 	
