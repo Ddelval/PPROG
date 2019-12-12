@@ -109,8 +109,22 @@ void rdic_free(){
    Creates the array of objects and stores it in *obj. Also copies the array of
    quantities into *quant.
  */
-Recipe* rec_getData(Object *** obj, int ** quant){
+Status rec_getData(Recipe * r, Object *** obj, int ** quant){
+        if(!r) return ERROR;
 
+        if(r->size == 0) return OK;
+
+        (*obj) = (Object **) calloc (sizeof(Object *), r->size);
+        if(!(*obj)) return ERROR;
+        (*quant) = (int *) calloc (sizeof(int), r->size);
+        if(!(*quant)) return ERROR;
+
+        int i = 0;
+        while(i < r->size) {
+                (*obj)[i] = odic_lookup(r->elements[i]);
+                (*quant)[i] = r->quantities[i];
+        }
+        return OK;
 }
 
 //Following format:  (size) (name) (result_id) (elements_ids) (list_of_quantites)
