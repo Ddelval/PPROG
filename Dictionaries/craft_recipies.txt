@@ -1,0 +1,16 @@
+0
+2
+Receta a
+3 3 4 4
+1
+3
+Receta B
+3 3 3 4 4 5
+2
+4
+Receta C
+3 3 4 4 5 6 7 8
+3
+2
+Receta D
+3 3 4 4
