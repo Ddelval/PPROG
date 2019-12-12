@@ -72,7 +72,7 @@ int attb_get(Attributes* attb, attb_type index){
 }
 
 Status attb_set(Attributes* attb, int p, attb_type index){
-        if(!attb || p < 0 || index < 0) return ERROR;
+        if(!attb || index < 0) return ERROR;
 
         attb->data[index] = p;
 
