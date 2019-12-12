@@ -10,12 +10,6 @@ struct _DialogDic {
   int size;
 };
 
-// struct _DialogMan{
-//     FILE * f;
-//     int counter;
-//
-// };
-
 DialogDic* ddic_ini(FILE* df) {
   if(!df) return NULL;
   DialogDic* ddic = (DialogDic*)calloc(1, sizeof(DialogDic));
@@ -29,7 +23,7 @@ DialogDic* ddic_ini(FILE* df) {
     return NULL;
   }
   for(int i=0;i<si;i++) {
-    ddic->d[i]=dman_load(df);
+    ddic->d[i]=diag_load(df);
     if(!ddic->d[i]) {
       ddic_free();
       return NULL;
@@ -41,7 +35,7 @@ DialogDic* ddic_ini(FILE* df) {
 void ddic_free(DialogDic* ddic) {
   if(!ddic) return;
   for(int i=0;i<si;i++) {
-    dman_free(ddic->d[i]);
+    diag_free(ddic->d[i]);
   }
   free(ddic->d);
   free(ddic);
@@ -51,7 +45,7 @@ void ddic_free(DialogDic* ddic) {
 Dialog* ddic_lookup(DialogDic* ddic, int did) {
   if(!ddic) return NULL;
   for(int i=0;i<ddic->size;i++) {
-    if(ddic->d[i]->id==did) return dman_copy(ddic->d[i]);
+    if(diag_getId(dic->d[i])==did) return diag_copy(ddic->d[i]);
   }
   return NULL;
 }
