@@ -15,8 +15,8 @@ struct _Combat{
   char * name[2];
   Attributes * stats[2];
   Skill * moveset[2][4];
-  Window * window[3];
-  Room * room;
+//  Window * window[3];
+//  Room * room;
   Bool stunp, stune;
 };
 
@@ -46,19 +46,26 @@ Combat * combat_ini(Entity * player, Entity * enemy){
   c->stune = FALSE;
 
 //SKILLS LOADING ??
-//  for(load = 0, load < 3, load++){
-//    c->moveset[0][load]= skill_readFromFile("skill.txt",entity_getSelected(c->p));//OJO
-//    c->moveset[1][load]= skill_readFromFile("skill.txt",entity_getSelected(c->e));
-//  }
+//  for(load = 0; load < 3; load++){
+//    c->moveset[0][load]= skill_readFromFile("skill.txt",1);//OJO
+//    c->moveset[1][load]= skill_readFromFile("skill.txt",2);  }
+c->moveset[0][0]= skill_readFromFile("skill.txt",1);
+c->moveset[0][1]= skill_readFromFile("skill.txt",2);
+c->moveset[0][2]= skill_readFromFile("skill.txt",3);
+c->moveset[0][3]= skill_readFromFile("skill.txt",4);
+c->moveset[1][0]= skill_readFromFile("skill.txt",1);
+c->moveset[1][1]= skill_readFromFile("skill.txt",2);
+c->moveset[1][2]= skill_readFromFile("skill.txt",3);
+c->moveset[1][3]= skill_readFromFile("skill.txt",4);
 
-  Pixel* backroom=pix_ini(134, 151, 179, 255);
-  FILE* f;
-  f = fopen("Display/Fonts/Robo_Mono/08.dat","r");
-  Font* titlef = font_load(f);
-  c->window[0] = win_ini(entity_getName(player), NULL, 0, 0, 0, 0, 0, titlef);
-  c->window[1] = win_ini(entity_getName(enemy), NULL, 0, 0, 0, 0, 0, titlef);
-  c->window[2] = win_ini("ACTIONS", NULL, 0, 0, 0, 0, 0, titlef);
-  c->room = room_ini(902, "COMBAT!",0, 0, backroom);
+ // Pixel* backroom=pix_ini(134, 151, 179, 255);
+ // FILE* f;
+//  f = fopen("Display/Fonts/Robo_Mono/08.dat","r");
+ // Font* titlef = font_load(f);
+ // c->window[0] = win_ini(entity_getName(player), NULL, 0, 0, 0, 0, 0, titlef);
+ // c->window[1] = win_ini(entity_getName(enemy), NULL, 0, 0, 0, 0, 0, titlef);
+ // c->window[2] = win_ini("ACTIONS", NULL, 0, 0, 0, 0, 0, titlef);
+ // c->room = room_ini(902, "COMBAT!",0, 0, backroom);
 
 
   return c;
@@ -69,7 +76,7 @@ int player_choice(){
   int move = 0;
   while(move < 1 || move > 6){
     scanf("%d", &move);
-    if(move < 6 && move > 1) break;
+    if(move < 6 && move >= 1) break;
     fprintf(stderr, "Please use a valid movement:\n");
   }
   return move;
@@ -108,13 +115,14 @@ int combat_exe(Combat *c){
 
 
   while(attb_get(c->stats[0],0) > 0 && attb_get(c->stats[1],0)>0){
-    if(i+aux % 2 == 0){
+    if((i+aux) % 2 == 0){
       if(c->stunp == FALSE){
         fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
         fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", skill_getName(c->moveset[0][0]),skill_getName(c->moveset[0][1]),skill_getName(c->moveset[0][2]),skill_getName(c->moveset[0][03]));
         move = player_choice();
         movement_exe(c, move, 0);
       }
+
       if(c->stunp == TRUE){
         fprintf(stdout, "You have been stunned, meanwhile, you can have some tea.\n");
         c->stunp = FALSE;
@@ -126,9 +134,9 @@ int combat_exe(Combat *c){
         move = IA_choice(c);
         movement_exe(c, move, 1);
       }
-      if(c->stunp == TRUE){
+      if(c->stune == TRUE){
         fprintf(stdout, "THe enemy has been stunned, his damage increased by 100, just joking.\n");
-        c->stunp = FALSE;
+        c->stune = FALSE;
       }
     }
     i++;
@@ -148,18 +156,18 @@ Bool attack_goes(Combat * c, Skill * skil, int who){
   double res;
   double random;
   int p1, p2;
-  p1 = attb_get(c->stats[who], 5);
+  p1 = attb_get(c->stats[who], 4);
   if(who == 0){
-  p2 = attb_get(c->stats[1], 5);
+  p2 = attb_get(c->stats[1], 4);
   }
-  else p2 = attb_get(c->stats[0], 5);
+  else p2 = attb_get(c->stats[0], 4);
 
   random = (double)rand();
   random /= RAND_MAX;
 
-  res = (p1/100) * 1.8 - (p2/100) - random;
+  res = ((double)p1/100) * 7 - ((double)p2/100) - (random/100);
 
-  if(skill_getSpecial(skil) == 1){
+  if(skill_getSpecial(skil) == 2){
     res += 3;
   }
   if(res < 0) return FALSE;
@@ -170,7 +178,7 @@ Bool attack_goes(Combat * c, Skill * skil, int who){
 //REVISADA, NO COMPILA
 void skill_stun(Combat * c, Skill * skil, int who){
   if(!c || !skil ) return;
-  if(skill_getSpecial(skil) != 0) return;
+  if(skill_getSpecial(skil) != 1) return;
   if(who == 0){
     c->stune = TRUE;
   }
@@ -211,7 +219,7 @@ int movement_exe(Combat * c, int action, int ent){
       dmgout = attb_get(aux1,1) - attb_get(c->stats[other], 2);
       attb_set(c->stats[other],attb_get(c->stats[other],0) - dmgout,0);
     }
-    free(attr);
+    //free(attr);
     attb_free(aux1);
   }
   else fprintf(stdout, "Attack dogded");
@@ -227,12 +235,12 @@ int movement_exe(Combat * c, int action, int ent){
 void combat_destroy(Combat * c){
   if(!c) return;
   int i;
-  room_free(c->room);
+ // room_free(c->room);
   attb_free(c->stats[0]);
   attb_free(c->stats[1]);
-  win_free(c->window[0]);
-  win_free(c->window[1]);
-  win_free(c->window[2]);
+ // win_free(c->window[0]);
+ // win_free(c->window[1]);
+ // win_free(c->window[2]);
 
   for(i=0; i<3;i++){
     skill_free(c->moveset[0][i]);
