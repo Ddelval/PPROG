@@ -123,6 +123,7 @@ Status rec_getData(Recipe * r, Object *** obj, int ** quant){
         while(i < r->size) {
                 (*obj)[i] = odic_lookup(r->elements[i]);
                 (*quant)[i] = r->quantities[i];
+                i++;
         }
         return OK;
 }
@@ -133,7 +134,8 @@ Recipe* rec_load(FILE *f){
         int i = 0;
         if(!f || !r) return NULL;
 
-        fscanf(f, "%d %s", &(r->size), r->name);
+        fscanf(f, "%d\n", &(r->size));
+        fgets(r->name, NAME_LENGTH ,f);
 
         r->quantities = (int *) calloc (sizeof(int), r->size);
         r->elements = (int *) calloc (sizeof(int), r->size);

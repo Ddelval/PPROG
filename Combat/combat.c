@@ -74,12 +74,12 @@ c->moveset[1][3]= skill_readFromFile("skill.txt",4);
 //REVISADA, NO COMPILA
 int player_choice(){
   int move = 0;
-  while(move < 1 || move > 6){
+  while(move < 1 || move > 4){
     scanf("%d", &move);
     if(move < 6 && move >= 1) break;
     fprintf(stderr, "Please use a valid movement:\n");
   }
-  return move;
+  return move-1;
 }
 
 
@@ -161,7 +161,7 @@ Bool attack_goes(Combat * c, Skill * skil, int who){
   p2 = attb_get(c->stats[1], 4);
   }
   else p2 = attb_get(c->stats[0], 4);
-
+  srand(time(NULL));
   random = (double)rand();
   random /= RAND_MAX;
 
