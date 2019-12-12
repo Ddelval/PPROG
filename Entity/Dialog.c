@@ -29,6 +29,7 @@ void diag_free(Dialog* diag){
 Dialog* diag_copy(Dialog* diag) {
   if(!diag) return NULL;
   Dialog* d = diag_ini();
+  if(!d) return NULL;
   d->id=diag->id;
   d->nlines=diag->nlines;
   d->linepos=diag->linepos;
@@ -80,7 +81,25 @@ Dialog* diag_jumpLines(Dialog* diag, int lines) {
 }
 
 Dialog* diag_load(FILE* f) {
-  
+  if(!f) return NULL;
+  Dialog* d=diag_ini();
+  if(!d) return NULL;
+  fscanf(f,"%d %d\n",&d->id,&d->nlines);
+  d->linepos=0;
+  d->lines=(char**)calloc(d->nlines,sizeof(char*));
+  for(int i=0;i<d->nlines;i++) {
+    d->lines[i]=(char *)calloc(MAX_DIALOG, sizeof(char));
+    if(!d->lines[i]) {
+      diag_free(d);
+      return NULL;
+    }
+    if(!fgets(d->lines[i],MAX_DIALOG,f)) {
+      diag_free(d);
+      return NULL;
+    }
+    strtok(d->lines[i], "\n");
+  }
+  return d;
 }
 
 
