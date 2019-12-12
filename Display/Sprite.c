@@ -6,12 +6,16 @@
 
 #include "Sprite.h"
 #define ret_free(spr) {spr_free(spr); return NULL;}
+typedef struct {
+    int tr_id;
+    int i1,i2,j1,j2;
+}trigdata;
 struct _Sprite{
   int id;
   int iPos, jPos;
   int width, height;
-  bool existstrigger;
-  int *** trigger;
+  trigdata* tr;
+  int trsize;
   bool** collision;
   bool** shadow;
   Canvas* canvas;
@@ -22,20 +26,6 @@ Sprite* spr_ini(int id, int width, int height){
     spr->id=id;
     spr->width=width;
     spr->height=height;
-
-    spr->trigger=calloc(height, sizeof(int**));
-    if(!spr->trigger)ret_free(spr);
-    for(int i=0;i<height;++i){
-        spr->trigger[i]=calloc(width, sizeof(int*));
-        for(int j=0;j<width;++j){
-            spr->trigger[i][j]=calloc(SPR_NTRIGGERS,sizeof(int));
-            if(!spr->trigger[i][j])ret_free(spr);
-            for(int w=0;w<SPR_NTRIGGERS;++w){
-                spr->trigger[i][j][w]=-1;
-            }
-        }
-        if(!spr->trigger[i])ret_free(spr);
-    }
 
     spr->collision=calloc(height, sizeof(int*));
     if(!spr->collision)ret_free(spr);
@@ -60,15 +50,6 @@ void spr_setCoordinates(Sprite* sp,int i,int j){
 }
 void spr_free(Sprite* sp){
     if(!sp)return;
-    if(sp->trigger){
-        for(int i=0;i<sp->height;++i){
-            for(int j=0;j<sp->width;++j){
-                free(sp->trigger[i][j]);
-            }
-            free(sp->trigger[i]);
-        }
-        free(sp->trigger);
-    }
     if(sp->collision){
         for(int i=0;i<sp->height;++i){
             free(sp->collision[i]);
@@ -84,16 +65,17 @@ Sprite* spr_copy(const Sprite* spr){
     if(!sp)ret_free(sp);
     sp->jPos=spr->jPos;
     sp->iPos=spr->iPos;
-    sp->existstrigger=spr->existstrigger;
     for(int i=0;i<spr->height;++i){
         for(int j=0;j<spr->width;++j){
-            for(int w=0;w<SPR_NTRIGGERS;++w)sp->trigger[i][j][w]=spr->trigger[i][j][w];
             sp->collision[i][j]=spr->collision[i][j];
             sp->shadow[i][j]=spr->shadow[i][j];
         }
     }
     canv_free(sp->canvas);
     sp->canvas=canv_copy(spr->canvas);
+    sp->trsize=spr->trsize;
+    sp->tr=calloc(sp->trsize,sizeof(trigdata));
+    memcpy(sp->tr,spr->tr,sizeof(trigdata)*sp->trsize);
     if(!sp->canvas)ret_free(sp);
     return sp;
 }
@@ -158,7 +140,6 @@ Sprite* spr_load(FILE* f){
     int n=0;
     fscanf(f, "%d",&n);
     if(n==0){
-        res->existstrigger=false;
         return res;
     }
     int i1,i2,j1,j2;
@@ -169,6 +150,25 @@ Sprite* spr_load(FILE* f){
     return res;
 }
 Sprite* spr_addTrigger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
+    if(!s)return NULL;
+    if(!s->tr){
+        s->tr=calloc(1,sizeof(trigdata));
+        if(!s->tr)return NULL;
+        s->trsize=0;
+    }
+    else{
+        s->tr=realloc(s->tr,(s->trsize+1)*sizeof(trigdata));
+        if(!s->tr)return NULL;
+    }
+    s->tr[s->trsize].tr_id=tr_id;
+    s->tr[s->trsize].i1=i1;
+    s->tr[s->trsize].i2=i2;
+    s->tr[s->trsize].j1=j1;
+    s->tr[s->trsize].j2=j2;
+    s->trsize++;
+    return s;
+
+    /*
     int jj1;
     while(i1<=i2){
         jj1=j1;
@@ -186,6 +186,7 @@ Sprite* spr_addTrigger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
         i1++;
     }
     return s;
+    */
 }
 /*
 Sprite* spr_printTrigger(Sprite* s){
@@ -212,14 +213,6 @@ Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei){
     return s;
 }
 int spr_checkCollisions(Sprite*s,bool**rarr,int rwid,int rhei, int ni,int nj){
-    /*FILE*f=fopen("datasss.txt","w");
-    for(int i=0;i<s->height;++i){
-        for(int j=0;j<s->width;++j){
-            fprintf(f,"%2d ",s->collision[i][j]);
-        }
-        fprintf(f,"\n");
-    }*/
-    //fclose(f);
     if(!rarr)return -1;
     int i2,j2;
     for(int i=0;i<s->height;++i){
@@ -257,9 +250,6 @@ Sprite* spr_processShadows(Sprite* s,Canvas* shad){
     }
     return s;
 }
-const int *** spr_getTriggerRef(Sprite* spr){
-    return spr? (const int ***)spr->trigger: NULL;
-}
 const Canvas* spr_getDispData(Sprite* spr){
     if(!spr)return NULL;
     return spr->canvas;
@@ -288,8 +278,23 @@ void spr_setOJ(Sprite* spr, int jpos){
     if(!spr)return;
     spr->jPos=jpos;
 }
-
 int spr_getId(const Sprite* sp){
     if(!sp)return 0;
     return sp->id;
+}
+int spr_getTriginfo(Sprite*s, int** tr_id, int** i1,int** i2, int** j1, int** j2){
+    if(!s)return -1;
+    *tr_id=calloc(s->trsize,sizeof(int));
+    *i1=calloc(s->trsize,sizeof(int));
+    *i2=calloc(s->trsize,sizeof(int));
+    *j1=calloc(s->trsize,sizeof(int));
+    *j2=calloc(s->trsize,sizeof(int));
+    for(int i=0;i<s->trsize;++i){
+        *i1[i]=s->tr[i].i1;
+        *j1[i]=s->tr[i].j1;
+        *i2[i]=s->tr[i].i2;
+        *j2[i]=s->tr[i].j2;
+        *tr_id[i]=s->tr[i].tr_id;
+    }
+    return s->trsize;
 }

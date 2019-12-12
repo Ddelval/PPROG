@@ -405,22 +405,22 @@ void room_free(Room* r){
 Room* room_processTriggers(Room * r, Sprite * sp, int index){
     if(!r||!sp)return NULL;
     int i0,j0;
-    const int *** dat=spr_getTriggerRef(sp);
-    for(int i=0;i<spr_getHeight(sp);++i){
-        i0=i+spr_getOI(sp);
-        if (i0<0||i0>=r->hei)continue;
-        for(int j=0;j<spr_getWidth(sp);++j){
-            j0= j+spr_getOJ(sp);
-            if(j0<0||j0>=r->wid)continue;
-            int w;
-            for(w=0;w<MAX_TRIG;++w){
-                if(r->trig[i0][j0][w].code==-1)break;
-            }
-            for(int u=0;u<SPR_NTRIGGERS&&u+w<MAX_TRIG;++u){
-                if(dat[i][j][u]==-1)break;
-                r->trig[i0][j0][u+w].code=dat[i][j][u];
-                r->trig[i0][j0][u+w].spindex=index;
-                
+    i0=spr_getOI(sp);
+    j0=spr_getOJ(sp);
+    int* tr_id;
+    int* i1,*i2,*j1,*j2;
+    int nsp=spr_getTriginfo(sp,&tr_id,&i1,&i2,&j1,&j2);
+    for(int w=0;w<nsp;++w){
+        for(int i=i0+i1[w];i<i0+i2[w];++i){
+            if(i<0||i>=r->hei)continue;
+            for(int j=j0+j1[w];j<j0+j2[w];++j){
+                if(j<0||j>=r->wid)continue;
+                int l=0;
+                while(l<MAX_TRIG&&r->trig[i][j][l].code!=-1)l++;
+                if(l!=MAX_TRIG){
+                    r->trig[i][j][l].code=tr_id[w];
+                    r->trig[i][j][l].spindex=index;
+                }
             }
         }
     }
