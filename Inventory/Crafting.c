@@ -134,6 +134,7 @@ Recipe* rec_load(FILE *f){
         int i = 0;
         if(!f || !r) return NULL;
 
+        fscanf(f, "%d\n", &(r->result_id));
         fscanf(f, "%d\n", &(r->size));
         fgets(r->name, NAME_LENGTH ,f);
 
