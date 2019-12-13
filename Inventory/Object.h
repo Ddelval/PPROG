@@ -1,6 +1,6 @@
+//  Created by David del Val on 05/12/2019
 //  PPROG
 //	Object.h
-//  Created by David del Val on 05/12/2019
 //
 //
 #ifndef OBJECT_H
@@ -55,8 +55,8 @@ Sprite* obj_getSprite(Object* ob);
 
 char* obj_getName(Object* ob);
 obj_type obj_getType(Object* ob);
-Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum);
+Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h);
 int obj_getId(Object* ob);
-
+int obj_renderHeight(Object* ob, int number,Font* ftext, Font* fnum);
 
 #endif

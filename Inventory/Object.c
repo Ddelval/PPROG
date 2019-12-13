@@ -8,7 +8,7 @@
 
 #define NAME_SIZE 50
 #define MAX_ATTACKS 4
-
+#define MARGIN 2
 struct _Object
 {
     int id;
@@ -148,7 +148,7 @@ obj_type obj_getType(Object* ob){
 int obj_getId(Object* ob){
     return ob? ob->id: -1;
 }
-Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum){
+int obj_renderHeight(Object* ob, int number,Font* ftext, Font* fnum){
     if(!ob)return 0;
     Sprite* sp=sdic_lookup(ob->icon_id);
     Canvas* c=canv_copy(spr_getDispData(sp));
@@ -170,5 +170,34 @@ Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum){
     Canvas* back=canv_backGrnd(255,255,255,255,canv_getWidth(bb)+4,canv_getHeight(bb)+2);
     canv_addOverlay(back,bb,1,2);
     canv_free(bb);
-    return back;
+    int h=canv_getHeight(back);
+    canv_free(back);
+    return h;
+}
+Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h){
+    if(!ob)return 0;
+    Sprite* sp=sdic_lookup(ob->icon_id);
+    Canvas* imag=canv_copy(spr_getDispData(sp));
+    spr_free(sp);
+    Wlabel* nam=wl_ini(ob->name,ftext,-2);
+    fprintf(stderr,"%s",ob->name);
+    char snum[10];
+    sprintf(snum,"%d",number);
+    Wlabel* num=wl_ini(snum,fnum,10);
+
+    Canvas* text=wl_render(nam,canv_getWidth(imag));
+    Canvas* numb =wl_render(num,canv_getWidth(imag));
+    Canvas* bb=canv_backGrnd(50,50,150,255,canv_getWidth(imag)+2*MARGIN,h-MARGIN);
+    //Blue part
+    Canvas* bottom2=canv_appendV(text,numb);
+    Canvas* bottom=canv_AdjustCrop(bottom2,canv_getWidth(bb),canv_getHeight(bottom2));
+    Canvas* top=canv_AdjustCrop(imag,canv_getWidth(bb),canv_getHeight(bb)-canv_getHeight(bottom));
+    Canvas* over=canv_appendV(top,bottom);
+    canv_addOverlay(bb,over,0,0);
+
+    //White margin
+    Canvas* fin=canv_backGrnd(255,255,255,255,canv_getWidth(bb)+2*MARGIN,h);
+    Canvas* bb2=canv_AdjustCrop(bb,canv_getWidth(fin),canv_getHeight(fin));
+    canv_addOverlay(fin,bb2,0,0);
+    return fin;
 }

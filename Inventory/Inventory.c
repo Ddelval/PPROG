@@ -166,8 +166,12 @@ Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Fon
     for(int ty=0;ty<OBJ_TYPE_SIZE;++ty){
         tot[ty]=calloc(inv->size[ty],sizeof(Canvas*));
         (*dimens)[ty]=inv->size[ty];
+        int he=0;
         for(int el=0;el<inv->size[ty];++el){
-            tot[ty][el]=obj_render(inv->items[ty][el],inv->times[ty][el],ftext,fnum);
+            he=max(he,obj_renderHeight(inv->items[ty][el],inv->times[ty][el],ftext,fnum));
+        }
+        for(int el=0;el<inv->size[ty];++el){
+            tot[ty][el]=obj_render(inv->items[ty][el],inv->times[ty][el],ftext,fnum,he);
             if(!tot[ty][el]){
                 for(int z=0;z<ty;++z)for(int j=0;j<inv->size[z];++j)canv_free(tot[z][j]);
                 for(int j=0;j<el;++j)canv_free(tot[ty][j]);
