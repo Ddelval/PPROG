@@ -19,5 +19,5 @@
 void rdic_ini();
 void rdic_free();
 Recipe* rdic_lookup(int id);
-
+Recipe** rec_getAllDoable(Inventory* inv, int * size);
 #endif
