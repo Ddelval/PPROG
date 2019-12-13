@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "Crafting.h"
+#include "Recipe.h"
 
 #define NAME_LENGTH 64
 

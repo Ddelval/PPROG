@@ -7,8 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "Crafting.h"
-#include "types.h"
+#include "Recipe.h"
 #define NAME_LENGTH 50
 
 
@@ -73,10 +72,10 @@ Recipe** rdic_getAllDoable(Inventory* inv, int * size){
         if(!rdic) rdic_ini();
         if(!rdic) return NULL;
         for(int i=0; i < rdic->size; ++i) {
-                if(rec_doable(inv, rdic->rec[i]) == TRUE) {
+                if(rec_doable(inv, rdic->rec[i]) == true) {
                         (*size)++;
-                        if(r) r = realloc(r, (*size) * sizeof(Recipe));
-                        if(!r) r = (Recipe **) calloc ((*size), sizeof(Recipe));
+                        if(r) r = realloc(r, (*size) * sizeof(Recipe*));
+                        if(!r) r = (Recipe **) calloc ((*size), sizeof(Recipe*));
                         r[i] = rec_copy(rdic->rec[i]);
                 }
         }
