@@ -10,10 +10,10 @@
 
 struct _Combat {
     Entity *p, *e;
-    char * name[2];
-    Attributes * stats[2];
-    Skill * moveset[2][4];
-    Bool stunp, stune;
+    char* name[2];
+    Attributes* stats[2];
+    Skill* moveset[2][4];
+    bool stunp, stune;
 };
 
 
@@ -51,14 +51,7 @@ Combat * combat_ini(Entity * player, Entity * enemy) {
     c->moveset[1][2] = skill_readFromFile("skill.txt", 3);
     c->moveset[1][3] = skill_readFromFile("skill.txt", 4);
 
-    // Pixel* backroom=pix_ini(134, 151, 179, 255);
-    // FILE* f;
-    //  f = fopen("Display/Fonts/Robo_Mono/08.dat","r");
-    // Font* titlef = font_load(f);
-    // c->window[0] = win_ini(entity_getName(player), NULL, 0, 0, 0, 0, 0, titlef);
-    // c->window[1] = win_ini(entity_getName(enemy), NULL, 0, 0, 0, 0, 0, titlef);
-    // c->window[2] = win_ini("ACTIONS", NULL, 0, 0, 0, 0, 0, titlef);
-    // c->room = room_ini(902, "COMBAT!",0, 0, backroom);
+
 
 
     return c;
@@ -78,7 +71,7 @@ int player_choice() {
 
 
 // For now the IA will just choose the attack with the highest attack field.
-//REVISADA, NO COMPILA
+//REVISADA,COMPILA
 
 int IA_choice(Combat * state) {
     int max_attack = 0;
@@ -139,9 +132,9 @@ int combat_exe(Combat *c) {
     return 0;
 }
 
-//REVISADA, NO COMPILA
+//REVISADA,COMPILA
 
-Bool attack_goes(Combat * c, Skill * skil, int who) {
+bool attack_goes(Combat * c, Skill * skil, int who) {
     if (!c || !skil) {
         printf("FATAL ERROR FUNCTION ATTACK_GOES");
         return FALSE;
@@ -167,7 +160,7 @@ Bool attack_goes(Combat * c, Skill * skil, int who) {
 }
 
 
-//REVISADA, NO COMPILA
+//REVISADA, COMPILA
 
 void skill_stun(Combat * c, Skill * skil, int who) {
     if (!c || !skil) return;
@@ -182,7 +175,7 @@ void skill_stun(Combat * c, Skill * skil, int who) {
 
 
 
-//ESTA FUNCION REQUERE DE UNA ACTUALIZACION DEL ATB.H
+
 
 int movement_exe(Combat * c, int action, int ent) {
     int other = 0;
@@ -223,7 +216,7 @@ int movement_exe(Combat * c, int action, int ent) {
             if (dmgout < 0) dmgout = 0;
             attb_set(c->stats[other], attb_get(c->stats[other], 0) - dmgout, 0);
         }
-        //free(attr);
+        
         attb_free(aux1);
     } else fprintf(stdout, "Attack dogded");
     return 0;
@@ -234,17 +227,15 @@ int movement_exe(Combat * c, int action, int ent) {
 
 
 
-//REVISADA, NO COMPILA
+//REVISADA,COMPILA
 
 void combat_destroy(Combat * c) {
     if (!c) return;
     int i;
-    // room_free(c->room);
+
     attb_free(c->stats[0]);
     attb_free(c->stats[1]);
-    // win_free(c->window[0]);
-    // win_free(c->window[1]);
-    // win_free(c->window[2]);
+
 
     for (i = 0; i < 3; i++) {
         skill_free(c->moveset[0][i]);

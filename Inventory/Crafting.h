@@ -42,7 +42,7 @@ Recipe* rec_load(FILE *f);
    int inv_getQuantity(Inventory* inv, int obj_id)that returns -1 if the element
    is not present or the quantiy that the inventory has of it otherwise.
  */
-Bool rec_doable(Inventory* inv, Recipe* r);
+bool rec_doable(Inventory* inv, Recipe* r);
 
 /*
    Returns the recipies that can be created with that inventory.
