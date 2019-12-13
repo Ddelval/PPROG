@@ -5,8 +5,8 @@
 */
 
 
-#ifndef Crafting_H
-#define Crafting_H
+#ifndef Recipe_H
+#define Recipe_H
 
 #include <stdlib.h>
 #include <string.h>
