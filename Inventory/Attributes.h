@@ -25,22 +25,22 @@ typedef enum {HEALTH,ATTACK,DEFENSE,SPEED,AGILITY} attb_type;
    Inputs:
    Outputs: attb pointer
  */
-Attributes * attb_ini();
+Attributes* attb_ini();
 /*
    Function name: attb_destroy
    Utility: It destroys an attb structure
    Inputs: attb pointer
    Outputs:
  */
-void attb_free(Attributes * attb);
+void attb_free(Attributes* attb);
 
 Attributes* attb_set(Attributes* attb, int p, attb_type index);
 
 int attb_get(Attributes* attb, attb_type index);
 
-int * attb_getAll(Attributes * attb);
+int * attb_getAll(Attributes* attb);
 
-Attributes* attb_setAll(Attributes * attb, int *p);
+Attributes* attb_setAll(Attributes* attb, int *p);
 
 
 
@@ -53,7 +53,7 @@ Attributes* attb_load(FILE* f);
    Inputs: two attb pointers
    Outputs: the primary attb pointer. Usually the one attached to the entity.
  */
-Attributes * attb_merge(Attributes * primary, Attributes * secondary);
+Attributes* attb_merge(Attributes* primary, Attributes* secondary);
 /*
    Function name: attb_print
    Utility: it prints the attribute values in a string format into a file.
@@ -61,11 +61,6 @@ Attributes * attb_merge(Attributes * primary, Attributes * secondary);
    Outputs: int that contains the number of characters that have been printed
  */
 
-Attributes *attb_copy(Attributes *a);
-
-
-
-
-
+Attributes* attb_copy(Attributes* a);
 
 #endif /* attb_H */
