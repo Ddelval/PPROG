@@ -66,3 +66,19 @@ Recipe* rdic_lookup(int id){
   }
   return NULL;
 }
+
+Recipe** rec_getAllDoable(Inventory* inv, int * size){
+        Recipe **r;
+
+        if(!rdic) rdic_ini();
+        if(!rdic) return NULL;
+        for(int i=0; i < rdic->size; ++i) {
+                if(rec_doable(inv, rdic->rec[i]) == TRUE) {
+                        (*size)++;
+                        if(r) r = realloc(r, (*size) * sizeof(Recipe));
+                        if(!r) r = (Recipe **) calloc ((*size), sizeof(Recipe));
+                        r[i] = rec_copy(rdic->rec[i]);
+                }
+        }
+        return r;
+}
