@@ -78,10 +78,17 @@ Object* obj_load(FILE* f){
     ob->name[strlen(ob->name)-1]=0;
 
     fscanf(f, "%d %d %d",(int*)(&ob->icon_id),(int*)(&ob->spr_id),(int*)(&ob->type));
-    //ob->atb=atb_load(f);
-    fscanf(f,"%d",&ob->n_attacks);
-    for(int i=0;i<ob->n_attacks;++i){
-        //ob->attacks[i]=skill_load(f);
+    if(ob->type==RESOURCE){
+
+    }
+    if(ob->type==CONSUMABLE){
+        //ob->atb=atb_load(f);
+    }
+    if(ob->type==WEAPON){
+        fscanf(f,"%d",&ob->n_attacks);
+        for(int i=0;i<ob->n_attacks;++i){
+            //ob->attacks[i]=skill_load(f);
+        }
     }
     fscanf(f,"%d",(int*)(&ob->destroyable));
     return ob;
@@ -146,7 +153,8 @@ Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum){
     Sprite* sp=sdic_lookup(ob->icon_id);
     Canvas* c=canv_copy(spr_getDispData(sp));
     spr_free(sp);
-    Wlabel* nam=wl_ini(ob->name,ftext,10);
+    Wlabel* nam=wl_ini(ob->name,ftext,-2);
+    fprintf(stderr,"%s",ob->name);
     char snum[10];
     sprintf(snum,"%d",number);
     Wlabel* num=wl_ini(snum,fnum,10);

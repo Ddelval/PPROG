@@ -105,4 +105,5 @@ Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz);
 Room* room_removeB(Room* r, int index);
 Room* room_printModBackg(Room* r, int disp_i, int disp_j);
 Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int room_j);
+Room* room_setHW(Room* r, int he,int wi);
 #endif /* Room_h */

@@ -27,7 +27,7 @@ struct _Entity {
   Inventory* inv;
   int room_index;
   Display* dis;
-  DialogDic* ddic;
+  //DialogDic* ddic;
 };
 
 
@@ -38,8 +38,8 @@ Entity *entity_ini (char *name, entType t, int i, int j){
   if(name && strlen(name)+1 < MAX_NAME_LENGTH) strcpy(e->name, name);
 
   e->t = t;
-  e->i = ipos;
-  e->j = jpos;
+  e->ipos = i;
+  e->jpos = j;
 
   e->attr = attb_ini();
   /*if (e->attr == NULL) {
@@ -196,22 +196,22 @@ Inventory *entity_getInventory(Entity* p){
 
 Entity* entity_moveUp(Entity* p){
   if(!p||!p->dis) return NULL;
-  disp_incPos(p->dis,p->room_index,-VERTICAL_STEP,0,&p->i,&p->j);
+  disp_incPos(p->dis,p->room_index,-VERTICAL_STEP,0,&p->ipos,&p->jpos);
   return p;
 }
 Entity* entity_moveDown(Entity* p){
   if(!p||!p->dis) return NULL;
-  disp_incPos(p->dis,p->room_index,VERTICAL_STEP,0,&p->i,&p->j);
+  disp_incPos(p->dis,p->room_index,VERTICAL_STEP,0,&p->ipos,&p->jpos);
   return p;
 }
 Entity* entity_moveLeft(Entity* p){
   if(!p||!p->dis) return NULL;
-  disp_incPos(p->dis,p->room_index,0,-HORIZONTAL_STEP,&p->i,&p->j);
+  disp_incPos(p->dis,p->room_index,0,-HORIZONTAL_STEP,&p->ipos,&p->jpos);
   return p;
 }
 Entity* entity_moveRight(Entity* p){
   if(!p||!p->dis) return NULL;
-  disp_incPos(p->dis,p->room_index,0,HORIZONTAL_STEP,&p->i,&p->j);
+  disp_incPos(p->dis,p->room_index,0,HORIZONTAL_STEP,&p->ipos,&p->jpos);
   return p;
 }
 

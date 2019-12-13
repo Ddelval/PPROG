@@ -22,8 +22,6 @@ void fcat_free(){
     free(dat);
 }
 Font* fcat_lookup(fname f){
-    
-    if(!f)return NULL;
     if(!dat)fcat_ini();
     if(!dat)return NULL;
     return dat[f];

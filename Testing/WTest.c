@@ -75,7 +75,6 @@ int main(){
     inv_insert(inv,o);
     o =odic_lookup(2);
     inv_insert(inv,o);
-    room_buildingInterface(r,10,0,0,0,0);
     while(1){
         char c=getch1();
         if(c=='W'){

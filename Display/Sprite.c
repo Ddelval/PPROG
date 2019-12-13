@@ -203,10 +203,10 @@ Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei){
     int i2,j2;
     for(int i=0;i<s->height;++i){
         i2=i+s->iPos;
-        if(i2>=rhei)break;
+        if(i2<0||i2>=rhei)continue;
         for(int j=0;j<s->width;++j){
             j2=j+s->jPos;
-            if(j2>=rwid)break;
+            if(j2<0||j2>=rwid)continue;
             rarr[i2][j2]= rarr[i2][j2]||s->collision[i][j];
         }
     }
@@ -238,10 +238,10 @@ Sprite* spr_processShadows(Sprite* s,Canvas* shad){
     int rwid=canv_getWidth(shad);
     for(int i=0;i<s->height;++i){
         i2=i+s->iPos;
-        if(i2>=rhei)break;
+        if(i2<0||i2>=rhei)continue;
         for(int j=0;j<s->width;++j){
             j2=j+s->jPos;
-            if(j2>=rwid)break;
+            if(j2<0||j2>=rwid)continue;
                 //fprintf(stderr,"%d %d %d %d \n",s->id,i,j,s->shadow[i][j]);
             if(s->shadow[i][j]||s->collision[i][j]){
                 assert(canv_setPixel(shad,canv_getPixel(s->canvas,i,j),i2,j2)!=NULL);

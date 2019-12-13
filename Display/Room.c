@@ -609,3 +609,9 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
     return r;
 
 }
+Room* room_setHW(Room* r, int he,int wi){
+    if(!r)return NULL;
+    r->c_b=min(r->hei,r->c_t+he);
+    r->c_r=min(r->wid,r->c_l+wi);
+    return r;
+}

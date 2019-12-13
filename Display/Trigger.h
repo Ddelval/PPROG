@@ -27,4 +27,5 @@ bool tr_getSpr_remove(const Trigger* tr);
 int tr_getQuantity(const Trigger* tr);
 
 bool tr_needsTrigger(trig_type t);
+int tr_getChance(const Trigger* tr);
 #endif

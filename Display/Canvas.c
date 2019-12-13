@@ -518,6 +518,22 @@ Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_i, int o_j){
 ///             the changes are applied to the background canvas.
 Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j){
     if(!base||!over)return NULL;
+    
+    for(int i=o_i;i<o_i+over->hei;++i){
+        if(i<0||i>=base->hei)continue;
+        for(int j=o_j;j<o_j+over->wid;++j){
+            if(j<0||j>=base->wid)continue;
+            Pixel* t=pix_overlay(base->data[i][j], over->data[i-o_i][j-o_j]);
+            pix_free(base->data[i][j]);
+            base->data[i][j]=t;
+            t=NULL;
+            //base->data[i][j]=pix_overlay(base->data[i][j], over->data[i-o_i][j-o_j]);
+            if(!base->data[i][j]){
+                return NULL;
+            }
+        }
+    }
+    /*
     int owid,ohei;
     owid=over->wid;
     ohei=over->hei;
@@ -534,7 +550,7 @@ Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j){
                 return NULL;
             }
         }
-    }
+    }*/
     return base;
 }
 

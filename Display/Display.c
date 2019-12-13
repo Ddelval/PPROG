@@ -122,7 +122,8 @@ Canvas* disp_Render(Display* dis){
             goto CLEAN;
         }
     }
-    room_setBounds(dis->room,0,0,dis->height,dis->vdiv);
+    room_setHW(dis->room,dis->height,dis->vdiv);
+    //room_setBounds(dis->room,0,0,dis->height,dis->vdiv);
     left=room_getRender(dis->room);
     //left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
     if(!left)goto CLEAN;
@@ -258,10 +259,10 @@ Display* disp_execute(Display* dis, int index, int room_index, void* en){
         int a;
         Trigger** dat =room_getTriggers(dis->room,t,room_index,&a);
         
-        if(a)trig_give(dat[0],en,dis);
+        if(a)f(dat[0],en,dis);
     }
     else{
-        trig_showInv(NULL,en,dis);
+        f(NULL,en,dis);
     }
     
     return dis;
