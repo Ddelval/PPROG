@@ -1,6 +1,6 @@
 CC = gcc -g
 EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest CraftTest
-OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o FontCatalog.o Wlabel.o Welem.o Room.o Inventory.o  Wlabic.o Window.o Display.o Object.o Crafting.o ObjectDic.o TrigReact.o
+OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o FontCatalog.o Wlabel.o Welem.o Room.o Inventory.o  Wlabic.o Window.o Display.o Object.o Recipe.o RecipeDic.o ObjectDic.o TrigReact.o
 ENGINE =
 LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/
 MIDDLE = @printf "\033[1m\033[1;34m $@ \033[0;30m\033[0m\t"
@@ -210,6 +210,10 @@ Skill.o:  Inventory/Skill.c Inventory/Skill.h
 	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
-Crafting.o:  Inventory/Crafting.c Inventory/Crafting.h
+Recipe.o:  Inventory/Recipe.c Inventory/Recipe.h
+	$(MIDDLE)
+	$(CC) -c $< $(LIB)
+
+RecipeDic.o:  Inventory/RecipeDic.c Inventory/RecipeDic.h
 	$(MIDDLE)
 	$(CC) -c $< $(LIB)
