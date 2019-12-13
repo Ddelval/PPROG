@@ -199,5 +199,17 @@ Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h){
     Canvas* fin=canv_backGrnd(255,255,255,255,canv_getWidth(bb)+2*MARGIN,h);
     Canvas* bb2=canv_AdjustCrop(bb,canv_getWidth(fin),canv_getHeight(fin));
     canv_addOverlay(fin,bb2,0,0);
+
+    canv_free(bb2);
+    canv_free(over);
+    canv_free(top);
+    canv_free(bottom);
+    canv_free(bottom2);
+    canv_free(bb);
+    canv_free(numb);
+    canv_free(text);
+    canv_free(imag);
+    wl_free(nam);
+    wl_free(num);
     return fin;
 }
