@@ -5,7 +5,6 @@
 #include <stdio.h>
 
 #include "Attributes.h"
-#include "types.h"
 #include "errno.h"
 extern int errno;
 
@@ -22,7 +21,7 @@ struct _Attributes {
    Inputs:
    Outputs: attb pointer
  */
-Attributes * attb_ini(){
+Attributes* attb_ini(){
         Attributes * a = NULL;
         int aux = 1;
         a = (Attributes *) calloc(1,sizeof (Attributes));
@@ -65,40 +64,35 @@ void attb_free(Attributes* attb) {
 
 
 
-int attb_get(Attributes* attb, attb_type index){
+int attb_get(Attributes* attb, attb_type index) {
         if (attb == NULL || index < 0) return -1;
 
         return attb->data[index];
 }
 
-Status attb_set(Attributes* attb, int p, attb_type index){
-        if(!attb || index < 0) return ERROR;
-
+Attributes* attb_set(Attributes* attb, int p, attb_type index) {
+        if(!attb || index < 0) return NULL;
         attb->data[index] = p;
-
-        return OK;
+        return attb;
 }
 
-int * attb_getAll(Attributes * attb){
+int* attb_getAll(Attributes* attb) {
         if(!attb) return NULL;
-
-        int * a;
-        
-        a = (int*)calloc(ATTRIBUTE_SIZE,sizeof(int));
-        
-        memcpy(a, attb->data, ATTRIBUTE_SIZE * sizeof(int));
-        
+        int* a = (int*)calloc(ATTRIBUTE_SIZE,sizeof(int));
+        if(!a) return NULL;
+        if(!memcpy(a, attb->data, ATTRIBUTE_SIZE * sizeof(int))) {
+                free(a);
+                return NULL;
+        }
         return a;
 }
 
-Status attb_setAll(Attributes * attb, int *p){
-        if (attb == NULL || !p) return ERROR;
-
-        for (int i = 0; i < ATTRIBUTE_SIZE; i++) {
+Attributes* attb_setAll(Attributes* attb, int* p){
+        if(!attb|| !p) return NULL;
+        for(int i=0; i<ATTRIBUTE_SIZE; i++) {
                 attb->data[i] = p[i];
         }
-
-        return OK;
+        return attb;
 }
 
 
@@ -108,24 +102,24 @@ Status attb_setAll(Attributes * attb, int *p){
    Inputs: two attb pointers
    Outputs: the primary attb pointer. Usually the one attached to the entity.
  */
-Attributes * attb_merge(Attributes * primary, Attributes * secondary){
+Attributes* attb_merge(Attributes* primary, Attributes* secondary){
         int i = 0;
         Attributes * a = attb_ini();
         if(!a || !primary || !secondary) return NULL;
 
         while(i < ATTRIBUTE_SIZE) {
-                if(attb_set(a, attb_get(secondary, i) + attb_get(primary, i), i) == ERROR) return NULL;
+                if(!attb_set(a, attb_get(secondary, i) + attb_get(primary, i), i)) return NULL;
                 i++;
         }
         return a;
 }
 
-Attributes *attb_copy(Attributes *a){
+Attributes* attb_copy(Attributes* a) {
         int i = 0;
         Attributes * b = attb_ini();
         if(!a || !b) return NULL;
-        while(i < ATTRIBUTE_SIZE) {
-                if(attb_set(b, attb_get(a, i), i) == ERROR) return NULL;
+        while(i<ATTRIBUTE_SIZE) {
+                if(!attb_set(b, attb_get(a, i), i)) return NULL;
                 i++;
         }
         return b;
@@ -134,15 +128,10 @@ Attributes *attb_copy(Attributes *a){
 
 
 Attributes* attb_load(FILE* f){
-        int i = 0;
         if(!f) return NULL;
-        Attributes * a = attb_ini();
+        Attributes* a = attb_ini();
         if(!a) return NULL;
-
-        while(i < ATTRIBUTE_SIZE) {
-                fscanf(f, "%d", &a->data[i]);
-                i++;
-        }
+        for(int i=0;i<ATTRIBUTE_SIZE;i++) fscanf(f, "%d", &a->data[i]);
 
         return a;
 }
@@ -156,17 +145,13 @@ Attributes* attb_load(FILE* f){
    Inputs: FILE pointer, attb pointer
    Outputs: int that contains the number of characters that have been printed
  */
-int attb_print(FILE *pf, Attributes * attb){
-
+int attb_print(FILE *pf, Attributes* attb){
         int i = 0;
-        if (!attb || !pf) {
-                fprintf(stderr, "%s", strerror(errno));
-                return -1;
-        }
+        if(!attb || !pf) return NULL;
 
         i = fprintf(pf, "[Health: %d,Attack: %d,Defense: %d,Speed: %d,Agility: %d]", attb_get(attb, 1),attb_get(attb, 2),attb_get(attb, 3),attb_get(attb, 4),attb_get(attb, 5));
 
-        if (ferror(pf) || i < 0) {
+        if (ferror(pf)||i < 0) {
                 fprintf(stderr, "%s\n", strerror(errno));
                 return -1;
         }

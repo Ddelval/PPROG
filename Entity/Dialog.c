@@ -215,11 +215,11 @@ Dialog* diag_load(FILE* f) {
 //
 //     if(!dman){
 //         fprintf(stdout, "ERROR invalid pointer dman_available");
-//         return FALSE;
+//         return false;
 //     }
 //     else if (dman->f == NULL){
 //         fprintf(stdout,"ERROR no entity attached, execute dman_getDialog first");
-//         return FALSE;
+//         return false;
 //     }
 //
 //
@@ -227,16 +227,16 @@ Dialog* diag_load(FILE* f) {
 //                 q  = fgets(buf, BUFFER_SIZE, dman->f);
 //                 if (atoi(buf) == dman->counter) {
 //                        //CREO QUE ESTO ESTA BIEN PREGUNTAR
-//                         return TRUE;
+//                         return true;
 //                 }
 //                 if(atoi(buf) > dman->counter){
 //                     fseek(dman->f, strlen(buf), SEEK_CUR); //DONT COMPLETELY TRUST THIS SOLUTION TILL ITS TESTED
-//                     return FALSE;
+//                     return false;
 //                 }
 //                   q = fgets(buf, BUFFER_SIZE, dman->f);
 //
 //         }while(q);
-//         return FALSE;
+//         return false;
 // }
 //
 //
@@ -262,7 +262,7 @@ Dialog* diag_load(FILE* f) {
 //     char * q;
 //     if(!dman) return 0;
 //
-//     if(dman_available(dman) == TRUE){
+//     if(dman_available(dman) == true){
 //       q = fgets(buf, BUFFER_SIZE, dman->f);
 //     }
 //     return q;

@@ -1,9 +1,11 @@
+/*  Entity.c  */
 
 #include "Entity.h"
 
 #define MAX_NAME_LENGTH 30
 #define HORIZONTAL_STEP 30
 #define VERTICAL_STEP 10
+#define SPRITES 4
 
 /*
    name: Entitys's name.
@@ -20,18 +22,18 @@
 struct _Entity {
   char name[MAX_NAME_LENGTH];
   Sprite* s;
-  entType t;
+  ent_type t;
   int ipos;
   int jpos;
   Attributes* attr;
   Inventory* inv;
   int room_index;
   Display* dis;
-  //DialogDic* ddic;
+  DialogDic* ddic;
 };
 
 
-Entity *entity_ini (char *name, entType t, int i, int j){
+Entity *entity_ini (char *name, ent_type t, int i, int j){
   Entity* e = NULL;
   e = (Entity*)calloc(1,sizeof(Entity));
   if(!e) return NULL;
@@ -42,27 +44,22 @@ Entity *entity_ini (char *name, entType t, int i, int j){
   e->jpos = j;
 
   e->attr = attb_ini();
-  /*if (e->attr == NULL) {
-          entity_free(e);
-          return NULL;
-  }*/
+  if (!e->attr) {
+    entity_free(e);
+    return NULL;
+  }
   e->inv = inv_ini();
-  /*
-  if (e->inv == NULL) {
-          entity_free(e);
-          return NULL;
-  }*/
+  if(!e->inv) {
+    entity_free(e);
+    return NULL;
+  }
   return e;
 }
-/**
- *
- *
- *
- *
- */
+
+
 Entity *entity_load(FILE* f, Display *d){
   Entity *e = NULL;
-  entType t = 0;
+  ent_type t = 0;
   char name[MAX_NAME_LENGTH];
   int x = 0, y = 0, aux = 0;
   e = entity_ini(NULL, 0, 0, 0);
@@ -127,7 +124,7 @@ Entity* entity_setSprite(Entity* p,int d){
   return p;
 }
 
-Entity* entity_setEntType(Entity* p, entType t){
+Entity* entity_setEntType(Entity* p, ent_type t){
   if(!p || t < 1 || t > 3) return NULL;
   p->t = t;
   return p;
@@ -166,8 +163,8 @@ Sprite *entity_getSprite(Entity* p){
   return s;
 }
 
-entType entity_getEntType(Entity* p){
-  entType e = 0;
+ent_type entity_getEntType(Entity* p){
+  ent_type e = 0;
   if ((!p) || (p->t != 1) && (p->t != 2) && (p->t != 3)) return e;
   return p->t;
 }
@@ -182,9 +179,16 @@ int entity_getCoordY(Entity* p){
   return p->jpos;
 }
 
-Attributes *entity_getAttribute(Entity* p){
+Attributes* entity_getAttributes(Entity* p){
   if(!p || !(p->attr)) return NULL;
   return p->attr;
+}
+
+Entity* entity_setAttributes(Entity* p, Attributes* a){
+  if(!p) return NULL;
+  p->attr=attb_copy(a);
+  if(!p->attr) return NULL;
+  return p;
 }
 
 Inventory *entity_getInventory(Entity* p){

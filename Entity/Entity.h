@@ -1,3 +1,5 @@
+/* Entity.h */
+
 #ifndef entity
 #define entity
 
@@ -8,16 +10,17 @@
 #include "ObjectDic.h"
 #include "Utility.h"
 #include "Trigger.h"
+#include "DialogDic.h"
 
 typedef struct _Entity Entity;
 
-typedef enum {PLAYER = 1, ENEMY = 2, ALLY = 3} entType;
+typedef enum {PLAYER = 1, ENEMY = 2, ALLY = 3} ent_type;
 
 
-/*Creates an entity and assigns a name, a sprite, an entType, a x and y coordinate
+/*Creates an entity and assigns a name, a sprite, an ent_type, a x and y coordinate
    and initializes the inventory and attribute field. If either of the pounter arguments is NULL, it sets
    that field to NULL*/
-Entity *entity_ini (char *name, entType t, int i, int j);
+Entity *entity_ini (char *name, ent_type t, int i, int j);
 
 /* Reads from the file passed as argument the  name, entity type (player (1), enemy(2) or ally (3)),
    x Coodinate, y coordinate and sprite in this order and initializes an entity with
@@ -34,7 +37,7 @@ Entity* entity_setSprite(Entity* p, int d);
 
 /* Sets the character's type, if the entity atgument is NULL, or the entity type
    is different from 1, 2 or 3 it will return ERROR*/
-Entity* entity_setEntType(Entity* p, entType t);
+Entity* entity_setEntType(Entity* p, ent_type t);
 
 /* Sets the character's x coordinate,  if the entity atgument is NULL or the coordinate
    is smaller than 0 it will return ERROR */
@@ -47,10 +50,10 @@ Entity* entity_setCoordJ(Entity* p, int j);
 
 Entity* entity_addtoDisplay(Entity* e, Display* dis);
 
-char * entity_getName(Entity* p);
+char* entity_getName(Entity* p);
 
-Attributes *entity_getAttribute(Entity* p);
-
+Attributes* entity_getAttributes(Entity* p);
+Entity* entity_setAttributes(Entity* p, Attributes* a);
 
 Entity* entity_moveUp(Entity* p);
 Entity* entity_moveDown(Entity* p);

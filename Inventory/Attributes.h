@@ -19,8 +19,6 @@ typedef enum {HEALTH,ATTACK,DEFENSE,SPEED,AGILITY} attb_type;
 
 
 
-#include "types.h"
-
 /*
    Function name: attb_ini
    Utility: It creates a new attb structure with 0 in each camp
@@ -36,13 +34,13 @@ Attributes * attb_ini();
  */
 void attb_free(Attributes * attb);
 
-Status attb_set(Attributes* attb, int p, attb_type index);
+Attributes* attb_set(Attributes* attb, int p, attb_type index);
 
 int attb_get(Attributes* attb, attb_type index);
 
 int * attb_getAll(Attributes * attb);
 
-Status attb_setAll(Attributes * attb, int *p);
+Attributes* attb_setAll(Attributes * attb, int *p);
 
 
 
