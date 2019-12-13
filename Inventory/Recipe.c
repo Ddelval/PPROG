@@ -136,6 +136,28 @@ bool rec_doable(Inventory* inv, Recipe* r){
 Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei){
         if(!r)return NULL;
         
+        //+def
+        int margin=10;
+        int stroke=2;
+        Canvas* p1=canv_backGrnd(255,255,255,255,hei/2,stroke);
+        Canvas* p2=canv_backGrnd(255,255,255,255,stroke,hei/2);
+        Canvas* pp1=canv_AdjustCrop(p1,hei/2,hei/2);
+        Canvas* pp2=canv_AdjustCrop(p2,hei/2,hei/2);
+        Canvas* pl=canv_Overlay(pp1,pp2,0,0);
+        Canvas* plus=canv_AdjustCrop(pl,canv_getWidth(pl)+margin*2,canv_getHeight(pl));
+        canv_free(p1);  canv_free(p2);
+        canv_free(pp1); canv_free(pp2);
+        canv_free(pl);
+
+        //=def
+        int sep=min(stroke*2,hei/2-2*stroke);
+        p1=canv_backGrnd(255,255,255,255,hei/2,stroke);
+        p2=canv_backGrnd(255,255,255,0,hei/2,stroke);
+        Canvas* eq=canv_appendV(p1,p2);
+        canv_appendVI(eq,p1);
+        Canvas* equal=canv_AdjustCrop(eq,canv_getWidth(eq)+2*margin,canv_getHeight)
+        
+
 }
 int * rec_getQuantities(Recipe * r){
   if(!r) return NULL;
