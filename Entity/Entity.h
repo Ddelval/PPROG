@@ -50,10 +50,10 @@ Entity* entity_setCoordJ(Entity* p, int j);
 
 Entity* entity_addtoDisplay(Entity* e, Display* dis);
 
-char * entity_getName(Entity* p);
+char* entity_getName(Entity* p);
 
-Attributes *entity_getAttribute(Entity* p);
-
+Attributes* entity_getAttributes(Entity* p);
+Entity* entity_setAttributes(Entity* p, Attributes* a);
 
 Entity* entity_moveUp(Entity* p);
 Entity* entity_moveDown(Entity* p);

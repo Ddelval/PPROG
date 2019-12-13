@@ -31,7 +31,7 @@ Recipe * rec_copy(Recipe *r);
    Creates the array of objects and stores it in *obj. Also copies the array of
    quantities into *quant.
  */
- Status rec_getData(Recipe * r, Object *** obj, int ** quant);
+Recipe* rec_getData(Recipe * r, Object *** obj, int ** quant);
 
 //Following format:  (size) (name) (result_id) (elements_ids)(list_of_quantites)
 Recipe* rec_load(FILE *f);

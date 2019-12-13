@@ -179,9 +179,16 @@ int entity_getCoordY(Entity* p){
   return p->jpos;
 }
 
-Attributes *entity_getAttribute(Entity* p){
+Attributes* entity_getAttributes(Entity* p){
   if(!p || !(p->attr)) return NULL;
   return p->attr;
+}
+
+Entity* entity_setAttributes(Entity* p, Attributes* a){
+  if(!p) return NULL;
+  p->attr=attb_copy(a);
+  if(!p->attr) return NULL;
+  return p;
 }
 
 Inventory *entity_getInventory(Entity* p){
