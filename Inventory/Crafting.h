@@ -15,6 +15,7 @@
 #include "Inventory.h"
 #include "Object.h"
 #include "ObjectDic.h"
+#include "RecipeDic.h"
 
 
 typedef struct _Recipe Recipe;
@@ -22,8 +23,6 @@ typedef struct _Recipe Recipe;
 Recipe* rec_ini();
 void rec_free(Recipe *r);
 
-void recdic_ini();
-void rdic_free();
 Recipe * rec_copy(Recipe *r);
 
 
@@ -53,5 +52,12 @@ bool rec_doable(Inventory* inv, Recipe* r);
    All the recipies one after another and we read ultil we reach EOF.
  */
 Recipe** rec_getAllDoable(Inventory* inv, int * size);
+
+
+int * rec_getQuantities(Recipe * r);
+int * rec_getElements(Recipe * r);
+int rec_getResult_id(Recipe * r);
+int rec_getSize(Recipe * r);
+char *rec_getName(Recipe * r);
 
 #endif
