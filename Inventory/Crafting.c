@@ -134,31 +134,6 @@ bool rec_doable(Inventory* inv, Recipe* r){
 }
 
 
-
-/*
-   Returns the recipies that can be created with that inventory.
-   To do so, it will read the recipies in rec_dic and for each one of them, it will evaluate wheter or not it can be done.
-   The amount of elements in the final array have to be stored in *size so that the caller can operate with the array.
-   Note that the file rec_dic can be created in two ways:
-   First the number of recipies and then each of them in the format specified in rec_load
-   All the recipies one after another and we read ultil we reach EOF.
- */
-Recipe** rec_getAllDoable(Inventory* inv, int * size){
-        Recipe **r = malloc(0);
-
-        if(!rdic) rdic_ini();
-        if(!rdic) return NULL;
-        for(int i=0; i < rdic->size; ++i) {
-                if(rec_doable(inv, rdic->rec[i]) == true) {
-                        (*size)++;
-                        r = realloc(r, (*size) * sizeof(Recipe));
-                        r[i] = rec_copy(rdic->rec[i]);
-                }
-        }
-        return r;
-}
-
-
 int * rec_getQuantities(Recipe * r){
   if(!r) return NULL;
   return r->quantities;
