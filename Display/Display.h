@@ -17,6 +17,7 @@
 #include "Room.h"
 #include "Inventory.h"
 #include "Window.h"
+#include "RecipeDic.h"
 
 typedef struct _Display Display;
 /*-----------------------------------------------------------------*/

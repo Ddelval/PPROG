@@ -133,7 +133,10 @@ bool rec_doable(Inventory* inv, Recipe* r){
         return true;
 }
 
-
+Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei){
+        if(!r)return NULL;
+        
+}
 int * rec_getQuantities(Recipe * r){
   if(!r) return NULL;
   return r->quantities;

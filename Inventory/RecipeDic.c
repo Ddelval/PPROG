@@ -67,7 +67,7 @@ Recipe* rdic_lookup(int id){
   return NULL;
 }
 
-Recipe** rec_getAllDoable(Inventory* inv, int * size){
+Recipe** rdic_getAllDoable(Inventory* inv, int * size){
         Recipe **r;
 
         if(!rdic) rdic_ini();

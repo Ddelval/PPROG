@@ -55,8 +55,8 @@ Sprite* obj_getSprite(Object* ob);
 
 char* obj_getName(Object* ob);
 obj_type obj_getType(Object* ob);
-Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h);
+Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h,int w);
 int obj_getId(Object* ob);
-int obj_renderHeight(Object* ob, int number,Font* ftext, Font* fnum);
+Object* obj_renderDims(Object* ob, int number,Font* ftext, Font* fnum,int*h,int*w);
 
 #endif

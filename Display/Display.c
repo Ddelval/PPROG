@@ -211,6 +211,15 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     dis->pop_inv=true;
     return dis;
 }
+Display* disp_CraftingWindow(Display* dis,Inventory* inv,Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers){
+    if(!dis||!inv||!ftitle||!fsubtitle||!ftext||!fnumbers)return NULL;
+
+    //Create +
+    int stroke=5;
+    int size=0;
+    Recipe** rec=rdic_getAllDoable(inv,&size);
+    
+}
 Display* disp_remInventory(Display* d){
     if(!d)return NULL;
     if(!d->pop_inv)return d;

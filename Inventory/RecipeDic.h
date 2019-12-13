@@ -13,11 +13,12 @@
 #include <stdio.h>
 
 #include "Inventory.h"
+#include "Recipe.h"
 #include "Object.h"
 #include "ObjectDic.h"
 
 void rdic_ini();
 void rdic_free();
 Recipe* rdic_lookup(int id);
-Recipe** rec_getAllDoable(Inventory* inv, int * size);
+Recipe** rdic_getAllDoable(Inventory* inv, int * size);
 #endif

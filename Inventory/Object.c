@@ -148,7 +148,7 @@ obj_type obj_getType(Object* ob){
 int obj_getId(Object* ob){
     return ob? ob->id: -1;
 }
-int obj_renderHeight(Object* ob, int number,Font* ftext, Font* fnum){
+Object* obj_renderDims(Object* ob, int number,Font* ftext, Font* fnum,int*h,int*w){
     if(!ob)return 0;
     Sprite* sp=sdic_lookup(ob->icon_id);
     Canvas* c=canv_copy(spr_getDispData(sp));
@@ -170,11 +170,12 @@ int obj_renderHeight(Object* ob, int number,Font* ftext, Font* fnum){
     Canvas* back=canv_backGrnd(255,255,255,255,canv_getWidth(bb)+4,canv_getHeight(bb)+2);
     canv_addOverlay(back,bb,1,2);
     canv_free(bb);
-    int h=canv_getHeight(back);
+    *h=canv_getHeight(back);
+    *w=canv_getWidth(back);
     canv_free(back);
-    return h;
+    return ob;
 }
-Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h){
+Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h, int w){
     if(!ob)return 0;
     Sprite* sp=sdic_lookup(ob->icon_id);
     Canvas* imag=canv_copy(spr_getDispData(sp));
@@ -187,7 +188,7 @@ Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h){
 
     Canvas* text=wl_render(nam,canv_getWidth(imag));
     Canvas* numb =wl_render(num,canv_getWidth(imag));
-    Canvas* bb=canv_backGrnd(50,50,150,255,canv_getWidth(imag)+2*MARGIN,h-MARGIN);
+    Canvas* bb=canv_backGrnd(50,50,150,255,w-2*MARGIN,h-MARGIN);
     //Blue part
     Canvas* bottom2=canv_appendV(text,numb);
     Canvas* bottom=canv_AdjustCrop(bottom2,canv_getWidth(bb),canv_getHeight(bottom2));
@@ -196,7 +197,7 @@ Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h){
     canv_addOverlay(bb,over,0,0);
 
     //White margin
-    Canvas* fin=canv_backGrnd(255,255,255,255,canv_getWidth(bb)+2*MARGIN,h);
+    Canvas* fin=canv_backGrnd(255,255,255,255,w,h);
     Canvas* bb2=canv_AdjustCrop(bb,canv_getWidth(fin),canv_getHeight(fin));
     canv_addOverlay(fin,bb2,0,0);
 
