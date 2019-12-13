@@ -1,4 +1,6 @@
-#include "combat.h"
+/*  Combat.c    */
+
+#include "Combat.h"
 #include "Window.h"
 #include "Room.h"
 #include "Font.h"
@@ -11,15 +13,9 @@ struct _Combat {
     char * name[2];
     Attributes * stats[2];
     Skill * moveset[2][4];
-    //  Window * window[3];
-    //  Room * room;
     Bool stunp, stune;
 };
 
-
-
-/*Funcion de inicialización de la estructura combate */
-//REVISADA NO COMPILA
 
 Combat * combat_ini(Entity * player, Entity * enemy) {
     Combat * c;
