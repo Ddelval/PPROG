@@ -22,9 +22,9 @@ struct _Attributes {
    Outputs: attb pointer
  */
 Attributes* attb_ini(){
-        Attributes * a = NULL;
+        Attributes* a = NULL;
         int aux = 1;
-        a = (Attributes *) calloc(1,sizeof (Attributes));
+        a = (Attributes*)calloc(1,sizeof(Attributes));
         if (a == NULL) {
                 printf("Error: calloc.\n");
                 return NULL;
@@ -147,14 +147,11 @@ Attributes* attb_load(FILE* f){
  */
 int attb_print(FILE *pf, Attributes* attb){
         int i = 0;
-        if(!attb || !pf) return NULL;
+        if(!attb || !pf) return -1;
 
         i = fprintf(pf, "[Health: %d,Attack: %d,Defense: %d,Speed: %d,Agility: %d]", attb_get(attb, 1),attb_get(attb, 2),attb_get(attb, 3),attb_get(attb, 4),attb_get(attb, 5));
 
-        if (ferror(pf)||i < 0) {
-                fprintf(stderr, "%s\n", strerror(errno));
-                return -1;
-        }
+        if (ferror(pf)||i<0) return -1;
 
         return i;
 }
