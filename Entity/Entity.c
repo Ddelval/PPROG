@@ -143,13 +143,7 @@ Entity* entity_copy(Entity* e) {
     return NULL;
   }
 
-  DialogDic* dd=ddic_copy(e->ddic);
-  if(!dd) {
-    entity_free(r);
-    return NULL;
-  }
-  if(!entity_setDialogs(r,dd)) {
-    ddic_free(dd);
+  if(!entity_setDialogs(r,e->ddic)) {
     entity_free(r);
     return NULL;
   }
@@ -300,7 +294,7 @@ Entity* entity_addtoDisplay(Entity* e, Display* dis){
 int entity_getRoomIndex(const Entity* en){
   return en? en->room_index: -1;
 }
-Entity* entity_addItem(Entity* en,int itemId, int quantity){
+Entity* entity_addItem(Entity* en,int itemId, int quantity) {
   Object* ob=odic_lookup(itemId);
   if(!ob)return NULL;
   inv_insertSeveral(en->inv,ob,quantity);
@@ -308,4 +302,13 @@ Entity* entity_addItem(Entity* en,int itemId, int quantity){
 }
 const Inventory* entity_getInvRef(Entity*en){
   return en? en->inv:NULL;
+}
+
+Entity* entity_setDialogs(Entity* e, DialogDic* ddic) {
+  if(!e||!ddic) return NULL;
+  DialogDic* d=ddic_copy(ddic);
+  if(!d) return NULL;
+
+  e->ddic=d;
+  return e;
 }

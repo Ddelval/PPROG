@@ -8,9 +8,9 @@
 #include "Display.h"
 #include "Object.h"
 #include "ObjectDic.h"
+#include "DialogDic.h"
 #include "Utility.h"
 #include "Trigger.h"
-#include "DialogDic.h"
 
 typedef struct _Entity Entity;
 
@@ -64,4 +64,10 @@ Entity* entity_moveRight(Entity* p);
 int entity_getRoomIndex(const Entity* en);
 Entity* entity_addItem(Entity* en,int itemId, int quantity);
 const Inventory* entity_getInvRef(Entity*en);
+
+/*
+    Sets the DialogDic of a given entity, copying it.
+*/
+Entity* entity_setDialogs(Entity* e, DialogDic* ddic);
+
 #endif

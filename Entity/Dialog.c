@@ -2,6 +2,8 @@
 
 #include "Dialog.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 // #define BUFFER_SIZE 1000
 // #define NUMBER_TXT 10
