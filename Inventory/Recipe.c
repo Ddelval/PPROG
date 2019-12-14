@@ -133,12 +133,15 @@ Canvas* _rec_renderPlus(int size){
 }
 
 Canvas* _rec_renderEqual(int size){
-        int sep=min(STROKE*2,size-2*STROKE);
+        int sep=min(STROKE,size-2*STROKE);
         Canvas* p1=canv_backGrnd(255,255,255,255,size,STROKE/2);
-        Canvas* p2=canv_backGrnd(255,255,255,0,size,STROKE/2);
+        Canvas* p2=canv_backGrnd(255,255,255,0,size,sep);
         Canvas* eq=canv_appendV(p1,p2);
         canv_appendVI(eq,p1);
-        Canvas* equal=canv_AdjustCrop(eq,canv_getWidth(eq)+6*MARGIN,canv_getHeight(eq));
+        Canvas* equal=canv_AdjustCrop(eq,canv_getWidth(eq)+2*MARGIN,canv_getHeight(eq));
+        canv_free(p1);
+        canv_free(p2);
+        canv_free(eq);
         return equal;
 }
 Canvas* _rec_renderLeft(Recipe* r,int obj_wid,int hei){
