@@ -59,21 +59,24 @@ void inv_free(Inventory* inv){
 }
 
 Inventory* inv_copy(Inventory* inv) {
-  if(!inv) return NULL;
-  Inventory* in =inv_ini();
+    if(!inv) return NULL;
+    Inventory* in =inv_ini();
+    memcpy(in,inv,sizeof(Inventory));
+    for(int i=0;i<OBJ_TYPE_SIZE;i++) {
 
-  for(int i=0;i<OBJ_TYPE_SIZE;i++) {
-    in->size[i]=inv->size[i];
-    in->alloc[i]=inv->alloc[i];
-    in->selected[i]=inv->selected[i];
-    in->times[i]=(int*)calloc(in->size[i], sizeof(int));
-    if(!in->times[i]) {
-      inv_free(in);
-      return NULL;
-    }
-    for(int j=0;j<in->size[i];++j) in->times[i][j]=inv->times[i][j];
+        in->times[i]=(int*)calloc(in->size[i], sizeof(int));
+        in->alloc[i]= calloc(in->size[i],sizeof(Object*));
+        if(!in->times[i]||!in->alloc[i]) {
+            inv_free(in);
+            return NULL;
+        }
+        memcpy(in->times,inv->times,sizeof(int)*in->size[i]);
+        for(int j=0;j<in->size[i];++j){
+            in->alloc[i]=obj_copy(inv->alloc[i]);
+            if(!in->alloc[i]){
+                inv_free(in);
+            }
   }
-  /*Still to do: copy the objects array*/
 }
 
 Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity){
