@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "Crafting.h"
+#include "Recipe.h"
 
 int main(){
   Recipe *r ;

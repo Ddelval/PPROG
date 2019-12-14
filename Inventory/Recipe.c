@@ -138,7 +138,7 @@ Canvas* _rec_renderEqual(int size){
         Canvas* p2=canv_backGrnd(255,255,255,0,size,STROKE/2);
         Canvas* eq=canv_appendV(p1,p2);
         canv_appendVI(eq,p1);
-        Canvas* equal=canv_AdjustCrop(eq,canv_getWidth(eq)+2*MARGIN,canv_getHeight(eq));
+        Canvas* equal=canv_AdjustCrop(eq,canv_getWidth(eq)+6*MARGIN,canv_getHeight(eq));
         return equal;
 }
 Canvas* _rec_renderLeft(Recipe* r,int obj_wid,int hei){
@@ -196,10 +196,13 @@ Recipe* rec_getObjDimensions(Recipe* r,int *ob_wid, int* hei){
                 he=max(he,h);
                 wi=max(wi,w);
         }
-        
+        Object* ob=odic_lookup(r->result_id);
+        obj_renderDims(ob,r->quant,fcat_lookup(M4),fcat_lookup(M6),&h,&w);
+        obj_free(ob);
+        he=max(he,h);
+        wi=max(wi,w);
         *hei=he;
         *ob_wid=wi;
-
         return r;
 }
 int rec_getMinWidth(Recipe* r, int obj_wid, int hei){
