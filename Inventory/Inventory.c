@@ -64,8 +64,8 @@ Inventory* inv_copy(Inventory* inv) {
     memcpy(in,inv,sizeof(Inventory));
     for(int i=0;i<OBJ_TYPE_SIZE;i++) {
 
-        in->times[i]=(int*)calloc(in->size[i], sizeof(int));
-        in->alloc[i]= calloc(in->size[i],sizeof(Object*));
+        in->times[i]=(int*)    calloc(in->size[i], sizeof(int));
+        in->alloc[i]=(Object*) calloc(in->size[i], sizeof(Object*));
         if(!in->times[i]||!in->alloc[i]) {
             inv_free(in);
             return NULL;
@@ -76,9 +76,9 @@ Inventory* inv_copy(Inventory* inv) {
             if(!in->alloc[i]){
                 inv_free(in);
                 return NULL;
-            }
-            
+            }   
   }
+  return in;
 }
 
 Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity){
