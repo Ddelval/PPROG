@@ -18,42 +18,31 @@ struct _Combat {
 
 
 Combat* combat_ini(Entity* player, Entity* enemy) {
-    int aux = 0;
-    int load;
-    if(!player||!enemy) return NULL;
+  if(!player||!enemy) return NULL;
+  Combat* c = (Combat*)calloc(1, sizeof(Combat));
+  if(!c) return NULL;
 
-    Combat* c = (Combat*)calloc(1, sizeof(Combat));
-    if(!c) return NULL;
-
-    c->player = player;
-    c->enemy = enemy;
-
-    c->name[0] = entity_getName(player);
-    c->name[1] = entity_getName(enemy);
-
-    c->stats[0] = attb_copy(entity_getAttributes(player));
-    c->stats[1] = attb_copy(entity_getAttributes(enemy));
-
-    c->stunplayer = false;
-    c->stunenemy = false;
-
-    //SKILLS LOADING ??
-    // for(load = 0; load < 3; load++){
-    //   c->moveset[0][load]= skill_readFromFile("skill.txt",1);//OJO
-    //   c->moveset[1][load]= skill_readFromFile("skill.txt",2);  }
-    c->moveset[0][0] = skill_readFromFile("skill.txt", 1);
-    c->moveset[0][1] = skill_readFromFile("skill.txt", 2);
-    c->moveset[0][2] = skill_readFromFile("skill.txt", 3);
-    c->moveset[0][3] = skill_readFromFile("skill.txt", 4);
-    c->moveset[1][0] = skill_readFromFile("skill.txt", 1);
-    c->moveset[1][1] = skill_readFromFile("skill.txt", 2);
-    c->moveset[1][2] = skill_readFromFile("skill.txt", 3);
-    c->moveset[1][3] = skill_readFromFile("skill.txt", 4);
-
-
-
-
-    return c;
+  c->player = entity_copy(player);
+  if(!c->player) {
+    free(c);
+    return NULL;
+  }
+  c->enemy = entity_copy(enemy);
+  if(!c->enemy) {
+    combat_free(c);
+    return NULL;
+  }
+  c->name[0] = entity_getName(player);
+  c->name[1] = entity_getName(enemy);
+  c->stats[0] = attb_copy(entity_getAttributes(player));
+  c->stats[1] = attb_copy(entity_getAttributes(enemy));
+  c->stunplayer = false;
+  c->stunenemy = false;
+  for(int i=0; i<4; i++){
+    c->moveset[0][i]= skill_readFromFile("skill.txt",i+1);
+    c->moveset[1][i]= skill_readFromFile("skill.txt",i+1);
+  }
+  return c;
 }
 
 //REVISADA, NO COMPILA
@@ -215,29 +204,23 @@ int movement_exe(Combat * c, int action, int ent) {
             if (dmgout < 0) dmgout = 0;
             attb_set(c->stats[other], attb_get(c->stats[other], 0) - dmgout, 0);
         }
-        
+
         attb_free(aux1);
     } else fprintf(stdout, "Attack dogded");
     return 0;
 }
 
-
-
-
-
-
-//REVISADA,COMPILA
-
-void combat_destroy(Combat * c) {
-    if (!c) return;
-    int i;
-
-    attb_free(c->stats[0]);
-    attb_free(c->stats[1]);
-
-
-    for (i = 0; i < 3; i++) {
-        skill_free(c->moveset[0][i]);
-        skill_free(c->moveset[1][i]);
-    }
+void combat_destroy(Combat* c) {
+  if(!c) return;
+  attb_free(c->stats[0]);
+  attb_free(c->stats[1]);
+  entity_free(c->player);
+  entity_free(c->enemy);
+  for(int i=0; i<4; i++) {
+      skill_free(c->moveset[0][i]);
+      skill_free(c->moveset[1][i]);
+  }
+  free(c->name[0]);
+  free(c->name[1]);
+  free(c);
 }
