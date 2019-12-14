@@ -237,11 +237,12 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
         wid=max(wid,w);
     }
     Canvas* gap=canv_backGrnd(0,0,0,0,wid,gap_w);
-
-    Canvas* c=rec_render(rec[0],ob_wid,wid,hei);
+    int margin=10;
+    int box_w=20;
+    Canvas* c=rec_render(rec[0],ob_wid,wid,hei,dis->width-2*margin-box_w);
     for(int i=1;i<size;++i){
         canv_appendVI(c,gap);
-        Canvas* c2=rec=rec_render(rec[i],ob_wid,wid,hei);
+        Canvas* c2=rec=rec_render(rec[i],ob_wid,wid,hei,dis->width-2*margin-box_w);
         canv_appendVI(c,c2);
         canv_free(c2);
     }

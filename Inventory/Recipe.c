@@ -147,7 +147,7 @@ Canvas* _rec_renderEqual(int size){
 Canvas* _rec_renderLeft(Recipe* r,int obj_wid,int hei){
         if(!r)return NULL;
         Canvas* plus=_rec_renderPlus(hei/2);
-        
+        Wlabel* wl=wl_ini(r->name,fcat_lookup(M6),0);
         Object* ob=odic_lookup(r->elements[0]);
         Canvas* l=obj_render(ob,r->quantities[0],fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei);
         Canvas* aux=NULL;
@@ -166,7 +166,7 @@ Canvas* _rec_renderLeft(Recipe* r,int obj_wid,int hei){
         return l;
 
 }
-Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei){
+Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei, int max_wid){
         if(!r)return NULL;
         
         
@@ -174,18 +174,22 @@ Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei){
         Object* ob=odic_lookup(r->result_id);
         Canvas* aux=obj_render(ob,r->quant,fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei);
         Canvas* eq=_rec_renderEqual(hei/2);
-        
+        Wlabel* wl=wl_ini(r->name,fcat_lookup(M6),0);
+        Canvas* txt=wl_renderSmall(wl,max_wid-canv_getWidth(aux)-canv_getWidth(eq)-canv_getWidth(l2));
         int lwid=wid-canv_getWidth(aux)-canv_getWidth(eq);
+        int marg=MARGIN;
+        if(wid+canv_getWidth(txt)+marg<max_wid)lwid+=marg;
         Canvas* l= canv_backGrnd(0,0,0,0,lwid-canv_getWidth(l2),hei);
-        canv_appendHI(l,l2);
-        canv_appendHI(l,eq);
+        canv_appendHI(txt,l);
+        canv_appendHI(txt,l2);
+        canv_appendHI(txt,eq);
         
-        canv_appendHI(l,aux);
+        canv_appendHI(txt,aux);
         canv_free(aux);
         obj_free(ob);
         canv_free(l2);
         canv_free(eq);
-        return l;
+        return txt;
 }
 Recipe* rec_getObjDimensions(Recipe* r,int *ob_wid, int* hei){
         if(!r||!ob_wid||!hei)return NULL;
@@ -216,6 +220,14 @@ int rec_getMinWidth(Recipe* r, int obj_wid, int hei){
         canv_free(l);
         canv_free(eq);
         return s;
+}
+Recipe* rec_make(Recipe* r, Inventory* inv){
+        if(!r||!inv)return NULL;
+        for(int i=0;i<r->size;++i){
+                Object* ob=odic_lookup(r->elements[i]);
+                inv_decrease(inv,ob,r->quantities[i]);
+        }
+        return r;
 }
 int * rec_getQuantities(Recipe * r){
   if(!r) return NULL;

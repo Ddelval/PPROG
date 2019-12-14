@@ -136,14 +136,14 @@ Inventory* inv_remove(Inventory* inv, Object* ob){
     }
     return found? inv: NULL;
 }
-Inventory* inv_decrease(Inventory* inv, Object* ob){
+Inventory* inv_decrease(Inventory* inv, Object* ob, int quantity){
     if(!inv||!ob)return NULL;
     obj_type ob_ty=obj_getType(ob);
 
     for(int i=0;i<inv->size[ob_ty];++i){
         if(obj_cmp(inv->items[ob_ty][i],ob)==0){
-            inv->times[ob_ty][i]--;
-            if(inv->times[ob_ty][i]==0){
+            inv->times[ob_ty][i]-=quantity;
+            if(inv->times[ob_ty][i]<=0){
                 inv_remove(inv,ob);
             }
             return inv;
