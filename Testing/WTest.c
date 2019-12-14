@@ -69,12 +69,13 @@ int main(){
     
     canv_print(stdout, disp_Render(dis), 0, 0);
 
-    Object* o =odic_lookup(1);
+    Object* o =odic_lookup(3);
     Inventory *inv=inv_ini();
     inv_insert(inv,o);
     inv_insert(inv,o);
-    o =odic_lookup(2);
+    o =odic_lookup(4);
     inv_insert(inv,o);
+    disp_CraftingWindow(dis,inv);
     while(1){
         char c=getch1();
         if(c=='W'){

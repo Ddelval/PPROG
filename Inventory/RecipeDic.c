@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "Recipe.h"
+#include "RecipeDic.h"
 #define NAME_LENGTH 50
 
 
@@ -17,9 +17,19 @@ typedef struct {
 } RecipeDic;
 
 RecipeDic* rdic=NULL;
-char* rec_dic = "Dictionaries/recipes.txt";
+char* rec_dic = "Dictionaries/c_recipies.txt";
 
 
+void rdic_free(){
+        if(!rdic) return;
+        if(rdic->rec) {
+                for(int i=0; i<rdic->size; ++i) {
+                        rec_free(rdic->rec[i]);
+                }
+                free(rdic->rec);
+        }
+        free(rdic);
+}
 
 void rdic_ini(){
         FILE* f=fopen(rec_dic,"r");
@@ -42,16 +52,7 @@ void rdic_ini(){
         }
 }
 
-void rdic_free(){
-        if(!rdic) return;
-        if(rdic->rec) {
-                for(int i=0; i<rdic->size; ++i) {
-                        rec_free(rdic->rec[i]);
-                }
-                free(rdic->rec);
-        }
-        free(rdic);
-}
+
 
 
 Recipe* rdic_lookup(int id){
@@ -67,7 +68,7 @@ Recipe* rdic_lookup(int id){
 }
 
 Recipe** rdic_getAllDoable(Inventory* inv, int * size){
-        Recipe **r;
+        Recipe **r=NULL;
 
         if(!rdic) rdic_ini();
         if(!rdic) return NULL;

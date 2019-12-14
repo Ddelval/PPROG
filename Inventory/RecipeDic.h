@@ -17,8 +17,6 @@
 #include "Object.h"
 #include "ObjectDic.h"
 
-void rdic_ini();
-void rdic_free();
 Recipe* rdic_lookup(int id);
 Recipe** rdic_getAllDoable(Inventory* inv, int * size);
 #endif

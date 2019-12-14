@@ -15,7 +15,7 @@
 #include "Inventory.h"
 #include "Object.h"
 #include "ObjectDic.h"
-#include "RecipeDic.h"
+#include "FontCatalog.h"
 
 
 typedef struct _Recipe Recipe;
@@ -49,5 +49,7 @@ int * rec_getElements(Recipe * r);
 int rec_getResult_id(Recipe * r);
 int rec_getSize(Recipe * r);
 char *rec_getName(Recipe * r);
-
+Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei);
+Recipe* rec_getObjDimensions(Recipe* r,int *ob_wid, int* hei);
+int rec_getMinWidth(Recipe* r, int obj_wid, int hei);
 #endif

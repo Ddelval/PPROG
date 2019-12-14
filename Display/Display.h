@@ -72,4 +72,5 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
 Display* disp_execute(Display* dis, int index, int room_index, void* en);
 Display* disp_remInventory(Display* d);
 Display* disp_remDialog(Display* dis);
+Display* disp_CraftingWindow(Display* dis,Inventory* inv);
 #endif /* Display_h */

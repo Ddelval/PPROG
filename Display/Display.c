@@ -7,6 +7,8 @@
 #include "Display.h"
 #define ARR_INC 3
 #define TITLE_MULTILINE 10
+#define DARKEN 0.40
+#define BLUR_RAD 10
 struct _Display{
     int width, height;
     int vdiv;
@@ -22,6 +24,7 @@ struct _Display{
     Window* popup;
     bool pop_dial;
     bool pop_inv;
+    bool pop_craf;
 };
 
 Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* titf){
@@ -160,7 +163,7 @@ Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f){
     int h=150;
     Canvas* bottom=canv_subCopy(c,canv_getHeight(c)-h,canv_getHeight(c),0,canv_getWidth(c));
     Canvas* bckg=canv_blur(bottom,10);
-    canv_darken(bckg,0.40);
+    canv_darken(bckg,DARKEN);
     Wlabel* wl= wl_ini(txt,f,10);
     Canvas* ren=wl_render(wl, dis->width-100);
     canv_addOverlay(bckg,ren,10,10);
@@ -203,22 +206,54 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
         canv_appendVI(c,b);
     }
     Canvas* back=disp_Render(dis);
-    Canvas* back2=canv_blur(back,10);
+    Canvas* back2=canv_blur(back,BLUR_RAD);
     canv_free(back);
-    canv_darken(back2,0.40);
+    canv_darken(back2,DARKEN);
     canv_addOverlay(back2,c,10,0);
     canv_print(stdout,back2,0,0);
     dis->pop_inv=true;
     return dis;
 }
-Display* disp_CraftingWindow(Display* dis,Inventory* inv,Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers){
-    if(!dis||!inv||!ftitle||!fsubtitle||!ftext||!fnumbers)return NULL;
+Display* disp_CraftingWindow(Display* dis,Inventory* inv){
+    if(!dis||!inv)return NULL;
 
-    //Create +
-    int stroke=5;
+    int gap_w=1;
+    
     int size=0;
     Recipe** rec=rdic_getAllDoable(inv,&size);
-    
+    if(!size)return canv_backGrnd(0,0,0,0,0,0);
+    if(!rec)return NULL;
+
+    int h,w,o_w;
+    int hei,wid,ob_wid;
+    hei=wid=ob_wid=0;
+    for(int i=0;i<size;++i){
+        rec_getObjDimensions(rec[i],&o_w,&h);
+        hei=max(hei,h);
+        ob_wid=max(ob_wid,o_w);
+    }
+    for(int i=0;i<size;++i){
+        w=rec_getMinWidth(rec[i],ob_wid,hei);
+        wid=max(wid,w);
+    }
+    Canvas* gap=canv_backGrnd(0,0,0,0,wid,gap_w);
+
+    Canvas* c=rec_render(rec[0],ob_wid,wid,hei);
+    for(int i=1;i<size;++i){
+        canv_appendVI(c,gap);
+        Canvas* c2=rec=rec_render(rec[i],ob_wid,wid,hei);
+        canv_appendVI(c,c2);
+        canv_free(c2);
+    }
+    canv_free(gap);
+
+    Canvas* back=disp_Render(dis);
+    Canvas* back2=canv_blur(back,BLUR_RAD);
+    canv_free(back);
+    canv_darken(back2,DARKEN);
+    canv_addOverlay(back2,c,10,10);
+    canv_print(stdout,back2,0,0);
+    dis->pop_craf=true;
 }
 Display* disp_remInventory(Display* d){
     if(!d)return NULL;
@@ -237,7 +272,7 @@ Room* disp_getrefRoom(Display* dis){
 
 int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
 
-    if(d->pop_dial||d->pop_inv)return 0;
+    if(d->pop_dial||d->pop_inv||d->pop_inv)return 0;
 
 
     int a=room_incPos(d->room, index, i, j);

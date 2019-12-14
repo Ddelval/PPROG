@@ -9,12 +9,15 @@
 #include <stdio.h>
 #include "Recipe.h"
 
-#define NAME_LENGTH 64
 
+#define NAME_LENGTH 64
+#define MARGIN 15
+#define STROKE 4
 struct _Recipe {
         int * quantities;
         int * elements;
         int result_id;
+        int quant;
         int size;
         char name[NAME_LENGTH];
 };
@@ -26,6 +29,7 @@ Recipe * rec_ini(){
 
         r->quantities = NULL;
         r->elements = NULL;
+        r->quant=0;
         r->result_id = -1;
         r->size = 0;
 
@@ -45,19 +49,12 @@ Recipe * rec_copy(Recipe *r){
         Recipe * c = rec_ini();
         if(!c) return NULL;
 
-        int *q = (int *) calloc (sizeof(int), r->size);
-        int *e = (int *) calloc (sizeof(int), r->size);
+        memcpy(c,r,sizeof(Recipe));
+        c->elements   = calloc (r->size, sizeof(int));
+        c->quantities = calloc (r->size, sizeof(int));
 
-        c->size = r->size;
-        c->result_id = r->result_id;
-        strcpy(c->name, r->name);
-
-        for(int i = 0; i < c->size; i++) {
-                q[i] = r->quantities[i];
-                e[i] = r->elements[i];
-        }
-        c->elements = e;
-        c->quantities = q;
+        memcpy(c->elements,r->elements,sizeof(int)*r->size);
+        memcpy(c->quantities,r->quantities,sizeof(int)*r->size);
 
         return c;
 }
@@ -77,38 +74,33 @@ Recipe* rec_getData(Recipe * r, Object *** obj, int ** quant){
         (*quant) = (int *) calloc (sizeof(int), r->size);
         if(!(*quant)) return NULL;
 
-        int i = 0;
-        while(i < r->size) {
+        for(int i=0;i<r->size;++i){
                 (*obj)[i] = odic_lookup(r->elements[i]);
                 (*quant)[i] = r->quantities[i];
-                i++;
         }
         return r;
 }
 
-//Following format:  (size) (name) (result_id) (elements_ids) (list_of_quantites)
+//Following format:  (result_id) (quantity) 
+//                   (name)
+//                   (size)
+//                   (elements_ids) 
+//                   (list_of_quantites)
 Recipe* rec_load(FILE *f){
         Recipe *r = rec_ini();
         int i = 0;
         if(!f || !r) return NULL;
 
-        fscanf(f, "%d\n", &(r->result_id));
-        fscanf(f, "%d\n", &(r->size));
+        fscanf(f, "%d %d\n", &(r->result_id),&(r->quant));
         fgets(r->name, NAME_LENGTH ,f);
+        r->name[strlen(r->name)-1]=0;
+        fscanf(f, "%d", &(r->size));
 
-        r->quantities = (int *) calloc (sizeof(int), r->size);
-        r->elements = (int *) calloc (sizeof(int), r->size);
+        r->quantities = (int *) calloc (r->size,sizeof(int));
+        r->elements   = (int *) calloc (r->size,sizeof(int));
 
-
-        while(i < r->size) {
-                fscanf(f, "%d", &(r->elements[i]));
-                i++;
-        }
-        i = 0;
-        while(i < r->size) {
-                fscanf(f, "%d", &(r->quantities[i]));
-                i++;
-        }
+        for(int i=0;i<r->size;++i) fscanf(f, "%d", &(r->elements[i]));
+        for(int i=0;i<r->size;++i) fscanf(f, "%d", &(r->quantities[i]));
 
         return r;
 }
@@ -122,42 +114,102 @@ Recipe* rec_load(FILE *f){
 bool rec_doable(Inventory* inv, Recipe* r){
         int i = 0;
         if(!inv || !r) return false;
-
-        while(i < r->size) {
-                if(inv_getQuantity(inv, r->elements[i]) < r->quantities[i]) {
-                        return false;
-                }
-                i++;
-        }
+        for(int i=0;i<r->size;++i)
+                if(inv_getQuantity(inv, r->elements[i]) < r->quantities[i]) return false;
 
         return true;
 }
-
-Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei){
-        if(!r)return NULL;
-        
-        //+def
-        int margin=10;
-        int stroke=2;
-        Canvas* p1=canv_backGrnd(255,255,255,255,hei/2,stroke);
-        Canvas* p2=canv_backGrnd(255,255,255,255,stroke,hei/2);
-        Canvas* pp1=canv_AdjustCrop(p1,hei/2,hei/2);
-        Canvas* pp2=canv_AdjustCrop(p2,hei/2,hei/2);
-        Canvas* pl=canv_Overlay(pp1,pp2,0,0);
-        Canvas* plus=canv_AdjustCrop(pl,canv_getWidth(pl)+margin*2,canv_getHeight(pl));
+Canvas* _rec_renderPlus(int size){
+        Canvas* p1  =canv_backGrnd(255,255,255,255,size,STROKE/2);
+        Canvas* p2  =canv_backGrnd(255,255,255,255,STROKE,size/2);
+        Canvas* pp1 =canv_AdjustCrop(p1,size,size);
+        Canvas* pp2 =canv_AdjustCrop(p2,size,size);
+        Canvas* pl  =canv_Overlay(pp1,pp2,0,0);
+        Canvas* plus=canv_AdjustCrop(pl,canv_getWidth(pl)+MARGIN*2,canv_getHeight(pl));
         canv_free(p1);  canv_free(p2);
         canv_free(pp1); canv_free(pp2);
         canv_free(pl);
+        return plus;
+}
 
-        //=def
-        int sep=min(stroke*2,hei/2-2*stroke);
-        p1=canv_backGrnd(255,255,255,255,hei/2,stroke);
-        p2=canv_backGrnd(255,255,255,0,hei/2,stroke);
+Canvas* _rec_renderEqual(int size){
+        int sep=min(STROKE*2,size-2*STROKE);
+        Canvas* p1=canv_backGrnd(255,255,255,255,size,STROKE/2);
+        Canvas* p2=canv_backGrnd(255,255,255,0,size,STROKE/2);
         Canvas* eq=canv_appendV(p1,p2);
         canv_appendVI(eq,p1);
-        Canvas* equal=canv_AdjustCrop(eq,canv_getWidth(eq)+2*margin,canv_getHeight)
+        Canvas* equal=canv_AdjustCrop(eq,canv_getWidth(eq)+2*MARGIN,canv_getHeight(eq));
+        return equal;
+}
+Canvas* _rec_renderLeft(Recipe* r,int obj_wid,int hei){
+        if(!r)return NULL;
+        Canvas* plus=_rec_renderPlus(hei/2);
         
+        Object* ob=odic_lookup(r->elements[0]);
+        Canvas* l=obj_render(ob,r->quantities[0],fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei);
+        Canvas* aux=NULL;
+        obj_free(ob);
 
+        for(int i=1;i<r->size;++i){
+                canv_appendHI(l,plus);
+                ob=odic_lookup(r->elements[i]);
+                aux=obj_render(ob,r->quantities[i],fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei);
+                canv_appendHI(l,aux);
+                canv_free(aux);
+                obj_free(ob);
+                aux=NULL;
+        }
+        canv_free(plus);
+        return l;
+
+}
+Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei){
+        if(!r)return NULL;
+        
+        
+        Canvas* l2=_rec_renderLeft(r,obj_wid,hei);
+        Object* ob=odic_lookup(r->result_id);
+        Canvas* aux=obj_render(ob,r->quant,fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei);
+        Canvas* eq=_rec_renderEqual(hei/2);
+        
+        int lwid=wid-canv_getWidth(aux)-canv_getWidth(eq);
+        Canvas* l= canv_backGrnd(0,0,0,0,lwid-canv_getWidth(l2),hei);
+        canv_appendHI(l,l2);
+        canv_appendHI(l,eq);
+        
+        canv_appendHI(l,aux);
+        canv_free(aux);
+        obj_free(ob);
+        canv_free(l2);
+        canv_free(eq);
+        return l;
+}
+Recipe* rec_getObjDimensions(Recipe* r,int *ob_wid, int* hei){
+        if(!r||!ob_wid||!hei)return NULL;
+        int h,w;
+        int he,wi;
+        he=wi=0;
+        for(int i=0;i<r->size;++i){
+                Object* ob=odic_lookup(r->elements[i]);
+                obj_renderDims(ob,r->quantities[i],fcat_lookup(M4),fcat_lookup(M6),&h,&w);
+                obj_free(ob);
+                he=max(he,h);
+                wi=max(wi,w);
+        }
+        
+        *hei=he;
+        *ob_wid=wi;
+
+        return r;
+}
+int rec_getMinWidth(Recipe* r, int obj_wid, int hei){
+        if(!r)return -1;
+        Canvas* l=_rec_renderLeft(r,obj_wid,hei);
+        Canvas* eq=_rec_renderEqual(hei/2);
+        int s=canv_getWidth(l)+canv_getWidth(eq)+obj_wid;
+        canv_free(l);
+        canv_free(eq);
+        return s;
 }
 int * rec_getQuantities(Recipe * r){
   if(!r) return NULL;
