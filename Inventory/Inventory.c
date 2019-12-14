@@ -75,7 +75,9 @@ Inventory* inv_copy(Inventory* inv) {
             in->alloc[i]=obj_copy(inv->alloc[i]);
             if(!in->alloc[i]){
                 inv_free(in);
+                return NULL;
             }
+            
   }
 }
 
