@@ -6,7 +6,7 @@
 
 #include "Inventory.h"
 #define INITIAL_SIZE 10
-#define INCREMENT 1.5  
+#define INCREMENT 1.5
 /**
  * @brief Structure that holds all the items that an entity has.
  * The macro OBJ_TYPE_SIZE is the amount of different types of objects
@@ -17,9 +17,9 @@
  *  - int      size: Int that stores the amount of different objets stored in items
  *  - int     alloc: Int that stores the space that has been allocated.
  *  - int  selected: The object that is being selected in each type
- * 
+ *
  * alloc and size will be compared to decide when is it necessary to increment the size of the array
- * 
+ *
  */
 struct _Inventory
 {
@@ -57,6 +57,25 @@ void inv_free(Inventory* inv){
     }
     free(inv);
 }
+
+Inventory* inv_copy(Inventory* inv) {
+  if(!inv) return NULL;
+  Inventory* in =inv_ini();
+
+  for(int i=0;i<OBJ_TYPE_SIZE;i++) {
+    in->size[i]=inv->size[i];
+    in->alloc[i]=inv->alloc[i];
+    in->selected[i]=inv->selected[i];
+    in->times[i]=(int*)calloc(in->size[i], sizeof(int));
+    if(!in->times[i]) {
+      inv_free(in);
+      return NULL;
+    }
+    for(int j=0;j<in->size[i];++j) in->times[i][j]=inv->times[i][j];
+  }
+  /*Still to do: copy the objects array*/
+}
+
 Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity){
     if(!inv||!ob)return NULL;
     obj_type ob_ty=obj_getType(ob);
@@ -67,8 +86,8 @@ Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity){
             return inv;
         }
     }
-    
-    // We already now that the object is not in the inventory    
+
+    // We already now that the object is not in the inventory
     if(inv->size[ob_ty]==inv->alloc[ob_ty]){
         int nsiz=inv->alloc[ob_ty]*INCREMENT;
         Object** tmp=realloc(inv->items[ob_ty],nsiz*sizeof(Object*));
@@ -84,7 +103,7 @@ Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity){
     inv->items[ob_ty][inv->size[ob_ty]]=obj_copy(ob);
     inv->times[ob_ty][inv->size[ob_ty]]+=quantity;
     inv->size[ob_ty]++;
-    return inv;    
+    return inv;
 }
 Inventory* inv_insert(Inventory* inv, Object* ob){
     if(!inv||!ob)return NULL;
@@ -96,8 +115,8 @@ Inventory* inv_insert(Inventory* inv, Object* ob){
             return inv;
         }
     }
-    
-    // We already now that the object is not in the inventory    
+
+    // We already now that the object is not in the inventory
     if(inv->size[ob_ty]==inv->alloc[ob_ty]){
         int nsiz=inv->alloc[ob_ty]*INCREMENT;
         Object** tmp=realloc(inv->items[ob_ty],nsiz*sizeof(Object*));
@@ -113,7 +132,7 @@ Inventory* inv_insert(Inventory* inv, Object* ob){
     inv->items[ob_ty][inv->size[ob_ty]]=obj_copy(ob);
     inv->times[ob_ty][inv->size[ob_ty]]++;
     inv->size[ob_ty]++;
-    return inv;    
+    return inv;
 }
 Inventory* inv_remove(Inventory* inv, Object* ob){
     if(!inv||!ob)return NULL;
@@ -200,4 +219,3 @@ int inv_getQuantity(Inventory* inv, int obj_id){
     }
     return 0;
 }
-

@@ -29,6 +29,8 @@ Entity *entity_load(FILE* f, Display *r);
 
 void entity_free(Entity *p);
 
+Entity* entity_copy(Entity* e);
+
 /* Sets the character's name, if either of the arguments is NULL it will return ERROR*/
 Entity* entity_setName(Entity* p, char* c);
 

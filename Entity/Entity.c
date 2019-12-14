@@ -104,6 +104,59 @@ Entity *entity_load(FILE* f, Display *d){
   return e;
 }
 
+Entity* entity_copy(Entity* e) {
+  if(!e) return NULL;
+  Entity* r = entity_ini(e->name, e->t, e->ipos, e->jpos);
+  if(!r) return NULL;
+
+  Sprite* s=spr_copy(e->s);
+  if(!s) {
+    entity_free(r);
+    return NULL;
+  }
+  if(!entity_setSprite(r,s)) {
+    spr_free(s);
+    entity_free(r);
+    return NULL;
+  }
+
+  Attributes* a=attb_copy(e->attr);
+  if(!a) {
+    entity_free(r);
+    return NULL;
+  }
+  if(!entity_setAttributes(r,a)) {
+    attb_free(a);
+    entity_free(r);
+    return NULL;
+  }
+
+  Inventory* i=inv_copy(e->inv);
+  if(!i) {
+    entity_free(r);
+    return NULL;
+  }
+  r->inv=i;
+
+  if(!entity_addtoDisplay(r,e->dis)) {
+    entity_free(r);
+    return NULL;
+  }
+
+  DialogDic* dd=ddic_copy(e->ddic);
+  if(!dd) {
+    entity_free(r);
+    return NULL;
+  }
+  if(!entity_setDialogs(r,dd)) {
+    ddic_free(dd);
+    entity_free(r);
+    return NULL;
+  }
+  r->room_index=e->room_index;
+  return r;
+}
+
 Entity* entity_setName(Entity* p, char* c){
   if(!p || !c) return NULL;
   if (strlen(c) >= MAX_NAME_LENGTH) {

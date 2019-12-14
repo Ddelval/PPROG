@@ -42,6 +42,30 @@ void ddic_free(DialogDic* ddic) {
   return;
 }
 
+Dialog* ddic_copy(DialogDic* ddic) {
+  if(!ddic) return NULL;
+  DialogDic* dd=(DialogDic*)calloc(1, sizeof(DialogDic));
+  if(!dd) return NULL;
+  dd->d=(Dialog**)calloc(ddic->size, sizeof(Dialog*));
+  if(!dd->d) {
+    ddic_free(dd);
+    return NULL;
+  }
+  for(int i=0;i<ddic->size;++i) {
+    dd->d[i]=diag_copy(ddic->d[i]);
+    if(!dd->d[i]) {
+      for(int j=0;j<i;++j) {
+        diag_free(dd->d[j]);
+      }
+      free(dd->d);
+      ddic_free(dd);
+      return NULL;
+    }
+  }
+  dd->size=ddic->size;
+  return dd;
+}
+
 Dialog* ddic_lookup(DialogDic* ddic, int did) {
   if(!ddic) return NULL;
   for(int i=0;i<ddic->size;i++) {
