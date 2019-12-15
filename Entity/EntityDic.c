@@ -7,7 +7,7 @@
 #include "EntityDic.h"
 
 typedef struct{
-    Sprite** dat;
+    Entity** dat;
     int size;
 } EntityDic;
 
