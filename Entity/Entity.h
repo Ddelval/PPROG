@@ -30,10 +30,10 @@ Entity *entity_ini (char *name, ent_type t, int i, int j);
  * ipos jpos
  * attributes
  * inventory
- * 
+ *
  * @param f File where the entity is
  * @param r Display to which it will be added
- * @return Entity* 
+ * @return Entity*
  */
 Entity *entity_load(FILE* f, Display *r);
 
@@ -79,5 +79,22 @@ const Inventory* entity_getInvRef(Entity*en);
     Sets the DialogDic of a given entity, copying it.
 */
 Entity* entity_setDialogs(Entity* e, DialogDic* ddic);
+
+/*
+    Gets the next line in the current dialog.
+*/
+const char* entity_getLine(Entity* e);
+
+/*
+    Resets the current dialog; sets it to the beginning.
+*/
+Entity* entity_resetDialog(Entity* e);
+
+/*
+    Sets the ID of the current dialog.
+*/
+Entity* entity_setDialog(Entity* e, int dialogid);
+
+int entity_getId(Entity* e);
 
 #endif

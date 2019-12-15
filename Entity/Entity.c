@@ -31,6 +31,7 @@ struct _Entity {
   int room_index;
   Display* dis;
   DialogDic* ddic;
+  int dialogid;
 };
 
 
@@ -60,7 +61,7 @@ Entity *entity_ini (char *name, ent_type t, int i, int j){
 
 Entity *entity_load(FILE* f, Display *d){
   Entity *e = NULL;
-  
+
   e = entity_ini(NULL, 0, 0, 0);
   if(!e) return NULL;
   attb_free(e->attr);
@@ -83,7 +84,7 @@ Entity *entity_load(FILE* f, Display *d){
         return NULL;
       }
   }
-  
+
 
   return e;
 }
@@ -115,6 +116,7 @@ Entity* entity_copy(Entity* e) {
     return NULL;
   }
   r->room_index=e->room_index;
+  r->dialogid=e->dialogid;
   return r;
 }
 
@@ -276,6 +278,28 @@ Entity* entity_setDialogs(Entity* e, DialogDic* ddic) {
   e->ddic=d;
   return e;
 }
+
+const char* entity_getLine(Entity* e) {
+  if(!e||!e->ddic) return NULL;
+  Dialog* dd=ddic_lookup(e->ddic, e->dialogid);
+  if(!dd) return NULL;
+  const char* c=diag_getNext(dd);
+  diag_free(dd);
+  return c;
+}
+
+Entity* entity_resetDialog(Entity* e) {
+  if(!e||!e->ddic) return NULL;
+  if(!ddic_resetDialog(e->ddic, e->dialogid)) return NULL;
+  return e;
+}
+
+Entity* entity_setDialog(Entity* e, int dialogid) {
+  if(!e) return NULL;
+  e->dialogid=dialogid;
+  return e;
+}
+
 int entity_getId(Entity* e){
   return e? e->id: -1;
 }

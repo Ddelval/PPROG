@@ -27,12 +27,17 @@ void ddic_free(DialogDic* ddic);
 /*
     Returns a copy of the given DialogDic.
 */
-Dialog* ddic_copy(DialogDic* ddic);
+DialogDic* ddic_copy(DialogDic* ddic);
 
 /*
     Searches for a Dialog with matching ID in the DialogDic. Returns it if found
     and otherwise gives back NULL;
 */
 Dialog* ddic_lookup(DialogDic* ddic, int did);
+
+/*
+    Resets a given dialog to its beggining state.
+*/
+DialogDic* ddic_resetDialog(DialogDic* e, int did);
 
 #endif /* DIALOGDIC_H */

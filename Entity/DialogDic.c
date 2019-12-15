@@ -42,7 +42,7 @@ void ddic_free(DialogDic* ddic) {
   return;
 }
 
-Dialog* ddic_copy(DialogDic* ddic) {
+DialogDic* ddic_copy(DialogDic* ddic) {
   if(!ddic) return NULL;
   DialogDic* dd=(DialogDic*)calloc(1, sizeof(DialogDic));
   if(!dd) return NULL;
@@ -70,6 +70,17 @@ Dialog* ddic_lookup(DialogDic* ddic, int did) {
   if(!ddic) return NULL;
   for(int i=0;i<ddic->size;i++) {
     if(diag_getId(ddic->d[i])==did) return diag_copy(ddic->d[i]);
+  }
+  return NULL;
+}
+
+DialogDic* ddic_resetDialog(DialogDic* dd, int did) {
+  if(!dd) return NULL;
+  for(int i=0;i<dd->size;i++) {
+    if(diag_getId(dd->d[i])==did) {
+      if(!diag_setLine(dd->d[i], 0)) return NULL;
+      return dd;
+    }
   }
   return NULL;
 }
