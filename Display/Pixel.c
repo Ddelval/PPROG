@@ -233,3 +233,7 @@ Pixel* pix_darken(Pixel* p,double light){
     p->b=min(p->b*light,255);
     return p;
 }
+Pixel* pix_average(Pixel* p1,Pixel*p2){
+    if(!p1||!p2) return NULL;
+    return pix_ini((p1->r+p2->r)/2,(p1->g+p2->g)/2,(p1->b+p2->b)/2,(p1->a+p2->a)/2);
+}

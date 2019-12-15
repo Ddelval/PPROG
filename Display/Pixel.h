@@ -114,4 +114,5 @@ Pixel* pix_load(FILE* f);
 Pixel* pix_newTransparent();
 bool pix_halfTransparent(const Pixel* a);
 Pixel* pix_darken(Pixel* p,double light);
+Pixel* pix_average(Pixel* p1,Pixel*p2);
 #endif /* Pixel_h */

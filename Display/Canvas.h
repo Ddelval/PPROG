@@ -252,4 +252,5 @@ Canvas* canv_darken(Canvas* c,double light);
 void canv_printSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);
 void canv_printAllNonTransparent(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);
 Canvas* canv_filter(Canvas* c,Pixel* p);
+Canvas* canv_circle(Pixel* p,int rad);
 #endif /* Canvas_h */

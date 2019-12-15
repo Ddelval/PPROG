@@ -218,6 +218,13 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     if(!dis||!inv)return NULL;
 
     int gap_w=1;
+    int circ_rad=10;
+    Pixel* nsel=pix_ini(255,255,255,255);
+    Canvas* dot=canv_circle(nsel,circ_rad);
+    Pixel* sel=pix_ini(150,150,255,255);
+    Canvas* dotsel=canv_circle(sel,circ_rad);
+
+    pix_free(nsel); pix_free(sel);
     
     int size=0;
     Recipe** rec=rdic_getAllDoable(inv,&size);
@@ -236,24 +243,40 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
         w=rec_getMinWidth(rec[i],ob_wid,hei);
         wid=max(wid,w);
     }
+
+    Canvas* fdot =canv_AdjustCrop(dot,canv_getWidth(dot),hei);
+    Canvas* fsdot=canv_AdjustCrop(dotsel,canv_getWidth(dotsel),hei);
+
+
     Canvas* gap=canv_backGrnd(0,0,0,0,wid,gap_w);
     int margin=10;
     int box_w=20;
-    Canvas* c=rec_render(rec[0],ob_wid,wid,hei,dis->width-2*margin-box_w);
+    Canvas* cc=rec_render(rec[0],ob_wid,wid,hei,dis->width-2*margin-box_w);
+    Canvas* c=canv_appendH(fdot,cc);
     for(int i=1;i<size;++i){
         canv_appendVI(c,gap);
-        Canvas* c2=rec=rec_render(rec[i],ob_wid,wid,hei,dis->width-2*margin-box_w);
-        canv_appendVI(c,c2);
+        Canvas* c2=rec_render(rec[i],ob_wid,wid,hei,dis->width-2*margin-box_w);
+        Canvas* c3=canv_appendH(fdot,c2);
+        canv_appendVI(c,c3);
         canv_free(c2);
+        canv_free(c3);
     }
     canv_free(gap);
 
+    Wlabel* wl=wl_ini("Recipies",fcat_lookup(M8),0);
+    Canvas* wl_r=wl_render(wl,dis->width);
+    int marg=15;
+    Canvas* wl_rr=canv_AdjustCrop(wl_r,dis->width,canv_getHeight(wl_r)+marg);
+    Canvas* c_r=canv_AdjustCrop(c,dis->width,canv_getHeight(c));
+    canv_appendVI(wl_rr,c_r);
     Canvas* back=disp_Render(dis);
     Canvas* back2=canv_blur(back,BLUR_RAD);
     canv_free(back);
     canv_darken(back2,DARKEN);
-    canv_addOverlay(back2,c,10,10);
+    canv_addOverlay(back2,wl_rr,0,0);
     canv_print(stdout,back2,0,0);
+
+
     dis->pop_craf=true;
 }
 Display* disp_remInventory(Display* d){

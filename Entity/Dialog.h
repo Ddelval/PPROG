@@ -3,8 +3,7 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include "Entity.h"
-
+#include "Utility.h"
 
 typedef struct _Dialog Dialog;
 

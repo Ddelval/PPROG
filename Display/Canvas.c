@@ -985,3 +985,26 @@ Canvas* canv_filter(Canvas* c,Pixel* p){
     }
     return cc;
 }
+Canvas* canv_circle(Pixel* p,int rad){
+    if(!p)return NULL;
+    rad-=rad%2;
+    Canvas* res=canv_ini(2*rad,2*rad);
+    for(int i=0;i<2*rad;++i){
+        for(int j=0;j<2*rad;++j){
+            int cnt=0;
+            for(int i2=i;i2<i+2;++i2)for(int j2=j;j2<j+2;++j2){
+                cnt+=(i2-rad)*(i2-rad)+(j2-rad)*(j2-rad)<rad*rad;
+            }
+            res->data[i][j]=pix_copy(p);
+            pix_setA(res->data[i][j],(int)((cnt/4.0)*255));
+        }
+    }
+    Canvas* r2=canv_ini(2*rad,rad);
+    for(int i=0;i<rad;++i){
+        for(int j=0;j<2*rad;++j){
+            r2->data[i][j]=pix_average(res->data[2*i][j],res->data[2*i+1][j]);
+        }
+    }
+    canv_free(res);
+    return r2;
+}

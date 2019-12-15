@@ -18,6 +18,7 @@
 #include "Inventory.h"
 #include "Window.h"
 #include "RecipeDic.h"
+#include "FontCatalog.h"
 
 typedef struct _Display Display;
 /*-----------------------------------------------------------------*/

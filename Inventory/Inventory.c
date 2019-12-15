@@ -77,7 +77,8 @@ Inventory* inv_copy(Inventory* inv) {
                 inv_free(in);
                 return NULL;
             }   
-  }
+        }
+    }
   return in;
 }
 
