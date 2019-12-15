@@ -9,6 +9,7 @@
 
 #include "Utility.h"
 #include "Object.h"
+#include "ObjectDic.h"
 #include "Canvas.h"
 #include "Font.h"
 
@@ -25,4 +26,5 @@ Inventory* inv_decrease(Inventory* inv, Object* ob, int quantity);
 Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Font* ftext, Font* fnum);
 int inv_getQuantity(Inventory* inv, int obj_id);
 Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity);
+Inventory* inv_load(FILE* f);
 #endif

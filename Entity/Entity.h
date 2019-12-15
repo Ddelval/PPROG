@@ -22,9 +22,19 @@ typedef enum {PLAYER = 1, ENEMY = 2, ALLY = 3} ent_type;
    that field to NULL*/
 Entity *entity_ini (char *name, ent_type t, int i, int j);
 
-/* Reads from the file passed as argument the  name, entity type (player (1), enemy(2) or ally (3)),
-   x Coodinate, y coordinate and sprite in this order and initializes an entity with
-   those fields. */
+/**
+ * @brief Reads the entity from a file
+ * Format:
+ * id type spr_id
+ * name
+ * ipos jpos
+ * attributes
+ * inventory
+ * 
+ * @param f File where the entity is
+ * @param r Display to which it will be added
+ * @return Entity* 
+ */
 Entity *entity_load(FILE* f, Display *r);
 
 void entity_free(Entity *p);

@@ -225,3 +225,29 @@ int inv_getQuantity(Inventory* inv, int obj_id){
     }
     return 0;
 }
+/**
+ * @brief Reads an inventory
+ * Format:
+ * number_of_elements
+ * id quantity
+ * id quantity
+ * ...
+ * 
+ * @param f 
+ * @return Inventory* 
+ */
+Inventory* inv_load(FILE* f){
+    if(!f)return NULL;
+    Inventory* inv=inv_ini();
+    if(!inv)return NULL;
+    int nelem=0;
+    int a,b;
+    fscanf(f,"%d",&nelem);
+    for(int i=0;i<nelem;++i){
+        fscanf(f,"%d %d",&a,&b);
+        Object* ob=odic_lookup(a);
+        inv_insertSeveral(inv,ob,b);
+        obj_free(ob);
+    }
+    return inv;
+}

@@ -615,3 +615,14 @@ Room* room_setHW(Room* r, int he,int wi){
     r->c_r=min(r->wid,r->c_l+wi);
     return r;
 }
+
+char* room_getName(Room* r){
+    if(!r)return NULL;
+    char * c=calloc(strlen(r->name)+1,sizeof(char));
+    if(!c)return NULL;
+    strcpy(c,r->name);
+    return c;
+}
+int room_getId(Room* r){
+    return r? r->id:-1;
+}

@@ -106,4 +106,6 @@ Room* room_removeB(Room* r, int index);
 Room* room_printModBackg(Room* r, int disp_i, int disp_j);
 Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int room_j);
 Room* room_setHW(Room* r, int he,int wi);
+char* room_getName(Room* r);
+int room_getId(Room* r);
 #endif /* Room_h */

@@ -2,7 +2,7 @@
 
 #include "Entity.h"
 
-#define MAX_NAME_LENGTH 30
+#define MAX_NAME_LENGTH 50
 #define HORIZONTAL_STEP 30
 #define VERTICAL_STEP 10
 #define SPRITES 4
@@ -20,6 +20,7 @@
    inv: A pointer to the entity's inventory.
  */
 struct _Entity {
+  int id;
   char name[MAX_NAME_LENGTH];
   Sprite* s;
   ent_type t;
@@ -59,47 +60,30 @@ Entity *entity_ini (char *name, ent_type t, int i, int j){
 
 Entity *entity_load(FILE* f, Display *d){
   Entity *e = NULL;
-  ent_type t = 0;
-  char name[MAX_NAME_LENGTH];
-  int x = 0, y = 0, aux = 0;
+  
   e = entity_ini(NULL, 0, 0, 0);
   if(!e) return NULL;
+  attb_free(e->attr);
+  inv_free(e->inv);
 
-  fscanf(f, "%s %d %d %d", name, &aux, &x, &y);
-  if(entity_setEntType(e, t)) {
-    entity_free(e);
-    return NULL;
-  }
-  int sid;
-  fscanf(f,"%d",&sid);
-  if(entity_setSprite(e,sid)==NULL){
-    entity_free(e);
-    return NULL;
-  }
+  int spindex;
+  fscanf(f,"%d %d %d\n",&(e->id),&(e->t),&spindex);
+  fgets(e->name,MAX_NAME_LENGTH,f);
+  fscanf(f,"%d %d",&(e->ipos),&(e->jpos));
+  e->attr= attb_load(f);
+  e->inv=  inv_load(f);
 
-  if(entity_addtoDisplay(e,d)==NULL){
+  if(entity_setSprite(e,spindex)==NULL){
     entity_free(e);
     return NULL;
   }
-  if(entity_setName(e, name) == NULL) {
-    entity_free(e);
-    return NULL;
+  if(d){
+    if(entity_addtoDisplay(e,d)==NULL){
+        entity_free(e);
+        return NULL;
+      }
   }
-
-  if(entity_setEntType(e,  t) == NULL) {
-    entity_free(e);
-    return NULL;
-  }
-
-  if(entity_setCoordI(e,  x) == NULL) {
-    entity_free(e);
-    return NULL;
-  }
-
-  if(entity_setCoordJ(e,  y) == NULL) {
-    entity_free(e);
-    return NULL;
-  }
+  
 
   return e;
 }
@@ -109,36 +93,19 @@ Entity* entity_copy(Entity* e) {
   Entity* r = entity_ini(e->name, e->t, e->ipos, e->jpos);
   if(!r) return NULL;
 
-  Sprite* s=spr_copy(e->s);
-  if(!s) {
+  r->s=spr_copy(e->s);
+  if(!r->s) {
     entity_free(r);
     return NULL;
   }
-  if(!entity_setSprite(r,s)) {
-    spr_free(s);
-    entity_free(r);
-    return NULL;
-  }
-
-  Attributes* a=attb_copy(e->attr);
-  if(!a) {
-    entity_free(r);
-    return NULL;
-  }
-  if(!entity_setAttributes(r,a)) {
-    attb_free(a);
+  r->attr=attb_copy(e->attr);
+  if(!r->attr) {
     entity_free(r);
     return NULL;
   }
 
-  Inventory* i=inv_copy(e->inv);
-  if(!i) {
-    entity_free(r);
-    return NULL;
-  }
-  r->inv=i;
-
-  if(!entity_addtoDisplay(r,e->dis)) {
+  r->inv=inv_copy(e->inv);
+  if(!r->inv) {
     entity_free(r);
     return NULL;
   }
@@ -285,7 +252,6 @@ Entity* entity_addtoDisplay(Entity* e, Display* dis){
   Room * r=disp_getrefRoom(dis);
   aux = room_addOSprite(r, e->s);
   if(aux < 0) {
-    entity_free(e);
     return NULL;
   }
   e->room_index = aux;
@@ -305,10 +271,11 @@ const Inventory* entity_getInvRef(Entity*en){
 }
 
 Entity* entity_setDialogs(Entity* e, DialogDic* ddic) {
-  if(!e||!ddic) return NULL;
+  if(!e) return NULL;
   DialogDic* d=ddic_copy(ddic);
-  if(!d) return NULL;
-
   e->ddic=d;
   return e;
+}
+int entity_getId(Entity* e){
+  return e? e->id: -1;
 }

@@ -75,7 +75,7 @@ int main(){
     inv_insert(inv,o);
     o =odic_lookup(4);
     inv_insert(inv,o);
-    disp_CraftingWindow(dis,inv);
+    //disp_CraftingWindow(dis,inv);
     while(1){
         char c=getch1();
         if(c=='W'){

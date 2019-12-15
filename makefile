@@ -1,8 +1,8 @@
-CC = gcc -g
-EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest CraftTest
-OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o FontCatalog.o Wlabel.o Welem.o Room.o Inventory.o  Wlabic.o Window.o Display.o Object.o Recipe.o RecipeDic.o ObjectDic.o TrigReact.o DialogDic.o Dialog.o
+CC = gcc -g -fsanitize=address
+EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest CraftTest WorldTest
+OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o FontCatalog.o Wlabel.o Welem.o Room.o Inventory.o  Wlabic.o Window.o Display.o Object.o Recipe.o RecipeDic.o ObjectDic.o TrigReact.o DialogDic.o Dialog.o EntityDic.o World.o
 ENGINE =
-LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/
+LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/ -I World/
 MIDDLE = @printf "\033[1m\033[1;34m $@ \033[0;30m\033[0m\t"
 all: $(EXE)
 
@@ -34,6 +34,7 @@ TestBug.o: Testing/TestBug.c Utility.o
 	$(CC) -c $< $(LIB)
 
 TestLabel: %: %.o $(OBJECTS)
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
 TestLabel.o: Testing/TestLabel.c Utility.o
@@ -41,6 +42,7 @@ TestLabel.o: Testing/TestLabel.c Utility.o
 	$(CC) -c $< $(LIB)
 
 TestDisplay: %: %.o $(OBJECTS)
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
 TestDisplay.o: Testing/TestDisplay.c Utility.o
@@ -96,6 +98,7 @@ WTest.o: Testing/WTest.c Utility.o
 	$(CC) -c $< $(LIB)
 
 WTestOld: %: %.o $(OBJECTS)
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
 WTestOld.o: Testing/WTestOld.c Utility.o
@@ -103,6 +106,7 @@ WTestOld.o: Testing/WTestOld.c Utility.o
 	$(CC) -c $< $(LIB)
 
 InvTest: %: %.o $(OBJECTS)
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS)  Utility.o -lm
 
 InvTest.o: Testing/InvTest.c Utility.o
@@ -110,9 +114,18 @@ InvTest.o: Testing/InvTest.c Utility.o
 	$(CC) -c $< $(LIB)
 
 CraftTest: %: %.o $(OBJECTS)
+	$(MIDDLE)
 	$(CC) -o $@ $@.o $(OBJECTS)  Utility.o -lm
 
 CraftTest.o: Testing/CraftTest.c Utility.o
+	$(MIDDLE)
+	$(CC) -c $< $(LIB)
+
+WorldTest: %: %.o $(OBJECTS)
+	$(MIDDLE)
+	$(CC) -o $@ $@.o $(OBJECTS)  Utility.o -lm
+
+WorldTest.o: Testing/WorldTest.c Utility.o
 	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -222,6 +235,14 @@ Dialog.o:  Entity/Dialog.c Entity/Dialog.h
 	$(MIDDLE)
 	$(CC) -c $< $(LIB)
 
+EntityDic.o:  Entity/EntityDic.c Entity/EntityDic.h
+	$(MIDDLE)
+	$(CC) -c $< $(LIB)
+
 DialogDic.o:  Entity/DialogDic.c Entity/DialogDic.h
+	$(MIDDLE)
+	$(CC) -c $< $(LIB)
+
+World.o:  World/World.c World/World.h
 	$(MIDDLE)
 	$(CC) -c $< $(LIB)
