@@ -89,7 +89,7 @@ Display* _wo_gameDisplay(Room* r){
         if(!wec[i])goto FAIL;
     }
     
-    cont=win_ini("Controls",wel,act_size,w-vdiv-1,h/2-20,0,0,fcat_lookup(M8));
+    cont=win_ini("Controls",wec,act_size,w-vdiv-1,h/2-20,0,0,fcat_lookup(M8));
     if(!cont)goto FAIL;
     disp_AddLWindow(dis,act);
     disp_AddLWindow(dis,cont);
