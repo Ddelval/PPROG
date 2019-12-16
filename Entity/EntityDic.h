@@ -11,8 +11,8 @@
 /// to read the data from the file every time instead of
 /// storing it on memory
 
-#ifndef SpriteDic_h
-#define SpriteDic_h
+#ifndef EntityDic_h
+#define EntityDic_h
 
 #include "Utility.h"
 #include "Entity.h"
@@ -23,7 +23,7 @@
 void edic_free();
 
 /*-----------------------------------------------------------------*/
-/// Fetch the sprite with this id
+/// Fetch the entity with this id
 Entity* edic_lookup(int id,Display* dis);
 
-#endif /* SpriteDic_h */
+#endif /* EntityDic_h */

@@ -61,6 +61,7 @@ Entity* edic_lookup(int id, Display* dis){
     for(int i=0;i<edic_data->size;++i){
         if(entity_getId(edic_data->dat[i])==id){
             Entity* e=entity_copy(edic_data->dat[i]);
+            fprintf(stderr,"%ld %ld\n",e,edic_data->dat[i]);
             entity_addtoDisplay(e,dis);
             return e;
         }

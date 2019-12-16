@@ -56,6 +56,7 @@ void spr_free(Sprite* sp){
         }
         free(sp->collision);
     }
+    free(sp->tr);
     canv_free(sp->canvas);
     free(sp);
 }

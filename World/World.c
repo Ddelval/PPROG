@@ -89,7 +89,7 @@ Display* _wo_gameDisplay(Room* r){
         if(!wec[i])goto FAIL;
     }
     
-    cont=win_ini("Controls",wec,act_size,w-vdiv-1,h/2-20,0,0,fcat_lookup(M8));
+    cont=win_ini("Controls",wec,cont_size,w-vdiv-1,h/2-20,0,0,fcat_lookup(M8));
     if(!cont)goto FAIL;
     disp_AddLWindow(dis,act);
     disp_AddLWindow(dis,cont);
@@ -118,6 +118,9 @@ void wo_free(World *w){
     if(!w)return;
     for(int i=0;i<w->allSiz;++i)entity_free(w->allies[i]);
     for(int i=0;i<w->enSiz;++i)entity_free(w->enemies[i]);
+    free(w->allies);
+    free(w->enemies);
+    free(w->name);
     entity_free(w->player);
     disp_free(w->dis);
     free(w);
@@ -181,7 +184,9 @@ World* wo_load(FILE* f){
 }
 World* wo_launch(World* w){
     if(!w)return NULL;
-    canv_print(stdout,disp_Render(w->dis),0,0);
+    Canvas* d=disp_Render(w->dis);
+    canv_print(stdout,d,0,0);
+    canv_free(d);
     while(1){
         char c=getch1();
         if(c=='W'){
@@ -204,11 +209,14 @@ World* wo_launch(World* w){
             disp_incSelIndex(w->dis,0,1);
         }
         if(c=='J'){
-            disp_execute(w->dis,1,entity_getRoomIndex(w->player),w->player);
+            disp_execute(w->dis,0,entity_getRoomIndex(w->player),w->player);
         }
         if(c=='Q'){
             disp_remInventory(w->dis);
             disp_remDialog(w->dis);
+        }
+        if(c=='E'){
+            break;
         }
 
     }

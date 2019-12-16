@@ -424,6 +424,11 @@ Room* room_processTriggers(Room * r, Sprite * sp, int index){
             }
         }
     }
+    free(i1);
+    free(i2);
+    free(j1);
+    free(j2);
+    free(tr_id);
     return r;
 }
 Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){

@@ -57,8 +57,16 @@ Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* 
 }
 void disp_free(Display* dat){
     if(!dat)return;
-    free(dat->latWindow);
+    
     free(dat->title);
+    room_free(dat->room);
+    for(int i=0;i<dat->nLatWindow;++i){
+        fprintf(stderr,"ss:%d\n",i);
+        fflush(stderr);
+        win_free(dat->latWindow[i]);
+    }
+    win_free(dat->popup);
+    free(dat->latWindow);
     free(dat);
 }
 Display* disp_AddLWindow(Display*dis, Window* w){
@@ -328,6 +336,7 @@ Display* disp_execute(Display* dis, int index, int room_index, void* en){
         Trigger** dat =room_getTriggers(dis->room,t,room_index,&a);
         
         if(a)f(dat[0],en,dis);
+        free(dat);
     }
     else{
         f(NULL,en,dis);

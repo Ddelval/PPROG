@@ -238,13 +238,13 @@ Entity* entity_moveRight(Entity* p){
 void entity_free(Entity *p){
   if(!p) return;
   if(p->s) spr_free(p->s);
-  p->s = NULL;
+
   if (p->attr) attb_free(p->attr);
-  p->attr = NULL;
+
   if(p->inv) inv_free(p->inv);
-  p->inv = NULL;
+
   free(p);
-  p = NULL;
+
   return;
 }
 Entity* entity_addtoDisplay(Entity* e, Display* dis){
