@@ -264,7 +264,8 @@ int room_modPos(Room* r, int index, int i, int j){
     if(aux==-1)return -1;
     if(aux==1)return 5;
     spr_setOJ(r->overs[index], j);
-    fprintf(stderr,"%d\n",j);
+    fprintf(stderr,"%d, %d\n",i,j);
+    fflush(stderr);
     spr_setOI(r->overs[index], i);
     return retval;
 }
@@ -523,7 +524,7 @@ Room* room_removeB(Room* r, int index){
     for(int i=index;i<r->backpos-1;++i){
         r->backg[i]=r->backg[i+1];
     }
-    r->backg[r->backpos]=NULL;
+    r->backg[r->backpos-1]=NULL;
     r->backpos--;
     
     return r;

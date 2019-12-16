@@ -6,7 +6,7 @@
 
 #include "Inventory.h"
 #define INITIAL_SIZE 10
-#define INCREMENT 1.5
+#define INCREMENT 2
 /**
  * @brief Structure that holds all the items that an entity has.
  * The macro OBJ_TYPE_SIZE is the amount of different types of objects
@@ -64,9 +64,9 @@ Inventory* inv_copy(Inventory* inv) {
     memcpy(in,inv,sizeof(Inventory));
     for(int i=0;i<OBJ_TYPE_SIZE;i++) {
 
-        in->times[i]=(int*)    calloc(in->size[i], sizeof(int));
-        in->items[i]=(Object*) calloc(in->size[i], sizeof(Object*));
-        if(!in->times[i]||!in->alloc[i]) {
+        in->times[i]=(int*)    calloc(in->alloc[i], sizeof(int));
+        in->items[i]=(Object*) calloc(in->alloc[i], sizeof(Object*));
+        if(!in->times[i]||!in->items[i]) {
             inv_free(in);
             return NULL;
         }
@@ -97,7 +97,7 @@ Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity){
     if(inv->size[ob_ty]==inv->alloc[ob_ty]){
         int nsiz=inv->alloc[ob_ty]*INCREMENT;
         Object** tmp=realloc(inv->items[ob_ty],nsiz*sizeof(Object*));
-        int * itmp =realloc(inv->times,nsiz*sizeof(int));
+        int * itmp =realloc(inv->times[ob_ty],nsiz*sizeof(int));
         if(!tmp||!itmp){
             return NULL;
         }
@@ -126,7 +126,7 @@ Inventory* inv_insert(Inventory* inv, Object* ob){
     if(inv->size[ob_ty]==inv->alloc[ob_ty]){
         int nsiz=inv->alloc[ob_ty]*INCREMENT;
         Object** tmp=realloc(inv->items[ob_ty],nsiz*sizeof(Object*));
-        int * itmp =realloc(inv->times,nsiz*sizeof(int));
+        int * itmp =realloc(inv->times[ob_ty],nsiz*sizeof(int));
         if(!tmp||!itmp){
             return NULL;
         }
