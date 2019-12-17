@@ -148,6 +148,9 @@ Entity* entity_setEntType(Entity* p, ent_type t){
 
 Entity* entity_setCoordI(Entity* p, int i){
   if(!p || i < 0) return NULL;
+  if(p->dis){
+    
+  }
   p->ipos = i;
   return p;
 }

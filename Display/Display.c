@@ -6,6 +6,7 @@
 
 #include "Display.h"
 #define ARR_INC 3
+#define LINE_WIDTH 2
 #define TITLE_MULTILINE 10
 #define DARKEN 0.40
 #define BLUR_RAD 10
@@ -121,30 +122,39 @@ void disp_RemPopup(Display* dis){
 Canvas* disp_Render(Display* dis){
     Canvas* left=NULL;
     Canvas* res=NULL;
+    Canvas* t=NULL,*t2=NULL;
     Wlabel* l = wl_ini(dis->title, dis->titf, TITLE_MULTILINE);
     Canvas* right=wl_render(l, dis->width-dis->vdiv);
     dis->rendered=true;
     dis->tithei=canv_getHeight(right);
     wl_free(l);
+    Canvas* bar=canv_backGrnd(255,255,255,255,dis->width-dis->vdiv,LINE_WIDTH);
     for(int i=0;i<dis->nLatWindow;++i){
+        canv_appendVI(right,bar);
         Canvas* c=win_render(dis->latWindow[i]);
         if(!c||!canv_appendVI(right, c)){
             canv_free(c);
             goto CLEAN;
         }
     }
+    canv_appendVI(right,bar);
     room_setHW(dis->room,dis->height,dis->vdiv);
     //room_setBounds(dis->room,0,0,dis->height,dis->vdiv);
     left=room_getRender(dis->room);
     //left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
     if(!left)goto CLEAN;
     dis->topm=(canv_getHeight(left)-canv_getHeight(right))/2;
-    res =canv_appendHNL(left, right);
+    Canvas* vbar=canv_backGrnd(255,255,255,255,LINE_WIDTH*2,canv_getHeight(right));
+    t=canv_appendHNL(left,vbar);
+    t2=canv_appendHNL(right,vbar);
+    res =canv_appendHNL(t, t2);
 
 CLEAN:
     canv_free(left);
     canv_free(right);
-
+    canv_free(bar);
+    canv_free(t);
+    canv_free(t2);
     return res;
 }
 int disp_scroll(Display* dis,double i,double j){
@@ -157,11 +167,12 @@ Display* print_Window(Display*dis, int index){
     if(index<0 || index>dis->nLatWindow) return NULL;
     Canvas* c=win_render(dis->latWindow[index]);
     //int ipos=dis->tithei+dis->topm;
-    int ipos=dis->tithei;
+    int ipos=dis->tithei+LINE_WIDTH;
     for(int i=0;i<index;++i){
-      ipos+=win_getHeight(dis->latWindow[i]);
+        ipos+=LINE_WIDTH;
+        ipos+=win_getHeight(dis->latWindow[i]);
     }
-    canv_print(stdout,c,ipos,dis->vdiv+1);
+    canv_print(stdout,c,ipos,dis->vdiv+1+2*LINE_WIDTH);
     return dis;
 }
 
