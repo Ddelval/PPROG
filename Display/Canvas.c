@@ -276,7 +276,39 @@ Canvas* canv_appendVI(Canvas* north, const Canvas* south){
     canv_free(res);
     return north;
 }
+Canvas* canv_appendVIA(Canvas* north,const Canvas* south,CAlign al){
+    if(!north||!south)return NULL;
+    int wid=max(north->wid,south->wid);
 
+    Canvas* gn=canv_backGrnd(0,0,0,0,wid-north->wid,north->hei);
+    Canvas* gs=canv_backGrnd(0,0,0,0,wid-south->wid,south->hei);
+    Canvas* nn,*ns;
+    if(al==RIGHT){
+        nn=canv_appendH(gn,north);
+        ns=canv_appendH(gs,south);
+    }
+    if(al==LEFT){
+        nn=canv_appendH(north,gn);
+        ns=canv_appendH(south,gs);
+    }
+    Canvas* res=canv_appendV(nn,ns);
+    for(int i=0;i<north->hei;++i){
+        for(int j=0;j<north->wid;++j){
+            pix_free(north->data[i][j]);
+        }
+    }
+    free(north->data);
+    north->wid=res->wid;
+    north->hei=res->hei;
+    north->data=res->data;
+    res->data=NULL;
+    canv_free(gn);
+    canv_free(nn);
+    canv_free(gs);
+    canv_free(ns);
+    canv_free(res);
+    return north;
+}
 
 Canvas* canv_appendHI(Canvas* west, const Canvas* east){
     if(!east||!west){

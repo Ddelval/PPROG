@@ -226,7 +226,10 @@ Recipe* rec_make(Recipe* r, Inventory* inv){
         for(int i=0;i<r->size;++i){
                 Object* ob=odic_lookup(r->elements[i]);
                 inv_decrease(inv,ob,r->quantities[i]);
+                obj_free(ob);
         }
+        Object* ob=odic_lookup(r->result_id);
+        inv_insertSeveral(inv,ob,r->quant);
         return r;
 }
 int * rec_getQuantities(Recipe * r){

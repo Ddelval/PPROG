@@ -222,10 +222,10 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     dis->pop_inv=true;
     return dis;
 }
-Display* disp_CraftingWindow(Display* dis,Inventory* inv){
+Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv,int selindex,int size){
     if(!dis||!inv)return NULL;
 
-    int gap_w=1;
+    int gap_w=10;
     int circ_rad=10;
     Pixel* nsel=pix_ini(255,255,255,255);
     Canvas* dot=canv_circle(nsel,circ_rad);
@@ -233,10 +233,23 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     Canvas* dotsel=canv_circle(sel,circ_rad);
 
     pix_free(nsel); pix_free(sel);
-    
-    int size=0;
-    Recipe** rec=rdic_getAllDoable(inv,&size);
-    if(!size)return canv_backGrnd(0,0,0,0,0,0);
+    if(!size){
+        Wlabel* wl=wl_ini("Recipies",fcat_lookup(M8),0);
+        Canvas* wl_r=wl_render(wl,dis->width);
+        int marg=15;
+        Canvas* wl_rr=canv_AdjustCrop(wl_r,dis->width,canv_getHeight(wl_r)+marg);
+        Canvas* back=disp_Render(dis);
+        Canvas* back2=canv_blur(back,BLUR_RAD);
+        
+        canv_darken(back2,DARKEN);
+        canv_addOverlay(back2,wl_rr,0,0);
+
+        wl_free(wl);
+        canv_free(wl_r);
+        canv_free(wl_rr);
+        canv_free(back);
+        return back2;
+    }
     if(!rec)return NULL;
 
     int h,w,o_w;
@@ -252,24 +265,28 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
         wid=max(wid,w);
     }
 
-    Canvas* fdot =canv_AdjustCrop(dot,canv_getWidth(dot),hei);
-    Canvas* fsdot=canv_AdjustCrop(dotsel,canv_getWidth(dotsel),hei);
+    Canvas* fdot =canv_AdjustCrop(dot,canv_getWidth(dot)+10,hei);
+    Canvas* fsdot=canv_AdjustCrop(dotsel,canv_getWidth(dotsel)+10,hei);
 
 
     Canvas* gap=canv_backGrnd(0,0,0,0,wid,gap_w);
     int margin=10;
     int box_w=20;
     Canvas* cc=rec_render(rec[0],ob_wid,wid,hei,dis->width-2*margin-box_w);
-    Canvas* c=canv_appendH(fdot,cc);
+    Canvas* c;
+    if(selindex!=0)c=canv_appendH(fdot,cc);
+    else c=canv_appendH(fsdot,cc);
     for(int i=1;i<size;++i){
         canv_appendVI(c,gap);
         Canvas* c2=rec_render(rec[i],ob_wid,wid,hei,dis->width-2*margin-box_w);
-        Canvas* c3=canv_appendH(fdot,c2);
-        canv_appendVI(c,c3);
+        Canvas* c3;
+        if(selindex!=i)c3=canv_appendH(fdot,c2);
+        else c3=canv_appendH(fsdot,c2);
+        canv_appendVIA(c,c3,RIGHT);
         canv_free(c2);
         canv_free(c3);
     }
-    canv_free(gap);
+    
 
     Wlabel* wl=wl_ini("Recipies",fcat_lookup(M8),0);
     Canvas* wl_r=wl_render(wl,dis->width);
@@ -282,10 +299,52 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     canv_free(back);
     canv_darken(back2,DARKEN);
     canv_addOverlay(back2,wl_rr,0,0);
-    canv_print(stdout,back2,0,0);
-
-
+    wl_free(wl);
+    canv_free(c_r);
+    canv_free(c);
+    canv_free(gap);
+    canv_free(cc);
+    return back2;
+}
+Display* disp_CraftingWindow(Display* dis,Inventory* inv){
+    if(!dis||!inv)return NULL;
     dis->pop_craf=true;
+    int size=0;
+    Recipe** rec=rdic_getAllDoable(inv,&size);
+    Canvas* base=_disp_renderCraftingWindow(dis,rec,inv,0,size);
+    canv_print(stdout,base,0,0);
+    if(!base)return NULL;
+    int selindex=0;
+    while(1){
+        char c=getch1();
+        switch(c){
+            case 'W': case 'O':
+                selindex++;
+                break;
+            case 'S': case 'L':
+                selindex--;
+                break;
+            case 'J':
+                rec_make(rec[selindex],inv);
+                selindex=-10;
+                break;
+            case 'Q':
+                selindex=-10;
+                break;
+
+        }
+        if(selindex==-10)break;
+        else selindex=(selindex+size)%size;
+        Canvas* sec=_disp_renderCraftingWindow(dis,rec,inv,selindex,size);
+        canv_printDiff(stdout,sec,base,0,0);
+        canv_free(base);
+        base=sec;
+    }
+    dis->pop_craf=false;
+    Canvas* c=disp_Render(dis);
+    canv_print(stdout,c,0,0);
+    canv_free(c);
+    return dis;
 }
 Display* disp_remInventory(Display* d){
     if(!d)return NULL;

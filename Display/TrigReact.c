@@ -17,3 +17,8 @@ void trig_showInv(Trigger* t, void* e,void* d){
     const Inventory* in =entity_getInvRef(e);
     disp_InventoryWindow(d,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6));
 }
+void trig_showRec(Trigger* t,void *e, void* d){
+    if(!e||!d)return;
+    const Inventory* in=entity_getInvRef(e);
+    disp_CraftingWindow(d,in);
+}

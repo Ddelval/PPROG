@@ -73,6 +73,7 @@ Display* _wo_gameDisplay(Room* r){
     if(!act)goto FAIL;
     win_addAction(act,trig_give,0,OBTAIN);
     win_addAction(act,trig_showInv,1,SHOW);
+    win_addAction(act,trig_showRec,2,SHOW);
     
     /** Controls **/
     int cont_size=3;

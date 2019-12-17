@@ -211,7 +211,13 @@ Inventory *entity_getInventory(Entity* p){
   if(!p || !(p->inv)) return NULL;
   return p->inv;
 }
-
+Entity* entity_setInventory(Entity* e, Inventory* inv){
+  if(!e||!inv)return NULL;
+  if(e->inv)inv_free(e->inv);
+  e->inv=inv_copy(inv);
+  if(!e->inv)return NULL;
+  return e;
+}
 
 
 Entity* entity_moveUp(Entity* p){

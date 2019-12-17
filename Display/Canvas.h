@@ -19,7 +19,7 @@
 #define Canvas_h
 #include "Pixel.h"
 typedef struct _Canvas Canvas;
-
+typedef enum {LEFT,RIGHT} CAlign;
 /*-----------------------------------------------------------------*/
 /// Free the allocated memory
 void canv_free(Canvas* c);
@@ -253,4 +253,5 @@ void canv_printSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj)
 void canv_printAllNonTransparent(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);
 Canvas* canv_filter(Canvas* c,Pixel* p);
 Canvas* canv_circle(Pixel* p,int rad);
+Canvas* canv_appendVIA(Canvas* north,const Canvas* south,CAlign al);
 #endif /* Canvas_h */
