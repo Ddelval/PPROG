@@ -83,7 +83,7 @@ Entity* entity_setDialogs(Entity* e, DialogDic* ddic);
 /*
     Gets the next line in the current dialog.
 */
-const char* entity_getLine(Entity* e);
+char* entity_getLine(Entity* e);
 
 /*
     Resets the current dialog; sets it to the beginning.
@@ -99,4 +99,5 @@ int entity_getId(Entity* e);
 
 Entity* entity_setInventory(Entity* e, Inventory* inv);
 bool entity_getHasDialog(Entity *e);
+Entity* entity_processAlly(Entity* e);
 #endif

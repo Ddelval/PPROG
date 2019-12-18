@@ -57,13 +57,13 @@ TriggerDic* trdic_ini(){
 int trdic_insert(Trigger* t){
     if(trdic_data==NULL)trdic_data=trdic_ini();
     if(trdic_data==NULL)return 1;
+    trdic_data->inserted++;
     tr_setId(t,-trdic_data->inserted);
     Trigger ** aux=realloc(trdic_data->dat,(trdic_data->size+1)*sizeof(Trigger*));
     if(!aux)return 1;
     trdic_data->dat=aux;
     trdic_data->dat[trdic_data->size]=tr_copy(t);
     trdic_data->size++;
-    trdic_data->inserted++;
     return -trdic_data->inserted;
 }
 

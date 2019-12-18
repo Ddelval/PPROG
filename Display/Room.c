@@ -85,7 +85,10 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
            for(int j=0;j<wid;++j){
                r->trig[i][j]=calloc(MAX_TRIG,sizeof(trigger));
                if(!r->trig[i][j])ret_free(r);
-               for(int w=0;w<MAX_TRIG;++w)r->trig[i][j][w].code=-1;
+               for(int w=0;w<MAX_TRIG;++w){
+                   r->trig[i][j][w].code=-1;
+                   r->trig[i][j][w].spindex=-1;
+               }
            }
        }
     r->map=canv_backGrnd(pix_retR(backcol), pix_retG(backcol), pix_retB(backcol), pix_retA(backcol), wid, hei);
@@ -326,13 +329,18 @@ Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
     i2=min(r->ov[i].i+r->ov[i].h,r->c_b);
     j2=min(r->ov[i].j+r->ov[i].w,r->c_r);
     if(i1>=i2||j1>=j2)return r;
-    Canvas* c=canv_subCopy(r->map,i1,i2,j1,j2);
+    Canvas* cbck=canv_copy(r->map);
+    for(int i=0;i<r->overpos;++i){
+        if(i==index)continue;
+        canv_addOverlay(cbck,spr_getDispData(r->overs[i]),spr_getOI(r->overs[i]),spr_getOJ(r->overs[i]));
+    }
+    Canvas* c=canv_subCopy(cbck,i1,i2,j1,j2);
     canv_print(stdout,c,i1-r->c_t+disp_i, j1-r->c_l+disp_j+1);
     fflush(stdout);
     canv_free(c);
     
     Canvas* torender=canv_copy(spr_getDispData(r->overs[i]));
-    Canvas* bc=canv_subCopy(r->map, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+    Canvas* bc=canv_subCopy(cbck, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
     Canvas* b2=canv_subCopy(r->shadows, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
     canv_addOverlay(torender,b2,0,0);
     canv_printSolid(stdout,torender,bc,disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1);
@@ -345,6 +353,7 @@ Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
     canv_free(bc);
     canv_free(torender);
     canv_free(b2);
+    canv_free(cbck);
     
     return r;
 }
@@ -416,7 +425,7 @@ Room* room_processTriggers(Room * r, Sprite * sp, int index){
             for(int j=j0+j1[w];j<j0+j2[w];++j){
                 if(j<0||j>=r->wid)continue;
                 int l=0;
-                while(l<MAX_TRIG&&r->trig[i][j][l].code!=-1)l++;
+                while(l<MAX_TRIG&&r->trig[i][j][l].spindex!=-1)l++;
                 if(l!=MAX_TRIG){
                     r->trig[i][j][l].code=tr_id[w];
                     r->trig[i][j][l].spindex=index;
@@ -435,10 +444,10 @@ Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){
     if(!r||sp_index>=r->overpos)return NULL;
     trigger* dat=r->trig[spr_getOI(r->overs[sp_index])][spr_getOJ(r->overs[sp_index])];
     int cnt;
-    for(cnt=0;cnt<MAX_TRIG&&dat[cnt].code!=-1;++cnt);
+    for(cnt=0;cnt<MAX_TRIG&&dat[cnt].spindex!=-1;++cnt);
     Trigger** t=calloc(cnt+1,sizeof(Trigger*));
     int j=0;
-    for(int i=0;i<MAX_TRIG&&dat[i].code!=-1;++i){
+    for(int i=0;i<MAX_TRIG&&dat[i].spindex!=-1;++i){
         t[j]=trdic_lookup(dat[i].code);
         if(tr_getType(t[j])==tt){
             tr_setSpr(t[j],dat[i].spindex);
@@ -493,7 +502,10 @@ Room* room_updateData(Room*r){
         for(int j=0;j<r->wid;++j){
             r->trig[i][j]=calloc(MAX_TRIG,sizeof(trigger));
             if(!r->trig[i][j])ret_free(r);
-            for(int w=0;w<MAX_TRIG;++w)r->trig[i][j][w].code=-1;
+            for(int w=0;w<MAX_TRIG;++w){
+                   r->trig[i][j][w].code=-1;
+                   r->trig[i][j][w].spindex=-1;
+               }
         }
     }
     
@@ -623,8 +635,8 @@ Room* room_setHW(Room* r, int he,int wi){
 Room* room_processAlly(Room* r, void *e,Sprite* s,int ally_index, int rad){
     if(!r||!s)return NULL;
     int oi,oj;
-    oi=spr_getOI(s);
-    oj=spr_getOJ(s);
+    oi=spr_getOI(r->overs[ally_index]);
+    oj=spr_getOJ(r->overs[ally_index]);
     Trigger *t =tr_createTalk(e,ally_index);
     if(!t)return NULL;
     int tid=trdic_insert(t);
@@ -634,17 +646,17 @@ Room* room_processAlly(Room* r, void *e,Sprite* s,int ally_index, int rad){
 
     for(int i=oi-rad;i<oi+rad+spr_getHeight(s);++i){
         if(i<0||i>=r->hei)continue;
-        for(int j=oj-rad;j<j0+oj-rad*2+spr_getWidth(s);++j){
+        for(int j=oj-rad;j<oj+rad*2+spr_getWidth(s);++j){
             if(j<0||j>=r->wid)continue;
             int l=0;
-            while(l<MAX_TRIG&&r->trig[i][j][l].code!=-1)l++;
+            while(l<MAX_TRIG&&r->trig[i][j][l].spindex!=-1)l++;
             if(l!=MAX_TRIG){
                 r->trig[i][j][l].code=tid;
-                r->trig[i][j][l].spindex=index;
+                r->trig[i][j][l].spindex=ally_index;
             }
         }
     }
-    spr_processCollisions(s,r->colision,r->wid,r->hei);
+    spr_processCollisions(r->overs[ally_index],r->colision,r->wid,r->hei);
     return r;
 }
 char* room_getName(Room* r){

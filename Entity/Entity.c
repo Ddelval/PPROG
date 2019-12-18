@@ -298,11 +298,11 @@ Entity* entity_setDialogs(Entity* e, DialogDic* ddic) {
   return e;
 }
 
-const char* entity_getLine(Entity* e) {
+char* entity_getLine(Entity* e) {
   if(!e||!e->ddic) return NULL;
   Dialog* dd=ddic_lookup(e->ddic, e->dialogid);
   if(!dd) return NULL;
-  const char* c=diag_getNext(dd);
+  char* c=diag_getNext(dd);
   diag_free(dd);
   return c;
 }

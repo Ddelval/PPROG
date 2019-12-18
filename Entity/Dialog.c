@@ -50,10 +50,12 @@ Dialog* diag_copy(Dialog* diag) {
   return d;
 }
 
-const char* diag_getNext(Dialog* diag) {
+char* diag_getNext(Dialog* diag) {
   if(!diag) return NULL;
+
+  char* c=strdup(diag->lines[diag->linepos]);
   diag->linepos++;
-  return diag->lines[diag->linepos];
+  return c;
 }
 
 int diag_getId(Dialog* diag) {

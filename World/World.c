@@ -60,7 +60,7 @@ Display* _wo_gameDisplay(Room* r){
     ch[0]="Collect";
     ch[1]="Inventory";
     ch[2]="Craft";
-    ch[3]="Enter";
+    ch[3]="Talk";
     wel=calloc(act_size,sizeof(Welem*));
     if(!wel)goto FAIL;
 
@@ -74,6 +74,7 @@ Display* _wo_gameDisplay(Room* r){
     win_addAction(act,trig_give,0,OBTAIN);
     win_addAction(act,trig_showInv,1,SHOW);
     win_addAction(act,trig_showRec,2,SHOW);
+    win_addAction(act,trig_talk,3,TALK);
     
     /** Controls **/
     int cont_size=3;
@@ -174,7 +175,7 @@ World* wo_load(FILE* f){
     w->allies=calloc(w->allSiz,sizeof(Entity*));
     for(int i=0;i<w->allSiz;++i){
         w->allies[i]=_wo_eload(f,w);
-        
+        entity_processAlly(w->allies[i]);
 
     }
     fscanf(f,"%d",&(w->enSiz));

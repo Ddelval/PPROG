@@ -24,5 +24,7 @@ void trig_showRec(Trigger* t,void *e, void* d){
 }
 void trig_talk(Trigger* t,void* e, void* d){
     if(!t||!e||!d)return;
-    char* c = entity_getLine()
+    char* c = entity_getLine(tr_getEntityRef(t));
+    disp_DiaglogWindow(d,c,fcat_lookup(M4));
+    free(c);
 }

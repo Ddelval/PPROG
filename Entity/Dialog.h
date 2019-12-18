@@ -25,7 +25,7 @@ Dialog* diag_copy(Dialog* diag);
 /*
     Gets the next line in the dialog, incrementing the line position.
 */
-const char* diag_getNext(Dialog* diag);
+char* diag_getNext(Dialog* diag);
 
 /*
     Returns the ID of the given Dialog.

@@ -55,7 +55,7 @@ EntityDic* edic_ini(){
             edic_free();
             return NULL;
         }
-        sprintf(c,"dialog-%3d.txt",entity_getId(s->dat[i]));
+        sprintf(c,"Dictionaries/dialog-%03d.txt",entity_getId(s->dat[i]));
         FILE * g=fopen(c,"r");
         free(c);
         if(!g){

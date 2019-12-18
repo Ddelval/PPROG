@@ -45,7 +45,7 @@ Trigger * tr_load(FILE* f){
     fscanf(f,"%d %d\n",&t->trig_id,&t->type);
     fgets(t->name,MAX_NAME,f);
     if(t->type==OBTAIN){
-        fscanf(f,"%d %d %d %d %d", &t->obj_id, &t->quantity,&t->spr_remove); 
+        fscanf(f,"%d %d %d", &t->obj_id, &t->quantity,&t->spr_remove); 
     }
     if(t->type==ENTER){
         fscanf(f,"%d",&t->room_id);
@@ -85,7 +85,7 @@ bool tr_needsTrigger(trig_type t){
     return true;
 }
 void tr_setId(Trigger * t, int id){
-    if(!t)return NULL;
+    if(!t)return;
     t->trig_id=id;
 }
 Trigger* tr_createTalk(void* e,int ally_id){
