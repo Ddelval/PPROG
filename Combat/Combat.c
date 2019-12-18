@@ -115,7 +115,7 @@ int combat_exe(Combat *c) {
         i++;
     }
 
-    combat_destroy(c);
+    co(c);
     //decir qn ha muerto y liberar la memoria de la strutura combat
     return 0;
 }
@@ -210,7 +210,7 @@ int movement_exe(Combat * c, int action, int ent) {
     return 0;
 }
 
-void combat_destroy(Combat* c) {
+void co(Combat* c) {
   if(!c) return;
   attb_free(c->stats[0]);
   attb_free(c->stats[1]);
