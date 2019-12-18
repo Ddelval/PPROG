@@ -1,0 +1,25 @@
+1
+Corte
+Corta Cosas
+3
+0 0 0 0 0
+0 30 0 0 0
+2
+Corte
+Corta Cosas
+3
+0 0 0 0 0
+0 30 0 0 0
+3
+Corte
+Corta Cosas
+3
+0 0 0 0 0
+0 30 0 0 0
+4
+Mejora
+Mejoria
+3
+0 10 10 0 0
+0 0 0 0 0
+

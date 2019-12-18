@@ -27,4 +27,6 @@ Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Fon
 int inv_getQuantity(Inventory* inv, int obj_id);
 Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity);
 Inventory* inv_load(FILE* f);
+void inv_getSelected (Inventory * inv, Object * selected);
+
 #endif

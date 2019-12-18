@@ -58,7 +58,7 @@ int combat_exe(Combat* c);
 int movement_exe(Combat* c, int action, int ent);
 
 /*This funciton frees everything related to struct combat*/
-void combat_destroy(Combat* c);
+void combat_free(Combat* c);
 
 
 //OJO HACE FALTA HACER FUNCIONES COPY COMENTAR EN CLASE

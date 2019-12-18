@@ -55,4 +55,6 @@ Attributes * skill_getAtbself(Skill *s);
 
 Attributes * skill_getAtbatk(Skill *s);
 
+Skill * skill_readFromFile(char *file, int id);
+
 #endif /* SKILL_H */

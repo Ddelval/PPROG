@@ -39,8 +39,8 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
   c->stunplayer = false;
   c->stunenemy = false;
   for(int i=0; i<4; i++){
-    c->moveset[0][i]= skill_readFromFile("skill.txt",i+1);
-    c->moveset[1][i]= skill_readFromFile("skill.txt",i+1);
+    c->moveset[0][i]= skill_readFromFile("Dictionaries/skill.txt",i+1);
+    c->moveset[1][i]= skill_readFromFile("Dictionaries/skill.txt",i+1);
   }
   return c;
 }
@@ -92,7 +92,7 @@ int combat_exe(Combat *c) {
         if ((i + aux) % 2 == 0) {
             if (c->stunplayer == false) {
                 fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
-                fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", skill_getName(c->moveset[0][0]), skill_getName(c->moveset[0][1]), skill_getName(c->moveset[0][2]), skill_getName(c->moveset[0][03]));
+                fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", skill_getName(c->moveset[0][0]), skill_getName(c->moveset[0][1]), skill_getName(c->moveset[0][2]), skill_getName(c->moveset[0][3]));
                 move = player_choice();
                 movement_exe(c, move, 0);
             }

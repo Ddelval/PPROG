@@ -76,7 +76,7 @@ Inventory* inv_copy(Inventory* inv) {
             if(!in->items[i]){
                 inv_free(in);
                 return NULL;
-            }   
+            }
         }
     }
   return in;
@@ -233,9 +233,9 @@ int inv_getQuantity(Inventory* inv, int obj_id){
  * id quantity
  * id quantity
  * ...
- * 
- * @param f 
- * @return Inventory* 
+ *
+ * @param f
+ * @return Inventory*
  */
 Inventory* inv_load(FILE* f){
     if(!f)return NULL;
@@ -251,4 +251,10 @@ Inventory* inv_load(FILE* f){
         obj_free(ob);
     }
     return inv;
+}
+
+void inv_getSelected (Inventory * inv, Object * selected){
+  if(!inv) return;
+  selected = inv->selected;
+  return;
 }
