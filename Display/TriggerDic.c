@@ -9,6 +9,7 @@
 typedef struct{
     Trigger** dat;
     int size;
+    int inserted;
 } TriggerDic;
 
 char trdic_c[]= "Dictionaries/trig.txt";
@@ -53,7 +54,18 @@ TriggerDic* trdic_ini(){
     //qsort(s->dat,siz,sizeof(Trigger*),cmpTrigger);
     return s;
 }
-
+int trdic_insert(Trigger* t){
+    if(trdic_data==NULL)trdic_data=trdic_ini();
+    if(trdic_data==NULL)return 1;
+    tr_setId(t,-trdic_data->inserted);
+    Trigger ** aux=realloc(trdic_data->dat,(trdic_data->size+1)*sizeof(Trigger*));
+    if(!aux)return 1;
+    trdic_data->dat=aux;
+    trdic_data->dat[trdic_data->size]=tr_copy(t);
+    trdic_data->size++;
+    trdic_data->inserted++;
+    return -trdic_data->inserted;
+}
 
 Trigger* trdic_lookup(int id){
     if(trdic_data==NULL){

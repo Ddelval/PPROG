@@ -27,5 +27,6 @@ bool tr_getSpr_remove(const Trigger* tr);
 int tr_getQuantity(const Trigger* tr);
 
 bool tr_needsTrigger(trig_type t);
-int tr_getChance(const Trigger* tr);
+void tr_setId(Trigger * t, int id);
+Trigger* tr_createTalk(void* e,int ally_id);
 #endif

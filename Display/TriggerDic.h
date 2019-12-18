@@ -6,4 +6,5 @@
 
 void trdic_free();
 Trigger* trdic_lookup(int id);
+int trdic_insert(Trigger* t);
 #endif

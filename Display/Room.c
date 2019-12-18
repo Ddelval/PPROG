@@ -313,40 +313,39 @@ Room* room_setBounds(Room*ro, int t, int l, int b, int r){
     return ro;
 }
 
-Room* room_printMod(Room* r,int disp_i, int disp_j){
+Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
     int wid=r->c_r-r->c_l;
     int hei=r->c_b-r->c_t;
     char * to_print=calloc(2*wid*hei, sizeof(char));
     int ipos=0;
-    for(int i=0;i<r->overpos;++i){
-        int i1,i2,j1,j2;
-        i1=max(r->ov[i].i,r->c_t);
-        j1=max(r->ov[i].j,r->c_l);
+    int i=index;
+    int i1,i2,j1,j2;
+    i1=max(r->ov[i].i,r->c_t);
+    j1=max(r->ov[i].j,r->c_l);
 
-        i2=min(r->ov[i].i+r->ov[i].h,r->c_b);
-        j2=min(r->ov[i].j+r->ov[i].w,r->c_r);
-        if(i1>=i2||j1>=j2)continue;
-        Canvas* c=canv_subCopy(r->map,i1,i2,j1,j2);
-        canv_print(stdout,c,i1-r->c_t+disp_i, j1-r->c_l+disp_j+1);
-        fflush(stdout);
-        canv_free(c);
-    }
-    for(int i=0;i<r->overpos;++i){
-        Canvas* torender=canv_copy(spr_getDispData(r->overs[i]));
-        Canvas* bc=canv_subCopy(r->map, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
-        Canvas* b2=canv_subCopy(r->shadows, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
-        canv_addOverlay(torender,b2,0,0);
-        canv_printSolid(stdout,torender,bc,disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1);
-        box b;
-        b.i=spr_getOI(r->overs[i]);
-        b.j=spr_getOJ(r->overs[i]);
-        b.w=canv_getWidth(spr_getDispData(r->overs[i]));
-        b.h=canv_getHeight(spr_getDispData(r->overs[i]));
-        r->ov[i]=b;
-        canv_free(bc);
-        canv_free(torender);
-        canv_free(b2);
-    }
+    i2=min(r->ov[i].i+r->ov[i].h,r->c_b);
+    j2=min(r->ov[i].j+r->ov[i].w,r->c_r);
+    if(i1>=i2||j1>=j2)return r;
+    Canvas* c=canv_subCopy(r->map,i1,i2,j1,j2);
+    canv_print(stdout,c,i1-r->c_t+disp_i, j1-r->c_l+disp_j+1);
+    fflush(stdout);
+    canv_free(c);
+    
+    Canvas* torender=canv_copy(spr_getDispData(r->overs[i]));
+    Canvas* bc=canv_subCopy(r->map, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+    Canvas* b2=canv_subCopy(r->shadows, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+    canv_addOverlay(torender,b2,0,0);
+    canv_printSolid(stdout,torender,bc,disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1);
+    box b;
+    b.i=spr_getOI(r->overs[i]);
+    b.j=spr_getOJ(r->overs[i]);
+    b.w=canv_getWidth(spr_getDispData(r->overs[i]));
+    b.h=canv_getHeight(spr_getDispData(r->overs[i]));
+    r->ov[i]=b;
+    canv_free(bc);
+    canv_free(torender);
+    canv_free(b2);
+    
     return r;
 }
 int room_scroll(Room* r, double i, double j){
@@ -621,7 +620,33 @@ Room* room_setHW(Room* r, int he,int wi){
     r->c_r=min(r->wid,r->c_l+wi);
     return r;
 }
+Room* room_processAlly(Room* r, void *e,Sprite* s,int ally_index, int rad){
+    if(!r||!s)return NULL;
+    int oi,oj;
+    oi=spr_getOI(s);
+    oj=spr_getOJ(s);
+    Trigger *t =tr_createTalk(e,ally_index);
+    if(!t)return NULL;
+    int tid=trdic_insert(t);
+    
+    tr_free(t);
+    if(tid>0)return NULL;
 
+    for(int i=oi-rad;i<oi+rad+spr_getHeight(s);++i){
+        if(i<0||i>=r->hei)continue;
+        for(int j=oj-rad;j<j0+oj-rad*2+spr_getWidth(s);++j){
+            if(j<0||j>=r->wid)continue;
+            int l=0;
+            while(l<MAX_TRIG&&r->trig[i][j][l].code!=-1)l++;
+            if(l!=MAX_TRIG){
+                r->trig[i][j][l].code=tid;
+                r->trig[i][j][l].spindex=index;
+            }
+        }
+    }
+    spr_processCollisions(s,r->colision,r->wid,r->hei);
+    return r;
+}
 char* room_getName(Room* r){
     if(!r)return NULL;
     char * c=calloc(strlen(r->name)+1,sizeof(char));
@@ -631,4 +656,15 @@ char* room_getName(Room* r){
 }
 int room_getId(Room* r){
     return r? r->id:-1;
+}
+Room* room_setSpriteI(Room* r,int index, int i){
+    if(!r||r->overpos<=index)return NULL;
+    spr_setOI(r->overs[index],i);
+    return r->overs[index]? r:NULL;
+}
+
+Room* room_setSpriteJ(Room* r,int index, int j){
+    if(!r||r->overpos<=index)return NULL;
+    spr_setOJ(r->overs[index],j);
+    return r->overs[index]? r:NULL;
 }

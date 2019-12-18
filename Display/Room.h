@@ -42,20 +42,8 @@ void room_free(Room* r);
 Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei);
 
 
-/// Prints the modifications that have been made to the sprites stored in the top layer since
-/// the last time that the room was rendered.
-/// It should be called after the position of a sprite in the top layer is modified
-/// The first two arguments refer to the position of the top left corner of the graphical representation
-/// of the room in the display.
-/// The next four arguments will describe the subsection of the room that is being displayed
-/// @param r               Room that we want to display
-/// @param disp_i    First row that the section of the room that is displayed occupies on the screen
-/// @param disp_j    First column that the section of the room that is displayed occupies on the screen
-/// @param i               First row of the room that is displayed
-/// @param j               First column of the room that is displayed
-/// @param wid          Width of the displayed portion of the room
-/// @param hei          Height of the displayed portion of the room
-Room* room_printMod(Room* r,int disp_i, int disp_j);
+
+
 
 
 /// Modifies the position of a sprite in the top layer
@@ -96,7 +84,7 @@ Canvas* room_getRender(Room* r);
  completely clear so they have not been included in this file */
 
 
-
+Room* room_printMod(Room* r, int index,int disp_i, int disp_j);
 Room* room_setBounds(Room*ro, int t, int l,int b,int r);
 int room_scroll(Room* r, double i, double j);
 Room* room_getBSpritePos(Room *r, int index, int* i, int *j);
@@ -108,4 +96,7 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
 Room* room_setHW(Room* r, int he,int wi);
 char* room_getName(Room* r);
 int room_getId(Room* r);
+Room* room_setSpriteJ(Room* r,int index, int j);
+Room* room_setSpriteI(Room* r,int index, int i);
+Room* room_processAlly(Room* r, void* e, Sprite* s,int ally_index, int rad);
 #endif /* Room_h */

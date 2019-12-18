@@ -6,6 +6,7 @@
 #define HORIZONTAL_STEP 30
 #define VERTICAL_STEP 10
 #define SPRITES 4
+#define TALK_RAD 20
 
 /*
    name: Entitys's name.
@@ -30,6 +31,7 @@ struct _Entity {
   Inventory* inv;
   int room_index;
   Display* dis;
+  bool has_dialog;
   DialogDic* ddic;
   int dialogid;
 };
@@ -70,7 +72,7 @@ Entity *entity_load(FILE* f, Display *d){
   int spindex;
   fscanf(f,"%d %d %d\n",&(e->id),&(e->t),&spindex);
   fgets(e->name,MAX_NAME_LENGTH,f);
-  fscanf(f,"%d %d",&(e->ipos),&(e->jpos));
+  fscanf(f,"%d %d %d",&(e->ipos),&(e->jpos),&e->has_dialog);
   e->attr= attb_load(f);
   e->inv=  inv_load(f);
 
@@ -149,7 +151,7 @@ Entity* entity_setEntType(Entity* p, ent_type t){
 Entity* entity_setCoordI(Entity* p, int i){
   if(!p || i < 0) return NULL;
   if(p->dis){
-    
+    disp_setSpriteI(p->dis,p->room_index,i);
   }
   p->ipos = i;
   return p;
@@ -158,6 +160,9 @@ Entity* entity_setCoordI(Entity* p, int i){
 Entity* entity_setCoordJ(Entity* p, int j){
   if(!p  || j < 0) return NULL;
   p->jpos = j;
+  if(p->dis){
+    disp_setSpriteJ(p->dis,p->room_index,j);
+  }
   return p;
 }
 
@@ -268,6 +273,11 @@ Entity* entity_addtoDisplay(Entity* e, Display* dis){
   e->room_index = aux;
   return e;
 }
+Entity* entity_processAlly(Entity* e){
+  if(!e&&!e->dis)return NULL;
+  Room* r=disp_getrefRoom(e->dis);
+  room_processAlly(r,e,e->s,e->room_index,TALK_RAD);
+}
 int entity_getRoomIndex(const Entity* en){
   return en? en->room_index: -1;
 }
@@ -311,4 +321,7 @@ Entity* entity_setDialog(Entity* e, int dialogid) {
 
 int entity_getId(Entity* e){
   return e? e->id: -1;
+}
+bool entity_getHasDialog(Entity *e){
+  return e? e->has_dialog:false;
 }

@@ -78,7 +78,7 @@ int main(){
                 }
             }
             else{
-                room_printMod(r, 0, 0);
+                room_printMod(r, 0, 0, 0);
             }
         }
         if(c=='S'){
@@ -89,7 +89,7 @@ int main(){
                 
             }
             else{
-                room_printMod(r, 0, 0);
+                room_printMod(r, 0, 0, 0);
             }
         }
         if(c=='A'){
@@ -100,7 +100,7 @@ int main(){
                 }
             }
             else{
-                room_printMod(r, 0, 0);
+                room_printMod(r, 0, 0, 0);
             }
         }
         if(c=='D'){
@@ -111,7 +111,7 @@ int main(){
                 }
             }
             else{
-                room_printMod(r, 0, 0);
+                room_printMod(r, 0, 0, 0);
             }
             
         }

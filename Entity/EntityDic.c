@@ -48,6 +48,31 @@ EntityDic* edic_ini(){
             edic_free();
             return NULL;
         }
+        if(!entity_getHasDialog(s->dat[i]))continue;
+
+        char * c=calloc(20,sizeof(char));
+        if(!c){
+            edic_free();
+            return NULL;
+        }
+        sprintf(c,"dialog-%3d.txt",entity_getId(s->dat[i]));
+        FILE * g=fopen(c,"r");
+        free(c);
+        if(!g){
+            edic_free();
+            return NULL;
+        }
+        DialogDic* dd=ddic_ini(g);
+        fclose(g);
+        if(!dd){
+            edic_free();
+            return NULL;
+        }
+        entity_setDialogs(s->dat[i],dd);
+
+
+
+
     }
     fclose(f);
     return s;
@@ -61,7 +86,6 @@ Entity* edic_lookup(int id, Display* dis){
     for(int i=0;i<edic_data->size;++i){
         if(entity_getId(edic_data->dat[i])==id){
             Entity* e=entity_copy(edic_data->dat[i]);
-            fprintf(stderr,"%ld %ld\n",e,edic_data->dat[i]);
             entity_addtoDisplay(e,dis);
             return e;
         }

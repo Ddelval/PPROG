@@ -74,4 +74,6 @@ Display* disp_execute(Display* dis, int index, int room_index, void* en);
 Display* disp_remInventory(Display* d);
 Display* disp_remDialog(Display* dis);
 Display* disp_CraftingWindow(Display* dis,Inventory* inv);
+Display* disp_setSpriteI(Display* d,int ind, int i);
+Display* disp_setSpriteJ(Display* d,int ind, int j);
 #endif /* Display_h */

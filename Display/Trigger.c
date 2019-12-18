@@ -22,7 +22,8 @@ struct _Trigger
     int room_id;
 
     /* Engage in conversation */
-    int entity_id;
+    int ally_id;
+    void * entit;
 };
 Trigger* tr_ini(){
     Trigger* t=calloc(1,sizeof(Trigger));
@@ -43,7 +44,15 @@ Trigger * tr_load(FILE* f){
     if(!t)return NULL;
     fscanf(f,"%d %d\n",&t->trig_id,&t->type);
     fgets(t->name,MAX_NAME,f);
-    fscanf(f,"%d %d %d %d %d", &t->obj_id, &t->quantity,&t->spr_remove, &t->room_id, &t->entity_id);
+    if(t->type==OBTAIN){
+        fscanf(f,"%d %d %d %d %d", &t->obj_id, &t->quantity,&t->spr_remove); 
+    }
+    if(t->type==ENTER){
+        fscanf(f,"%d",&t->room_id);
+    }
+    if(t->type==TALK){
+        fscanf(f,"%d",&t->ally_id);
+    }
     return t;
 }
 Trigger* tr_copy(const Trigger * src){
@@ -74,4 +83,20 @@ int tr_getQuantity(const Trigger* tr){
 bool tr_needsTrigger(trig_type t){
     if(t==SHOW)return false;
     return true;
+}
+void tr_setId(Trigger * t, int id){
+    if(!t)return NULL;
+    t->trig_id=id;
+}
+Trigger* tr_createTalk(void* e,int ally_id){
+    Trigger* t=tr_ini();
+    if(!t)return NULL;
+    t->ally_id=ally_id;
+    t->entit=e;
+    t->type=TALK;
+    return t;
+}
+void* tr_getEntityRef(Trigger* t){
+    if(!t)return NULL;
+    return t->entit;
 }

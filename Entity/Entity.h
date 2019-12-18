@@ -98,4 +98,5 @@ Entity* entity_setDialog(Entity* e, int dialogid);
 int entity_getId(Entity* e);
 
 Entity* entity_setInventory(Entity* e, Inventory* inv);
+bool entity_getHasDialog(Entity *e);
 #endif

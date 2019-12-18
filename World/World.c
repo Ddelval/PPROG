@@ -174,6 +174,7 @@ World* wo_load(FILE* f){
     w->allies=calloc(w->allSiz,sizeof(Entity*));
     for(int i=0;i<w->allSiz;++i){
         w->allies[i]=_wo_eload(f,w);
+        
 
     }
     fscanf(f,"%d",&(w->enSiz));

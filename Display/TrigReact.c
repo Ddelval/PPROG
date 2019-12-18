@@ -22,3 +22,7 @@ void trig_showRec(Trigger* t,void *e, void* d){
     const Inventory* in=entity_getInvRef(e);
     disp_CraftingWindow(d,in);
 }
+void trig_talk(Trigger* t,void* e, void* d){
+    if(!t||!e||!d)return;
+    char* c = entity_getLine()
+}

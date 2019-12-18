@@ -372,6 +372,15 @@ Room* disp_getrefRoom(Display* dis){
     return dis? dis->room:NULL;
 }
 
+Display* disp_setSpriteI(Display* d,int ind, int i){
+    if(!d||!d->room)return NULL;
+    return room_setSpriteI(d->room,ind,i)? d:NULL;
+}
+Display* disp_setSpriteJ(Display* d,int ind, int j){
+    if(!d||!d->room)return NULL;
+    return room_setSpriteJ(d->room,ind,j)? d:NULL;
+}
+
 int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
 
     if(d->pop_dial||d->pop_inv||d->pop_inv)return 0;
@@ -392,7 +401,7 @@ int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
         }
     }
     else{
-        room_printMod(d->room, 0, 0);
+        room_printMod(d->room,index, 0, 0);
     }
     room_getBSpritePos(d->room,index,f_i,f_j);
     return 0;
