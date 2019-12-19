@@ -7,9 +7,10 @@
 
 #define PLAYER_ACTIONS 2 //Fixed window index for player actions
 #define COMBAT_ROOM 0 //ndex of the only room in c->cd. For readability only
-
+#define MAX_ATTACKS 4
 struct _Combat {
     Entity *player, *enemy;
+    Object * o1 = NULL, *o2 = NULL;
     char* name[2];
     Attributes* stats[2];
     Skill* moveset[2][4];
@@ -70,10 +71,18 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
   c->stats[1] = attb_copy(entity_getAttributes(enemy));
   c->stunplayer = false;
   c->stunenemy = false;
-  for(int i=0; i<4; i++){
-    c->moveset[0][i]= skill_readFromFile("Dictionaries/skill.txt",i+1);
-    c->moveset[1][i]= skill_readFromFile("Dictionaries/skill.txt",i+1);
-  }
+
+  o1 = odic_lookup(inv_getSelectedWeapon(entity_getInventory(player)));
+  o2 = odic_lookup(inv_getSelectedWeapon(entity_getInventory(enemy)));
+
+
+  c->moveset[0] = obj_getAttacks(o1);
+  c->moveset[1] = obj_getAttacks(o2);
+
+  //for(int i=0; i<4; i++){
+  //  c->moveset[0][i]= skill_readFromFile("Dictionaries/skill.txt",i+1);
+  //  c->moveset[1][i]= skill_readFromFile("Dictionaries/skill.txt",i+1);
+  //}
   return c;
 }
 
