@@ -140,6 +140,7 @@ Room* room_load(FILE* f){
             room_free(r);
             return NULL;
         }
+        spr_free(s);
     }
     return r;
 }

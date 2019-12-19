@@ -50,7 +50,7 @@ EntityDic* edic_ini(){
         }
         if(!entity_getHasDialog(s->dat[i]))continue;
 
-        char * c=calloc(20,sizeof(char));
+        char * c=calloc(40,sizeof(char));
         if(!c){
             edic_free();
             return NULL;
@@ -69,7 +69,7 @@ EntityDic* edic_ini(){
             return NULL;
         }
         entity_setDialogs(s->dat[i],dd);
-
+        ddic_free(dd);
 
 
 

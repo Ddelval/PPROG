@@ -147,6 +147,7 @@ Canvas* disp_Render(Display* dis){
             canv_free(c);
             goto CLEAN;
         }
+        canv_free(c);
     }
     canv_appendVI(right,bar);
     room_setHW(dis->room,dis->height,dis->vdiv);
