@@ -69,7 +69,7 @@ void obj_free(Object* ob){
  */
 Object* obj_load(FILE* f){
     if(!f)return NULL;
-    
+
     Object* ob=obj_ini();
     if(!ob)return NULL;
     fscanf(f,"%d",&ob->id);
@@ -95,7 +95,7 @@ Object* obj_load(FILE* f){
 }
 /**
  * @brief Compares two objects
- * 
+ *
  * @param ob1 First object to be compared
  * @param ob2 Second object to be compared
  * @return int  >0 if ob1>ob2
@@ -135,6 +135,11 @@ Sprite* obj_getSprite(Object* ob){
     return sdic_lookup(ob->spr_id);
 }
 
+Skill ** obj_getAttacks(Object * ob){
+  if(!ob) return NULL;
+  return ob->attacks;
+}
+
 char* obj_getName(Object* ob){
     if(!ob)return NULL;
     char* ch=calloc(strlen(ob->name)+1,sizeof(char));
@@ -163,7 +168,7 @@ Object* obj_renderDims(Object* ob, int number,Font* ftext, Font* fnum,int*h,int*
     canv_free(c2);
     c2=wl_render(num,canv_getWidth(c));
     canv_appendVI(c,c2);
-    
+
     Canvas* bb=canv_backGrnd(50,50,150,255,canv_getWidth(c)+4,canv_getHeight(c)+2);
     canv_addOverlay(bb,c,1,2);
     canv_free(c);

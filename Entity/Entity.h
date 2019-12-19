@@ -65,6 +65,9 @@ Entity* entity_addtoDisplay(Entity* e, Display* dis);
 char* entity_getName(Entity* p);
 
 Attributes* entity_getAttributes(Entity* p);
+
+Inventory * entity_getInventory( Entity * p);
+
 Entity* entity_setAttributes(Entity* p, Attributes* a);
 
 Entity* entity_moveUp(Entity* p);
@@ -100,4 +103,5 @@ int entity_getId(Entity* e);
 Entity* entity_setInventory(Entity* e, Inventory* inv);
 bool entity_getHasDialog(Entity *e);
 Entity* entity_processAlly(Entity* e);
+
 #endif

@@ -40,7 +40,7 @@ void obj_free(Object* ob);
 Object* obj_load(FILE* f);
 /**
  * @brief Compares two objects
- * 
+ *
  * @param ob1 First object to be compared
  * @param ob2 Second object to be compared
  * @return int  >0 if ob1>ob2
@@ -58,5 +58,6 @@ obj_type obj_getType(Object* ob);
 Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h,int w);
 int obj_getId(Object* ob);
 Object* obj_renderDims(Object* ob, int number,Font* ftext, Font* fnum,int*h,int*w);
+Skill ** obj_getAttacks(Object * ob);
 
 #endif

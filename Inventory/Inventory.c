@@ -253,8 +253,17 @@ Inventory* inv_load(FILE* f){
     return inv;
 }
 
-void inv_getSelected (Inventory * inv, Object * selected){
-  if(!inv) return;
-  selected = inv->selected;
-  return;
+int inv_getSelectedWeapon (Inventory * inv){
+  if(!inv) return NULL;
+  return inv->selected[0];
+}
+
+int inv_getSelectedConsumable (Inventory * inv){
+  if(!inv) return NULL;
+  return inv->selected[1];
+}
+
+int inv_getSelectedReource (Inventory * inv){
+  if(!inv) return NULL;
+  return inv->selected[2];
 }

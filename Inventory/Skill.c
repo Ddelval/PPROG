@@ -7,6 +7,7 @@ extern int errno;
 
 
 
+
 struct _skill {
         int id;
         char name[20];
@@ -81,6 +82,7 @@ Skill * skill_readFromFile(char *file, int id){
         }  while(q);
         return NULL;
 }
+
 
 
 
