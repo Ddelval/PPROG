@@ -154,7 +154,7 @@ Object* obj_renderDims(Object* ob, int number,Font* ftext, Font* fnum,int*h,int*
     Canvas* c=canv_copy(spr_getDispData(sp));
     spr_free(sp);
     Wlabel* nam=wl_ini(ob->name,ftext,-2);
-    fprintf(stderr,"%s",ob->name);
+    //fprintf(stderr,"%s",ob->name);
     char snum[10];
     sprintf(snum,"%d",number);
     Wlabel* num=wl_ini(snum,fnum,10);
@@ -181,7 +181,7 @@ Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h, int w)
     Canvas* imag=canv_copy(spr_getDispData(sp));
     spr_free(sp);
     Wlabel* nam=wl_ini(ob->name,ftext,-2);
-    fprintf(stderr,"%s",ob->name);
+    //fprintf(stderr,"%s",ob->name);
     char snum[10];
     sprintf(snum,"%d",number);
     Wlabel* num=wl_ini(snum,fnum,10);

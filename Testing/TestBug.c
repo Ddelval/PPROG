@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
   if(!win_setBackColor(win, pt)) return -1;
   pix_free(pt);
 	if(!win) {
-		fprintf(stderr, "NULL WINDOW");
+		//fprintf(stderr, "NULL WINDOW");
 		return 1;
 	}
 	errno = 0;

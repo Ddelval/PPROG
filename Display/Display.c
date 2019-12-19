@@ -63,8 +63,6 @@ void disp_free(Display* dat){
     free(dat->title);
     room_free(dat->room);
     for(int i=0;i<dat->nLatWindow;++i){
-        fprintf(stderr,"ss:%d\n",i);
-        fflush(stderr);
         win_free(dat->latWindow[i]);
     }
     win_free(dat->popup);

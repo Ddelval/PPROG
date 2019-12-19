@@ -29,7 +29,7 @@ Skill * skill_ini(){
 
         skil = (Skill *) calloc(1,sizeof(Skill));
         if (skil == NULL) {
-                printf("Error: calloc.\n");
+                //printf("Error: calloc.\n");
                 return NULL;
         }
         skil->atbself = attb_ini();

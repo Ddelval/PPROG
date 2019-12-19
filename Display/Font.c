@@ -86,7 +86,6 @@ Font* font_load(FILE* fil){
     Canvas** split=canv_VSplit(whole, &nelem);
     canv_free(whole);
     if(nelem<strlen(elem)){
-        fprintf(stderr,"Not all the characters were found");
         free(id);
         free(elem);
         for(int i=0;i<siz(split);++i){

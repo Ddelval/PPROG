@@ -268,7 +268,7 @@ int room_modPos(Room* r, int index, int i, int j){
     if(aux==-1)return -1;
     if(aux==1)return 5;
     spr_setOJ(r->overs[index], j);
-    fprintf(stderr,"%d, %d\n",i,j);
+    //fprintf(stderr,"%d, %d\n",i,j);
     fflush(stderr);
     spr_setOI(r->overs[index], i);
     return retval;

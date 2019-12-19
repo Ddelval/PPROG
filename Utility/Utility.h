@@ -32,6 +32,7 @@ int max(int a,int b);
 int min(int a,int b);
 
 char getch1(void);
-
+void term_restore();
+void term_init();
 //void handle_winch(Display* dis);
 #endif /* Utility_h */

@@ -8,7 +8,7 @@
 
 void append(char* dest, int* spos, const char* orig){
     if(!dest||!spos||!orig){
-        fprintf(stderr,"NULL pointer in append function\n");
+        //fprintf(stderr,"NULL pointer in append function\n");
         return;
     }
     while(*orig){
@@ -21,7 +21,7 @@ void append(char* dest, int* spos, const char* orig){
 void appendf(char* dest, int* spos, char* orig){
     assert(dest&&spos&&orig);
     if(!dest||!spos||!orig){
-        fprintf(stderr,"NULL pointer in append function\n");
+        //fprintf(stderr,"NULL pointer in append function\n");
         return;
     }
     char* o=orig;
@@ -48,6 +48,7 @@ int min(int a,int b){
 }
 char getch1(void)
 {
+    /*
     char buf = 0;
     struct termios old = {0};
     fflush(stdout);
@@ -71,6 +72,8 @@ char getch1(void)
     //if(tcsetattr(0, TCSADRAIN, &old) < 0)
         //perror("tcsetattr ~ICANON");
     return buf;
+    */
+    return fgetc(stdin);
  }
 /*
 void handle_winch(Display* dis) {
@@ -85,3 +88,23 @@ void handle_winch(Display* dis) {
     
     signal(SIGWINCH, handle_winch);
 }*/
+struct termios initial;
+void term_restore(){
+    tcsetattr(fileno(stdin),TCSANOW,&initial);
+    fprintf(stdout,"%c[?25h",27);
+}
+void term_init(){
+    struct termios new;
+
+    tcgetattr(fileno(stdin),&initial);
+    new=initial;
+    new.c_lflag&=~ICANON;
+    new.c_lflag&=~ECHO;
+    new.c_cc[VMIN]=1;
+    new.c_cc[VTIME]=0;
+    new.c_lflag&=~ISIG;
+    
+    tcsetattr(fileno(stdin),TCSANOW,&new);
+    fprintf(stdout,"%c[?25l",27);
+
+}

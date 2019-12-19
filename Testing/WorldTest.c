@@ -1,5 +1,6 @@
 #include "World.h"
 int main(){
+    term_init();
     World* w=wo_get("s1");
     wo_launch(w);
     sdic_free();
@@ -8,5 +9,6 @@ int main(){
     fcat_free();
     odic_free();
     wo_free(w);
+    term_restore();
     return 0;
 }
