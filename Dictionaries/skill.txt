@@ -1,25 +1,32 @@
 1
-Corte
-Corta Cosas
+Gash
+A useful, but not very useful, basic melee attack.
 3
 0 0 0 0 0
-0 30 0 0 0
+0 10 0 0 6
 2
-Corte
-Corta Cosas
+Simple shot
+Not too much to say, just shot at it.
 3
 0 0 0 0 0
-0 30 0 0 0
+0 13 0 0 3
 3
-Corte
-Corta Cosas
+Double team
+Useful in order to avoid being ass kicked.
 3
+0 0 0 0 6
 0 0 0 0 0
-0 30 0 0 0
 4
-Mejora
-Mejoria
+Force field
+A strong device is increasing your defense, take advantage.
 3
-0 10 10 0 0
+0 0 4 0 0
 0 0 0 0 0
+5
+Electric pulse
+You introduce your sword into the ground creating a powerful electric pulse, however your lose some attack power due to overcharge.
+0
+0 -2 0 0 0
+0 14 0 0 0
+
 
