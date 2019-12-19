@@ -56,9 +56,10 @@ Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* 
     }
     return dis;
 }
+
 void disp_free(Display* dat){
     if(!dat)return;
-    
+
     free(dat->title);
     room_free(dat->room);
     for(int i=0;i<dat->nLatWindow;++i){
@@ -70,6 +71,7 @@ void disp_free(Display* dat){
     free(dat->latWindow);
     free(dat);
 }
+
 Display* disp_AddLWindow(Display*dis, Window* w){
     if(!dis||!w)return NULL;
     if(dis->nLatWindow+1>dis->latWinalloc){
@@ -97,15 +99,24 @@ Display* disp_RemLwindow(Display* dis, int index){
     dis->nLatWindow--;
     return dis;
 }
+
 Display* disp_incSelIndex(Display* dis, int winIndex, int increment){
   if(!dis)return NULL;
   if(winIndex>=dis->nLatWindow) return NULL;
   if(win_incrementSelected(dis->latWindow[winIndex],increment)==NULL){
-    
+
     return NULL;
   }
   return print_Window(dis,winIndex);
 }
+
+int disp_getSelIndex(Display* dis, int winIndex){
+  if(!dis) return NULL;
+  if(winIndex>=dis->nLatWindow) return NULL;
+
+  return win_getSelectedIndex(dis->latWindow[winIndex]);
+}
+
 Display* disp_SetPopup(Display* dis, Window* p){
     if(!dis||!p) {
         return NULL;
@@ -160,7 +171,7 @@ CLEAN:
 int disp_scroll(Display* dis,double i,double j){
     if(!dis)return -1;
     return room_scroll(dis->room,i,j);
-    
+
 }
 Display* print_Window(Display*dis, int index){
     if(!dis) return NULL;
@@ -251,7 +262,7 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv,in
         Canvas* wl_rr=canv_AdjustCrop(wl_r,dis->width,canv_getHeight(wl_r)+marg);
         Canvas* back=disp_Render(dis);
         Canvas* back2=canv_blur(back,BLUR_RAD);
-        
+
         canv_darken(back2,DARKEN);
         canv_addOverlay(back2,wl_rr,0,0);
 
@@ -297,7 +308,7 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv,in
         canv_free(c2);
         canv_free(c3);
     }
-    
+
 
     Wlabel* wl=wl_ini("Recipies",fcat_lookup(M8),0);
     Canvas* wl_r=wl_render(wl,dis->width);
@@ -413,13 +424,13 @@ Display* disp_execute(Display* dis, int index, int room_index, void* en){
     if(tr_needsTrigger(t)){
         int a;
         Trigger** dat =room_getTriggers(dis->room,t,room_index,&a);
-        
+
         if(a)f(dat[0],en,dis);
         free(dat);
     }
     else{
         f(NULL,en,dis);
     }
-    
+
     return dis;
 }

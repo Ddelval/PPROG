@@ -14,6 +14,9 @@
 #include <unistd.h>
 #include <termios.h>
 #include <assert.h>
+
+#define DISP_HEIGHT 471
+#define DISP_WIDTH 1209
 /*
 #include <signal.h>
 #include <ncurses.h>

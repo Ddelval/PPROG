@@ -32,13 +32,15 @@ Outputs: None
 Functioning: It decides the four movements the player will be able to execute
 */
 
-int player_choice();
+Combat* combat_incrMove(Combat* c, int incr);
 
 /*
 Name: IA_choice
 Imputs: combat structure
 Outputs: int
 Functioning: The computer receives the structure and manages to choose a "smart" movement*/
+
+Combat* combat_executeMove(Combat* c);
 
 int IA_choice(Combat* state);
 

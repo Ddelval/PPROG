@@ -1,12 +1,12 @@
 /*  Combat.c    */
 
 #include "Combat.h"
-#include "Window.h"
-#include "Room.h"
-#include "Font.h"
-#include "Pixel.h"
+#include "Display.h"
 #include <stdlib.h>
 #include <time.h>
+
+#define PLAYER_ACTIONS 2 //Fixed window index for player actions
+#define COMBAT_ROOM 0 //ndex of the only room in c->cd. For readability only
 
 struct _Combat {
     Entity *player, *enemy;
@@ -14,6 +14,7 @@ struct _Combat {
     Attributes* stats[2];
     Skill* moveset[2][4];
     bool stunplayer, stunenemy;
+    Display* cd;
 };
 
 
@@ -21,15 +22,46 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
   if(!player||!enemy) return NULL;
   Combat* c = (Combat*)calloc(1, sizeof(Combat));
   if(!c) return NULL;
-
+  FILE* f=fopen("Display/Fonts/Robo_Mono/08.txt", "r");
+  Font* f8=font_load(f);
+  fclose(f);
+  if(!f8) {
+    free(c);
+    return NULL;
+  }
+  f=fopen("Worlds/c1.txt", "r");
+  Room* cr=room_load(f);
+  if(!cr) {
+    free(c);
+    font_free(f8);
+    return NULL;
+  }
+  fclose(f);
+  c->cd = disp_ini(DISP_WIDTH, DISP_HEIGHT, cr, 800, "COMBAT!", f8);
+  if(!c->cd) {
+    free(c);
+    font_free(f8);
+    return NULL;
+  }
   c->player = entity_copy(player);
   if(!c->player) {
-    free(c);
+    combat_free(c);
+    font_free(f8);
+    return NULL;
+  }
+  if(!entity_addtoDisplay(c->player, c->cd)) {
+    combat_free(c);
+    font_free(f8);
     return NULL;
   }
   c->enemy = entity_copy(enemy);
   if(!c->enemy) {
     combat_free(c);
+    return NULL;
+  }
+  if(!entity_addtoDisplay(c->enemy, c->cd)) {
+    combat_free(c);
+    font_free(f8);
     return NULL;
   }
   c->name[0] = entity_getName(player);
@@ -45,80 +77,130 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
   return c;
 }
 
-//REVISADA, NO COMPILA
+Combat* combat_incrMove(Combat* c, int incr) {
+  if(!c||!c->cd) return NULL;
+  if(!disp_incSelIndex(c->cd, PLAYER_ACTIONS,incr)) return NULL;
 
-int player_choice() {
-    int move = 0;
-    while (move < 1 || move > 4) {
-        scanf("%d", &move);
-        if (move <= 4 && move >= 1) break;
-        fprintf(stderr, "Please use a valid movement:\n");
-    }
-    return move - 1;
+  return c;
+}
+
+Combat* combat_executeMove(Combat* c) {
+  if(!c||!c->cd||!c->player) return NULL;
+
+  int mindex=disp_getSelIndex(c->cd, PLAYER_ACTIONS);
+  if(mindex==-1) return NULL;
+  /*So far*/
+  int ent=0;
+  int action=mindex;
+  /*So far*/
+  int other = 0;
+  int dmgout;
+  Attributes * aux1;
+  Attributes * aux2;
+  int * attr;
+  fprintf(stdout, "%s ataca con %s.\n", c->name[ent], skill_getName(c->moveset[ent][action]));
+  if (ent == 0) {
+      other = 1;
+  }
+  if (attack_goes(c, c->moveset[ent][action], ent) == true) {
+      skill_stun(c, c->moveset[ent][action], ent);
+
+      aux1 = attb_merge(c->stats[ent], skill_getAtbatk(c->moveset[ent][action]));
+
+      if (attb_get(skill_getAtbatk(c->moveset[ent][action]), 1) == 0) {
+          aux2 = attb_merge(c->stats[ent], skill_getAtbself(c->moveset[ent][action]));
+
+          // HOTFIX IN ORDER TO NOT ALLOW OVERHEALING
+          if (other == 1) {
+              if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->player), 0)) {
+                  attb_set(aux2, attb_get(entity_getAttributes(c->player), 0), 0);
+              }
+          } else {
+              if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->enemy), 0)) {
+                  attb_set(aux2, attb_get(entity_getAttributes(c->enemy), 0), 0);
+              }
+          }
+
+
+          attr = attb_getAll(aux2);
+
+          attb_setAll(c->stats[ent], attr);
+          attb_free(aux2);
+      } else {
+          dmgout = attb_get(aux1, 1) - attb_get(c->stats[other], 2);
+          if (dmgout < 0) dmgout = 0;
+          attb_set(c->stats[other], attb_get(c->stats[other], 0) - dmgout, 0);
+      }
+
+      attb_free(aux1);
+  } else fprintf(stdout, "Attack dogded");
+  return 0;
 }
 
 
-// For now the IA will just choose the attack with the highest attack field.
-//REVISADA,COMPILA
-
-int IA_choice(Combat * state) {
-    int max_attack = 0;
-    int i = 0;
-
-    if (!state) return -1;
-    //ESTAMOS ASUMIENDO QUE EL ENEMIGO TIENE 4 ATAQUES SINO QUIERES QUE ESTO OCURRA AÑADE UN CAMPO A LA ESTRUCTURA SKILL
-    while (i <= 3) {
-        if (attb_get(skill_getAtbatk(state->moveset[1][i]), 1) > attb_get(skill_getAtbatk(state->moveset[1][max_attack]), 1)) {
-            max_attack = i;
-        }
-        i++;
-    }
-
-    return max_attack;
+Combat* combat_enemyMove(Combat* c) {
+  if(!c||!c->enemy) return NULL;
+  return c; /*Adaptation*/
 }
 
-int combat_exe(Combat *c) {
-    int i = 0, aux = 1, move = 0;
+// int IA_choice(Combat * state) {
+//     int max_attack = 0;
+//     int i = 0;
+//
+//     if (!state) return -1;
+//     //ESTAMOS ASUMIENDO QUE EL ENEMIGO TIENE 4 ATAQUES SINO QUIERES QUE ESTO OCURRA AÑADE UN CAMPO A LA ESTRUCTURA SKILL
+//     while (i <= 3) {
+//         if (attb_get(skill_getAtbatk(state->moveset[1][i]), 1) > attb_get(skill_getAtbatk(state->moveset[1][max_attack]), 1)) {
+//             max_attack = i;
+//         }
+//         i++;
+//     }
+//
+//     return max_attack;
+// }
 
-    if (!c) return -1;
-
-    if (attb_get(c->stats[0], 3) > attb_get(c->stats[1], 3)) {
-        aux = 0;
-    }
-
-
-
-    while (attb_get(c->stats[0], 0) > 0 && attb_get(c->stats[1], 0) > 0) {
-        if ((i + aux) % 2 == 0) {
-            if (c->stunplayer == false) {
-                fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
-                fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", skill_getName(c->moveset[0][0]), skill_getName(c->moveset[0][1]), skill_getName(c->moveset[0][2]), skill_getName(c->moveset[0][3]));
-                move = player_choice();
-                movement_exe(c, move, 0);
-            }
-
-            if (c->stunplayer == true) {
-                fprintf(stdout, "You have been stunned, meanwhile, you can have some tea.\n");
-                c->stunplayer = false;
-            }
-
-        } else {
-            if (c->stunenemy == false) {
-                move = IA_choice(c);
-                movement_exe(c, move, 1);
-            }
-            if (c->stunenemy == true) {
-                fprintf(stdout, "THe enemy has been stunned, his damage increased by 100, just joking.\n");
-                c->stunenemy = false;
-            }
-        }
-        i++;
-    }
-
-    co(c);
-    //decir qn ha muerto y liberar la memoria de la strutura combat
-    return 0;
-}
+// int combat_exe(Combat *c) {
+//     int i = 0, aux = 1, move = 0;
+//
+//     if (!c) return -1;
+//
+//     if (attb_get(c->stats[0], 3) > attb_get(c->stats[1], 3)) {
+//         aux = 0;
+//     }
+//
+//
+//
+//     while (attb_get(c->stats[0], 0) > 0 && attb_get(c->stats[1], 0) > 0) {
+//         if ((i + aux) % 2 == 0) {
+//             if (c->stunplayer == false) {
+//                 fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
+//                 fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", skill_getName(c->moveset[0][0]), skill_getName(c->moveset[0][1]), skill_getName(c->moveset[0][2]), skill_getName(c->moveset[0][3]));
+//                 move = player_choice();
+//                 movement_exe(c, move, 0);
+//             }
+//
+//             if (c->stunplayer == true) {
+//                 fprintf(stdout, "You have been stunned, meanwhile, you can have some tea.\n");
+//                 c->stunplayer = false;
+//             }
+//
+//         } else {
+//             if (c->stunenemy == false) {
+//                 move = IA_choice(c);
+//                 movement_exe(c, move, 1);
+//             }
+//             if (c->stunenemy == true) {
+//                 fprintf(stdout, "THe enemy has been stunned, his damage increased by 100, just joking.\n");
+//                 c->stunenemy = false;
+//             }
+//         }
+//         i++;
+//     }
+//
+//     combat_free(c);
+//     //decir qn ha muerto y liberar la memoria de la strutura combat
+//     return 0;
+// }
 
 //REVISADA,COMPILA
 
@@ -165,52 +247,52 @@ void skill_stun(Combat * c, Skill * skil, int who) {
 
 
 
-int movement_exe(Combat * c, int action, int ent) {
-    int other = 0;
-    int dmgout;
-    Attributes * aux1;
-    Attributes * aux2;
-    int * attr;
-    fprintf(stdout, "%s ataca con %s.\n", c->name[ent], skill_getName(c->moveset[ent][action]));
-    if (ent == 0) {
-        other = 1;
-    }
-    if (attack_goes(c, c->moveset[ent][action], ent) == true) {
-        skill_stun(c, c->moveset[ent][action], ent);
+// int movement_exe(Combat * c, int action, int ent) {
+//     int other = 0;
+//     int dmgout;
+//     Attributes * aux1;
+//     Attributes * aux2;
+//     int * attr;
+//     fprintf(stdout, "%s ataca con %s.\n", c->name[ent], skill_getName(c->moveset[ent][action]));
+//     if (ent == 0) {
+//         other = 1;
+//     }
+//     if (attack_goes(c, c->moveset[ent][action], ent) == true) {
+//         skill_stun(c, c->moveset[ent][action], ent);
+//
+//         aux1 = attb_merge(c->stats[ent], skill_getAtbatk(c->moveset[ent][action]));
+//
+//         if (attb_get(skill_getAtbatk(c->moveset[ent][action]), 1) == 0) {
+//             aux2 = attb_merge(c->stats[ent], skill_getAtbself(c->moveset[ent][action]));
+//
+//             // HOTFIX IN ORDER TO NOT ALLOW OVERHEALING
+//             if (other == 1) {
+//                 if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->player), 0)) {
+//                     attb_set(aux2, attb_get(entity_getAttributes(c->player), 0), 0);
+//                 }
+//             } else {
+//                 if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->enemy), 0)) {
+//                     attb_set(aux2, attb_get(entity_getAttributes(c->enemy), 0), 0);
+//                 }
+//             }
+//
+//
+//             attr = attb_getAll(aux2);
+//
+//             attb_setAll(c->stats[ent], attr);
+//             attb_free(aux2);
+//         } else {
+//             dmgout = attb_get(aux1, 1) - attb_get(c->stats[other], 2);
+//             if (dmgout < 0) dmgout = 0;
+//             attb_set(c->stats[other], attb_get(c->stats[other], 0) - dmgout, 0);
+//         }
+//
+//         attb_free(aux1);
+//     } else fprintf(stdout, "Attack dogded");
+//     return 0;
+// }
 
-        aux1 = attb_merge(c->stats[ent], skill_getAtbatk(c->moveset[ent][action]));
-
-        if (attb_get(skill_getAtbatk(c->moveset[ent][action]), 1) == 0) {
-            aux2 = attb_merge(c->stats[ent], skill_getAtbself(c->moveset[ent][action]));
-
-            // HOTFIX IN ORDER TO NOT ALLOW OVERHEALING
-            if (other == 1) {
-                if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->player), 0)) {
-                    attb_set(aux2, attb_get(entity_getAttributes(c->player), 0), 0);
-                }
-            } else {
-                if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->enemy), 0)) {
-                    attb_set(aux2, attb_get(entity_getAttributes(c->enemy), 0), 0);
-                }
-            }
-
-
-            attr = attb_getAll(aux2);
-
-            attb_setAll(c->stats[ent], attr);
-            attb_free(aux2);
-        } else {
-            dmgout = attb_get(aux1, 1) - attb_get(c->stats[other], 2);
-            if (dmgout < 0) dmgout = 0;
-            attb_set(c->stats[other], attb_get(c->stats[other], 0) - dmgout, 0);
-        }
-
-        attb_free(aux1);
-    } else fprintf(stdout, "Attack dogded");
-    return 0;
-}
-
-void co(Combat* c) {
+void combat_free(Combat* c) {
   if(!c) return;
   attb_free(c->stats[0]);
   attb_free(c->stats[1]);
@@ -222,5 +304,6 @@ void co(Combat* c) {
   }
   free(c->name[0]);
   free(c->name[1]);
+  disp_free(c->cd);
   free(c);
 }

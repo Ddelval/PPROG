@@ -44,8 +44,8 @@ int main(int argc, char** argv) {
 
 
 
-    attb_setAll(entity_getAttribute(player),set);
-    attb_setAll(entity_getAttribute(enemy),set1);
+    attb_setAll(entity_getAttributes(player),set);
+    attb_setAll(entity_getAttributes(enemy),set1);
 
 
     c = combat_ini(player,enemy);
@@ -57,5 +57,5 @@ int main(int argc, char** argv) {
 
 
 
-    return (EXIT_SUCCESS);
+    return 0;
 }

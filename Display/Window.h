@@ -77,6 +77,11 @@ Window* win_incrementSelected(Window* win, int selected_elem);
 Welem* win_getSelected(Window* win);
 
 /*-----------------------------------------------------------------*/
+/// Returns the index of the selected element, or -1 if nothing is
+/// selected or in case of error
+int win_getSelectedIndex(Window* win);
+
+/*-----------------------------------------------------------------*/
 /// Moves the scroll position to the next section of the window
 Window* win_scrollDown(Window* win);
 /*-----------------------------------------------------------------*/

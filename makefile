@@ -1,5 +1,5 @@
-CC = gcc -g 
-EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest CraftTest WorldTest 
+CC = gcc -g
+EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest CraftTest WorldTest
 OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o FontCatalog.o Wlabel.o Welem.o Room.o Inventory.o  Wlabic.o Window.o Display.o Object.o Recipe.o RecipeDic.o ObjectDic.o TrigReact.o DialogDic.o Dialog.o EntityDic.o World.o Combat.o
 ENGINE =
 LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/ -I World/ -I Combat/

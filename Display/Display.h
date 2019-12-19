@@ -60,6 +60,10 @@ void disp_RemPopup(Display* dis);
 
 Display* disp_incSelIndex(Display* dis, int winIndex, int increment);
 
+/*-----------------------------------------------------------------*/
+/// Get the selected index of the given lateral window.
+int disp_getSelIndex(Display* dis, int winIndex);
+
 Display* print_Window(Display*dis, int index);
 
 

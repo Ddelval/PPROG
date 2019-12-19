@@ -8,12 +8,12 @@ struct _Window {
 	char* title;
 	Welem** Win_elem;
 	int num_elems;
-  	int num_elems_siz;
+  int num_elems_siz;
 	int selected_elem;
 	int width, height;
 	int scroll_pos;
 	int leftm, rightm, topm, botm;
-  	int jpos, ipos;
+  int jpos, ipos;
 	Pixel* backcol;
 	Pixel* forecol;
 	const Font* titlef;
@@ -239,6 +239,11 @@ Welem* win_getSelected(Window* win) {
 	return we;
 }
 
+int win_getSelectedIndex(Window* win) {
+	if(!win || !win->Win_elem) return -1;
+	return win->selected_elem;
+}
+
 Window* win_scrollDown(Window* win) {
 	if(!win) return NULL;
     win->scroll_pos+=win->height;
@@ -268,7 +273,7 @@ Window* win_copy(Window* win) {
 	memcpy(win2->actions,win->actions,win->action_size*sizeof(func_trig));
 
 	win2->action_size=win->action_size;
-	
+
     return win2;
 }
 
