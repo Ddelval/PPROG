@@ -61,7 +61,7 @@ int movement_exe(Combat* c, int action, int ent);
 
 /*This funciton frees everything related to struct combat*/
 void combat_free(Combat* c);
-
+void apply_consumable(Combat *c);
 
 //OJO HACE FALTA HACER FUNCIONES COPY COMENTAR EN CLASE
 #endif

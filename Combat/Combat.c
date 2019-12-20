@@ -248,7 +248,12 @@ Combat* combat_enemyMove(Combat* c) {
 //                 fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
 //                 fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", skill_getName(c->moveset[0][0]), skill_getName(c->moveset[0][1]), skill_getName(c->moveset[0][2]), skill_getName(c->moveset[0][3]));
 //                 move = player_choice();
-//                 movement_exe(c, move, 0);
+//                  if(move != 5){
+//                    movement_exe(c, move, 0);
+//                  }
+//                else{
+//                    apply_consumable(c);
+//}
 //             }
 //
 //             if (c->stunplayer == true) {
@@ -363,6 +368,25 @@ void skill_stun(Combat * c, Skill * skil, int who) {
 //     } else fprintf(stdout, "Attack dogded");
 //     return 0;
 // }
+
+/*void apply_consumable(Combat * c){
+  int * attr;
+  if(!combat) return;
+  attr = attb_getAll(obj_getAttributes(inv_getSelected(entity_getInventory(player), CONSUMABLE)));
+  attb_setAll(c->stats[0], attr);
+
+//DISABLE OVERHEALING
+  if (attb_get(c->stats[0], 0) > attb_get(entity_getAttributes(c->player), 0)) {
+
+    attb_set(c->stats[0], attb_get(entity_getAttributes(c->player), 0), 0);
+    }
+
+  inv_decrease(entity_getInventory(player),obj_getAttributes(inv_getSelected(entity_getInventory(player), CONSUMABLE)),1);
+
+  return;
+
+}*/
+
 
 void combat_free(Combat* c) {
   if(!c) return;

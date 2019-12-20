@@ -140,6 +140,11 @@ Skill ** obj_getAttacks(Object * ob){
   return ob->attacks;
 }
 
+Attributes * obj_getAttributes(Object * ob){
+  if(!ob) return NULL;
+  return ob->atb;
+}
+
 char* obj_getName(Object* ob){
     if(!ob)return NULL;
     char* ch=calloc(strlen(ob->name)+1,sizeof(char));
