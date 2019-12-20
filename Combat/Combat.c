@@ -8,6 +8,7 @@
 #define PLAYER_ACTIONS 2 //Fixed window index for player actions
 #define COMBAT_ROOM 0 //Index of the only room in c->cd. For readability only
 #define MAX_ATTACKS 4
+#define TOP_STATS 150
 struct _Combat {
     Entity *player, *enemy;
     Object *weapons[2];
@@ -147,23 +148,89 @@ Combat* combat_enemyMove(Combat* c) {
   if(!c||!c->enemy) return NULL;
   return c; /*Adaptation*/
 }
+/*
+ int IA_choice(Combat * state) {
+     int max_attack = 0;
+     int i = 0;
+     bool founded[4];
+     if (!state) return -1;
 
-// int IA_choice(Combat * state) {
-//     int max_attack = 0;
-//     int i = 0;
-//
-//     if (!state) return -1;
-//     //ESTAMOS ASUMIENDO QUE EL ENEMIGO TIENE 4 ATAQUES SINO QUIERES QUE ESTO OCURRA AÑADE UN CAMPO A LA ESTRUCTURA SKILL
-//     while (i <= 3) {
-//         if (attb_get(skill_getAtbatk(state->moveset[1][i]), 1) > attb_get(skill_getAtbatk(state->moveset[1][max_attack]), 1)) {
-//             max_attack = i;
-//         }
-//         i++;
-//     }
-//
-//     return max_attack;
-// }
 
+
+
+//EMERGENCY HEALING
+     if(attb_get(state->stats[1], 0) < 30){
+       i=0;
+       while (i <= 3) {
+           if (attb_get(skill_getAtbself(state->moveset[1][i]), 0) > attb_get(skill_getAtbself(state->moveset[1][max_attack]), 0)) {
+               max_attack = i;
+           }
+           i++;
+       }
+
+       if(attb_get(skill_getAtbself(state->moveset[1][max_attack]), 0) != 0){
+         return max_attack;
+       }
+     }
+//STAT BOOSTING ATK
+    if(attb_get(state->stats[1], 1) < attb_get(state->stats[0],1)-20 ){
+      i=0;
+      while (i <= 3) {
+          if (attb_get(skill_getAtbself(state->moveset[1][i]), 1) > attb_get(skill_getAtbself(state->moveset[1][max_attack]), 1)) {
+              max_attack = i;
+          }
+          i++;
+      }
+
+      if(attb_get(skill_getAtbself(state->moveset[1][max_attack]), 1) != 0){
+        return max_attack;
+      }
+    }
+    //STAT BOOSTING DEF
+    if(attb_get(state->stats[1], 2) < attb_get(state->stats[0],1)-25 ){
+      i=0;
+      while (i <= 3) {
+          if (attb_get(skill_getAtbself(state->moveset[1][i]), 2) > attb_get(skill_getAtbself(state->moveset[1][max_attack]), 2)) {
+              max_attack = i;
+          }
+          i++;
+      }
+
+      if(attb_get(skill_getAtbself(state->moveset[1][max_attack]), 2) != 0){
+        return max_attack;
+      }
+    }
+    //STAT BOOSTING AGL
+    if(attb_get(state->stats[1], 2) < attb_get(state->stats[0],2)-15 ){
+      i=0;
+      while (i <= 3) {
+          if (attb_get(skill_getAtbself(state->moveset[1][i]), 4) > attb_get(skill_getAtbself(state->moveset[1][max_attack]), 4)) {
+              max_attack = i;
+          }
+          i++;
+      }
+
+      if(attb_get(skill_getAtbself(state->moveset[1][max_attack]), 4) != 0){
+        return max_attack;
+      }
+    }
+
+
+//DEFAULT BEHAVIOUR
+      i = 0;
+      while (i <= 3) {
+          if (attb_get(skill_getAtbatk(state->moveset[1][i]), 1) > attb_get(skill_getAtbatk(state->moveset[1][max_attack]), 1)) {
+              max_attack = i;
+            }
+            i++;
+          }
+
+
+
+
+     return max_attack;
+}
+*/
 // int combat_exe(Combat *c) {
 //     int i = 0, aux = 1, move = 0;
 //
