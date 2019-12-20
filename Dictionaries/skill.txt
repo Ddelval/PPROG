@@ -27,6 +27,58 @@ Electric pulse
 You introduce your sword into the ground creating a powerful electric pulse, however your lose some attack power due to overcharge.
 0
 0 -2 0 0 0
-0 14 0 0 0
+0 14 0 0 1
+6
+Powered Shot
+You load your weapon in order to make a greater impact but you may loose some of your defense in the process.
+3
+0 0 -3 0 0
+0 0 20 0 2
+7
+Accurate strike
+You will not miss a chance using this melee skill with a reduced power spike.
+1
+0 0 0 0 0
+0 8 0 0 0
+8
+Electric rocket
+Shot combined with a magnetic field which is able to stun enemies, nonetheless it will harm you.
+0
+-5 0 0 0 0
+0 10 0 0 1
+9
+Laser cut
+A laser saber needs a laser attack, have fun!! 
+3
+0 0 0 0 0
+0 20 0 0 0
+10
+Uraniun bomb
+A lot of damage, for both of you, be careful!
+3
+-30 0 0 0 0
+0 50 0 0 0
+11
+Laser kick
+Your enchanced armament allows you to reliably stun yout enemies with a little bit of damage
+1
+0 0 0 0 0
+0 10 0 0 3
+12
+Hoe strike
+The hoe has chosen you know destroy those aliens, but it is heavy so dont use it too much
+0
+0 -15 0 0 0
+0 100 0 0 0
+13
+Potatoe bombing
+The RESA potatoes are remote-controlled by Charo, nobody can escape from them, not even you
+1
+-90 0 0 0 0
+0 120 0 0 0
+
+
+
+
 
 
