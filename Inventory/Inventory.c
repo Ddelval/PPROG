@@ -253,17 +253,8 @@ Inventory* inv_load(FILE* f){
     return inv;
 }
 
-int inv_getSelectedWeapon (Inventory * inv){
+const Object* inv_getSelected(Inventory * inv, obj_type t){
   if(!inv) return NULL;
-  return inv->selected[0];
+  return inv->items[inv->selected[t]];
 }
 
-int inv_getSelectedConsumable (Inventory * inv){
-  if(!inv) return NULL;
-  return inv->selected[1];
-}
-
-int inv_getSelectedReource (Inventory * inv){
-  if(!inv) return NULL;
-  return inv->selected[2];
-}

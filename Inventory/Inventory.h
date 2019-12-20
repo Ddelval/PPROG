@@ -27,8 +27,5 @@ Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Fon
 int inv_getQuantity(Inventory* inv, int obj_id);
 Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity);
 Inventory* inv_load(FILE* f);
-int inv_getSelectedWeapon (Inventory * inv);
-int inv_getSelectedConsumable (Inventory * inv);
-int inv_getSelectedReource (Inventory * inv);
-
+const Object* inv_getSelected(Inventory * inv, obj_type t);
 #endif

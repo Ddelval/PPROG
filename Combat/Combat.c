@@ -6,14 +6,14 @@
 #include <time.h>
 
 #define PLAYER_ACTIONS 2 //Fixed window index for player actions
-#define COMBAT_ROOM 0 //ndex of the only room in c->cd. For readability only
+#define COMBAT_ROOM 0 //Index of the only room in c->cd. For readability only
 #define MAX_ATTACKS 4
 struct _Combat {
     Entity *player, *enemy;
-    Object * o1 = NULL, *o2 = NULL;
+    Object *weapons[2];
     char* name[2];
     Attributes* stats[2];
-    Skill* moveset[2][4];
+    Skill** moveset[2];
     bool stunplayer, stunenemy;
     Display* cd;
 };
@@ -72,17 +72,13 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
   c->stunplayer = false;
   c->stunenemy = false;
 
-  o1 = odic_lookup(inv_getSelectedWeapon(entity_getInventory(player)));
-  o2 = odic_lookup(inv_getSelectedWeapon(entity_getInventory(enemy)));
+  c->weapons[0] = inv_getSelected(entity_getInventory(player), WEAPON);
+  c->weapons[1]= inv_getSelected(entity_getInventory(enemy), WEAPON);
 
 
-  c->moveset[0] = obj_getAttacks(o1);
-  c->moveset[1] = obj_getAttacks(o2);
+  c->moveset[0] = obj_getAttacks(c->weapons[0]);
+  c->moveset[1] = obj_getAttacks(c->weapons[1]);
 
-  //for(int i=0; i<4; i++){
-  //  c->moveset[0][i]= skill_readFromFile("Dictionaries/skill.txt",i+1);
-  //  c->moveset[1][i]= skill_readFromFile("Dictionaries/skill.txt",i+1);
-  //}
   return c;
 }
 
