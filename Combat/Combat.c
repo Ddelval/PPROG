@@ -491,64 +491,73 @@ void _combat_message(Combat* c, char* message) {
   return;
 }
 
-Combat* combat_executeMove(Combat* c) {
-  if(!c||!c->cd||!c->player) return NULL;
+Combat* combat_load(Combat*c) {
+  if(!c||!c->cd||!c->player||!c->enemy) return NULL;
 
-  int mindex=disp_getSelIndex(c->cd, PLAYER_ACTIONS);
-  if(mindex==-1) return NULL;
-  /*So far*/
-  int ent=0;
-  int action=mindex;
-  /*So far*/
-  int other = 0;
-  int dmgout;
-  Attributes * aux1;
-  Attributes * aux2;
-  int * attr;
-  fprintf(stdout, "%s ataca con %s.\n", c->name[ent], skill_getName(c->moveset[ent][action]));
-  if (ent == 0) {
-      other = 1;
+  if(c->cd->nLatWindow>0) {
+    for(int i=c->cd->nLatWindow-1; i>=0; --i) {
+      if(!disp_RemLwindow(c->cd, i)) return NULL;
+    }
   }
-  if (attack_goes(c, c->moveset[ent][action], ent) == true) {
-      skill_stun(c, c->moveset[ent][action], ent);
-
-      aux1 = attb_merge(c->stats[ent], skill_getAtbatk(c->moveset[ent][action]));
-
-      if (attb_get(skill_getAtbatk(c->moveset[ent][action]), 1) == 0) {
-          aux2 = attb_merge(c->stats[ent], skill_getAtbself(c->moveset[ent][action]));
-
-          // HOTFIX IN ORDER TO NOT ALLOW OVERHEALING
-          if (other == 1) {
-              if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->player), 0)) {
-                  attb_set(aux2, attb_get(entity_getAttributes(c->player), 0), 0);
-              }
-          } else {
-              if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->enemy), 0)) {
-                  attb_set(aux2, attb_get(entity_getAttributes(c->enemy), 0), 0);
-              }
-          }
-
-
-          attr = attb_getAll(aux2);
-
-          attb_setAll(c->stats[ent], attr);
-          attb_free(aux2);
-      } else {
-          dmgout = attb_get(aux1, 1) - attb_get(c->stats[other], 2);
-          if (dmgout < 0) dmgout = 0;
-          attb_set(c->stats[other], attb_get(c->stats[other], 0) - dmgout, 0);
+  Welem* pstats[5];
+  Welem* estats[5];
+  Welem* movs[5];
+  char* c[5][128];
+  sprintf(c[0], "Health: %d", attb_get(c->stats[PLAYER], HEALTH));
+  sprintf(c[1], "Attack: %d", attb_get(c->stats[PLAYER], ATTACK));
+  sprintf(c[2], "Defense: %d", attb_get(c->stats[PLAYER], DEFENSE));
+  sprintf(c[3], "Speed: %d", attb_get(c->stats[PLAYER], SPEED));
+  sprintf(c[4], "Agility: %d", attb_get(c->stats[PLAYER], AGILITY));
+  for(int i=0;i<5;++i) {
+      pstats[i]=we_createLabel(c[i],fcat_lookup(M4),0);
+      if(!pstats[i]) {
+        for(int j=0;j<i;++j)we_free(pstats[j]);
+        return NULL;
       }
+  }
 
-      attb_free(aux1);
-  } else fprintf(stdout, "Attack dogded");
-  return 0;
+
+  Window* winplayer=win_ini("Your stats",pstats,5,c->cd->width-c->cd->vdiv-1,c->cd->height/4-20,0,0,fcat_lookup(M8));
+  if(!winplayer) return NULL;
+
+  Window* winenemy=win_ini("Enemy's stats",estats,5,c->cd->width-c->cd->vdiv-1,c->cd->height/4-20,c->cd->height/4-20,0,fcat_lookup(M8));
+  if(!winenemy) {
+    win_free(winplayer);
+    return NULL;
+  }
+  Window* winoptions=win_ini("Movements",movs,5,c->cd->width-c->cd->vdiv-1,c->cd->height/4-20, c->cd->height/2-40,0,fcat_lookup(M8));
+  if(!winoptions) {
+    win_free(winplayer);
+    win_free(winenemy);
+    return NULL;
+  }
+  Window* wininfo=win_ini("State of the combat",NULL,0,c->cd->width-c->cd->vdiv-1,c->cd->height/4-20,c->cd->height-80,0,fcat_lookup(M8));
+  if(!wininfo) {
+    win_free(winplayer);
+    win_free(winenemy);
+    win_free(winoptions);
+    return NULL;
+  }
+
+  if(!disp_AddLWindow(c->cd, winplayer)) {
+
+    return NULL;
+  }
+  if(!disp_AddLWindow(c->cd, winenemy)) {
+
+    return NULL;
+  }
+  if(!disp_AddLWindow(c->cd, winoptions)) {
+
+    return NULL;
+  }
+  if(!disp_AddLWindow(c->cd, wininfo)) {
+
+    return NULL;
+  }
+
 }
 
-
-Combat* combat_enemyMove(Combat* c) {
-  if(!c||!c->enemy) return NULL;
-  return c; /*Adaptation*/
-}
 /*
  int IA_choice(Combat * state) {
      int max_attack = 0;
