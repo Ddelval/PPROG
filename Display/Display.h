@@ -82,4 +82,7 @@ Display* disp_remDialog(Display* dis);
 Display* disp_CraftingWindow(Display* dis,Inventory* inv);
 Display* disp_setSpriteI(Display* d,int ind, int i);
 Display* disp_setSpriteJ(Display* d,int ind, int j);
+const Window* disp_getLWindow(Display* d, int windex);
+int disp_getNLatWindow(Display* d);
+int* disp_getDimensions(Display* d);
 #endif /* Display_h */

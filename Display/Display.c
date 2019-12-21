@@ -442,3 +442,24 @@ Display* disp_execute(Display* dis, int index, int room_index, void* en){
 
     return dis;
 }
+
+const Window* disp_getLWindow(Display* d, int windex) {
+  if(!d||windex<0||windex>=d->nLatWindow) return NULL;
+
+  return d->latWindow[windex];
+}
+
+int disp_getNLatWindow(Display* d) {
+  if(!d) return NULL;
+
+  return d->nLatWindow;
+}
+
+int* disp_getDimensions(Display* d) {
+  if(!d) return NULL;
+
+  int* r=(int*)calloc(3, sizeof(int));
+  r[0]=d->width;
+  r[1]=d->height;
+  r[2]=d->vdiv;
+}

@@ -16,7 +16,7 @@
 
 
 #include "Attributes.h"
-typedef enum {STUNNER = 0, UNDOGDE = 1, NORMAL = 2} specialSkill;
+typedef enum {STUNNER = 0, UNDODGE = 1, NORMAL = 2} specialSkill;
 typedef struct _skill Skill;
 //typedef struct _entity entity;
 /*

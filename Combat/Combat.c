@@ -2,6 +2,7 @@
 
 #include "Combat.h"
 #include "Display.h"
+#include "Attributes.h"
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
@@ -24,6 +25,14 @@ struct _Combat {
     Display* cd;
 };
 
+/*  PROTOTYPES FOR PRIVATE FUNCTIONS  */
+Combat* _combat_executeMove(Combat* c, int choice);
+Combat* _combat_playerMove(Combat* c, int choice);
+Combat* _combat_executeEnemyMove(Combat *c, int choice);
+Combat* _combat_enemyMove(Combat* c);
+void _combat_applyConsumable(Combat* c, Entity* e, int id);
+void _combat_message(Combat* c, char* message);
+
 
 Combat* combat_ini(Entity* player, Entity* enemy) {
   if(!player||!enemy) return NULL;
@@ -36,7 +45,7 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
     free(c);
     return NULL;
   }
-  f=fopen("Worlds/c1.txt", "r");
+  f=fopen("Worlds/c1.txt", "r");  // HARDCODED. IT DOESN'T EXIST (YET).
   Room* cr=room_load(f);
   if(!cr) {
     free(c);
@@ -93,8 +102,8 @@ Combat* combat_execute(Combat* c) {
 
   int selindex=0;
   while(1) {
-      char c=getch1();
-      switch(c){
+      char ch=getch1();
+      switch(ch){
           case 'W': case 'O':
               selindex++;
               break;
@@ -102,7 +111,7 @@ Combat* combat_execute(Combat* c) {
               selindex--;
               break;
           case 'J':
-              if(!_combat_executeMove(c, selindex) return NULL;
+              if(!_combat_executeMove(c, selindex)) return NULL;
               if(!attb_get(c->stats[PLAYER], HEALTH)||!attb_get(c->stats[ENEMY], HEALTH)) return c;
               break;
           case 'Q': //NOTE: THIS IS ONLY TO BE ABLE TO EXIT MID-COMBAT WHILE DEVELOPING THE GAME. REMOVE THIS WHEN THE DELIVERY IS DUE.
@@ -119,7 +128,7 @@ Combat* _combat_executeMove(Combat* c, int choice) {
 
   if(choice==COMBAT_CONSUMABLE) {
     _combat_applyConsumable(c, c->player, PLAYER);
-    if(!_combat_enemyMove(Combat* c)) return NULL;
+    if(!_combat_enemyMove(c)) return NULL;
     return c;
   }
   /*  Normal turn; no consumable used */
@@ -135,25 +144,26 @@ Combat* _combat_executeMove(Combat* c, int choice) {
   if(skill_getSpecial(ps)==UNDODGE) res=1;
   if(res<0) { /*  Your attack is dodged */
     if(attb_get(c->stats[PLAYER], SPEED)<attb_get(c->stats[ENEMY], SPEED)) {
-      if(!_combat_enemyMove(Combat* c)) return NULL;
+      if(!_combat_enemyMove(c)) return NULL;
       sleep(2);
       _combat_message(c, "The enemy dodged your attack!");
     } else {
       _combat_message(c, "The enemy dodged your attack!");
       sleep(2);
-      if(!_combat_enemyMove(Combat* c)) return NULL;
+      if(!_combat_enemyMove(c)) return NULL;
     }
   } else {  /* Your attack hits */
     if(attb_get(c->stats[PLAYER], SPEED)>attb_get(c->stats[ENEMY], SPEED)) {
-      if(!_combat_playerMove(Combat* c, choice)) return NULL;
+      if(!_combat_playerMove(c, choice)) return NULL;
       sleep(2);
-      if(!_combat_enemyMove(Combat* c)) return NULL;
+      if(!_combat_enemyMove(c)) return NULL;
     } else {
-      if(!_combat_enemyMove(Combat* c)) return NULL;
+      if(!_combat_enemyMove(c)) return NULL;
       sleep(2);
-      if(!_combat_playerMove(Combat* c, choice)) return NULL;
+      if(!_combat_playerMove(c, choice)) return NULL;
     }
   }
+
   return c;
 }
 
@@ -161,7 +171,7 @@ Combat* _combat_playerMove(Combat* c, int choice) {
   if(!c||choice<0||choice>=MAX_ATTACKS) return NULL;
 
   if(c->stunplayer) {
-    _combat_message(Combat* c, "You are stunned! You cannot move!");
+    _combat_message(c, "You are stunned! You cannot move!");
     c->stunplayer=false;
     return c;
   }
@@ -220,7 +230,7 @@ Combat* _combat_playerMove(Combat* c, int choice) {
   }
 
   /*  RISING OUR ATTACK  */
-  attack = min(attb_get(c->stats[PLAYER], ATTACK) + attb_get(self, ATTACK), attb_get(entity_getAttributes(c->player, ATTACK)));
+  attack = min(attb_get(c->stats[PLAYER], ATTACK) + attb_get(self, ATTACK), attb_get(entity_getAttributes(c->player), ATTACK));
   if(!attb_set(c->stats[PLAYER], attack, ATTACK)) {
     attb_free(self);
     attb_free(attk);
@@ -228,7 +238,7 @@ Combat* _combat_playerMove(Combat* c, int choice) {
   }
 
   /*  OUR SPEED  */
-  slowing = min(attb_get(c->stats[PLAYER], SPEED) + attb_get(self, SPEED), attb_get(entity_getAttributes(c->player, SPEED)));
+  slowing = min(attb_get(c->stats[PLAYER], SPEED) + attb_get(self, SPEED), attb_get(entity_getAttributes(c->player), SPEED));
   if(!attb_set(c->stats[PLAYER], slowing, SPEED)) {
     attb_free(self);
     attb_free(attk);
@@ -236,7 +246,7 @@ Combat* _combat_playerMove(Combat* c, int choice) {
   }
 
   /*  OUR AGILITY  */
-  clumnsiness = min(attb_get(c->stats[PLAYER], AGILITY) + attb_get(self, AGILITY), attb_get(entity_getAttributes(c->player, AGILITY)));
+  clumnsiness = min(attb_get(c->stats[PLAYER], AGILITY) + attb_get(self, AGILITY), attb_get(entity_getAttributes(c->player), AGILITY));
   if(!attb_set(c->stats[PLAYER], clumnsiness, AGILITY)) {
     attb_free(self);
     attb_free(attk);
@@ -244,7 +254,7 @@ Combat* _combat_playerMove(Combat* c, int choice) {
   }
 
   /*  OUR DEFENSE  */
-  defense = min(attb_get(c->stats[PLAYER], DEFENSE) + attb_get(self, DEFENSE), attb_get(entity_getAttributes(c->player, DEFENSE)));
+  defense = min(attb_get(c->stats[PLAYER], DEFENSE) + attb_get(self, DEFENSE), attb_get(entity_getAttributes(c->player), DEFENSE));
   if(!attb_set(c->stats[PLAYER], defense, DEFENSE)) {
     attb_free(self);
     attb_free(attk);
@@ -252,7 +262,7 @@ Combat* _combat_playerMove(Combat* c, int choice) {
   }
 
   /*  OUR HEALTH  */
-  damage = min(attb_get(c->stats[PLAYER], HEALTH) + attb_get(self, HEALTH), attb_get(entity_getAttributes(c->player, HEALTH)));
+  damage = min(attb_get(c->stats[PLAYER], HEALTH) + attb_get(self, HEALTH), attb_get(entity_getAttributes(c->player), HEALTH));
   if(!attb_set(c->stats[PLAYER], damage, HEALTH)) {
     attb_free(self);
     attb_free(attk);
@@ -325,7 +335,7 @@ Combat* _combat_executeEnemyMove(Combat *c, int choice) {
   }
 
   /*  RISING OUR ATTACK  */
-  attack = min(attb_get(c->stats[ENEMY], ATTACK) + attb_get(self, ATTACK), attb_get(entity_getAttributes(c->enemy, ATTACK)));
+  attack = min(attb_get(c->stats[ENEMY], ATTACK) + attb_get(self, ATTACK), attb_get(entity_getAttributes(c->enemy), ATTACK));
   if(!attb_set(c->stats[ENEMY], attack, ATTACK)) {
     attb_free(self);
     attb_free(attk);
@@ -333,7 +343,7 @@ Combat* _combat_executeEnemyMove(Combat *c, int choice) {
   }
 
   /*  OUR SPEED  */
-  slowing = min(attb_get(c->stats[ENEMY], SPEED) + attb_get(self, SPEED), attb_get(entity_getAttributes(c->enemy, SPEED)));
+  slowing = min(attb_get(c->stats[ENEMY], SPEED) + attb_get(self, SPEED), attb_get(entity_getAttributes(c->enemy), SPEED));
   if(!attb_set(c->stats[ENEMY], slowing, SPEED)) {
     attb_free(self);
     attb_free(attk);
@@ -341,7 +351,7 @@ Combat* _combat_executeEnemyMove(Combat *c, int choice) {
   }
 
   /*  OUR AGILITY  */
-  clumnsiness = min(attb_get(c->stats[ENEMY], AGILITY) + attb_get(self, AGILITY), attb_get(entity_getAttributes(c->enemy, AGILITY)));
+  clumnsiness = min(attb_get(c->stats[ENEMY], AGILITY) + attb_get(self, AGILITY), attb_get(entity_getAttributes(c->enemy), AGILITY));
   if(!attb_set(c->stats[ENEMY], clumnsiness, AGILITY)) {
     attb_free(self);
     attb_free(attk);
@@ -349,7 +359,7 @@ Combat* _combat_executeEnemyMove(Combat *c, int choice) {
   }
 
   /*  OUR DEFENSE  */
-  defense = min(attb_get(c->stats[ENEMY], DEFENSE) + attb_get(self, DEFENSE), attb_get(entity_getAttributes(c->enemy, DEFENSE)));
+  defense = min(attb_get(c->stats[ENEMY], DEFENSE) + attb_get(self, DEFENSE), attb_get(entity_getAttributes(c->enemy), DEFENSE));
   if(!attb_set(c->stats[ENEMY], defense, DEFENSE)) {
     attb_free(self);
     attb_free(attk);
@@ -357,7 +367,7 @@ Combat* _combat_executeEnemyMove(Combat *c, int choice) {
   }
 
   /*  OUR HEALTH  */
-  damage = min(attb_get(c->stats[ENEMY], HEALTH) + attb_get(self, HEALTH), attb_get(entity_getAttributes(c->enemy, HEALTH)));
+  damage = min(attb_get(c->stats[ENEMY], HEALTH) + attb_get(self, HEALTH), attb_get(entity_getAttributes(c->enemy), HEALTH));
   if(!attb_set(c->stats[ENEMY], damage, HEALTH)) {
     attb_free(self);
     attb_free(attk);
@@ -375,7 +385,7 @@ Combat* _combat_executeEnemyMove(Combat *c, int choice) {
 Combat* _combat_enemyMove(Combat* c) {
   if(!c) return NULL;
   if(c->stunenemy) {
-    _combat_message(Combat* c, "Enemy is stunned! He cannot move!");
+    _combat_message(c, "Enemy is stunned! He cannot move!");
     c->stunenemy=false;
     return c;
   }
@@ -441,7 +451,7 @@ Combat* _combat_enemyMove(Combat* c) {
 
 void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   if(!c||!e||id>1||id<0) return;
-  Attributes* attr = obj_getAttributes(inv_getSelected(entity_getInventory(e), CONSUMABLE)));
+  Attributes* attr = obj_getAttributes(inv_getSelected(entity_getInventory(e), CONSUMABLE));
   if(!attr) return;
   if(!attb_merge(c->stats[id], attr)) return;
 
@@ -463,13 +473,13 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   attb_free(attr);
   if(id==ENEMY) _combat_message(c, "The enemy used a consumable to rise his stats!");
   else _combat_message(c, "You used your selected consumable to rise your stats!");
-  if(!inv_decrease(entity_getInventory(e),obj_getAttributes(inv_getSelected(entity_getInventory(e), CONSUMABLE)), CONSUMABLE)) return NULL;
+  if(!inv_decrease(entity_getInventory(e),obj_getAttributes(inv_getSelected(entity_getInventory(e), CONSUMABLE)), CONSUMABLE)) return;
   return;
 }
 
 void _combat_message(Combat* c, char* message) {
   if(!c||!message||!c->cd) return;
-  if(!win_remWindowElement(c->cd->latWindow[PLAYER_INFO], 0)) return;
+  if(!win_remWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), 0)) return;
   FILE* f=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
   Font* f6=font_load(f);
   fclose(f);
@@ -479,7 +489,7 @@ void _combat_message(Combat* c, char* message) {
     font_free(f6);
     return;
   }
-  if(!win_addWindowElement(c->cd->latWindow[PLAYER_INFO], we)) {
+  if(!win_addWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), we)) {
     font_free(f6);
     we_free(we);
     return;
@@ -494,308 +504,154 @@ void _combat_message(Combat* c, char* message) {
 Combat* combat_load(Combat*c) {
   if(!c||!c->cd||!c->player||!c->enemy) return NULL;
 
-  if(c->cd->nLatWindow>0) {
-    for(int i=c->cd->nLatWindow-1; i>=0; --i) {
+  if(disp_getNLatWindow(c->cd)>0) {
+    for(int i=disp_getNLatWindow(c->cd)-1; i>=0; --i) {
       if(!disp_RemLwindow(c->cd, i)) return NULL;
     }
   }
   Welem* pstats[5];
   Welem* estats[5];
   Welem* movs[5];
-  char* c[5][128];
-  sprintf(c[0], "Health: %d", attb_get(c->stats[PLAYER], HEALTH));
-  sprintf(c[1], "Attack: %d", attb_get(c->stats[PLAYER], ATTACK));
-  sprintf(c[2], "Defense: %d", attb_get(c->stats[PLAYER], DEFENSE));
-  sprintf(c[3], "Speed: %d", attb_get(c->stats[PLAYER], SPEED));
-  sprintf(c[4], "Agility: %d", attb_get(c->stats[PLAYER], AGILITY));
+  char ch[5][128];
+  sprintf(ch[0], "Health: %d", attb_get(c->stats[PLAYER], HEALTH));
+  sprintf(ch[1], "Attack: %d", attb_get(c->stats[PLAYER], ATTACK));
+  sprintf(ch[2], "Defense: %d", attb_get(c->stats[PLAYER], DEFENSE));
+  sprintf(ch[3], "Speed: %d", attb_get(c->stats[PLAYER], SPEED));
+  sprintf(ch[4], "Agility: %d", attb_get(c->stats[PLAYER], AGILITY));
   for(int i=0;i<5;++i) {
-      pstats[i]=we_createLabel(c[i],fcat_lookup(M4),0);
+      pstats[i]=we_createLabel(ch[i],fcat_lookup(M4),0);
       if(!pstats[i]) {
         for(int j=0;j<i;++j)we_free(pstats[j]);
         return NULL;
       }
   }
 
+  sprintf(ch[0], "Health: %d", attb_get(c->stats[ENEMY], HEALTH));
+  sprintf(ch[1], "Attack: %d", attb_get(c->stats[ENEMY], ATTACK));
+  sprintf(ch[2], "Defense: %d", attb_get(c->stats[ENEMY], DEFENSE));
+  sprintf(ch[3], "Speed: %d", attb_get(c->stats[ENEMY], SPEED));
+  sprintf(ch[4], "Agility: %d", attb_get(c->stats[ENEMY], AGILITY));
+  for(int i=0;i<5;++i) {
+      estats[i]=we_createLabel(ch[i],fcat_lookup(M4),0);
+      if(!estats[i]) {
+        for(int j=0;j<5;++j)we_free(pstats[j]);
+        for(int j=0;j<i;++j)we_free(estats[j]);
+        return NULL;
+      }
+  }
 
-  Window* winplayer=win_ini("Your stats",pstats,5,c->cd->width-c->cd->vdiv-1,c->cd->height/4-20,0,0,fcat_lookup(M8));
-  if(!winplayer) return NULL;
-
-  Window* winenemy=win_ini("Enemy's stats",estats,5,c->cd->width-c->cd->vdiv-1,c->cd->height/4-20,c->cd->height/4-20,0,fcat_lookup(M8));
-  if(!winenemy) {
-    win_free(winplayer);
+  for(int i=0;i<4;++i) {
+      movs[i]=we_createLabel(skill_getName(c->moveset[PLAYER][i]),fcat_lookup(M6),0);
+      if(!movs[i]) {
+        for(int j=0;j<5;++j)we_free(pstats[j]);
+        for(int j=0;j<5;++j)we_free(estats[j]);
+        for(int j=0;j<i;++j)we_free(movs[j]);
+        return NULL;
+      }
+  }
+  movs[4]=we_createLabel(obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE)), fcat_lookup(M6),0);
+  if(!movs[4]) {
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int j=0;j<4;++j)we_free(movs[j]);
     return NULL;
   }
-  Window* winoptions=win_ini("Movements",movs,5,c->cd->width-c->cd->vdiv-1,c->cd->height/4-20, c->cd->height/2-40,0,fcat_lookup(M8));
+  int* y=disp_getDimensions(c->cd);
+  Window* winplayer=win_ini("Your stats",pstats,5,y[0]-y[2]-1,y[2]/4-20,0,0,fcat_lookup(M8));
+  if(!winplayer) {
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int j=0;j<5;++j)we_free(movs[j]);
+    free(y);
+    return NULL;
+  }
+
+  Window* winenemy=win_ini("Enemy's stats",estats,5,y[0]-y[2]-1,y[2]/4-20,y[2]/4-20,0,fcat_lookup(M8));
+  if(!winenemy) {
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int j=0;j<5;++j)we_free(movs[j]);
+    win_free(winplayer);
+    free(y);
+    return NULL;
+  }
+  Window* winoptions=win_ini("Movements",movs,5,y[0]-y[2]-1,y[2]/4-20, y[2]/2-40,0,fcat_lookup(M8));
   if(!winoptions) {
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int j=0;j<5;++j)we_free(movs[j]);
     win_free(winplayer);
     win_free(winenemy);
+    free(y);
     return NULL;
   }
-  Window* wininfo=win_ini("State of the combat",NULL,0,c->cd->width-c->cd->vdiv-1,c->cd->height/4-20,c->cd->height-80,0,fcat_lookup(M8));
+  Window* wininfo=win_ini("State of the combat",NULL,0,y[0]-y[2]-1,y[2]/4-20,y[2]-80,0,fcat_lookup(M8));
   if(!wininfo) {
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int j=0;j<5;++j)we_free(movs[j]);
+    win_free(winplayer);
+    win_free(winenemy);
+    win_free(winoptions);
+    free(y);
+    return NULL;
+  }
+
+  if(!disp_AddLWindow(c->cd, winplayer)) {
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int j=0;j<5;++j)we_free(movs[j]);
+    win_free(winplayer);
+    win_free(winenemy);
+    win_free(winoptions);
+    free(y);
+    return NULL;
+  }
+  if(!disp_AddLWindow(c->cd, winenemy)) {
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int j=0;j<5;++j)we_free(movs[j]);
     win_free(winplayer);
     win_free(winenemy);
     win_free(winoptions);
     return NULL;
   }
-
-  if(!disp_AddLWindow(c->cd, winplayer)) {
-
-    return NULL;
-  }
-  if(!disp_AddLWindow(c->cd, winenemy)) {
-
-    return NULL;
-  }
   if(!disp_AddLWindow(c->cd, winoptions)) {
-
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int j=0;j<5;++j)we_free(movs[j]);
+    win_free(winplayer);
+    win_free(winenemy);
+    win_free(winoptions);
+    free(y);
     return NULL;
   }
   if(!disp_AddLWindow(c->cd, wininfo)) {
-
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int j=0;j<5;++j)we_free(movs[j]);
+    win_free(winplayer);
+    win_free(winenemy);
+    win_free(winoptions);
+    free(y);
     return NULL;
   }
-
+  /*
+      NOTE: AS WE HAVE A LOADED DISPLAY WITH A ROOM, IT WOULD BE NICE HAVING TWO
+      SPRITES FOR THE ENEMY AND THE PLAYER FACING EACH OTHER POKEMON-LIKE.
+  */
+  Canvas* d=disp_Render(c->cd);
+  canv_print(stdout,d,0,0);
+  canv_free(d);
+  for(int j=0;j<5;++j)we_free(pstats[j]);
+  for(int j=0;j<5;++j)we_free(estats[j]);
+  for(int j=0;j<5;++j)we_free(movs[j]);
+  win_free(winplayer);
+  win_free(winenemy);
+  win_free(winoptions);
+  free(y);
+  return c;
 }
-
-/*
- int IA_choice(Combat * state) {
-     int max_attack = 0;
-     int i = 0;
-     bool founded[4];
-     if (!state) return -1;
-
-
-
-
-//EMERGENCY HEALING
-     if(attb_get(state->stats[1], 0) < 30){
-       i=0;
-       while (i <= 3) {
-           if (attb_get(skill_getAtbself(state->moveset[1][i]), 0) > attb_get(skill_getAtbself(state->moveset[1][max_attack]), 0)) {
-               max_attack = i;
-           }
-           i++;
-       }
-
-       if(attb_get(skill_getAtbself(state->moveset[1][max_attack]), 0) != 0){
-         return max_attack;
-       }
-     }
-//STAT BOOSTING ATK
-    if(attb_get(state->stats[1], 1) < attb_get(state->stats[0],1)-20 ){
-      i=0;
-      while (i <= 3) {
-          if (attb_get(skill_getAtbself(state->moveset[1][i]), 1) > attb_get(skill_getAtbself(state->moveset[1][max_attack]), 1)) {
-              max_attack = i;
-          }
-          i++;
-      }
-
-      if(attb_get(skill_getAtbself(state->moveset[1][max_attack]), 1) != 0){
-        return max_attack;
-      }
-    }
-    //STAT BOOSTING DEF
-    if(attb_get(state->stats[1], 2) < attb_get(state->stats[0],1)-25 ){
-      i=0;
-      while (i <= 3) {
-          if (attb_get(skill_getAtbself(state->moveset[1][i]), 2) > attb_get(skill_getAtbself(state->moveset[1][max_attack]), 2)) {
-              max_attack = i;
-          }
-          i++;
-      }
-
-      if(attb_get(skill_getAtbself(state->moveset[1][max_attack]), 2) != 0){
-        return max_attack;
-      }
-    }
-    //STAT BOOSTING AGL
-    if(attb_get(state->stats[1], 2) < attb_get(state->stats[0],2)-15 ){
-      i=0;
-      while (i <= 3) {
-          if (attb_get(skill_getAtbself(state->moveset[1][i]), 4) > attb_get(skill_getAtbself(state->moveset[1][max_attack]), 4)) {
-              max_attack = i;
-          }
-          i++;
-      }
-
-      if(attb_get(skill_getAtbself(state->moveset[1][max_attack]), 4) != 0){
-        return max_attack;
-      }
-    }
-
-
-//DEFAULT BEHAVIOUR
-      i = 0;
-      while (i <= 3) {
-          if (attb_get(skill_getAtbatk(state->moveset[1][i]), 1) > attb_get(skill_getAtbatk(state->moveset[1][max_attack]), 1)) {
-              max_attack = i;
-            }
-            i++;
-          }
-
-
-
-
-     return max_attack;
-}
-*/
-// int combat_exe(Combat *c) {
-//     int i = 0, aux = 1, move = 0;
-//
-//     if (!c) return -1;
-//
-//     if (attb_get(c->stats[0], 3) > attb_get(c->stats[1], 3)) {
-//         aux = 0;
-//     }
-//
-//
-//
-//     while (attb_get(c->stats[0], 0) > 0 && attb_get(c->stats[1], 0) > 0) {
-//         if ((i + aux) % 2 == 0) {
-//             if (c->stunplayer == false) {
-//                 fprintf(stdout, "El jugador ataca primero, selecciona una acción:\n");
-//                 fprintf(stdout, "Listado de movimientos:\n %s\t %s\n%s\t%s\n", skill_getName(c->moveset[0][0]), skill_getName(c->moveset[0][1]), skill_getName(c->moveset[0][2]), skill_getName(c->moveset[0][3]));
-//                 move = player_choice();
-//                  if(move != 5){
-//                    movement_exe(c, move, 0);
-//                  }
-//                else{
-//                    apply_consumable(c);
-//}
-//             }
-//
-//             if (c->stunplayer == true) {
-//                 fprintf(stdout, "You have been stunned, meanwhile, you can have some tea.\n");
-//                 c->stunplayer = false;
-//             }
-//
-//         } else {
-//             if (c->stunenemy == false) {
-//                 move = IA_choice(c);
-//                 movement_exe(c, move, 1);
-//             }
-//             if (c->stunenemy == true) {
-//                 fprintf(stdout, "THe enemy has been stunned, his damage increased by 100, just joking.\n");
-//                 c->stunenemy = false;
-//             }
-//         }
-//         i++;
-//     }
-//
-//     combat_free(c);
-//     //decir qn ha muerto y liberar la memoria de la strutura combat
-//     return 0;
-// }
-
-//REVISADA,COMPILA
-
-bool attack_goes(Combat * c, Skill * skil, int who) {
-    if (!c || !skil) {
-        printf("FATAL ERROR FUNCTION ATTACK_GOES");
-        return false;
-    }
-    double res;
-    double random;
-    int p1, p2;
-    p1 = attb_get(c->stats[who], 4);
-    if (who == 0) {
-        p2 = attb_get(c->stats[1], 4);
-    } else p2 = attb_get(c->stats[0], 4);
-    srand(time(NULL));
-    random = (double) rand();
-    random /= RAND_MAX;
-
-    res = ((double) p1 / 100) * 7 - ((double) p2 / 100) - (random / 100);
-
-    if (skill_getSpecial(skil) == 2) {
-        res += 3;
-    }
-    if (res < 0) return false;
-    if (res >= 0) return true;
-}
-
-
-//REVISADA, COMPILA
-
-void skill_stun(Combat * c, Skill * skil, int who) {
-    if (!c || !skil) return;
-    if (skill_getSpecial(skil) != 1) return;
-    if (who == 0) {
-        c->stunenemy = true;
-    } else {
-        c->stunplayer = true;
-    }
-}
-
-
-
-
-
-
-// int movement_exe(Combat * c, int action, int ent) {
-//     int other = 0;
-//     int dmgout;
-//     Attributes * aux1;
-//     Attributes * aux2;
-//     int * attr;
-//     fprintf(stdout, "%s ataca con %s.\n", c->name[ent], skill_getName(c->moveset[ent][action]));
-//     if (ent == 0) {
-//         other = 1;
-//     }
-//     if (attack_goes(c, c->moveset[ent][action], ent) == true) {
-//         skill_stun(c, c->moveset[ent][action], ent);
-//
-//         aux1 = attb_merge(c->stats[ent], skill_getAtbatk(c->moveset[ent][action]));
-//
-//         if (attb_get(skill_getAtbatk(c->moveset[ent][action]), 1) == 0) {
-//             aux2 = attb_merge(c->stats[ent], skill_getAtbself(c->moveset[ent][action]));
-//
-//             // HOTFIX IN ORDER TO NOT ALLOW OVERHEALING
-//             if (other == 1) {
-//                 if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->player), 0)) {
-//                     attb_set(aux2, attb_get(entity_getAttributes(c->player), 0), 0);
-//                 }
-//             } else {
-//                 if (attb_get(aux2, 0) > attb_get(entity_getAttributes(c->enemy), 0)) {
-//                     attb_set(aux2, attb_get(entity_getAttributes(c->enemy), 0), 0);
-//                 }
-//             }
-//
-//
-//             attr = attb_getAll(aux2);
-//
-//             attb_setAll(c->stats[ent], attr);
-//             attb_free(aux2);
-//         } else {
-//             dmgout = attb_get(aux1, 1) - attb_get(c->stats[other], 2);
-//             if (dmgout < 0) dmgout = 0;
-//             attb_set(c->stats[other], attb_get(c->stats[other], 0) - dmgout, 0);
-//         }
-//
-//         attb_free(aux1);
-//     } else fprintf(stdout, "Attack dogded");
-//     return 0;
-// }
-
-/*void apply_consumable(Combat * c){
-  int * attr;
-  if(!combat) return;
-  attr = attb_getAll(obj_getAttributes(inv_getSelected(entity_getInventory(player), CONSUMABLE)));
-  attb_setAll(c->stats[0], attr);
-
-//DISABLE OVERHEALING
-  if (attb_get(c->stats[0], 0) > attb_get(entity_getAttributes(c->player), 0)) {
-
-    attb_set(c->stats[0], attb_get(entity_getAttributes(c->player), 0), 0);
-    }
-
-  inv_decrease(entity_getInventory(player),obj_getAttributes(inv_getSelected(entity_getInventory(player), CONSUMABLE)),1);
-
-  return;
-
-}*/
 
 
 void combat_free(Combat* c) {
