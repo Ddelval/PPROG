@@ -125,7 +125,7 @@ Combat* _combat_executeMove(Combat* c, int choice) {
   }
   /*  Normal turn; no consumable used */
 
-  Skill* ps=c->Skill[PLAYER][choice];
+  Skill* ps=c->moveset[PLAYER][choice];
   int p1 = attb_get(c->stats[PLAYER], AGILITY);
   int p2 = attb_get(c->stats[ENEMY], AGILITY);
   srand(time(NULL));
@@ -162,7 +162,103 @@ Combat* _combat_playerMove(Combat* c, int choice) {
     c->stunplayer=false;
     return c;
   }
-  if(skill_getSpecial()==STUNNER) c->stunenemy=true;
+  if(skill_getSpecial(c->moveset[PLAYER][choice])==STUNNER) c->stunenemy=true;
+
+  Attributes* self=attb_merge(c->stats[PLAYER], skill_getAtbself(c->moveset[PLAYER][choice]));
+  if(!self) return NULL;
+  Attributes* attk=attb_merge(c->stats[PLAYER], skill_getAtbatk(c->moveset[PLAYER][choice]));
+  if(!attk) {
+    attb_free(self);
+    return NULL;
+  }
+  /*  LOWERING ENEMY'S DAMAGE  */
+  int attack = attb_get(attk, ATTACK) - attb_get(c->stats[ENEMY], DEFENSE);
+  if(attack < 0) attack = 0;
+  if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], ATTACK) - attack, ATTACK)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  SLOWING UP ENEMY  */
+  int slowing = attb_get(attk, SPEED) - attb_get(c->stats[ENEMY], DEFENSE);
+  if(slowing < 0) slowing = 0;
+  if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], SPEED) - slowing, SPEED)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  MAKING ENEMY LOSE AGILITY */
+  int clumnsiness = attb_get(attk, AGILITY) - attb_get(c->stats[ENEMY], DEFENSE);
+  if(clumnsiness < 0) clumnsiness = 0;
+  if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], AGILITY) - clumnsiness, AGILITY)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  LOWERING ENEMY'S DEFENSE  */
+  int defense = attb_get(attk, DEFENSE) - attb_get(c->stats[ENEMY], DEFENSE);
+  if(defense < 0) defense = 0;
+  if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], DEFENSE) - defense, DEFENSE)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  DAMAGE  */
+  int damage = attb_get(attk, HEALTH) - attb_get(c->stats[ENEMY], DEFENSE);
+  if(damage < 0) damage = 0;
+  if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], HEALTH) - damage, HEALTH)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  RISING OUR ATTACK  */
+  attack = min(attb_get(c->stats[PLAYER], ATTACK) + attb_get(self, ATTACK), attb_get(entity_getAttributes(c->player, ATTACK)));
+  if(!attb_set(c->stats[PLAYER], attack, ATTACK)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  OUR SPEED  */
+  slowing = min(attb_get(c->stats[PLAYER], SPEED) + attb_get(self, SPEED), attb_get(entity_getAttributes(c->player, SPEED)));
+  if(!attb_set(c->stats[PLAYER], slowing, SPEED)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  OUR AGILITY  */
+  clumnsiness = min(attb_get(c->stats[PLAYER], AGILITY) + attb_get(self, AGILITY), attb_get(entity_getAttributes(c->player, AGILITY)));
+  if(!attb_set(c->stats[PLAYER], clumnsiness, AGILITY)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  OUR DEFENSE  */
+  defense = min(attb_get(c->stats[PLAYER], DEFENSE) + attb_get(self, DEFENSE), attb_get(entity_getAttributes(c->player, DEFENSE)));
+  if(!attb_set(c->stats[PLAYER], defense, DEFENSE)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  OUR HEALTH  */
+  damage = min(attb_get(c->stats[PLAYER], HEALTH) + attb_get(self, HEALTH), attb_get(entity_getAttributes(c->player, HEALTH)));
+  if(!attb_set(c->stats[PLAYER], damage, HEALTH)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  attb_free(self);
+  attb_free(attk);
+  return c;
 
 }
 
