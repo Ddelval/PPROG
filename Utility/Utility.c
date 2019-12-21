@@ -102,7 +102,7 @@ void term_init(){
     new.c_lflag&=~ECHO;
     new.c_cc[VMIN]=1;
     new.c_cc[VTIME]=0;
-    new.c_lflag&=~ISIG;
+    //new.c_lflag&=~ISIG;
     
     tcsetattr(fileno(stdin),TCSANOW,&new);
     fprintf(stdout,"%c[?25l",27);

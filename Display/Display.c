@@ -10,6 +10,9 @@
 #define TITLE_MULTILINE 10
 #define DARKEN 0.40
 #define BLUR_RAD 10
+#define NSEL_VALS 255,255,255,255
+#define  SEL_VALS 150,150,255,255
+#define CIRC_RAD 10
 struct _Display{
     int width, height;
     int vdiv;
@@ -252,17 +255,14 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     dis->pop_inv=true;
     return dis;
 }
-Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv,int selindex,int size){
+Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv, int size, pairii* coord){
     if(!dis||!inv)return NULL;
 
     int gap_w=10;
-    int circ_rad=10;
-    Pixel* nsel=pix_ini(255,255,255,255);
-    Canvas* dot=canv_circle(nsel,circ_rad);
-    Pixel* sel=pix_ini(150,150,255,255);
-    Canvas* dotsel=canv_circle(sel,circ_rad);
+    Pixel* nsel=pix_ini(0,0,0,0);
+    Canvas* dot=canv_circle(nsel,CIRC_RAD);
 
-    pix_free(nsel); pix_free(sel);
+    pix_free(nsel);
     if(!size){
         Wlabel* wl=wl_ini("Recipies",fcat_lookup(M8),0);
         Canvas* wl_r=wl_render(wl,dis->width);
@@ -295,8 +295,13 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv,in
         wid=max(wid,w);
     }
 
-    Canvas* fdot =canv_AdjustCrop(dot,canv_getWidth(dot)+10,hei);
-    Canvas* fsdot=canv_AdjustCrop(dotsel,canv_getWidth(dotsel)+10,hei);
+    Canvas* lat=canv_backGrnd(0,0,0,0,5,1);
+    Canvas* fdot_1 =canv_AdjustCrop(dot,canv_getWidth(dot),hei);
+    Canvas* fdot=canv_appendH(fdot_1,lat);
+
+    canv_free(lat);
+    canv_free(fdot_1);
+
 
 
     Canvas* gap=canv_backGrnd(0,0,0,0,wid,gap_w);
@@ -304,14 +309,16 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv,in
     int box_w=20;
     Canvas* cc=rec_render(rec[0],ob_wid,wid,hei,dis->width-2*margin-box_w);
     Canvas* c;
-    if(selindex!=0)c=canv_appendH(fdot,cc);
-    else c=canv_appendH(fsdot,cc);
+    c=canv_appendH(fdot,cc);
+    coord[0].fi=0;
+    coord[0].se=canv_getWidth(c);
     for(int i=1;i<size;++i){
         canv_appendVI(c,gap);
         Canvas* c2=rec_render(rec[i],ob_wid,wid,hei,dis->width-2*margin-box_w);
         Canvas* c3;
-        if(selindex!=i)c3=canv_appendH(fdot,c2);
-        else c3=canv_appendH(fsdot,c2);
+        c3=canv_appendH(fdot,c2);
+        coord[i].fi=canv_getHeight(c);
+        coord[i].se=canv_getWidth(c3);
         canv_appendVIA(c,c3,RIGHT);
         canv_free(c2);
         canv_free(c3);
@@ -322,6 +329,12 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv,in
     Canvas* wl_r=wl_render(wl,dis->width);
     int marg=15;
     Canvas* wl_rr=canv_AdjustCrop(wl_r,dis->width,canv_getHeight(wl_r)+marg);
+
+    for(int i=0;i<size;++i){
+        coord[i].se=canv_getWidth(c)-coord[i].se +(dis->width-canv_getWidth(c))/2+1;
+        coord[i].fi+=canv_getHeight(wl_rr)+ceil(canv_getHeight(fdot)/2.0);
+    }
+
     Canvas* c_r=canv_AdjustCrop(c,dis->width,canv_getHeight(c));
     canv_appendVI(wl_rr,c_r);
     Canvas* back=disp_Render(dis);
@@ -336,15 +349,42 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv,in
     canv_free(cc);
     return back2;
 }
+Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,Canvas* bckg){
+    if(!coordinates)return NULL;
+
+    Pixel* nsel=pix_ini(NSEL_VALS);
+    Canvas* dot=canv_circle(nsel,CIRC_RAD);
+    Pixel* sel=pix_ini(SEL_VALS);
+    Canvas* dotsel=canv_circle(sel,CIRC_RAD);
+
+    for(int i=0;i<size;++i){
+        Canvas* back=canv_subCopy(bckg,coordinates[i].fi,coordinates[i].fi+canv_getHeight(dot),coordinates[i].se,coordinates[i].se+canv_getWidth(dot));
+        if(i==selected){
+            canv_addOverlay(back,dotsel,0,0);
+        }
+        else{
+            canv_addOverlay(back,dot,0,0);
+        }
+        canv_print(stdout,back,coordinates[i].fi,coordinates[i].se);
+    }
+}
 Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     if(!dis||!inv)return NULL;
     dis->pop_craf=true;
     int size=0;
     Recipe** rec=rdic_getAllDoable(inv,&size);
-    Canvas* base=_disp_renderCraftingWindow(dis,rec,inv,0,size);
-    canv_print(stdout,base,0,0);
-    if(!base)return NULL;
+    if(!rec)return NULL;
+    pairii* coordinates =calloc(size,sizeof(pairii));
+    if(!coordinates){
+        //ERROR CONTROL
+    }
     int selindex=0;
+    Canvas* base=_disp_renderCraftingWindow(dis,rec,inv,size,coordinates);
+    if(!base)return NULL;
+    canv_print(stdout,base,0,0);
+    _disp_reprintCraft(coordinates,size,selindex,base);
+    
+    
     while(1){
         char c=getch1();
         switch(c){
@@ -365,15 +405,13 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
         }
         if(selindex==-10)break;
         else selindex=(selindex+size)%size;
-        Canvas* sec=_disp_renderCraftingWindow(dis,rec,inv,selindex,size);
-        canv_printDiff(stdout,sec,base,0,0);
-        canv_free(base);
-        base=sec;
+        _disp_reprintCraft(coordinates,size,selindex,base);
     }
     dis->pop_craf=false;
     Canvas* c=disp_Render(dis);
     canv_print(stdout,c,0,0);
     canv_free(c);
+    canv_free(base);
     return dis;
 }
 Display* disp_remInventory(Display* d){

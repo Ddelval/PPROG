@@ -24,7 +24,9 @@
 */
 typedef enum{false,true}bool;
 //extern int err=0;
-
+typedef struct {
+    int fi,se;
+}pairii;
 void appendf(char* dest, int* spos,char* orig);
 void append (char* dest, int* spos, const char* orig);
 char* movecur(int x,int y);

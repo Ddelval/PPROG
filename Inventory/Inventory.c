@@ -70,9 +70,9 @@ Inventory* inv_copy(Inventory* inv) {
             inv_free(in);
             return NULL;
         }
-        memcpy(in->times,inv->times,sizeof(int)*in->size[i]);
+        memcpy(in->times[i],inv->times[i],sizeof(int)*in->size[i]);
         for(int j=0;j<in->size[i];++j){
-            in->items[i]=obj_copy(inv->items[i]);
+            in->items[i][j]=obj_copy(inv->items[i][j]);
             if(!in->items[i]){
                 inv_free(in);
                 return NULL;

@@ -1028,7 +1028,7 @@ Canvas* canv_circle(Pixel* p,int rad){
                 cnt+=(i2-rad)*(i2-rad)+(j2-rad)*(j2-rad)<rad*rad;
             }
             res->data[i][j]=pix_copy(p);
-            pix_setA(res->data[i][j],(int)((cnt/4.0)*255));
+            pix_setA(res->data[i][j],(int)((cnt/4.0)*255*pix_retA(p)));
         }
     }
     Canvas* r2=canv_ini(2*rad,rad);
