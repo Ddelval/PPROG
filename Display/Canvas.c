@@ -871,6 +871,7 @@ void canv_printAllNonTransparent(FILE* f, const Canvas* c,const Canvas* backg,in
     for(int i=0;i<strpos;++i)appendf(rend,&rpos,str[i]);
     free(str);
     fprintf(f,"%s",rend);
+    fflush(stdout);
 }
 
 

@@ -463,6 +463,98 @@ int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
     room_getBSpritePos(d->room,index,f_i,f_j);
     return 0;
 }
+int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
+    if(!dis)return -1;
+    bool fail=false;
+    bool exit=false;
+    bool chosen=false;
+    int wid=dis->width/2.5;
+    int hei=100;
+    int res;
+    int ipos=0,jpos=0;
+    Window* win;
+    Canvas* crender;
+    Canvas* rend,*rend2;
+    Welem** el;
+
+    //Center the popup
+    el=calloc(siz,sizeof(Welem*));
+    
+    if(!el){ fail=true; goto END; }
+    for(int i=0;i<siz;++i){
+        el[i]=we_createLabel(tr_getDesc(dat[i]),fcat_lookup(M6),0);
+        if(!el[i]){ fail=true; goto END; }
+    }
+    win=win_ini("Choose an action:",el,siz,wid,hei,jpos,ipos,fcat_lookup(M8));
+    if(!win){ fail=true; goto END; }
+    win_setSelected(win,0);
+    
+
+    Pixel* p=pix_ini(255,255,255,255);
+    win_addBorder(win,p,1);
+    pix_free(p);
+
+    wid=win_getWidth(win);
+    hei=win_getHeight(win);
+    jpos=dis->width/2-win_getWidth(win)/2;
+    ipos=dis->height/2-win_getHeight(win)/2;
+
+    rend=win_render(win);
+    if(!rend){ fail=true; goto END; }
+    canv_print(stdout,rend,ipos,jpos);
+    char c;
+   
+    while(1){
+        c=getch1();
+        switch (c)      
+        {
+        case 'W': case 'O':
+            win_incrementSelected(win,-1);
+            rend2=win_render(win);
+            if(!rend2){ fail=true; goto END; }
+            canv_printDiff(stdout,rend2,rend,ipos,jpos-1);
+            canv_free(rend);
+            rend=rend2;
+            rend2=NULL;
+            break;
+        
+        case 'S': case 'L':
+            win_incrementSelected(win,1);
+            rend2=win_render(win);
+            if(!rend2){ fail=true; goto END; }
+            canv_printDiff(stdout,rend2,rend,ipos,jpos-1);
+            canv_free(rend);
+            rend=rend2;
+            rend2=NULL;
+            break;
+        
+        case 'J':
+            chosen=true;
+            break;
+        case 'Q':
+            exit=true;
+            break;
+        }
+       if(exit||chosen)break;
+    }
+END:
+    
+    crender=disp_Render(dis);
+    rend2=canv_subCopy(crender,ipos,ipos+hei,jpos,jpos+wid);
+    canv_print(stdout,rend2,ipos,jpos);
+    for(int i=0;i<siz;++i)we_free(el[i]);
+    free(el);
+    canv_free(rend);
+    canv_free(crender);
+    canv_free(rend2);
+
+    if(chosen)res=win_getSelectedIndex(win);
+    win_free(win);
+    if(chosen) return res;
+    
+    return -1;
+}
+
 Display* disp_execute(Display* dis, int index, int room_index, void* en){
     if(!dis)return NULL;
     func_trig f =win_getSelectedAction(dis->latWindow[index]);
@@ -471,7 +563,12 @@ Display* disp_execute(Display* dis, int index, int room_index, void* en){
         int a;
         Trigger** dat =room_getTriggers(dis->room,t,room_index,&a);
 
-        if(a)f(dat[0],en,dis);
+        if(a>1){
+            int r=disp_chooseWindow(dis,f,dat,a);
+            
+            if(r>=0)f(dat[r],en,dis);
+        }
+        else if (a==1)f(dat[0],en,dis);
         free(dat);
     }
     else{

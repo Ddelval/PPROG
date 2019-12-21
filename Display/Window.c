@@ -8,18 +8,21 @@ struct _Window {
 	char* title;
 	Welem** Win_elem;
 	int num_elems;
-  int num_elems_siz;
+  	int num_elems_siz;
 	int selected_elem;
 	int width, height;
 	int scroll_pos;
 	int leftm, rightm, topm, botm;
-  int jpos, ipos;
+  	int jpos, ipos;
 	Pixel* backcol;
 	Pixel* forecol;
 	const Font* titlef;
 	func_trig* actions;
 	trig_type* act_type;
 	int action_size;
+	bool hasBorder;
+	Pixel* borderColor;
+	int borderWidth;
 };
 
 Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, int jpos, int ipos, const Font* titlef) {
@@ -195,11 +198,22 @@ Canvas* win_render(Window* win) {
         back=NULL;
         goto END;
     }
+	if(win->hasBorder){
+		Canvas* bck=canv_backGrnd(pix_retR(win->borderColor),pix_retG(win->borderColor),
+								  pix_retB(win->borderColor),pix_retA(win->borderColor),
+								  win->width+4* win->borderWidth,win->height+2*win->borderWidth);
+		Canvas* tmp= canv_AdjustCrop(back,canv_getWidth(bck),canv_getHeight(bck));
+		canv_free(back);
+		back=tmp;
+		canv_addOverlay(bck,back,0,0);
+		canv_free(back);
+		back=bck;
+	}
 
 END:
     r=NULL;
    if(back){
-       r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height, 0, win->width);
+       r=canv_subCopy(back, win->scroll_pos, win->scroll_pos+win->height+(win->hasBorder? 2*win->borderWidth:0), 0, win->width+(win->hasBorder? 4*win->borderWidth:0));
    }
    wl_free(t_lab);
    canv_free(back);
@@ -310,17 +324,24 @@ int* win_getMargins(Window *win) {
 	return m;
 }
 
+Window* win_addBorder(Window* win,Pixel* color, int width){
+	if(!win||!color)return NULL;
+	win->borderWidth=width;
+	if(win->borderColor)pix_free(win->borderColor);
+	win->borderColor=pix_copy(color);
+	win->hasBorder=true;
+}
 /// Return the widht of the canvas
 int win_getWidth(const Window* w) {
 	if(!w) return -1;
-	return w->width;
+	return w->width+(w->hasBorder? 4*w->borderWidth:0);
 }
 
 
 /// Return the height of the canvas
 int win_getHeight(const Window* w) {
 	if(!w) return -1;
-	return w->height;
+	return w->height+(w->hasBorder? 2*w->borderWidth:0);
 }
 
 Window* win_setBackColor(Window *win, Pixel* backcol) {

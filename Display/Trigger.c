@@ -44,6 +44,7 @@ Trigger * tr_load(FILE* f){
     if(!t)return NULL;
     fscanf(f,"%d %d\n",&t->trig_id,&t->type);
     fgets(t->name,MAX_NAME,f);
+    if(strlen(t->name))t->name[strlen(t->name)-1]=0;
     if(t->type==OBTAIN){
         fscanf(f,"%d %d %d", &t->obj_id, &t->quantity,&t->spr_remove); 
     }
@@ -99,4 +100,7 @@ Trigger* tr_createTalk(void* e,int ally_id){
 void* tr_getEntityRef(Trigger* t){
     if(!t)return NULL;
     return t->entit;
+}
+const char* tr_getDesc(Trigger* t){
+    return t? strdup(t->name):NULL;
 }

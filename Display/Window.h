@@ -141,4 +141,5 @@ func_trig win_getSelectedAction(Window* win);
 
 trig_type win_getSelectedTrigType(Window * win);
 
+Window* win_addBorder(Window* win,Pixel* color, int width);
 #endif
