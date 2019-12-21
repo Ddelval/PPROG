@@ -4,6 +4,7 @@
 #include "Display.h"
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 
 #define PLAYER_ACTIONS 2 //Fixed window index for player actions
 #define PLAYER_INFO 3 //Fixed window index for combat info
@@ -91,7 +92,7 @@ Combat* combat_execute(Combat* c) {
   if(!c||!c->cd) return NULL;
 
   int selindex=0;
-  while(1){
+  while(1) {
       char c=getch1();
       switch(c){
           case 'W': case 'O':
@@ -111,8 +112,6 @@ Combat* combat_execute(Combat* c) {
       selindex=(selindex+MAX_ATTACKS+1)%(MAX_ATTACKS+1);
       if(!disp_setSelIndex(c->cd, PLAYER_ACTIONS,selindex)) return NULL;
   }
-
-
 }
 
 Combat* _combat_executeMove(Combat* c, int choice) {
@@ -137,21 +136,25 @@ Combat* _combat_executeMove(Combat* c, int choice) {
   if(res<0) { /*  Your attack is dodged */
     if(attb_get(c->stats[PLAYER], SPEED)<attb_get(c->stats[ENEMY], SPEED)) {
       if(!_combat_enemyMove(Combat* c)) return NULL;
+      sleep(2);
       _combat_message(c, "The enemy dodged your attack!");
     } else {
       _combat_message(c, "The enemy dodged your attack!");
+      sleep(2);
       if(!_combat_enemyMove(Combat* c)) return NULL;
     }
   } else {  /* Your attack hits */
     if(attb_get(c->stats[PLAYER], SPEED)>attb_get(c->stats[ENEMY], SPEED)) {
       if(!_combat_playerMove(Combat* c, choice)) return NULL;
+      sleep(2);
       if(!_combat_enemyMove(Combat* c)) return NULL;
     } else {
       if(!_combat_enemyMove(Combat* c)) return NULL;
+      sleep(2);
       if(!_combat_playerMove(Combat* c, choice)) return NULL;
     }
   }
-    return c;
+  return c;
 }
 
 Combat* _combat_playerMove(Combat* c, int choice) {
@@ -258,8 +261,115 @@ Combat* _combat_playerMove(Combat* c, int choice) {
 
   attb_free(self);
   attb_free(attk);
+  char message[128];
+  sprintf(message, "You attacked with %s!", skill_getName(c->moveset[PLAYER][choice]));
+  _combat_message(c, message);
   return c;
+}
 
+Combat* _combat_executeEnemyMove(Combat *c, int choice) {
+  if(!c||choice<0||choice>=MAX_ATTACKS) return NULL;
+
+  if(skill_getSpecial(c->moveset[ENEMY][choice])==STUNNER) c->stunplayer=true;
+
+  Attributes* self=attb_merge(c->stats[ENEMY], skill_getAtbself(c->moveset[ENEMY][choice]));
+  if(!self) return NULL;
+  Attributes* attk=attb_merge(c->stats[ENEMY], skill_getAtbatk(c->moveset[ENEMY][choice]));
+  if(!attk) {
+    attb_free(self);
+    return NULL;
+  }
+  /*  LOWERING ENEMY'S DAMAGE  */
+  int attack = attb_get(attk, ATTACK) - attb_get(c->stats[PLAYER], DEFENSE);
+  if(attack < 0) attack = 0;
+  if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], ATTACK) - attack, ATTACK)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  SLOWING UP ENEMY  */
+  int slowing = attb_get(attk, SPEED) - attb_get(c->stats[PLAYER], DEFENSE);
+  if(slowing < 0) slowing = 0;
+  if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], SPEED) - slowing, SPEED)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  MAKING ENEMY LOSE AGILITY */
+  int clumnsiness = attb_get(attk, AGILITY) - attb_get(c->stats[PLAYER], DEFENSE);
+  if(clumnsiness < 0) clumnsiness = 0;
+  if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], AGILITY) - clumnsiness, AGILITY)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  LOWERING ENEMY'S DEFENSE  */
+  int defense = attb_get(attk, DEFENSE) - attb_get(c->stats[PLAYER], DEFENSE);
+  if(defense < 0) defense = 0;
+  if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], DEFENSE) - defense, DEFENSE)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  DAMAGE  */
+  int damage = attb_get(attk, HEALTH) - attb_get(c->stats[PLAYER], DEFENSE);
+  if(damage < 0) damage = 0;
+  if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], HEALTH) - damage, HEALTH)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  RISING OUR ATTACK  */
+  attack = min(attb_get(c->stats[ENEMY], ATTACK) + attb_get(self, ATTACK), attb_get(entity_getAttributes(c->enemy, ATTACK)));
+  if(!attb_set(c->stats[ENEMY], attack, ATTACK)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  OUR SPEED  */
+  slowing = min(attb_get(c->stats[ENEMY], SPEED) + attb_get(self, SPEED), attb_get(entity_getAttributes(c->enemy, SPEED)));
+  if(!attb_set(c->stats[ENEMY], slowing, SPEED)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  OUR AGILITY  */
+  clumnsiness = min(attb_get(c->stats[ENEMY], AGILITY) + attb_get(self, AGILITY), attb_get(entity_getAttributes(c->enemy, AGILITY)));
+  if(!attb_set(c->stats[ENEMY], clumnsiness, AGILITY)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  OUR DEFENSE  */
+  defense = min(attb_get(c->stats[ENEMY], DEFENSE) + attb_get(self, DEFENSE), attb_get(entity_getAttributes(c->enemy, DEFENSE)));
+  if(!attb_set(c->stats[ENEMY], defense, DEFENSE)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  /*  OUR HEALTH  */
+  damage = min(attb_get(c->stats[ENEMY], HEALTH) + attb_get(self, HEALTH), attb_get(entity_getAttributes(c->enemy, HEALTH)));
+  if(!attb_set(c->stats[ENEMY], damage, HEALTH)) {
+    attb_free(self);
+    attb_free(attk);
+    return NULL;
+  }
+
+  attb_free(self);
+  attb_free(attk);
+  char message[128];
+  sprintf(message, "Your enemy attacked with %s!", skill_getName(c->moveset[ENEMY][choice]));
+  _combat_message(c, message);
+  return c;
 }
 
 Combat* _combat_enemyMove(Combat* c) {
@@ -279,7 +389,7 @@ Combat* _combat_enemyMove(Combat* c) {
       }
     }
     if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]),HEALTH)!=0) {
-      return max_attack;
+      return _combat_executeEnemyMove(c, max_attack);
     }
   }
   //STAT BOOSTING ATTACK
@@ -291,7 +401,7 @@ Combat* _combat_enemyMove(Combat* c) {
       }
     }
     if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]),ATTACK) != 0){
-      return max_attack;
+      return _combat_executeEnemyMove(c, max_attack);
     }
   }
   //STAT BOOSTING DEF
@@ -303,7 +413,7 @@ Combat* _combat_enemyMove(Combat* c) {
       }
     }
     if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), DEFENSE) != 0) {
-      return max_attack;
+      return _combat_executeEnemyMove(c, max_attack);
     }
   }
   //STAT BOOSTING AGL
@@ -315,7 +425,7 @@ Combat* _combat_enemyMove(Combat* c) {
       }
     }
     if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), SPEED) != 0){
-      return max_attack;
+      return _combat_executeEnemyMove(c, max_attack);
     }
   }
   //DEFAULT BEHAVIOUR
@@ -325,7 +435,7 @@ Combat* _combat_enemyMove(Combat* c) {
         max_attack = i;
     }
   }
-  return max_attack;
+  return _combat_executeEnemyMove(c, max_attack);
 }
 
 
