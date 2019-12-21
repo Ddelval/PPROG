@@ -5,8 +5,8 @@
 //
 
 #include "Pixel.h"
-#include <math.h>
 #define  MAX_VAL 255
+
 struct _Pixel{
     int r,g,b,a;
 };
@@ -17,15 +17,15 @@ int _filter(int a){
 }
 
 /*-----------------------------------------------------------------*/
-/// Creates a new Pixel
-/// @param r 	The value of the red channel
-/// @param g 	The value of the green channel
-/// @param b 	The value of the blue channel
-/// @param a 	The value of the alpha channel.
-/// The value of the alpha channel determines the oppacituy.
-/// 255 -> opaque
-/// 0     -> transparent
-/// All these values have to be between 0 and 255 (both included)
+/**
+ * @brief Creates a new Pixel
+ * 
+ * @param r The value of the red channel
+ * @param g The value of the green channel
+ * @param b The value of the blue channel
+ * @param a The value of the alpha channel.
+ * @return Pixel* New pixel with these values
+ */
 Pixel* pix_ini(int r,int g, int b, int a){
     Pixel* p= (Pixel*) calloc(1,sizeof(Pixel));
     if(!p)return NULL;
@@ -35,13 +35,32 @@ Pixel* pix_ini(int r,int g, int b, int a){
     p->a=_filter(a);
     return p;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Creates a new transparent pixel
+ * 
+ * @return Pixel*: a new transparent pixel
+ */
 Pixel* pix_newTransparent(){
     return pix_ini(0,0,0,0);
 }
+
 /*-----------------------------------------------------------------*/
-/// Frees the memory allocated for this pixel
-void pix_free(Pixel* p){
-    free(p);
+/**
+ * @brief Loads the pixel from a file
+ * This function was created to set up 
+ * a format in which the colors should be stored in files.
+ * 
+ * @param f File
+ * @return Pixel* The pixel containing the data read from the file
+ */
+Pixel* pix_load(FILE* f){
+    if(!f)return NULL;
+    int a,r,g,b;
+    fscanf(f,"%d, %d, %d, %d]",&a,&r,&g,&b);
+    return pix_ini(r, g, b, a);
+    
 }
 
 /*-----------------------------------------------------------------*/
@@ -50,6 +69,25 @@ void pix_free(Pixel* p){
 Pixel * pix_copy(const Pixel* src){
     if(!src)return NULL;
     return pix_ini(src->r, src->g, src->b, src->a);
+}
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Averages the value of two pixels
+ * 
+ * This function may be used to scale down images.
+ * For instance it can be aplied to graphics generate
+ * in-game whose aspect ratio is important. 
+ * In order to maintain the aspect ratio, it is necessary to 
+ * shrink them by half in the vertical axis
+ * 
+ * @param p1 
+ * @param p2 
+ * @return Pixel* 
+ */
+Pixel* pix_average(Pixel* p1,Pixel*p2){
+    if(!p1||!p2) return NULL;
+    return pix_ini((p1->r+p2->r)/2,(p1->g+p2->g)/2,(p1->b+p2->b)/2,(p1->a+p2->a)/2);
 }
 
 /*-----------------------------------------------------------------*/
@@ -85,6 +123,121 @@ Pixel* pix_overlay(const Pixel* back, const Pixel* top){
     oa*=255; or*=255; og*=255; ob*=255;
     return pix_ini((int)round(or), (int)round(og), (int)round(ob), (int)round(oa));
 }
+
+
+
+/*-----------------------------------------------------------------*/
+/// Frees the memory allocated for this pixel
+void pix_free(Pixel* p){
+    free(p);
+}
+
+/*-----------------------------------------------------------------*/
+/// Copies the contents of one pixel to another.
+/// This function can be useful when we have a grid of pixels
+/// and we want to make a part of it equal to another set of pixels
+/// @param dest Pixel that will take the new values
+/// @param src  Pixel whose values are copied
+void pix_copyVals(Pixel*dest, const Pixel*src){
+    dest->r=src->r;
+    dest->g=src->g;
+    dest->b=src->b;
+    dest->a=src->a;
+}
+
+/*-----------------------------------------------------------------*/
+/// Check if two pixels are equal.
+/// By definition, for both of them to be equal,
+/// the values in all the channels have to be the same
+/// @param a First pixel
+/// @param b Second pixel
+bool pix_equals(const Pixel* a,const Pixel*b){
+    return a->r==b->r&&a->g==b->g&&a->b==b->b&&a->a==b->a;
+}
+
+/*-----------------------------------------------------------------*/
+/// Check if a pixel is transparent
+/// @param a Pixel to be checked
+bool pix_transparent(const Pixel* a){
+    return a->a==0;
+}
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Checks if the pixel is half transparent or more
+ * 
+ * This function will be used to differenciate pixels that 
+ * represent shadows from the ones that represent actual objects
+ * 
+ * @param a Pixel to be tested
+ * @return true if the pixel is less than or half opaque
+ * @return false if the pixel is more than half opaque
+ */
+bool pix_halfTransparent(const Pixel* a){
+    return a->a<=255/2+1;
+}
+
+/*-----------------------------------------------------------------*/
+/// Returns the scape sequence that will change the background
+/// color of the terminal to the color of this pixel.
+/// @param a Pixel whose color will be taken
+char* pix_scapeSeq(Pixel* a){
+    char* c=(char*)malloc(sizeof(char)*25);
+    sprintf(c,"%c[%d;%d;%d;%d;%dm",27,48,2,a->r,a->g,a->b);
+    return c;
+}
+
+/*-----------------------------------------------------------------*/
+/// Render a horizontal line of pixels.
+/// @param a	Pointer to the array of pixels
+/// @param len 	Amount of pixels to be rendered
+/// @return An array of chars that, if printed on the screen will 
+///         represent this line of pixels.
+char * pix_renderLine(Pixel**a,int len){
+    int diff=0;
+    for(int i=1;i<len;++i) diff+=!pix_equals(a[i], a[i-1]); //Count differences
+    int size=(diff+2)*25+(len+1)+2;
+    char * res= (char*) malloc(sizeof(char)*size);
+    int ipos=0;
+    appendf(res, &ipos, pix_scapeSeq(a[0]));
+    char * c =calloc(10, sizeof(char));
+    sprintf(c,"%c[1D ", 27);
+    appendf(res, &ipos,c);
+    //append(res, &ipos, " ");
+    for(int i=1;i<len;++i){
+        if(!pix_equals(a[i], a[i-1])){
+            appendf(res, &ipos, pix_scapeSeq(a[i]));
+        }
+        append(res, &ipos, " ");
+        
+    }
+    //Pixel* p = pix_ini(0, 0, 0, 0);
+    //appendf(res,&ipos,pix_scapeSeq(p));
+   // free(p);
+    return res;
+}
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Reduces the brightness of the pixel
+ * 
+ * @param p     Pixel to be modified
+ * @param light The percentage of light that will remain
+ * @return Pixel* A not-null pointer if the process was successful
+ */
+Pixel* pix_darken(Pixel* p,double light){
+    if(!p||light<0)return NULL;
+    p->r=min(p->r*light,255);
+    p->g=min(p->g*light,255);
+    p->b=min(p->b*light,255);
+    return p;
+}
+
+
+
+/* ############################################################### */
+/* ###################### SETTERS AND GETTERS #################### */
+/* ############################################################### */
 
 /*-----------------------------------------------------------------*/
 /// Changes the red value of p to r
@@ -144,96 +297,4 @@ int pix_retB(const Pixel* p){
 int pix_retA(const Pixel* p){
     if(!p)return -1;
     return p->a;
-}
-
-/*-----------------------------------------------------------------*/
-/// Copies the contents of one pixel to another.
-/// This function can be useful when we have a grid of pixels
-/// and we want to make a part of it equal to another set of pixels
-/// @param dest Pixel that will take the new values
-/// @param src Pixel whose values are copied
-void pix_copyVals(Pixel*dest, const Pixel*src){
-    dest->r=src->r;
-    dest->g=src->g;
-    dest->b=src->b;
-    dest->a=src->a;
-}
-
-/*-----------------------------------------------------------------*/
-/// Check if two pixels are equal.
-/// By definition, for both of them to be equal,
-/// the values in all the channels have to be the same
-/// @param a First pixel
-/// @param b Second pixel
-bool pix_equals(const Pixel* a,const Pixel*b){
-    return a->r==b->r&&a->g==b->g&&a->b==b->b&&a->a==b->a;
-}
-
-/*-----------------------------------------------------------------*/
-/// Check if a pixel is transparent
-/// @param a Pixel to be checked
-bool pix_transparent(const Pixel* a){
-    return a->a==0;
-}
-
-/*-----------------------------------------------------------------*/
-/// Returns the scape sequence that will change the background
-/// color of the terminal to the color of this pixel.
-/// @param a Pixel whose color will be taken
-char* pix_scapeSeq(Pixel* a){
-    char* c=(char*)malloc(sizeof(char)*25);
-    sprintf(c,"%c[%d;%d;%d;%d;%dm",27,48,2,a->r,a->g,a->b);
-    return c;
-}
-
-/*-----------------------------------------------------------------*/
-/// Render a horizontal line of pixels.
-/// @param a	Pointer to the array of pixels
-/// @param len 	Amount of pixels to be rendered
-/// @return An array of chars that, if printed on the screen will represent this line of pixels.
-char * pix_renderLine(Pixel**a,int len){
-    int diff=0;
-    for(int i=1;i<len;++i) diff+=!pix_equals(a[i], a[i-1]); //Count differences
-    int size=(diff+2)*25+(len+1)+2;
-    char * res= (char*) malloc(sizeof(char)*size);
-    int ipos=0;
-    appendf(res, &ipos, pix_scapeSeq(a[0]));
-    char * c =calloc(10, sizeof(char));
-    sprintf(c,"%c[1D ", 27);
-    appendf(res, &ipos,c);
-    //append(res, &ipos, " ");
-    for(int i=1;i<len;++i){
-        if(!pix_equals(a[i], a[i-1])){
-            appendf(res, &ipos, pix_scapeSeq(a[i]));
-        }
-        append(res, &ipos, " ");
-        
-    }
-    //Pixel* p = pix_ini(0, 0, 0, 0);
-    //appendf(res,&ipos,pix_scapeSeq(p));
-   // free(p);
-    return res;
-}
-
-Pixel* pix_load(FILE* f){
-    if(!f)return NULL;
-    int a,r,g,b;
-    fscanf(f,"%d, %d, %d, %d]",&a,&r,&g,&b);
-    return pix_ini(r, g, b, a);
-    
-}
-
-bool pix_halfTransparent(const Pixel* a){
-    return a->a<=255/2+1;
-}
-Pixel* pix_darken(Pixel* p,double light){
-    if(!p)return NULL;
-    p->r=min(p->r*light,255);
-    p->g=min(p->g*light,255);
-    p->b=min(p->b*light,255);
-    return p;
-}
-Pixel* pix_average(Pixel* p1,Pixel*p2){
-    if(!p1||!p2) return NULL;
-    return pix_ini((p1->r+p2->r)/2,(p1->g+p2->g)/2,(p1->b+p2->b)/2,(p1->a+p2->a)/2);
 }
