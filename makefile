@@ -1,260 +1,60 @@
-CC = gcc -g
-EXE = TestFont TestWindow TestCanvas TestSize TestLabel TestSprite TestDisplay WTest TestBug TestColoring TestRoom WTestOld InvTest CraftTest WorldTest
-OBJECTS = Attributes.o Skill.o Pixel.o Canvas.o Trigger.o Character.o Entity.o SpriteDic.o TriggerDic.o Sprite.o Font.o FontCatalog.o Wlabel.o Welem.o Room.o Inventory.o  Wlabic.o Window.o Display.o Object.o Recipe.o RecipeDic.o ObjectDic.o TrigReact.o DialogDic.o Dialog.o EntityDic.o World.o Combat.o
-ENGINE =
-LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/ -I World/ -I Combat/
+#.SECONDARY:
+CC= gcc -g
+EXE:=WorldTest WTest
+
+
+EXE_O:=$(patsubst %,Compile_obj/%.o,$(EXE))
+DISPLAY:=$(foreach F,$(wildcard Display/*.c),$(subst Display/, Compile_obj/Display/, $(subst .c,.o, $F)))
+
+ENTITY:=$(foreach F,$(wildcard Entity/*.c),$(subst Entity/, Compile_obj/Entity/, $(subst .c,.o, $F)))
+
+INVENTORY:=$(foreach F,$(wildcard Inventory/*.c),$(subst Inventory/, Compile_obj/Inventory/, $(subst .c,.o, $F)))
+
+WORLD:=$(foreach F,$(wildcard World/*.c),$(subst World/, Compile_obj/World/, $(subst .c,.o, $F)))
+
+UTILITY:=$(foreach F,$(wildcard Utility/*.c),$(subst Utility/, Compile_obj/Utility/, $(subst .c,.o, $F)))
+
+OBJECTS:= $(DISPLAY) $(ENTITY) $(INVENTORY) $(WORLD) $(UTILITY)
+
 MIDDLE = @printf "\033[1m\033[1;34m $@ \033[0;30m\033[0m\t"
-all: $(EXE)
+LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/ -I World/ -I Combat/
+
+all: $(EXE_O)
+
 
 clean:
+	find . -name '*.o' -delete
 	rm -f *.o core $(EXE)
 
-TestFont: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
 
-TestFont.o: Testing/TestFont.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
 
-TestColoring: %: %.o $(OBJECTS)
+#Testing
+Compile_obj/%.o: Testing/%.c $(OBJECTS)
 	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
+	$(CC) -c  $< -o $@ $(LIB)
+	$(CC) -o  $(subst Compile_obj/,,$(subst .o,,$@))  $@   $(OBJECTS)  -lm
 
-TestColoring.o: Testing/TestColoring.c Utility.o
+#Display
+Compile_obj/Display/%.o: Display/%.c Display/%.h
 	$(MIDDLE)
-	$(CC) -c $< $(LIB)
+	$(CC) -c  $< -o $@ $(LIB)
 
-TestBug: %: %.o $(OBJECTS)
+#Entity
+Compile_obj/Entity/%.o: Entity/%.c Entity/%.h
 	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
+	$(CC) -c  $< -o $@ $(LIB)
 
-TestBug.o: Testing/TestBug.c Utility.o
+#Inventory
+Compile_obj/Inventory/%.o: Inventory/%.c Inventory/%.h
 	$(MIDDLE)
-	$(CC) -c $< $(LIB)
+	$(CC) -c  $< -o $@ $(LIB)
 
-TestLabel: %: %.o $(OBJECTS)
+#World
+Compile_obj/World/%.o: World/%.c World/%.h
 	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
+	$(CC) -c  $< -o $@ $(LIB)
 
-TestLabel.o: Testing/TestLabel.c Utility.o
+#Utility
+Compile_obj/Utility/%.o: Utility/%.c Utility/%.h
 	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-TestDisplay: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
-
-TestDisplay.o: Testing/TestDisplay.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-TestWindow: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
-
-TestWindow.o: Testing/TestWindow.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-TestCanvas: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
-
-TestCanvas.o: Testing/TestCanvas.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-TestSprite: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
-
-TestSprite.o: Testing/TestSprite.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-TestSize: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm -lncurses
-
-TestSize.o: Testing/TestSize.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-TestRoom: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm -lncurses
-
-TestRoom.o: Testing/TestRoom.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-WTest: %: %.o  $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o  $(OBJECTS)  Utility.o -lm
-
-WTest.o: Testing/WTest.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-WTestOld: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS) Utility.o -lm
-
-WTestOld.o: Testing/WTestOld.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-InvTest: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS)  Utility.o -lm
-
-InvTest.o: Testing/InvTest.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-CraftTest: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS)  Utility.o -lm
-
-CraftTest.o: Testing/CraftTest.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-WorldTest: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS)  Utility.o -lm
-
-WorldTest.o: Testing/WorldTest.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-CombatTest: %: %.o $(OBJECTS)
-	$(MIDDLE)
-	$(CC) -o $@ $@.o $(OBJECTS)  Utility.o -lm
-
-CombatTest.o: Testing/CombatTest.c Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # 				 Source Files 			# # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-Canvas.o : Display/Canvas.c Display/Canvas.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Character.o : Display/Character.c Display/Character.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Font.o : Display/Font.c Display/Font.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-FontCatalog.o : Display/FontCatalog.c Display/FontCatalog.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Pixel.o : Display/Pixel.c Display/Pixel.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Wlabel.o : Display/Wlabel.c Display/Wlabel.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Window.o : Display/Window.c Display/Window.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Sprite.o : Display/Sprite.c Display/Sprite.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Room.o : Display/Room.c Display/Room.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-SpriteDic.o : Display/SpriteDic.c Display/SpriteDic.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Welem.o : Display/Welem.c Display/Welem.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Wlabic.o : Display/Wlabic.c Display/Wlabic.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Display.o : Display/Display.c Display/Display.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Trigger.o : Display/Trigger.c Display/Trigger.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-TriggerDic.o : Display/TriggerDic.c Display/TriggerDic.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-TrigReact.o : Display/TrigReact.c Display/TrigReact.h Utility.o
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-Utility.o:  Utility/Utility.c Utility/Utility.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Entity.o:  Entity/Entity.c Entity/Entity.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Attributes.o:  Inventory/Attributes.c Inventory/Attributes.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Object.o:  Inventory/Object.c Inventory/Object.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Inventory.o:  Inventory/Inventory.c Inventory/Inventory.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-ObjectDic.o:  Inventory/ObjectDic.c Inventory/ObjectDic.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Skill.o:  Inventory/Skill.c Inventory/Skill.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Recipe.o:  Inventory/Recipe.c Inventory/Recipe.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-RecipeDic.o:  Inventory/RecipeDic.c Inventory/RecipeDic.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Dialog.o:  Entity/Dialog.c Entity/Dialog.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-EntityDic.o:  Entity/EntityDic.c Entity/EntityDic.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-DialogDic.o:  Entity/DialogDic.c Entity/DialogDic.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-World.o:  World/World.c World/World.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
-
-Combat.o:   Combat/Combat.c Combat/Combat.h
-	$(MIDDLE)
-	$(CC) -c $< $(LIB)
+	$(CC) -c  $< -o $@ $(LIB)
