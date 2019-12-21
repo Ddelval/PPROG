@@ -116,6 +116,15 @@ Window* win_addWindowElement(Window* win, Welem* we){
     win->num_elems++;
     return win;
 }
+
+Window* win_remWindowElement(Window* win, int index) {
+	if(!win||index>win->num_elems||index<win->num_elems) return NULL;
+	we_free(win->Win_elem[index]);
+	win->selected_elem=-1;
+	win->num_elems--;
+	/*Actions array handling*/
+	return win;
+}
 Window* win_addAction(Window* win,func_trig f, int index,trig_type t){
 	if(!win)return NULL;
 	if(!win->actions){
@@ -211,6 +220,7 @@ Window* win_redraw(Window* win, int width, int height, int i, int j) {
 
 Window* win_setSelected(Window* win, int selected_elem) {
 	if(!win) return NULL;
+	if(selected_elem>=win->num_elems) return NULL;
 	if(win->selected_elem>=0) {
 		if(!we_setBackColor(win->Win_elem[win->selected_elem], pix_retR(win->backcol), pix_retG(win->backcol), pix_retB(win->backcol), pix_retA(win->backcol))) return NULL;
 	}

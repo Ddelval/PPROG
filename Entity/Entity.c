@@ -125,7 +125,7 @@ Entity* entity_copy(Entity* e) {
 Entity* entity_setName(Entity* p, char* c){
   if(!p || !c) return NULL;
   if (strlen(c) >= MAX_NAME_LENGTH) {
-    //printf("Name can't have so many characters.");
+    printf("Name can't have so many characters.");
     return NULL;
   }
   strcpy(p->name, c);

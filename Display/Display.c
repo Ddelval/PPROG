@@ -108,6 +108,15 @@ Display* disp_incSelIndex(Display* dis, int winIndex, int increment){
   return print_Window(dis,winIndex);
 }
 
+Display* disp_setSelIndex(Display* dis, int winIndex, int selIndex){
+  if(!dis)return NULL;
+  if(winIndex>=dis->nLatWindow) return NULL;
+  if(win_setSelected(dis->latWindow[winIndex],selIndex)==NULL){
+    return NULL;
+  }
+  return print_Window(dis,winIndex);
+}
+
 int disp_getSelIndex(Display* dis, int winIndex){
   if(!dis) return NULL;
   if(winIndex>=dis->nLatWindow) return NULL;

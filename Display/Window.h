@@ -76,6 +76,10 @@ Window* win_incrementSelected(Window* win, int selected_elem);
 /// Returns the index of the selected element
 Welem* win_getSelected(Window* win);
 
+
+Window* win_remWindowElement(Window* win, int index);
+
+
 /*-----------------------------------------------------------------*/
 /// Returns the index of the selected element, or -1 if nothing is
 /// selected or in case of error
