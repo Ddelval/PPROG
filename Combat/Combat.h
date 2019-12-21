@@ -18,50 +18,19 @@ Functioning: Creates an structure called combat that manages every aspect of the
 Combat* combat_ini(Entity* player, Entity* enemy);
 
 /*
-Name: combat_process
-Imputs: combat * state
-Outputs : None
-Funcioting: It creates a loop that ends when someone health is 0, meanwhile it executes
-the movements.
+    Executes a combat, already initialized and loaded. Does not finish until one of the
+    players is dead. NOTE: in order to make development easy, we can exit by pressing Q.
 */
-void combat_process(Combat* state);
-/*
-Name: moveset_loader(entity * fighter, combat * state)
-Imputs: entity * player | combat * state
-Outputs: None
-Functioning: It decides the four movements the player will be able to execute
-*/
-
-Combat* combat_incrMove(Combat* c, int incr);
+Combat* combat_execute(Combat* c);
 
 /*
-Name: IA_choice
-Imputs: combat structure
-Outputs: int
-Functioning: The computer receives the structure and manages to choose a "smart" movement*/
-
-Combat* combat_executeMove(Combat* c);
-
-int IA_choice(Combat* state);
+    Prepares the graphical interface for a combat, rendering it.
+*/
+Combat* combat_load(Combat *c);
 
 /*
-Name: move_exe
-Imputs: int movement | combat * struct
-Outputs: None
-Functioning: This function starts deciding who atacks and who defends, then it executes the moveement
+    Frees a combat.
 */
-void move_exe(int movement, Combat* state);
-
-
-/* This function will execute the hole combat, main function. */
-int combat_exe(Combat* c);
-
-/* This function will apply the changes each movement makes on the receiver entity */
-int movement_exe(Combat* c, int action, int ent);
-
-/*This funciton frees everything related to struct combat*/
 void combat_free(Combat* c);
-void apply_consumable(Combat *c);
 
-//OJO HACE FALTA HACER FUNCIONES COPY COMENTAR EN CLASE
 #endif
