@@ -36,30 +36,30 @@ Compile_obj/%.o: Testing/%.c $(OBJECTS)
 
 #Display
 Compile_obj/Display/%.o: Display/%.c Display/%.h
-	mkdir -p Compile_obj/Display/
+	@mkdir -p Compile_obj/Display/
 	$(MIDDLE)
 	$(CC) -c  $< -o $@ $(LIB)
 
 #Entity
 Compile_obj/Entity/%.o: Entity/%.c Entity/%.h
-	mkdir -p Compile_obj/Entity/
+	@mkdir -p Compile_obj/Entity/
 	$(MIDDLE)
 	$(CC) -c  $< -o $@ $(LIB)
 
 #Inventory
 Compile_obj/Inventory/%.o: Inventory/%.c Inventory/%.h
-	mkdir -p Compile_obj/Inventory/
+	@mkdir -p Compile_obj/Inventory/
 	$(MIDDLE)
 	$(CC) -c  $< -o $@ $(LIB)
 
 #World
 Compile_obj/World/%.o: World/%.c World/%.h
-	mkdir -p Compile_obj/World/
+	@mkdir -p Compile_obj/World/
 	$(MIDDLE)
 	$(CC) -c  $< -o $@ $(LIB)
 
 #Utility
 Compile_obj/Utility/%.o: Utility/%.c Utility/%.h
-	mkdir -p Compile_obj/Utility/
+	@mkdir -p Compile_obj/Utility/
 	$(MIDDLE)
 	$(CC) -c  $< -o $@ $(LIB)
