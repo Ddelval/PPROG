@@ -52,12 +52,12 @@ Dialog* diag_copy(Dialog* diag) {
 
 char* diag_getNext(Dialog* diag) {
   if(!diag) return NULL;
-
+  if(diag->linepos>=diag->lines)return NULL;
   char* c=strdup(diag->lines[diag->linepos]);
   diag->linepos++;
+  
   return c;
 }
-
 int diag_getId(Dialog* diag) {
   if(!diag) return -1;
   return diag->id;

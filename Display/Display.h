@@ -19,6 +19,7 @@
 #include "Window.h"
 #include "RecipeDic.h"
 #include "FontCatalog.h"
+#include "DialogMan.h"
 
 typedef struct _Display Display;
 /*-----------------------------------------------------------------*/

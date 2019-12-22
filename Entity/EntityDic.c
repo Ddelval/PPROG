@@ -62,7 +62,7 @@ EntityDic* edic_ini(){
             edic_free();
             return NULL;
         }
-        DialogDic* dd=ddic_ini(g);
+        DialogMan* dd=ddic_ini(g);
         fclose(g);
         if(!dd){
             edic_free();

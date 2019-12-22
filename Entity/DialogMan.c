@@ -1,18 +1,19 @@
-/*  DialogDic.c */
+/*  DialogMan.c */
 
-#include "DialogDic.h"
+#include "DialogMan.h"
 
 #define BUFFER_SIZE 1000
 #define NUMBER_TXT 10
 
-struct _DialogDic {
+struct _DialogMan {
   Dialog** d;
   int size;
+  int position
 };
 
-DialogDic* ddic_ini(FILE* df) {
+DialogMan* ddic_ini(FILE* df) {
   if(!df) return NULL;
-  DialogDic* ddic = (DialogDic*)calloc(1, sizeof(DialogDic));
+  DialogMan* ddic = (DialogMan*)calloc(1, sizeof(DialogMan));
   if(!ddic) return NULL;
   int si;
   fscanf(df,"%d", &si);
@@ -32,7 +33,7 @@ DialogDic* ddic_ini(FILE* df) {
   return ddic;
 }
 
-void ddic_free(DialogDic* ddic) {
+void ddic_free(DialogMan* ddic) {
   if(!ddic) return;
   for(int i=0;i<ddic->size;i++) {
     diag_free(ddic->d[i]);
@@ -42,9 +43,10 @@ void ddic_free(DialogDic* ddic) {
   return;
 }
 
-DialogDic* ddic_copy(DialogDic* ddic) {
+DialogMan* ddic_copy(DialogMan* ddic) {
   if(!ddic) return NULL;
-  DialogDic* dd=(DialogDic*)calloc(1, sizeof(DialogDic));
+  DialogMan* dd=(DialogMan*)calloc(1, sizeof(DialogMan));
+  memcpy(dd,ddic,sizeof(DialogMan));
   if(!dd) return NULL;
   dd->d=(Dialog**)calloc(ddic->size, sizeof(Dialog*));
   if(!dd->d) {
@@ -62,11 +64,14 @@ DialogDic* ddic_copy(DialogDic* ddic) {
       return NULL;
     }
   }
-  dd->size=ddic->size;
   return dd;
 }
+char* ddic_getLine(DialogMan* dic){
+  if(!dic) return NULL;
+  return diag_getNext(dic->d[dic->position]);
+}
 
-Dialog* ddic_lookup(DialogDic* ddic, int did) {
+Dialog* ddic_lookup(DialogMan* ddic, int did) {
   if(!ddic) return NULL;
   for(int i=0;i<ddic->size;i++) {
     if(diag_getId(ddic->d[i])==did) return diag_copy(ddic->d[i]);
@@ -74,13 +79,25 @@ Dialog* ddic_lookup(DialogDic* ddic, int did) {
   return NULL;
 }
 
-DialogDic* ddic_resetDialog(DialogDic* dd, int did) {
-  if(!dd) return NULL;
-  for(int i=0;i<dd->size;i++) {
-    if(diag_getId(dd->d[i])==did) {
-      if(!diag_setLine(dd->d[i], 0)) return NULL;
-      return dd;
-    }
+DialogMan* ddic_advance(DialogMan* dd){
+  if(!dd)return NULL;
+  dd->position++;
+  if(dd->position>=dd->size){
+    dd->position--;
+    return NULL;
   }
+  return dd;
+}
+
+DialogMan* ddic_setDialog(DialogMan* ddic, int did){
+  for(int i=0;i<ddic->size;i++) {
+    if(diag_getId(ddic->d[i])==did)ddic->position=i;
+  }
+  return ddic;
+}
+DialogMan* ddic_resetDialog(DialogMan* dd) {
+  if(!dd) return NULL;
+  if(!diag_setLine(dd->d[dd->position], 0)) return NULL;
+  return dd;
   return NULL;
 }

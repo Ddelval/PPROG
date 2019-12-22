@@ -8,7 +8,7 @@
 #include "Display.h"
 #include "Object.h"
 #include "ObjectDic.h"
-#include "DialogDic.h"
+#include "DialogMan.h"
 #include "Utility.h"
 #include "Trigger.h"
 
@@ -79,9 +79,9 @@ Entity* entity_addItem(Entity* en,int itemId, int quantity);
 const Inventory* entity_getInvRef(Entity*en);
 
 /*
-    Sets the DialogDic of a given entity, copying it.
+    Sets the DialogMan of a given entity, copying it.
 */
-Entity* entity_setDialogs(Entity* e, DialogDic* ddic);
+Entity* entity_setDialogs(Entity* e, DialogMan* ddic);
 
 /*
     Gets the next line in the current dialog.

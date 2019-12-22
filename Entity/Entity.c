@@ -32,8 +32,7 @@ struct _Entity {
   int room_index;
   Display* dis;
   bool has_dialog;
-  DialogDic* ddic;
-  int dialogid;
+  DialogMan* ddic;
 };
 
 
@@ -118,7 +117,6 @@ Entity* entity_copy(Entity* e) {
     return NULL;
   }
   r->room_index=e->room_index;
-  r->dialogid=e->dialogid;
   return r;
 }
 
@@ -291,32 +289,32 @@ const Inventory* entity_getInvRef(Entity*en){
   return en? en->inv:NULL;
 }
 
-Entity* entity_setDialogs(Entity* e, DialogDic* ddic) {
+Entity* entity_setDialogs(Entity* e, DialogMan* ddic) {
   if(!e) return NULL;
-  DialogDic* d=ddic_copy(ddic);
+  DialogMan* d=ddic_copy(ddic);
   e->ddic=d;
   return e;
 }
 
 char* entity_getLine(Entity* e) {
   if(!e||!e->ddic) return NULL;
-  Dialog* dd=ddic_lookup(e->ddic, e->dialogid);
-  if(!dd) return NULL;
-  char* c=diag_getNext(dd);
-  diag_free(dd);
-  return c;
+  return ddic_getLine(e->ddic);
 }
 
 Entity* entity_resetDialog(Entity* e) {
   if(!e||!e->ddic) return NULL;
-  if(!ddic_resetDialog(e->ddic, e->dialogid)) return NULL;
+  if(!ddic_resetDialog(e->ddic)) return NULL;
   return e;
 }
 
 Entity* entity_setDialog(Entity* e, int dialogid) {
   if(!e) return NULL;
-  e->dialogid=dialogid;
+  ddic_setDialog(e->ddic,dialogid);
   return e;
+}
+Entity* entity_advanceDialog(Entity* e){
+  if(!e)return NULL;
+  ddic_advance(e->ddic);
 }
 
 int entity_getId(Entity* e){
