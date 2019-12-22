@@ -44,7 +44,7 @@ Display* _wo_gameDisplay(Room* r){
 
     Window* act;
     Window* cont;
-    
+
     int vdiv=800;
     int w=1200;
     int h=400;
@@ -52,7 +52,7 @@ Display* _wo_gameDisplay(Room* r){
     if(!tit)goto FAIL;
     Display* dis=disp_ini(w,h,r,vdiv,tit,fcat_lookup(M8));
     if(!dis)goto FAIL;
-    
+
     /** Actions Window **/
     int act_size=4;
     ch=calloc(act_size,sizeof(char*));
@@ -75,7 +75,7 @@ Display* _wo_gameDisplay(Room* r){
     win_addAction(act,trig_showInv,1,SHOW);
     win_addAction(act,trig_showRec,2,SHOW);
     win_addAction(act,trig_talk,3,TALK);
-    
+
     /** Controls **/
     int cont_size=3;
     cn=calloc(cont_size,sizeof(char*));
@@ -90,7 +90,7 @@ Display* _wo_gameDisplay(Room* r){
         wec[i]=we_createLabel(cn[i],fcat_lookup(M6),0);
         if(!wec[i])goto FAIL;
     }
-    
+
     cont=win_ini("Controls",wec,cont_size,w-vdiv-1,h/2-20,0,0,fcat_lookup(M8));
     if(!cont)goto FAIL;
     disp_AddLWindow(dis,act);
@@ -101,7 +101,7 @@ FAIL:
     free(dis);
     dis=NULL;
 
-END: 
+END:
     free(ch);
     for(int i=0;i<act_size;++i)we_free(wel[i]);
     free(wel);
@@ -138,31 +138,25 @@ Entity* _wo_eload(FILE* f,World * w){
     entity_setCoordJ(e,j);
     char* c=calloc(MAX_NAME_ENTITY,sizeof(char));
     fgets(c,MAX_NAME_ENTITY,f);
-    int re=0;
-    while(re<MAX_NAME_ENTITY&&c[re]==' ')++re;
-    char* c2=calloc(strlen(c)-re,sizeof(char));
-    strcpy(c2,c+re);
-    if(strlen(c2)>0)c2[strlen(c2)-1]=0;
-    entity_setName(e,c2);
+    entity_setName(e,c);
     free(c);
-    free(c2);
     return e;
 }
 /**
  * @brief Reads the world from a file
  * Format:
  * Room
- * 
+ *
  * player
  * number_of_allies
  * allies
  * number_of_enemies
  * enemies
- * 
+ *
  * The format of every entity is:
  * id ipos jpos name
- * @param f 
- * @return World* 
+ * @param f
+ * @return World*
  */
 World* wo_load(FILE* f){
     if(!f)return NULL;
@@ -210,7 +204,7 @@ World* wo_launch(World* w){
         }
         if(c=='D'){
             entity_moveRight(w->player,true);
-            
+
         }
         if(c=='O'){
             disp_incSelIndex(w->dis,0,-1);
