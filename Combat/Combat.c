@@ -101,8 +101,8 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
   c->weapons[ENEMY]= inv_getSelected(entity_getInventory(enemy), WEAPON);
 
 
-  c->moveset[PLAYER] = obj_getAttacks(c->weapons[0]);
-  c->moveset[ENEMY] = obj_getAttacks(c->weapons[1]);
+  c->moveset[PLAYER] = obj_getAttacks(c->weapons[PLAYER]);
+  c->moveset[ENEMY] = obj_getAttacks(c->weapons[ENEMY]);
 
   return c;
 }

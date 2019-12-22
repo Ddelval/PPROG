@@ -1,6 +1,6 @@
 .SECONDARY:
 CC= gcc -g
-EXE:=WorldTest WTest
+EXE:=WorldTest WTest TestCombat
 
 
 EXE_O:=$(patsubst %,Compile_obj/%.o,$(EXE))
