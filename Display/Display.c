@@ -197,34 +197,14 @@ Display* print_Window(Display*dis, int index){
     canv_print(stdout,c,ipos,dis->vdiv+1+2*LINE_WIDTH);
     return dis;
 }
-Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ename){
+Display* disp_DialogWindow(const Display* dis, const DialogMan* dman){
     if(!dis||!dman)return NULL;
 
     char* txt=NULL;
-    char* en =NULL;
     bool err=false;
     Canvas *bottom=NULL,*back=NULL,*rend=NULL;
     Canvas *wl_rend=NULL,*result=NULL;
-    Canvas *nam_rend=NULL;
     Wlabel* wl=NULL;
-
-    en=calloc(strlen(ename)+2,sizeof(char));
-    if(!en) goto ERR_END;
-    strcpy(en,ename);
-    int l=strlen(en);
-    en[l]=':';
-    en[l+1]=0;
-
-    wl=wl_ini(en,fcat_lookup(M6),0);
-    wl_rend=wl_renderSmall(wl,dis->width);
-    nam_rend=canv_addMargin(wl_rend,10,0,0,20);
-    if(!nam_rend)goto ERR_END;
-    canv_free(wl_rend);
-    wl_rend=canv_addMargin(nam_rend,0,dis->width-canv_getWidth(nam_rend),0,0);
-    canv_free(nam_rend);
-    nam_rend=wl_rend;
-    wl_rend=NULL;
-    wl_free(wl);
 
     int h=150;
     int ipos=dis->height-h;
@@ -233,18 +213,17 @@ Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ena
     bottom=canv_subCopy(rend,ipos ,canv_getHeight(rend),0,canv_getWidth(rend));
     back=canv_blur(bottom,10);
     canv_darken(back,DARKEN);
-    canv_addOverlay(back,nam_rend,0,0);
     if(!back)goto ERR_END;
 
     txt=dman_getLine(dman);
-    if(!txt) txt=strdup("... ... ...");
-    
+    if(!txt) txt=strdup(". . .");
+
 
     wl=wl_ini(txt,fcat_lookup(M4),0);
     wl_rend=wl_render(wl, dis->width-100);
     if(!wl_rend)goto ERR_END;
 
-    result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),50);
+    result=canv_Overlay(back,wl_rend,10,10);
     canv_print(stdout,result,ipos,0);
     char in;
     while(1){
@@ -253,11 +232,11 @@ Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ena
         canv_free(wl_rend); wl_rend=NULL;
 
         txt=dman_getLine(dman);
-        if(!txt)goto END; 
+        if(!txt)goto END;
         wl=wl_ini(txt,fcat_lookup(M4),0);
         wl_rend=wl_render(wl, dis->width-100);
         if(!wl_rend)goto ERR_END;
-        result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),10);
+        result=canv_Overlay(back,wl_rend,10,10);
         if(!result)goto ERR_END;
         canv_print(stdout,result,ipos,0);
 
