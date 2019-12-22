@@ -7,13 +7,14 @@
 #include "Combat.h"
 #include "EntityDic.h"
 #include "Entity.h"
+#include "Inventory.h"
+#include "Object.h"
 
 int main() {
   Entity* player=edic_lookup(0, NULL);
-  Inventory* inv=entity_getInventory(player);
-  if(!inv) printf("noo\n");
+  Entity* enemy=edic_lookup(0, NULL);
 
-  printf("%d\n", inv_getQuantity(inv, 6));
-
+  Object* o=inv_getSelected(entity_getInventory(player), WEAPON);
+  printf("AA");
   return 0;
 }
