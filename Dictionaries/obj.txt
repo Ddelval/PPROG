@@ -34,3 +34,25 @@ Iron
 105
 2
 1
+
+6
+Stick
+102
+102
+0
+10
+22
+Stick
+Hits the enemy
+2
+2 0 0 0 0
+3 1 2 0 5
+1
+
+7
+Wooden potion
+102
+102
+1
+10 5 0 0 0
+1
