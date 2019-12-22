@@ -5,6 +5,7 @@
 //
 
 #include "Object.h"
+#include "Skill.h"
 
 #define NAME_SIZE 50
 #define MAX_ATTACKS 4
@@ -42,15 +43,15 @@ Object* obj_ini(){
 }
 
 void obj_free(Object* ob){
-    if(!ob)return;
-    //atb_free(ob->atb);
-    if(ob->n_attacks){
-        for(int i=0;i<ob->n_attacks;++i){
-            //skill_free(ob->attack[i]);
-        }
-        free(ob->attacks);
+  if(!ob)return;
+  attb_free(ob->atb);
+  if(ob->n_attacks){
+    for(int i=0;i<ob->n_attacks;++i){
+      skill_free(ob->attacks[i]);
     }
-    free(ob);
+    //free(ob->attacks);
+  }
+  free(ob);
 }
 /**
  * @brief Loads an object from a file
@@ -60,10 +61,10 @@ void obj_free(Object* ob){
  * icon_id
  * sprite_id
  * type
- * 
- * If it is a consumable, it will also have 
+ *
+ * If it is a consumable, it will also have
  * attributes
- * 
+ *
  * If it is a weapon, it will also have:
  * number of moves
  * id of each attack
@@ -71,30 +72,30 @@ void obj_free(Object* ob){
  * @return Object* New object with the data
  */
 Object* obj_load(FILE* f){
-    if(!f)return NULL;
+  if(!f)return NULL;
 
-    Object* ob=obj_ini();
-    if(!ob)return NULL;
-    fscanf(f,"%d",&ob->id);
-    ob->name[0]='\n';
-    while(ob->name[0]=='\n')fgets(ob->name,NAME_SIZE,f);
-    ob->name[strlen(ob->name)-1]=0;
+  Object* ob=obj_ini();
+  if(!ob)return NULL;
+  fscanf(f,"%d",&ob->id);
+  ob->name[0]='\n';
+  while(ob->name[0]=='\n')fgets(ob->name,NAME_SIZE,f);
+  ob->name[strlen(ob->name)-1]=0;
 
-    fscanf(f, "%d %d %d",(int*)(&ob->icon_id),(int*)(&ob->spr_id),(int*)(&ob->type));
-    if(ob->type==RESOURCE){
+  fscanf(f, "%d\n%d\n%d",(int*)(&ob->icon_id),(int*)(&ob->spr_id),(int*)(&ob->type));
+  if(ob->type==RESOURCE){
 
-    }
-    if(ob->type==CONSUMABLE){
-        ob->atb=attb_load(f);
-    }
-    if(ob->type==WEAPON){
-        fscanf(f,"%d",&ob->n_attacks);
-        for(int i=0;i<ob->n_attacks;++i){
-            //ob->attacks[i]=skill_load(f);
-        }
-    }
-    fscanf(f,"%d",(int*)(&ob->destroyable));
-    return ob;
+  }
+  if(ob->type==CONSUMABLE){
+      ob->atb=attb_load(f);
+  }
+  if(ob->type==WEAPON){
+      fscanf(f,"%d",&ob->n_attacks);
+      for(int i=0;i<ob->n_attacks;++i){
+          ob->attacks[i]=skill_load(f);
+      }
+  }
+  fscanf(f,"%d",(int*)(&ob->destroyable));
+  return ob;
 }
 /**
  * @brief Compares two objects
@@ -123,7 +124,7 @@ Object* obj_copy(Object* ob){
     //res->atb=atb_copy(ob->atb);
     strcpy(res->name,ob->name);
     for(int i=0;i<ob->n_attacks;++i){
-        //res->attacks[i]=skill_copy(ob->attacks[i]);
+        res->attacks[i]=skill_copy(ob->attacks[i]);
     }
     return res;
 }

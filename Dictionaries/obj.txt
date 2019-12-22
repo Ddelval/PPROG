@@ -1,4 +1,4 @@
-5
+7
 
 1
 Rock
@@ -35,15 +35,32 @@ Iron
 2
 1
 
-<<<<<<< HEAD
 6
 Stick
 102
 102
 0
-10
-22
-Stick
+4
+409
+Stick hit
+Hits the enemy
+2
+2 0 0 0 0
+3 1 2 0 5
+409
+Stick hit
+Hits the enemy
+2
+2 0 0 0 0
+3 1 2 0 5
+409
+Stick hit
+Hits the enemy
+2
+2 0 0 0 0
+3 1 2 0 5
+409
+Stick hit
 Hits the enemy
 2
 2 0 0 0 0

@@ -32,6 +32,19 @@ Function name: skill_destroy
  Inputs: skill to destroy (pointer)
  Outputs: skill pointer
  */
+
+/*
+    Loads a skill from file. The file format is:
+    ID
+    NAME
+    DESCRIPTION
+    SPECIAL_SKILL
+    ATTRIBUTES (SELF)
+    ATTRIBUTES (ATTACK)
+*/
+Skill* skill_load(FILE* f);
+
+
 void skill_destroy(Skill* skill);
 /*
 Function name: skill_load
