@@ -14,6 +14,8 @@ WORLD:=$(foreach F,$(wildcard World/*.c),$(subst World/, Compile_obj/World/, $(s
 
 UTILITY:=$(foreach F,$(wildcard Utility/*.c),$(subst Utility/, Compile_obj/Utility/, $(subst .c,.o, $F)))
 
+COMBAT:=$(foreach F,$(wildcard Combat/*.c),$(subst Combat/, Compile_obj/Combat/, $(subst .c,.o, $F)))
+
 OBJECTS:= $(DISPLAY) $(ENTITY) $(INVENTORY) $(WORLD) $(UTILITY)
 
 MIDDLE = @printf "\033[1m\033[1;34m $@ \033[0;30m\033[0m\t"
@@ -61,5 +63,11 @@ Compile_obj/World/%.o: World/%.c World/%.h
 #Utility
 Compile_obj/Utility/%.o: Utility/%.c Utility/%.h
 	@mkdir -p Compile_obj/Utility/
+	$(MIDDLE)
+	$(CC) -c  $< -o $@ $(LIB)
+
+#Combat
+Compile_obj/Combat/%.o: Combat/%.c Combat/%.h
+	@mkdir -p Compile_obj/Combat/
 	$(MIDDLE)
 	$(CC) -c  $< -o $@ $(LIB)
