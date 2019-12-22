@@ -158,7 +158,7 @@ obj_type obj_getType(Object* ob){
 int obj_getId(Object* ob){
     return ob? ob->id: -1;
 }
-Object* obj_renderDims(Object* ob, int number,Font* ftext, Font* fnum,int*h,int*w){
+Object* obj_renderDims(const Object* ob, int number, const Font* ftext, const Font* fnum,int*h,int*w){
     if(!ob)return 0;
     Sprite* sp=sdic_lookup(ob->icon_id);
     Canvas* c=canv_copy(spr_getDispData(sp));
@@ -185,7 +185,7 @@ Object* obj_renderDims(Object* ob, int number,Font* ftext, Font* fnum,int*h,int*
     canv_free(back);
     return ob;
 }
-Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h, int w, bool selected){
+Canvas* obj_render(const Object* ob, int number, const Font* ftext, const Font* fnum, int h, int w, bool selected){
     if(!ob)return 0;
     Sprite* sp=sdic_lookup(ob->icon_id);
     Canvas* imag=canv_copy(spr_getDispData(sp));

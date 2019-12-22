@@ -893,7 +893,7 @@ Canvas* canv_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int o
             }
         }
     }
-    canv_printAllSolid(f,canv,old,oi,oj);
+    canv_printAllNonTransparent(f,canv,oi,oj);
     canv_free(canv);
     return canv;
 }

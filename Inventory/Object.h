@@ -56,9 +56,9 @@ Sprite* obj_getSprite(Object* ob);
 char* obj_getName(Object* ob);
 Attributes * obj_getAttributes(Object * ob);
 obj_type obj_getType(Object* ob);
-Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h,int w,bool selected);
+Canvas* obj_render(const Object* ob, int number, const Font* ftext, const Font* fnum, int h,int w,bool selected);
 int obj_getId(Object* ob);
-Object* obj_renderDims(Object* ob, int number,Font* ftext, Font* fnum,int*h,int*w);
+Object* obj_renderDims(const Object* ob, int number, const Font* ftext, const Font* fnum,int*h,int*w);
 Skill ** obj_getAttacks(Object * ob);
 
 #endif

@@ -214,7 +214,8 @@ Display* disp_DialogWindow(const Display* dis, const DialogMan* dman){
     if(!back)goto ERR_END;
 
     txt=dman_getLine(dman);
-    if(!txt)goto END;
+    if(!txt) txt=strdup(". . .");
+    
 
     wl=wl_ini(txt,fcat_lookup(M4),0);
     wl_rend=wl_render(wl, dis->width-100);
@@ -229,7 +230,7 @@ Display* disp_DialogWindow(const Display* dis, const DialogMan* dman){
         canv_free(wl_rend); wl_rend=NULL;
 
         txt=dman_getLine(dman);
-        if(!txt)goto END;  
+        if(!txt)goto END; 
         wl=wl_ini(txt,fcat_lookup(M4),0);
         wl_rend=wl_render(wl, dis->width-100);
         if(!wl_rend)goto ERR_END;
