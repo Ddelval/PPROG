@@ -6,6 +6,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <pthread.h>
 #include "Entity.h"
 #include "Display.h"
 #include "TrigReact.h"

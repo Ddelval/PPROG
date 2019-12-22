@@ -48,51 +48,18 @@ int min(int a,int b){
 }
 char getch1(void)
 {
-    /*
-    char buf = 0;
-    struct termios old = {0};
-    fflush(stdout);
-    tcgetattr(0, &old);
-    //if(tcgetattr(0, &old) < 0)
-        //perror("tcsetattr()");
-    old.c_lflag &= ~ICANON;
-    old.c_lflag &= ~ECHO;
-    old.c_cc[VMIN] = 1;
-    old.c_cc[VTIME] = 0;
-    tcsetattr(0, TCSANOW, &old);
-   // if(tcsetattr(0, TCSANOW, &old) < 0)
-        //perror("tcsetattr ICANON");
-    read(0, &buf, 1);
-    fflush(stdin);
-    //if(read(0, &buf, 1) < 0)
-        //perror("read()");
-    old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
-    tcsetattr(0, TCSADRAIN, &old);
-    //if(tcsetattr(0, TCSADRAIN, &old) < 0)
-        //perror("tcsetattr ~ICANON");
-    return buf;
-    */
     return fgetc(stdin);
  }
-/*
-void handle_winch(Display* dis) {
-    signal(SIGWINCH, SIG_IGN);
 
-    endwin();
-    initscr();
-    refresh();
-    clear();
-    
-    if(!disp_fulldraw(dis, LINES, COLS)) err=WINCH_ERR;
-    
-    signal(SIGWINCH, handle_winch);
-}*/
 struct termios initial;
+//sem_t mut;
 void term_restore(){
     tcsetattr(fileno(stdin),TCSANOW,&initial);
     fprintf(stdout,"%c[?25h",27);
+    //sem_destroy(&mut);
 }
+
+
 void term_init(){
     struct termios new;
 
@@ -107,4 +74,13 @@ void term_init(){
     tcsetattr(fileno(stdin),TCSANOW,&new);
     fprintf(stdout,"%c[?25l",27);
 
+    //sem_init(&mut,0,1);
+}
+
+
+int sendToScreen(FILE* f, char* ch){
+    if(!f||!ch)return NULL;
+    //sem_wait(&mut);
+    fprintf(f,ch);
+    //sem_post(&mut);
 }

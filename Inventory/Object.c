@@ -54,16 +54,19 @@ void obj_free(Object* ob){
 }
 /**
  * @brief Loads an object from a file
- * The format is the following:
+ * The common format is the following:
  * id
  * name
  * icon_id
  * sprite_id
  * type
+ * 
+ * If it is a consumable, it will also have 
  * attributes
- * number of attacks
- * attacks
- * destroyable
+ * 
+ * If it is a weapon, it will also have:
+ * number of moves
+ * id of each attack
  * @param f File from where the object will be read
  * @return Object* New object with the data
  */

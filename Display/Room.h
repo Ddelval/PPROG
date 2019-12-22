@@ -46,14 +46,9 @@ Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei);
 
 
 
-/// Modifies the position of a sprite in the top layer
-/// @param r            Room in which the sprites are
-/// @param index   Index of the spritre in the array of sprites in the top layer
-/// @param i            New row index for the sprite
-/// @param j            New column index for the sprite
-int room_modPos(Room* r, int index, int i, int j);
+int room_modPos(Room* r, int index, int i, int j, bool scroll);
 
-int room_incPos(Room* r, int index, int i, int j);
+int room_incPos(Room* r, int index, int i, int j,bool scroll);
 Room* room_load(FILE* f);
 
 /*-----------------------------------------------------------------*/

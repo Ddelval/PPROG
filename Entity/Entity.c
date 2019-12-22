@@ -6,7 +6,7 @@
 #define HORIZONTAL_STEP 30
 #define VERTICAL_STEP 10
 #define SPRITES 4
-#define TALK_RAD 20
+
 
 /*
    name: Entitys's name.
@@ -228,24 +228,24 @@ Entity* entity_setInventory(Entity* e, Inventory* inv){
 }
 
 
-Entity* entity_moveUp(Entity* p){
+Entity* entity_moveUp(Entity* p, bool scroll){
   if(!p||!p->dis) return NULL;
-  disp_incPos(p->dis,p->room_index,-VERTICAL_STEP,0,&p->ipos,&p->jpos);
+  disp_incPos(p->dis,p->room_index,-VERTICAL_STEP,0,&p->ipos,&p->jpos,scroll);
   return p;
 }
-Entity* entity_moveDown(Entity* p){
+Entity* entity_moveDown(Entity* p, bool scroll){
   if(!p||!p->dis) return NULL;
-  disp_incPos(p->dis,p->room_index,VERTICAL_STEP,0,&p->ipos,&p->jpos);
+  disp_incPos(p->dis,p->room_index,VERTICAL_STEP,0,&p->ipos,&p->jpos,scroll);
   return p;
 }
-Entity* entity_moveLeft(Entity* p){
+Entity* entity_moveLeft(Entity* p, bool scroll){
   if(!p||!p->dis) return NULL;
-  disp_incPos(p->dis,p->room_index,0,-HORIZONTAL_STEP,&p->ipos,&p->jpos);
+  disp_incPos(p->dis,p->room_index,0,-HORIZONTAL_STEP,&p->ipos,&p->jpos,scroll);
   return p;
 }
-Entity* entity_moveRight(Entity* p){
+Entity* entity_moveRight(Entity* p, bool scroll){
   if(!p||!p->dis) return NULL;
-  disp_incPos(p->dis,p->room_index,0,HORIZONTAL_STEP,&p->ipos,&p->jpos);
+  disp_incPos(p->dis,p->room_index,0,HORIZONTAL_STEP,&p->ipos,&p->jpos,scroll);
   return p;
 }
 
@@ -276,7 +276,7 @@ Entity* entity_addtoDisplay(Entity* e, Display* dis){
 Entity* entity_processAlly(Entity* e){
   if(!e&&!e->dis)return NULL;
   Room* r=disp_getrefRoom(e->dis);
-  room_processAlly(r,e,e->s,e->room_index,TALK_RAD);
+  room_processAlly(r,e,e->s,e->room_index,ENTITY_TALK_RAD);
 }
 int entity_getRoomIndex(const Entity* en){
   return en? en->room_index: -1;

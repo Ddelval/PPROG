@@ -30,4 +30,6 @@ void tr_setId(Trigger * t, int id);
 Trigger* tr_createTalk(void* e,int ally_id);
 void* tr_getEntityRef(Trigger* t);
 const char* tr_getDesc(Trigger* t);
+bool tr_completeEqual(Trigger* t1,Trigger* t2);
+int tr_getAlly_id(Trigger * t);
 #endif
