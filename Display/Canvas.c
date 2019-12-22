@@ -799,18 +799,20 @@ void canv_print(FILE* f, Canvas* c,int i,int j){
     }
     char ** da=_canv_render(c,c->wid,c->hei);
     if(!da)return;
+    int siz=0;
+    for(int w=0;w<c->hei;++w)siz+=strlen(da[w]);
+    char* buff=calloc(siz+c->hei*16+20,sizeof(char));
+    int pos=0;
     for(int w=0;w<c->hei;++w){
         char * aux=movecur(i+w, j);
-        fprintf(f,"%s",aux);
-        //puts(aux);
-        free(aux);
-        fprintf(f, "%s",da[w]);
-        //puts(da[w]);
-        free(da[w]);
+        appendf(buff,&pos,aux);
+        appendf(buff,&pos,da[w]);
     }
+    sendToScreen(f, buff);
     if(tofree) canv_free(c);
     fflush(f);
     free(da);
+    free(buff);
 }
 
 /*-----------------------------------------------------------------*/
@@ -945,12 +947,12 @@ void canv_printAllSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int 
                 j++;
                 continue;
             }
-            char* c=pix_renderLine((const Pixel**)buff,l);
+            char* cc2=pix_renderLine((const Pixel**)buff,l);
             l=0;
             char* c2=movecur(oi+i,oj+jj);
-            char* segment=calloc(strlen(c)+strlen(c2)+1,sizeof(char));
-            if(!c||!c2||!segment){
-                free(c);
+            char* segment=calloc(strlen(cc2)+strlen(c2)+1,sizeof(char));
+            if(!cc2||!c2||!segment){
+                free(cc2);
                 free(c2);
                 free(segment);
                 free(buff);
@@ -958,8 +960,8 @@ void canv_printAllSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int 
             }
             int pos=0;
             append(segment,&pos,c2);
-            append(segment,&pos,c);
-            free(c);
+            append(segment,&pos,cc2);
+            free(cc2);
             free(c2);
             str[strpos]=segment;
             strpos++;
@@ -974,7 +976,9 @@ void canv_printAllSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int 
     int rpos=0;
     for(int i=0;i<strpos;++i)appendf(rend,&rpos,str[i]);
     free(str);
-    fprintf(f,"%s",rend);
+    sendToScreen(f, rend);
+    fflush(f);
+    free(rend);
 }
 
 /*-----------------------------------------------------------------*/
@@ -1043,8 +1047,8 @@ void canv_printAllNonTransparent(FILE* f, const Canvas* c,int oi,int oj){
     int rpos=0;
     for(int i=0;i<strpos;++i)appendf(rend,&rpos,str[i]);
     free(str);
-    fprintf(f,"%s",rend);
-    fflush(stdout);
+    sendToScreen(f, rend);
+    fflush(f);
 }
 
 /*-----------------------------------------------------------------*/

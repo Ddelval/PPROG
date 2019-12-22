@@ -80,16 +80,16 @@ int main(){
     while(1){
         char c=getch1();
         if(c=='W'){
-            entity_moveUp(e);
+            entity_moveUp(e,true);
         }
         if(c=='S'){
-            entity_moveDown(e);
+            entity_moveDown(e,true);
         }
         if(c=='A'){
-            entity_moveLeft(e);
+            entity_moveLeft(e,true);
         }
         if(c=='D'){
-            entity_moveRight(e);
+            entity_moveRight(e,true);
             
         }
         if(c=='O'){

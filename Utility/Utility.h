@@ -9,6 +9,8 @@
 #define siz(x) sizeof(x)/sizeof((x[0]))
 #include <stdio.h>
 #include <stdlib.h>
+#include <semaphore.h>
+#include <pthread.h>
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
@@ -17,6 +19,8 @@
 
 #define DISP_HEIGHT 471
 #define DISP_WIDTH 1209
+
+#define ENTITY_TALK_RAD 20
 /*
 #include <signal.h>
 #include <ncurses.h>

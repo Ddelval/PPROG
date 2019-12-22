@@ -233,9 +233,18 @@ Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei){
  4: left border
  5: collison 
  */
-int room_modPos(Room* r, int index, int i, int j){
+int room_modPos(Room* r, int index, int i, int j, bool scroll){
     if(!r||index>=r->overpos){
         return -1;
+    }
+    if(!scroll){
+        //We only want to check against borders and collisions
+        if(i+spr_getHeight(r->overs[index])>=r->hei||i<0||j<0||j+spr_getWidth(r->overs[index])>=r->wid) return 5;
+        int a=spr_checkCollisions(r->overs[index],r->colision,r->wid,r->hei,i,j);
+        if(a)return a;
+        spr_setOJ(r->overs[index], j);
+        spr_setOI(r->overs[index], i);
+        return 0;
     }
     int aux;
     int retval=0;
@@ -273,11 +282,11 @@ int room_modPos(Room* r, int index, int i, int j){
     spr_setOI(r->overs[index], i);
     return retval;
 }
-int room_incPos(Room* r, int index, int i, int j){
+int room_incPos(Room* r, int index, int i, int j,bool scroll){
     if(!r||index>=r->overpos){
         return -1;
     }
-    return room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]));
+    return room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]),scroll);
 }
 /**
  * @brief Sets the are of the window that will be rendered when the rendering functions are called
@@ -340,11 +349,16 @@ Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
     fflush(stdout);
     canv_free(c);
     
-    Canvas* torender=canv_copy(spr_getDispData(r->overs[i]));
-    Canvas* bc=canv_subCopy(cbck, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
-    Canvas* b2=canv_subCopy(r->shadows, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
+    i1=max(spr_getOI(r->overs[i]),r->c_t);
+    j1=max(spr_getOJ(r->overs[i]),r->c_l);
+
+    j2=min(spr_getOJ(r->overs[i])+spr_getWidth (r->overs[i]),r->c_r);
+    i2=min(spr_getOI(r->overs[i])+spr_getHeight(r->overs[i]),r->c_b);
+    Canvas* torender=canv_subCopy(spr_getDispData(r->overs[i]),i1-spr_getOI(r->overs[i]),i2-spr_getOI(r->overs[i]), j1-spr_getOJ(r->overs[i]), j2-spr_getOJ(r->overs[i]));
+    Canvas* bc=canv_subCopy(cbck, i1, i2, j1, j2);
+    Canvas* b2=canv_subCopy(r->shadows, i1, i2, j1, j2);
     canv_addOverlay(torender,b2,0,0);
-    canv_printAllSolid(stdout,torender,bc,disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1);
+    canv_printAllSolid(stdout,torender,bc,disp_i-r->c_t+i1, disp_j-r->c_l+j1+1);
     box b;
     b.i=spr_getOI(r->overs[i]);
     b.j=spr_getOJ(r->overs[i]);
@@ -441,25 +455,57 @@ Room* room_processTriggers(Room * r, Sprite * sp, int index){
     free(tr_id);
     return r;
 }
-Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){
-    if(!r||sp_index>=r->overpos)return NULL;
-    trigger* dat=r->trig[spr_getOI(r->overs[sp_index])][spr_getOJ(r->overs[sp_index])];
+Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz){
+    if(!r||i<0||j<0||i>=r->hei||j>=r->wid)return NULL;
+    trigger* dat=r->trig[i][j];
     int cnt;
     for(cnt=0;cnt<MAX_TRIG&&dat[cnt].spindex!=-1;++cnt);
     Trigger** t=calloc(cnt+1,sizeof(Trigger*));
-    int j=0;
-    for(int i=0;i<MAX_TRIG&&dat[i].spindex!=-1;++i){
-        t[j]=trdic_lookup(dat[i].code);
-        if(tr_getType(t[j])==tt){
-            tr_setSpr(t[j],dat[i].spindex);
-            j++;
+    int jj=0;
+    for(int ii=0;ii<MAX_TRIG&&dat[ii].spindex!=-1;++ii){
+        t[jj]=trdic_lookup(dat[ii].code);
+        if(tr_getType(t[jj])==tt){
+            tr_setSpr(t[jj],dat[ii].spindex);
+            jj++;
         }
         else{
-            tr_free(t[j]);
+            tr_free(t[jj]);
         }
     }
-    *siz=j;
+    *siz=jj;
     return t;
+}
+Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){
+    if(!r||sp_index>=r->overpos)return NULL;
+    int cn[4];
+    Trigger** tr[4];
+    for(int i=0;i<4;++i)cn[i]=0;
+    tr[0]=_room_getTriggersLoc(r,tt,spr_getOI(r->overs[sp_index]),spr_getOJ(r->overs[sp_index]),&cn[0]);
+    tr[1]=_room_getTriggersLoc(r,tt,spr_getOI(r->overs[sp_index])+spr_getHeight(r->overs[sp_index]),spr_getOJ(r->overs[sp_index]),&cn[1]);
+    tr[2]=_room_getTriggersLoc(r,tt,spr_getOI(r->overs[sp_index]),spr_getOJ(r->overs[sp_index])+spr_getWidth(r->overs[sp_index]),&cn[2]);
+    tr[3]=_room_getTriggersLoc(r,tt,spr_getOI(r->overs[sp_index])+spr_getHeight(r->overs[sp_index]),spr_getOJ(r->overs[sp_index])+spr_getWidth(r->overs[sp_index]),&cn[3]);
+    Trigger** tot=calloc(cn[0]+cn[1]+cn[2]+cn[3],sizeof(Trigger*));
+    int index=0;
+    for(int i=0;i<4;++i){
+        if(!tr[i]) continue;
+        for(int j=0;j<cn[i];++j){
+            bool eq=false;
+            for(int w=0;w<index;++w){
+                if(tr_completeEqual(tr[i][j],tot[w])){
+                    eq=true;
+                    break;
+                }
+            }
+            if(!eq){
+                tot[index]=tr[i][j];
+                index++;
+            }
+            
+        }
+    }
+    for(int i=0;i<4;++i)free(tr[i]);
+    *siz=index;
+    return tot;
 }
 Canvas* room_redrawMap(Room*r){
     Canvas* b=canv_backGrnd(pix_retR(r->backcol),pix_retG(r->backcol),pix_retB(r->backcol),pix_retA(r->backcol),r->wid,r->hei);
@@ -515,6 +561,28 @@ Room* room_updateData(Room*r){
         spr_processCollisions(r->backg[i],r->colision,r->wid,r->hei);
         spr_processShadows(r->backg[i],r->shadows);
         room_processTriggers(r,r->backg[i],i);
+    }
+    for(int i=1;i<r->overpos;++i){
+        int oi,oj;
+        int rad= ENTITY_TALK_RAD;
+        oi=spr_getOI(r->overs[i]);
+        oj=spr_getOJ(r->overs[i]);
+        int tid=trdic_talksearch(i);
+        if(tid>0)return NULL;
+
+        for(int i2=oi-rad;i2<oi+rad+spr_getHeight(r->overs[i]);++i2){
+            if(i2<0||i2>=r->hei)continue;
+            for(int j=oj-rad;j<oj+rad*2+spr_getWidth(r->overs[i]);++j){
+                if(j<0||j>=r->wid)continue;
+                int l=0;
+                while(l<MAX_TRIG&&r->trig[i2][j][l].spindex!=-1)l++;
+                if(l!=MAX_TRIG){
+                    r->trig[i2][j][l].code=tid;
+                    r->trig[i2][j][l].spindex=i;
+                }
+            }
+        }
+        spr_processCollisions(r->overs[i],r->colision,r->wid,r->hei);
     }
 
     return r;

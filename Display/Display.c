@@ -547,12 +547,12 @@ Display* disp_setSpriteJ(Display* d,int ind, int j){
     return room_setSpriteJ(d->room,ind,j)? d:NULL;
 }
 
-int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
+int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j, bool scroll){
 
     if(d->pop_dial||d->pop_inv||d->pop_inv)return 0;
 
 
-    int a=room_incPos(d->room, index, i, j);
+    int a=room_incPos(d->room, index, i, j,scroll);
     int b=-1;
     int c=-1;
     if(i>0)b=3;
@@ -562,7 +562,7 @@ int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j){
 
     if(a==-1)return -1;
     if(a==b||a==c){
-        if(disp_scroll(d,0.5*(i>0)-0.5*(i<0),0.5*(j>0)-0.5*(j<0))==1){
+        if(scroll&&disp_scroll(d,0.5*(i>0)-0.5*(i<0),0.5*(j>0)-0.5*(j<0))==1){
             canv_print(stdout,room_getRender(d->room),0,0);
         }
     }
