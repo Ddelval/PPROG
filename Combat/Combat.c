@@ -173,12 +173,70 @@ Combat* _combat_executeMove(Combat* c, int choice) {
   }
 
   if(playerattacks||enemyattacks) {
-    if(!win_remWindowElement(disp_getLWindow(c->cd,PLAYER_STATS), 0)) {
+    /*  PLAYER STATS  */
+    if(!win_clear(disp_getLWindow(c->cd,PLAYER_STATS))) {
       free(p);
       free(e);
       return NULL;
-    } /*Create a function win_clear to clear all welems in the windows;
-        then redraw the current stats-ret[i] for each attribute as welems.*/
+    }
+    free(p);
+    free(e);
+    char ch[5][128];
+    sprintf(ch[0], "Health: %d", attb_get(c->stats[PLAYER], HEALTH));
+    sprintf(ch[1], "Attack: %d", attb_get(c->stats[PLAYER], ATTACK));
+    sprintf(ch[2], "Defense: %d", attb_get(c->stats[PLAYER], DEFENSE));
+    sprintf(ch[3], "Speed: %d", attb_get(c->stats[PLAYER], SPEED));
+    sprintf(ch[4], "Agility: %d", attb_get(c->stats[PLAYER], AGILITY));
+    Welem* pstats[5];
+    for(int i=0;i<5;++i) {
+        pstats[i]=we_createLabel(ch[i],fcat_lookup(M4),0);
+        if(!pstats[i]) {
+          for(int j=0;j<i;++j)we_free(pstats[j]);
+          return NULL;
+        }
+    }
+    /*  ENEMY STATS */
+    if(!win_clear(disp_getLWindow(c->cd,ENEMY_STATS))) {
+      for(int j=0;j<5;++j)we_free(pstats[j]);
+      return NULL;
+    }
+    sprintf(ch[0], "Health: %d", attb_get(c->stats[ENEMY], HEALTH));
+    sprintf(ch[1], "Attack: %d", attb_get(c->stats[ENEMY], ATTACK));
+    sprintf(ch[2], "Defense: %d", attb_get(c->stats[ENEMY], DEFENSE));
+    sprintf(ch[3], "Speed: %d", attb_get(c->stats[ENEMY], SPEED));
+    sprintf(ch[4], "Agility: %d", attb_get(c->stats[ENEMY], AGILITY));
+    Welem* estats[5];
+    for(int i=0;i<5;++i) {
+        estats[i]=we_createLabel(ch[i],fcat_lookup(M4),0);
+        if(!estats[i]) {
+          for(int j=0;j<5;++j)we_free(pstats[j]);
+          for(int j=0;j<i;++j)we_free(estats[j]);
+          return NULL;
+        }
+    }
+    /*  PLAYER MOVEMENTS  */
+    if(!win_clear(disp_getLWindow(c->cd,PLAYER_ACTIONS))) {
+      for(int j=0;j<5;++j)we_free(pstats[j]);
+      for(int j=0;j<5;++j)we_free(estats[j]);
+      return NULL;
+    }
+    Welem* movs[5];
+    for(int i=0;i<4;++i) {
+      movs[i]=we_createLabel(skill_getName(c->moveset[PLAYER][i]),fcat_lookup(M6),0);
+      if(!movs[i]) {
+        for(int j=0;j<5;++j)we_free(pstats[j]);
+        for(int j=0;j<5;++j)we_free(estats[j]);
+        for(int j=0;j<i;++j)we_free(movs[j]);
+        return NULL;
+      }
+    }
+    movs[4]=we_createLabel(obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE)), fcat_lookup(M6),0);
+    if(!movs[4]) {
+      for(int j=0;j<5;++j)we_free(pstats[j]);
+      for(int j=0;j<5;++j)we_free(estats[j]);
+      for(int j=0;j<4;++j)we_free(movs[j]);
+      return NULL;
+    }
   }
 
 

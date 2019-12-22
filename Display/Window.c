@@ -8,12 +8,12 @@ struct _Window {
 	char* title;
 	Welem** Win_elem;
 	int num_elems;
-  	int num_elems_siz;
+  int num_elems_siz;
 	int selected_elem;
 	int width, height;
 	int scroll_pos;
 	int leftm, rightm, topm, botm;
-  	int jpos, ipos;
+  int jpos, ipos;
 	Pixel* backcol;
 	Pixel* forecol;
 	const Font* titlef;
@@ -368,4 +368,22 @@ Pixel* win_getBackColor(Window *win) {
 Pixel* win_getForeColor(Window *win) {
 	if (!win) return NULL;
 	return win->forecol;
+}
+
+Window* win_clear(Window* w) {
+	if(!w) return NULL;
+
+	for(int i=0;i<w->num_elems;++i) {
+		if(!win_remWindowElement(w, i)) return NULL;
+	}
+	return w;
+}
+
+Window* win_addWelems(Window* w, Welem** we, int n) {
+	if(!w||!we) return NULL;
+
+	for(int i=0;i<n;i++) {
+		if(!win_addWindowElement(w,we[i])) return NULL;
+	}
+	return w;
 }

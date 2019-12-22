@@ -65,7 +65,7 @@ Inventory* inv_copy(const Inventory* inv) {
     for(int i=0;i<OBJ_TYPE_SIZE;i++) {
 
         in->times[i]=(int*)    calloc(in->alloc[i], sizeof(int));
-        in->items[i]=(Object*) calloc(in->alloc[i], sizeof(Object*));
+        in->items[i]=(Object**) calloc(in->alloc[i], sizeof(Object*));
         if(!in->times[i]||!in->items[i]) {
             inv_free(in);
             return NULL;
@@ -274,4 +274,3 @@ Canvas* inv_renderObj(Inventory* inv, obj_type t, int hei, int wid, const Font* 
 int inv_getSelectedIndex(const Inventory* inv, obj_type t){
     return inv? inv->selected[t]:-1;
 }
-

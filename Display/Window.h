@@ -142,4 +142,15 @@ func_trig win_getSelectedAction(Window* win);
 trig_type win_getSelectedTrigType(Window * win);
 
 Window* win_addBorder(Window* win,Pixel* color, int width);
+
+/*
+    Clears a window, removing all its internal elements.
+*/
+Window* win_clear(Window* w);
+
+/*
+    Adds n elements to a given window.
+*/
+Window* win_addWelems(Window* w, Welem** we, int n);
+
 #endif
