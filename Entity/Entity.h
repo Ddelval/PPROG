@@ -27,7 +27,7 @@ Entity *entity_ini (char *name, ent_type t, int i, int j);
  * Format:
  * id type spr_id
  * name
- * ipos jpos
+ * ipos jpos has_dialog
  * attributes
  * inventory
  *
