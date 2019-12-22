@@ -16,7 +16,7 @@ UTILITY:=$(foreach F,$(wildcard Utility/*.c),$(subst Utility/, Compile_obj/Utili
 
 COMBAT:=$(foreach F,$(wildcard Combat/*.c),$(subst Combat/, Compile_obj/Combat/, $(subst .c,.o, $F)))
 
-OBJECTS:= $(DISPLAY) $(ENTITY) $(INVENTORY) $(WORLD) $(UTILITY)
+OBJECTS:= $(DISPLAY) $(ENTITY) $(INVENTORY) $(WORLD) $(UTILITY) $(COMBAT)
 
 MIDDLE = @printf "\033[1m\033[1;34m $@ \033[0;30m\033[0m\t"
 LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/ -I World/ -I Combat/

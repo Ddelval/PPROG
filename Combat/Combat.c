@@ -151,28 +151,35 @@ Combat* _combat_executeMove(Combat* c, int choice) {
   srand(time(NULL));
   double random = (double)rand()/RAND_MAX;
   double res=((double)p1/100)*2 - ((double)p2/100) - random;
-
+  int* e;
+  int* p;
   if(skill_getSpecial(ps)==NORMAL) res += 0.3;
   if(skill_getSpecial(ps)==UNDODGE) res=1;
   if(res<0) { /*  Your attack is dodged */
     if(attb_get(c->stats[PLAYER], SPEED)<attb_get(c->stats[ENEMY], SPEED)) {
-      if(!int* e=_combat_enemyMove(c)) return NULL;
+      e=_combat_enemyMove(c);
+      if(!e) return NULL;
       sleep(2);
       _combat_message(c, "The enemy dodged your attack!");
     } else {
       _combat_message(c, "The enemy dodged your attack!");
       sleep(2);
-      if(!int* e=_combat_enemyMove(c)) return NULL;
+      e=_combat_enemyMove(c);
+      if(!e) return NULL;
     }
   } else {  /* Your attack hits */
     if(attb_get(c->stats[PLAYER], SPEED)>attb_get(c->stats[ENEMY], SPEED)) {
-      if(!int* p=_combat_playerMove(c, choice)) return NULL;
+      p=_combat_playerMove(c, choice);
+      if(!p) return NULL;
       sleep(2);
-      if(!int* e=_combat_enemyMove(c)) return NULL;
+      e=_combat_enemyMove(c);
+      if(!e) return NULL;
     } else {
-      if(!int* e=_combat_enemyMove(c)) return NULL;
+      e=_combat_enemyMove(c);
+      if(!e) return NULL;
       sleep(2);
-      if(!int* p=_combat_playerMove(c, choice)) return NULL;
+      p=_combat_playerMove(c, choice);
+      if(!p) return NULL;
     }
   }
   sleep(2);
@@ -225,17 +232,16 @@ Combat* _combat_executeMove(Combat* c, int choice) {
           return NULL;
         }
     }
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
   }
   free(p);
   free(e);
   _combat_message(c, "Please select a movement");
-  if(!win_setSelected(disp_getLWindow(c->cd, PLAYER_ACTIONS)), -1) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
+  if(!win_setSelected(disp_getLWindow(c->cd, PLAYER_ACTIONS), -1)) {
     return NULL;
   }
-  for(int j=0;j<5;++j)we_free(pstats[j]);
-  for(int j=0;j<5;++j)we_free(estats[j]);
+
   return c;
 }
 
