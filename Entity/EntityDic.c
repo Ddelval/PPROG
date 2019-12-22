@@ -62,14 +62,14 @@ EntityDic* edic_ini(){
             edic_free();
             return NULL;
         }
-        DialogDic* dd=ddic_ini(g);
+        DialogMan* dd=dman_ini(g);
         fclose(g);
         if(!dd){
             edic_free();
             return NULL;
         }
         entity_setDialogs(s->dat[i],dd);
-        ddic_free(dd);
+        dman_free(dd);
 
 
 
