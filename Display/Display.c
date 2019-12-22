@@ -197,17 +197,63 @@ Display* print_Window(Display*dis, int index){
     canv_print(stdout,c,ipos,dis->vdiv+1+2*LINE_WIDTH);
     return dis;
 }
-Display* disp_DialogWindow(Display* dis, DialogMan* dman){
+Display* disp_DialogWindow(const Display* dis, const DialogMan* dman){
     if(!dis||!dman)return NULL;
 
-    Canvas* bottom,*back;
-    Canvas* rend=disp_Render(dis);
+    char* txt=NULL;
+    bool err=false;
+    Canvas *bottom=NULL,*back=NULL,*rend=NULL;
+    Canvas *wl_rend=NULL,*result=NULL;
+    Wlabel* wl=NULL;
+
     int h=150;
-    bottom=canv_subCopy(rend,dis->height-h,dis->height,0,dis->width);
+    int ipos=dis->height-h;
+
+    rend=disp_Render(dis);
+    bottom=canv_subCopy(rend,ipos ,canv_getHeight(rend),0,canv_getWidth(rend));
     back=canv_blur(bottom,10);
     canv_darken(back,DARKEN);
-    char* c=dman_getLine(dman);
+    if(!back)goto ERR_END;
 
+    txt=dman_getLine(dman);
+    if(!txt)goto END;
+
+    wl=wl_ini(txt,fcat_lookup(M4),0);
+    wl_rend=wl_render(wl, dis->width-100);
+    if(!wl_rend)goto ERR_END;
+
+    result=canv_Overlay(back,wl_rend,10,10);
+    canv_print(stdout,result,ipos,0);
+    char in;
+    while(1){
+        in=getch1();
+        wl_free(wl); wl=NULL;
+        canv_free(wl_rend); wl_rend=NULL;
+
+        txt=dman_getLine(dman);
+        if(!txt)goto END;
+        wl=wl_ini(txt,fcat_lookup(M4),0);
+        wl_rend=wl_render(wl, dis->width-100);
+        if(!wl_rend)goto ERR_END;
+        result=canv_Overlay(back,wl_rend,10,10);
+        if(!result)goto ERR_END;
+        canv_print(stdout,result,ipos,0);
+
+    }
+    goto END;
+
+SUCC_END:
+
+
+ERR_END:
+    err=true;
+END:
+    canv_print(stdout,bottom,ipos,0);
+    canv_free(bottom);
+    canv_free(back);
+    canv_free(rend);
+    free(txt);
+    return err? NULL:dis;
 }
 Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f){
     if(!dis||!txt)return NULL;

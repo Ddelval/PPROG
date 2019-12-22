@@ -52,7 +52,7 @@ Dialog* diag_copy(Dialog* diag) {
 
 char* diag_getNext(Dialog* diag) {
   if(!diag) return NULL;
-  if(diag->linepos>=diag->lines)return NULL;
+  if(diag->linepos>=diag->nlines)return NULL;
   char* c=strdup(diag->lines[diag->linepos]);
   diag->linepos++;
   

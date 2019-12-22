@@ -8,7 +8,7 @@
 struct _DialogMan {
   Dialog** d;
   int size;
-  int position
+  int position;
 };
 
 DialogMan* dman_ini(FILE* df) {

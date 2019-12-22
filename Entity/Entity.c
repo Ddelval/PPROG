@@ -324,3 +324,7 @@ int entity_getId(Entity* e){
 bool entity_getHasDialog(Entity *e){
   return e? e->has_dialog:false;
 }
+const DialogMan* entity_getDialogs(Entity *e){
+  if(!e)return NULL;
+  return e->dman;
+}
