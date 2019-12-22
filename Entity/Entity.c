@@ -140,6 +140,14 @@ Entity* entity_setSprite(Entity* p,int d){
   return p;
 }
 
+Sprite* entity_getSprite(Entity* p) {
+  if(!p||!p->s) return NULL;
+
+  Sprite* rs=spr_copy(p->s);
+  if(!rs) return NULL;
+  return rs;
+}
+
 Entity* entity_setEntType(Entity* p, ent_type t){
   if(!p || t < 1 || t > 3) return NULL;
   p->t = t;
@@ -176,13 +184,6 @@ char * entity_getName(Entity* p){
 
   strcpy(name, p->name);
   return name;
-}
-
-Sprite *entity_getSprite(Entity* p){
-  Sprite *s = NULL;
-  if(!p || !(p->s)) return NULL;
-  s = spr_copy(p->s);
-  return s;
 }
 
 ent_type entity_getEntType(Entity* p){

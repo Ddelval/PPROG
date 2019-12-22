@@ -47,6 +47,11 @@ Entity* entity_setName(Entity* p, char* c);
 /* Sets the character's sprite, if either of the arguments is NULL it will return ERROR */
 Entity* entity_setSprite(Entity* p, int d);
 
+/*
+    Gets the sprite associated to this entity.
+*/
+Sprite* entity_getSprite(Entity* p);
+
 /* Sets the character's type, if the entity atgument is NULL, or the entity type
    is different from 1, 2 or 3 it will return ERROR*/
 Entity* entity_setEntType(Entity* p, ent_type t);

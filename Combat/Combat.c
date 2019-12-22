@@ -47,20 +47,28 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
     free(c);
     return NULL;
   }
-  f=fopen("Worlds/c1.txt", "r");  // HARDCODED. IT DOESN'T EXIST (YET).
-  Room* cr=room_load(f);
+  Pixel* pb=pix_ini(150, 146, 137,255);
+  if(!pb) {
+    free(c);
+    font_free(f8);
+    return NULL;
+  }
+  Room* cr=room_ini(902, "Combat_room", DISP_HEIGHT, DISP_WIDTH-800, pb);
   if(!cr) {
     free(c);
+    pix_free(pb);
     font_free(f8);
     return NULL;
   }
-  fclose(f);
+
   c->cd = disp_ini(DISP_WIDTH, DISP_HEIGHT, cr, 800, "COMBAT!", f8);
   if(!c->cd) {
-    free(c);
+    combat_free(c);
+    pix_free(pb);
     font_free(f8);
     return NULL;
   }
+  pix_free(pb);
   c->player = entity_copy(player);
   if(!c->player) {
     combat_free(c);
@@ -130,7 +138,9 @@ Combat* _combat_executeMove(Combat* c, int choice) {
 
   if(choice==COMBAT_CONSUMABLE) {
     _combat_applyConsumable(c, c->player, PLAYER);
+    sleep(2);
     if(!_combat_enemyMove(c)) return NULL;
+    sleep(2);
     return c;
   }
   /*  Normal turn; no consumable used */
@@ -165,6 +175,7 @@ Combat* _combat_executeMove(Combat* c, int choice) {
       if(!int* p=_combat_playerMove(c, choice)) return NULL;
     }
   }
+  sleep(2);
   bool enemyattacks=false;
   bool playerattacks=false;
   for(int i=0;i<10;i++) {
@@ -214,34 +225,17 @@ Combat* _combat_executeMove(Combat* c, int choice) {
           return NULL;
         }
     }
-    /*  PLAYER MOVEMENTS  */
-    if(!win_clear(disp_getLWindow(c->cd,PLAYER_ACTIONS))) {
-      for(int j=0;j<5;++j)we_free(pstats[j]);
-      for(int j=0;j<5;++j)we_free(estats[j]);
-      return NULL;
-    }
-    Welem* movs[5];
-    for(int i=0;i<4;++i) {
-      movs[i]=we_createLabel(skill_getName(c->moveset[PLAYER][i]),fcat_lookup(M6),0);
-      if(!movs[i]) {
-        for(int j=0;j<5;++j)we_free(pstats[j]);
-        for(int j=0;j<5;++j)we_free(estats[j]);
-        for(int j=0;j<i;++j)we_free(movs[j]);
-        return NULL;
-      }
-    }
-    movs[4]=we_createLabel(obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE)), fcat_lookup(M6),0);
-    if(!movs[4]) {
-      for(int j=0;j<5;++j)we_free(pstats[j]);
-      for(int j=0;j<5;++j)we_free(estats[j]);
-      for(int j=0;j<4;++j)we_free(movs[j]);
-      return NULL;
-    }
   }
-
-
-  /*Maybe would be nice deselecting the attack used in this turn now.*/
-
+  free(p);
+  free(e);
+  _combat_message(c, "Please select a movement");
+  if(!win_setSelected(disp_getLWindow(c->cd, PLAYER_ACTIONS)), -1) {
+    for(int j=0;j<5;++j)we_free(pstats[j]);
+    for(int j=0;j<5;++j)we_free(estats[j]);
+    return NULL;
+  }
+  for(int j=0;j<5;++j)we_free(pstats[j]);
+  for(int j=0;j<5;++j)we_free(estats[j]);
   return c;
 }
 
@@ -762,10 +756,15 @@ Combat* combat_load(Combat*c) {
     free(y);
     return NULL;
   }
-  /*
-      NOTE: AS WE HAVE A LOADED DISPLAY WITH A ROOM, IT WOULD BE NICE HAVING TWO
-      SPRITES FOR THE ENEMY AND THE PLAYER FACING EACH OTHER POKEMON-LIKE.
-  */
+
+  Sprite* ps=entity_getSprite(c->player);
+  if(!ps) return NULL;
+  spr_setCoordinates(ps, 200,200);
+  Sprite* es=entity_getSprite(c->enemy);
+  if(!es) return NULL;
+  spr_setCoordinates(es, 50,600);
+  if(!room_addBSprite(disp_getrefRoom(c->cd), ps)) return NULL;
+  if(!room_addBSprite(disp_getrefRoom(c->cd), es)) return NULL;
   Canvas* d=disp_Render(c->cd);
   canv_print(stdout,d,0,0);
   canv_free(d);
