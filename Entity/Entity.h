@@ -103,5 +103,5 @@ int entity_getId(Entity* e);
 Entity* entity_setInventory(Entity* e, Inventory* inv);
 bool entity_getHasDialog(Entity *e);
 Entity* entity_processAlly(Entity* e);
-
+const DialogMan* entity_getDialogs(Entity *e);
 #endif

@@ -1,7 +1,7 @@
 /*  DialogMan.h */
 
-#ifndef DIALOGMAN.H
-#define DIALOGMAN.H
+#ifndef DIALOGMAN_H
+#define DIALOGMAN_H
 
 #include "Dialog.h"
 #include <stdlib.h>
@@ -44,4 +44,4 @@ DialogMan* dman_resetDialog(DialogMan* dd);
 char* dman_getLine(DialogMan* dic);
 DialogMan* dman_setDialog(DialogMan* dman, int did);
 DialogMan* dman_advance(DialogMan* dd);
-#endif /* DIALOGMAN.H */
+#endif /* DIALOGMAN_H */
