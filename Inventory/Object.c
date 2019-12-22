@@ -90,7 +90,7 @@ Object* obj_load(FILE* f){
     if(ob->type==WEAPON){
         fscanf(f,"%d",&ob->n_attacks);
         for(int i=0;i<ob->n_attacks;++i){
-            ob->attacks[i]=skill_load(f);
+            //ob->attacks[i]=skill_load(f);
         }
     }
     fscanf(f,"%d",(int*)(&ob->destroyable));
