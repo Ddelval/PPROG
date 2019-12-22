@@ -71,6 +71,7 @@ Entity *entity_load(FILE* f, Display *d){
   int spindex;
   fscanf(f,"%d %d %d\n",&(e->id),&(e->t),&spindex);
   fgets(e->name,MAX_NAME_LENGTH,f);
+  if(strlen(e->name)>0)e->name[strlen(e->name)-1]=0;
   fscanf(f,"%d %d %d",&(e->ipos),&(e->jpos),&e->has_dialog);
   e->attr= attb_load(f);
   e->inv=  inv_load(f);

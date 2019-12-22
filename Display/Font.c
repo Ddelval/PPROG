@@ -178,7 +178,7 @@ Canvas* font_renderText(const Font* f,char* txt){
     int len=(int)strlen(txt);
     char *mod_txt=_remQuotes(txt);
     Canvas* tmp;
-    Canvas* res=canv_backGrnd(0, 0, 0, 0, font_calcWidth(f, mod_txt), f->hei);
+    Canvas* res=canv_backGrnd(0, 0, 0, 0, font_calcWidth(f, mod_txt)+f->padding, f->hei);
     if(!res){
         return NULL;
     }

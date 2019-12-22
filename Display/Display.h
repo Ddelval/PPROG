@@ -85,5 +85,5 @@ Display* disp_setSpriteJ(Display* d,int ind, int j);
 const Window* disp_getLWindow(Display* d, int windex);
 int disp_getNLatWindow(Display* d);
 int* disp_getDimensions(Display* d);
-Display* disp_DialogWindow(const Display* dis, const DialogMan* dman);
+Display* disp_DialogWindow(const Display* dis, const DialogMan* dman,char* c);
 #endif /* Display_h */
