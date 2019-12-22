@@ -102,7 +102,7 @@ int main(){
             disp_execute(dis,1,entity_getRoomIndex(e),e);
         }
         if(c=='Q'){
-            disp_remInventory(dis);
+            //disp_remInventory(dis);
             disp_remDialog(dis);
         }
         //usleep(100000);

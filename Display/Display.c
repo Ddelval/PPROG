@@ -197,7 +197,7 @@ Display* print_Window(Display*dis, int index){
     canv_print(stdout,c,ipos,dis->vdiv+1+2*LINE_WIDTH);
     return dis;
 }
-Display* disp_Dialog(Display* dis,)
+
 Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f){
     if(!dis||!txt)return NULL;
     Canvas* c=disp_Render(dis);
