@@ -10,6 +10,19 @@
 struct _Pixel{
     int r,g,b,a;
 };
+/**
+ * @brief The pixel ADT represents a color
+ * 
+ * This ADT also includes all the necessary functions to overlay
+ * two colors and deal with transparencies.
+ * 
+ * In order to do so, aside from the color information, we also
+ * store the alpha channel. The higher the alpha value of a pixel,
+ * the more opaque it is.
+ * 255 -> opaque
+ * 0   -> transparent
+ */
+
 int _filter(int a){
     if(a>MAX_VAL)a=MAX_VAL;
     if(a<0)a=0;
