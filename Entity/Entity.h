@@ -75,10 +75,10 @@ Inventory * entity_getInventory( Entity * p);
 
 Entity* entity_setAttributes(Entity* p, Attributes* a);
 
-Entity* entity_moveUp(Entity* p);
-Entity* entity_moveDown(Entity* p);
-Entity* entity_moveLeft(Entity* p);
-Entity* entity_moveRight(Entity* p);
+Entity* entity_moveUp(Entity* p,bool scroll);
+Entity* entity_moveDown(Entity* p,bool scroll);
+Entity* entity_moveLeft(Entity* p,bool scroll);
+Entity* entity_moveRight(Entity* p,bool scroll);
 int entity_getRoomIndex(const Entity* en);
 Entity* entity_addItem(Entity* en,int itemId, int quantity);
 const Inventory* entity_getInvRef(Entity*en);

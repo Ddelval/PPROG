@@ -104,3 +104,10 @@ void* tr_getEntityRef(Trigger* t){
 const char* tr_getDesc(Trigger* t){
     return t? strdup(t->name):NULL;
 }
+bool tr_completeEqual(Trigger* t1,Trigger* t2){
+    if(!t1||!t2)return -1;
+    return memcmp(t1,t2,sizeof(Trigger))==0;
+}
+int tr_getAlly_id(Trigger * t){
+    return t? t->ally_id:-1;
+}

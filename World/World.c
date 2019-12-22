@@ -185,6 +185,7 @@ World* wo_load(FILE* f){
     }
     return w;
 }
+
 World* wo_launch(World* w){
     if(!w)return NULL;
     Canvas* d=disp_Render(w->dis);
@@ -193,16 +194,16 @@ World* wo_launch(World* w){
     while(1){
         char c=getch1();
         if(c=='W'){
-            entity_moveUp(w->player);
+            entity_moveUp(w->player,true);
         }
         if(c=='S'){
-            entity_moveDown(w->player);
+            entity_moveDown(w->player,true);
         }
         if(c=='A'){
-            entity_moveLeft(w->player);
+            entity_moveLeft(w->player,true);
         }
         if(c=='D'){
-            entity_moveRight(w->player);
+            entity_moveRight(w->player,true);
 
         }
         if(c=='O'){

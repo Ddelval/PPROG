@@ -35,6 +35,7 @@ Iron
 2
 1
 
+<<<<<<< HEAD
 6
 Stick
 102
