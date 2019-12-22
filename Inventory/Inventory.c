@@ -43,6 +43,7 @@ Inventory* inv_ini(){
         inv->size[i]=0;
         inv->alloc[i]=INITIAL_SIZE;
     }
+    for(int i=0;i<OBJ_TYPE_SIZE;++i) inv->selected[i]=0;
     return inv;
 }
 

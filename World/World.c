@@ -138,7 +138,12 @@ Entity* _wo_eload(FILE* f,World * w){
     entity_setCoordJ(e,j);
     char* c=calloc(MAX_NAME_ENTITY,sizeof(char));
     fgets(c,MAX_NAME_ENTITY,f);
-    entity_setName(e,c);
+    int re=0;
+    while(re<MAX_NAME_ENTITY&&c[re]==' ')++re;
+    char* c2=calloc(strlen(c)-re,sizeof(char));
+    strcpy(c2,c+re);
+    if(strlen(c2)>0)c2[strlen(c2)-1]=0;
+    entity_setName(e,c2);
     free(c);
     return e;
 }
