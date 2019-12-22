@@ -85,7 +85,7 @@ Pixel * pix_copy(const Pixel* src){
  * @param p2 
  * @return Pixel* 
  */
-Pixel* pix_average(Pixel* p1,Pixel*p2){
+Pixel* pix_average(const Pixel* p1,const Pixel*p2){
     if(!p1||!p2) return NULL;
     return pix_ini((p1->r+p2->r)/2,(p1->g+p2->g)/2,(p1->b+p2->b)/2,(p1->a+p2->a)/2);
 }
@@ -181,7 +181,7 @@ bool pix_halfTransparent(const Pixel* a){
 /// Returns the scape sequence that will change the background
 /// color of the terminal to the color of this pixel.
 /// @param a Pixel whose color will be taken
-char* pix_scapeSeq(Pixel* a){
+char* pix_scapeSeq(const Pixel* a){
     char* c=(char*)malloc(sizeof(char)*25);
     sprintf(c,"%c[%d;%d;%d;%d;%dm",27,48,2,a->r,a->g,a->b);
     return c;
@@ -193,7 +193,7 @@ char* pix_scapeSeq(Pixel* a){
 /// @param len 	Amount of pixels to be rendered
 /// @return An array of chars that, if printed on the screen will 
 ///         represent this line of pixels.
-char * pix_renderLine(Pixel**a,int len){
+char * pix_renderLine(const Pixel**a,int len){
     int diff=0;
     for(int i=1;i<len;++i) diff+=!pix_equals(a[i], a[i-1]); //Count differences
     int size=(diff+2)*25+(len+1)+2;

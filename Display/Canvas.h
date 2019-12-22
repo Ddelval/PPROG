@@ -20,238 +20,457 @@
 #include "Pixel.h"
 typedef struct _Canvas Canvas;
 typedef enum {LEFT,RIGHT} CAlign;
+
 /*-----------------------------------------------------------------*/
 /// Free the allocated memory
 void canv_free(Canvas* c);
 
-
-/// Create an empty canvas with the especified width and height
-/// Note that the pixel pointers are still not allocated 
-///
-/// @param wid Width of the canvas
-/// @param hei Height of the canvas
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Creates a new canvas
+ * 
+ * Note that this function will not initalise the array of pixels.
+ * It will only allocate the memory for it.
+ * 
+ * @param wid Width of the new canvas
+ * @param hei Height of the new canvas
+ * @return New canvas
+ */
 Canvas* canv_ini(int wid,int hei);
 
-
 /*-----------------------------------------------------------------*/
-/// Read a canvas from a file.
-/// The format has to be the following:
-/// <width> <height>
-/// [r,g,b,a] [r,g,b,a]...
-///
-/// @param f File from which the data will be read
-
+/**
+ * @brief Loads a canvas from a file
+ * 
+ * The format should be the following:
+ * (width) (height)
+ * [r,g,b,a] [r,g,b,a]...
+ * 
+ * @param f File from which the data will be read
+ * @return Pointer to the new canvas
+ */
 Canvas* canv_load(FILE* f);
 
-
 /*-----------------------------------------------------------------*/
-/// Generate a canvas of a given color and dimensions
-///
-/// @param r        red component of this background
-/// @param g        green component
-/// @param b        blue component
-/// @param a        alpha component. 255=opaque, 0=transparent
-/// @param width    width of the generated canvas
-/// @param height   height of the generated canvas
+/**
+ * @brief Creates a new canvas of a given color and dimensions
+ * 
+ * @param r         red component
+ * @param g         green component
+ * @param b         blue component
+ * @param a         alpha value
+ * @param width     width of the canvas
+ * @param height    height of the canvas
+ * @return Canvas*  to the new canvas
+ */
 Canvas* canv_backGrnd(int r, int g, int b, int a, int width, int height);
 
-
 /*-----------------------------------------------------------------*/
-/// Get a new canvas that contains both canvases appended horizontally
-///
-/// @param west Canvas that will be in the western region of the result
-/// @param east Canvas that will be in the eastern region of the result
+/**
+ * @brief Copies the given canvas
+ * 
+ * @param bas   Canvas to be copied
+ * @return      New anvas with exactly the same data
+ */
+Canvas* canv_copy (const Canvas* bas);
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Returns a copy of a section of the given Canvas
+ * 
+ * @param bas   Source canvas
+ * @param i2    i starting index (included)
+ * @param i1    i ending   index (excluded) 
+ * @param j1    j starting index (included)
+ * @param j2    j ending   index (excluded)
+ * @return      New canvas containing a copy of the given section
+ */
+Canvas* canv_subCopy (const Canvas* bas,int i1,int i2,int j1,int j2);
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Appends two canvases horizontally
+ * 
+ * That is to say the resulting canvas looks like:
+ * 
+ * WWWWWWW
+ * WWWWWWWEEEEE
+ * WWWWWWWEEEEE
+ * WWWWWWWEEEEE
+ * WWWWWWW
+ * 
+ * Where the 'W' repesent the west canvas and the 'E'
+ * represents the east canvas.
+ * 
+ * If they do not have the same height, the smaller one will 
+ * be centered vertically.
+ * 
+ * @param west  Canvas to the left
+ * @param east  Canvas to the right
+ * @return      New canvas with the result of the operation
+ */
 Canvas* canv_appendH(const Canvas* west, const Canvas* east);
 
+/*-----------------------------------------------------------------*/
 /**
- * @brief Second version of canv_appendH that does not allign both canvases
+ * @brief   Appends two canvases horizontally without aligning
+ *          the smaller one
  * 
- * The return of this function is a canvas that contains both of the canvases
- * appended horizontally and aligned with their top limit. 
+ * That is to say the resulting canvas looks like:
  * 
- * @param west Canvas that will be in the western region of the result
- * @param east Canvas that will be in the eastern region of the result
- * @return Canvas* 
+ * WWWWWWWEEEEE
+ * WWWWWWWEEEEE
+ * WWWWWWWEEEEE
+ * WWWWWWW
+ * WWWWWWW
+ * 
+ * Where the 'W' repesent the west canvas and the 'E'
+ * represents the east canvas.
+ * 
+ * If they do not have the same height, the smaller one will 
+ * be aligned relative to its top.
+ * 
+ * @param west  Canvas to the left
+ * @param east  Canvas to the right
+ * @return      New canvas with the result of the operation
  */
 Canvas* canv_appendHNL(const Canvas* west, const Canvas* east);
-/*-----------------------------------------------------------------*/
-/// Get a new canvas that contains both canvases appended vertically
-/// 
-/// @param north Canvas that will be in the northern region of the result
-/// @param south Canvas that will be in the southern region of the result
-Canvas* canv_appendV(const Canvas* north, const Canvas* south);
-
 
 /*-----------------------------------------------------------------*/
-/// Append the south Canvas below the North canvas
-///
-/// @param north Canvas that will be in the northern region of the result
-/// @param south Canvas that will be in the southern region of the result
-/// @returns     A not NULL value as long as the process has been
-///              completed successfully
-Canvas* canv_appendVI(Canvas* north, const Canvas* south);
-
-
-/*-----------------------------------------------------------------*/
-/// Get a new canvas that contains both canvases appended horizontally
-///
-/// @param west  Canvas that will be in the western region of the result
-/// @param east  Canvas that will be in the eastern region of the result
-/// @returns     A not NULL value as long as the process has been
-///              completed successfully
+/**
+ * @brief Appends the east canvas to the right of the west one.
+ *        In this case the west canvas will reflect the changes
+ * 
+ * That is to say the resulting canvas looks like:
+ * 
+ * WWWWWWW
+ * WWWWWWWEEEEE
+ * WWWWWWWEEEEE
+ * WWWWWWWEEEEE
+ * WWWWWWW
+ * 
+ * Where the 'W' repesent the west canvas and the 'E'
+ * represents the east canvas.
+ * 
+ * If they do not have the same height, the smaller one will 
+ * be centered vertically.
+ * 
+ * @remark  The result of the operation will be stored in the west
+ *          canvas. The return value is only used to report errors.
+ * 
+ * @param west  Canvas to the left
+ * @param east  Canvas to the right
+ * @return      New canvas with the result of the operation
+ */
 Canvas* canv_appendHI(Canvas* west, const Canvas* east);
 
 
+
 /*-----------------------------------------------------------------*/
-/// Returns a new Canvas that contains the original one and the margins defined in the input parameters
+/**
+ * @brief Appends two canvases vertically
+ * 
+ * That is to say the resulting canvas looks like:
+ * 
+ *    NNNNNN
+ *    NNNNNN
+ *  SSSSSSSSSS  
+ *  SSSSSSSSSS
+ *  SSSSSSSSSS
+ * 
+ * Where the 'N' repesent the north canvas and the 'S'
+ * represents the south canvas.
+ * 
+ * If they do not have the same height, the smaller one will 
+ * be centered horizontally.
+ * 
+ * @param north  Canvas on the top
+ * @param south  Canvas on the bottom
+ * @return      New canvas with the result of the operation
+ */
+Canvas* canv_appendV(const Canvas* north, const Canvas* south);
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Appends two canvases vertically and stores the result
+ *        in the top one
+ * 
+ * That is to say the resulting canvas looks like:
+ * 
+ *    NNNNNN
+ *    NNNNNN
+ *  SSSSSSSSSS  
+ *  SSSSSSSSSS
+ *  SSSSSSSSSS
+ * 
+ * Where the 'N' repesent the north canvas and the 'S'
+ * represents the south canvas.
+ * 
+ * If they do not have the same height, the smaller one will 
+ * be centered horizontally.
+ * 
+ * @param north  Canvas on the top
+ * @param south  Canvas on the bottom
+ * @return       A NULL pointer in case of error, north otherwise
+ */
+Canvas* canv_appendVI(Canvas* north, const Canvas* south);
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Appends two canvases vertically using the given alignment 
+ *        and stores the result in the top one
+ * 
+ * When al=LEFT, the resulting canvas looks like:
+ * 
+ *  NNNNNN
+ *  NNNNNN
+ *  SSSSSSSSSS  
+ *  SSSSSSSSSS
+ *  SSSSSSSSSS
+ *
+ * When al=RIGHT, the resulting canvas looks like:
+ * 
+ *      NNNNNN
+ *      NNNNNN
+ *  SSSSSSSSSS  
+ *  SSSSSSSSSS
+ *  SSSSSSSSSS
+ * Where the 'N' repesent the north canvas and the 'S'
+ * represents the south canvas.
+ * 
+ * 
+ * @param north Canvas on the top
+ * @param south Canvas on the bottom
+ * @param al    Alignement of the canvases
+ * @return      A NULL pointer in case of error, north otherwise
+ */
+Canvas* canv_appendVIA(Canvas* north,const Canvas* south,CAlign al);
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Adds a margin to a canvas. The padding will be transparent.
+ * 
+ * @param src       Canvas that will be placed in the center
+ * @param top       Margin in the top
+ * @param right     Margin in the right
+ * @param bottom    Margin in the bottom
+ * @param left      Margin in the left
+ * @return          New canvas with the given canvas and the margins
+ */
 Canvas* canv_addMargin (const Canvas *src, int top, int right, int bottom, int left);
 
-
 /*-----------------------------------------------------------------*/
-/// Return a copy of the given canvas
-///
-/// @param bas Canvas to be coppied
-Canvas* canv_copy (const Canvas* bas);
-
-
-/*-----------------------------------------------------------------*/
-/// Split a canvas into smaller sub-canvases making vertical separations
-/// @param src      Canvas to be splitted
-/// @param nelem    Pointer to an integer where the number
-///                 of returned elements will be stored
-///
-/// @return   An array of Canvas* that contains all non-transparent
-///           sub-sections of the given canvas separated.
+/**
+ * @brief Split a canvas into smaller sub-canvases making vertical separations
+ * 
+ * This function will split the canvas into pieces that are separated by 
+ * transparent horizontal gaps.
+ * This can be particularly useful when we want to load more than one 
+ * canvas in a single file. 
+ * 
+ * For instance, if a picture contains several leters:
+ * a b c d e
+ * This function will return each letter in a separete canvas
+ * 
+ * @param src       Canvas to be splitted
+ * @param nelem     Pointer to an integer where the number
+ *                  of returned elements will be stored
+ * @return          An array of Canvas* that contains all non-transparent
+ *                  sub-sections of the given canvas separated.
+ */
 Canvas ** canv_VSplit(const Canvas* src, int* nelem);
 
-
 /*-----------------------------------------------------------------*/
-/// Returns a copy of a section of the given Canvas
-///
-/// @param bas Source canvas
-/// @param i1 i starting index (included)
-/// @param i2 i ending   index (excluded)
-/// @param j1 j starting index (included)
-/// @param j2 j ending   index (excluded)
-Canvas* canv_subCopy (const Canvas* bas,int i1,int i2,int j1,int j2);
-
-
-/*-----------------------------------------------------------------*/
-/// Returns a copy of a canvas adjusted to a given dimensions.
-/// If the canvas is smaller, it will be centered and the rest
-/// of the pixels will be transparent
-/// If the canvas is bigger, it will be centered and cropped
-///
-/// @param src Original canvas
-/// @param nwidth new width value
-/// @param nheight new height value
+/**
+ * @brief   Adjust a canvas to a given dimensions.
+ * 
+ * 
+ * If the canvas is smaller, it will be centered and the rest
+ * of the pixels will be transparent
+ * If the canvas is bigger, it will be centered and cropped
+ * 
+ * @param src       Original canvas
+ * @param nwidth    New width
+ * @param nheight   New height
+ * @return          New canvas with the given dimensions
+ */
 Canvas* canv_AdjustCrop(const Canvas* src, int nwidth,int nheight);
 
-
 /*-----------------------------------------------------------------*/
-/// Merge two canvases into a new canvas
-///
-/// @param base The canvas that will act as background
-/// @param over The canvas that will act as foreground
-/// @param o_i  The top limit of the foreground canvas
-/// @param o_j  The left limit of the foreground canvas
-///
-/// @remark     (o_x,o_y) are the coordinates of the top-left corner of the foreground canvas
-///             with respecto to the background canvas
-///
-/// @return A new canvas containing the merge of the other two
+/**
+ * @brief       Merges two canvases into one
+ * 
+ * The last two parameters indicate the coordinates of
+ * the top-left corner of over when taking the top-left corner
+ * of base as a reference frame.
+ * 
+ * @param base  The canvas that will act as background
+ * @param over  The canvas that will act as foreground
+ * @param o_i   The offset in the vertical axis
+ * @param o_j   The offset in the horizontal axis
+ * @return      New canvas with the result of overlaying one canvas
+ *              on top of the other
+ */
 Canvas* canv_Overlay(const Canvas* base, const Canvas* over, int o_i, int o_j);
-
-
 /*-----------------------------------------------------------------*/
-/// Merge a new canvas in the base one
-///
-/// @param base The canvas that will act as background
-/// @param over The canvas that will act as foreground
-/// @param o_i  The top limit of the foreground canvas
-/// @param o_j  The left limit of the foreground canvas
-///
-/// @remark     In this case, no new canvas is created,
-///             the changes are applied to the background canvas.
+/**
+ * @brief Merges a new canvas in the base one
+ * 
+ * @param base  The canvas that will act as background
+ * @param over  The canvas that will act as foreground
+ * @param o_i   The top limit of the foreground canvas
+ * @param o_j   The left limit of the foreground canvas
+ * @return      A NULL pointer if an error ocurred.
+ *              base otherwise
+ */
 Canvas* canv_addOverlay(Canvas* base, const Canvas* over, int o_i, int o_j);
 
-
 /*-----------------------------------------------------------------*/
-/// Print the canvas to the file
-///
-/// @param f    File in which the canvas will be printed
-/// @param c    Canvas to be printed
-/// @param i    Top limit of the canvas when it is displayed in the screen
-/// @param j    Left limit of the canvas when it is displayed in the screen
-///
-/// @remark     The caller must know that the canvas will fit in the screen
+/**
+ * @brief Prints the canvas to the file
+ * 
+ * Note that this function will not check if the canvas fits on the screen
+ * 
+ * @param f File in which the canvas will be printed
+ * @param c Canvas to be printed
+ * @param i x-coordinate of of the canvas when it is displayed on the screen
+ * @param j Left limit of the canvas when it is displayed on the screen
+ */
 void canv_print(FILE* f, Canvas* c,int i,int j);
 
+/*-----------------------------------------------------------------*/
 /**
- * @brief Prepares the printing of the canvas
+ * @brief Returns the characters that have to be echoed to the terminal
+ *        in order to print this canvas.
  * 
- * This function will render the canvas and store in a string all
- * the characters that are requried to print this canvas.
- * This includes all the characters used to move the cursor around and 
- * to print the pixels.
+ * The characters include the movement of the cursor to the required
+ * positions
  * 
- * @param c Canvas to be processed
- * @param i Position of the top of the canvas in the screen
- * @param j Position of the left of the canvas in the screen 
- * @return char* 
+ * 
+ * @param c Canvas to be printed
+ * @param i x-coordinate of of the canvas when it is displayed on the screen
+ * @param j Left limit of the canvas when it is displayed on the screen
+ * 
+ * @returns An array of characters with the information required
+ *          to print the Canvas
  */
 char * canv_StorePrint(Canvas* c, int i, int j);
 
 /**
- * @brief Prints only the differences between two canvases
+ * @brief Prints only the sections that are different between the new 
+ *        and the old canvas
  * 
- * This function operates in exactly the same way as canvas_print but
- * it will only print the differences between both canvases
- * @param f     File where the canvas will be printed
+ * Note that for this function to work correctly, old should be the 
+ * exact canvas that is now being displayed
+ * 
+ * @param f     File to which the canvas will be printed
  * @param new   New canvas
- * @param old 
- * @param oi 
- * @param oj 
+ * @param old   Previous canvas
+ * @param oi    Vertical offset
+ * @param oj    Horizontal offset
+ * @return      A NULL pointer if there was an error. 
+ *              canv otherwise
+ */
+Canvas* canv_printDiff(FILE* f,const Canvas* new,const Canvas* old,int oi, int oj);
+
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Prints the solid section of the canvas
+ * 
+ * Note that all pixel that are completely transparent will not be printed
+ * The pixels that are partilly transparent will be overlaied on top
+ * of the background
+ * 
+ * @param c     Canvas to be printed
+ * @param backg Background canvas, it will be used when pixels are not completely opaque.
+ *              It must have the same width and height
+ * @param oi    Top row
+ * @param oj    Left column
+ */
+
+void canv_printAllSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Prints the section that is not completely transparent
+ *        of the canvas
+ * 
+ * Note that all pixel that not completely transparent will be printed
+ * 
+ * @param c     Canvas to be printed
+ * @param oi    Top row
+ * @param oj    Left column
+ */
+void canv_printAllNonTransparent(FILE* f, const Canvas* c,int oi,int oj);
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Sets the value of a specific pixel in the 
+ *        canvas
+ * 
+ * @param c Canvas that contains the pixel that has to be changed
+ * @param p New pixel
+ * @param i I coordinate of the pixel in the canvas
+ * @param j J coordinate of the pixel in the canvas
  * @return Canvas* 
  */
-Canvas* canv_printDiff(FILE* f, const Canvas* new,const Canvas* old,int oi, int oj);
+Canvas* canv_setPixel(Canvas* c,const Pixel* p, int i,int j);
+
 /*-----------------------------------------------------------------*/
-/// Print an area of the canvas to a file
-///
-/// @param f    File in which the canvas will be printed
-/// @param c    Canvas to be printed
-/// @param i    Top limit of the canvas when it is displayed in the screen
-/// @param j    Left limit of the canvas when it is displayed in the screen
-/// @param wid  Maximum width that will be displayed
-/// @param hei  Maximum height that will be displayed
+/**
+ * @brief Returns a blurred version of the canvas
+ * 
+ * @param c     Canvas that will be blurred
+ * @param rad   Radious of the blur effect
+ * @return      New canvas with the blur applied
+ */
+Canvas* canv_blur(Canvas* c,int rad);
 
-void canv_printR(FILE* f, const Canvas* c,int i,int j,int wid,int hei);
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Darkens the pixels in the canvas
+ * It will not create a new canvas, the Canvas* return value
+ * will only indicate wheter or not the process was successful
+ * 
+ * @param c     Canvas to be darken
+ * @param light Percentage of light that the canvas will have 
+ *              relative to its current brightness
+ * @return  c if the process was successful
+ *          NULL if there was any error
+ */
+Canvas* canv_darken(Canvas* c,double light);
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Applies a color filter to the Canvas
+ * 
+ * This filter works by reducing the values of some of the channels
+ * of the pixels.
+ * 
+ * @param c     Canvas that will be filter
+ * @param p     Color that will be applied in the filter
+ * @return      A new canvas with the filter applied
+ */
+Canvas* canv_filter(Canvas* c,Pixel* p);
 
-/// Return the widht of the canvas
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Draws a circle of this color
+ * 
+ * @param p     The color that will fill the circle
+ * @param rad   The radious of the requested circle
+ * @return      New canvas containing the circle
+ */
+Canvas* canv_circle(Pixel* p,int rad);
+
+/*-----------------------------------------------------------------*/
+/// Returns the width of the canvas
 int canv_getWidth(const Canvas* c);
 
-
-/// Return the height of the canvas
+/*-----------------------------------------------------------------*/
+/// Returns the height of the canvas
 int canv_getHeight(const Canvas* c);
 
-
-/// Allows the access to a particular pixel stored in a Canvas.
-/// @param c Canvas that contains the pixel that is going to be accesed
-/// @param i Row of the pixel
-/// @param j Column of the pixel
-/// @return  Reference to the pixel in the canvas
+/*-----------------------------------------------------------------*/
+/// Returns the pixel of the canvas in the given position
 const Pixel* canv_getPixel(const Canvas* c,int i,int j);
-
-
-
-
-Canvas* canv_setPixel(Canvas* c,const Pixel* p, int i,int j);
-Canvas* canv_blur(Canvas* c,int rad);
-Canvas* canv_darken(Canvas* c,double light);
-void canv_printSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);
-void canv_printAllNonTransparent(FILE* f, const Canvas* c,const Canvas* backg,int oi,int oj);
-Canvas* canv_filter(Canvas* c,Pixel* p);
-Canvas* canv_circle(Pixel* p,int rad);
-Canvas* canv_appendVIA(Canvas* north,const Canvas* south,CAlign al);
 #endif /* Canvas_h */

@@ -27,6 +27,7 @@ typedef enum{false,true}bool;
 typedef struct {
     int fi,se;
 }pairii;
+
 void appendf(char* dest, int* spos,char* orig);
 void append (char* dest, int* spos, const char* orig);
 char* movecur(int x,int y);

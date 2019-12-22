@@ -344,7 +344,7 @@ Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
     Canvas* bc=canv_subCopy(cbck, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
     Canvas* b2=canv_subCopy(r->shadows, spr_getOI(r->overs[i]), spr_getOI(r->overs[i])+canv_getHeight(torender), spr_getOJ(r->overs[i]), spr_getOJ(r->overs[i])+canv_getWidth(torender));
     canv_addOverlay(torender,b2,0,0);
-    canv_printSolid(stdout,torender,bc,disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1);
+    canv_printAllSolid(stdout,torender,bc,disp_i-r->c_t+spr_getOI(r->overs[i]), disp_j-r->c_l+spr_getOJ(r->overs[i])+1);
     box b;
     b.i=spr_getOI(r->overs[i]);
     b.j=spr_getOJ(r->overs[i]);
