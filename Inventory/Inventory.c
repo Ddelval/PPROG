@@ -261,6 +261,10 @@ const Object* inv_getSelected(const Inventory * inv, obj_type t){
   if(!inv) return NULL;
   return inv->items[inv->selected[t]];
 }
+Object* inv_getSelectedCopy(const Inventory* inv, obj_type t){
+  if(!inv) return NULL;
+  return obj_copy(inv->items[inv->selected[t]]);
+}
 Inventory* inv_incrementSelected(Inventory* inv, obj_type t, int incr){
     if(!inv)return NULL;
     if(inv->size[t]==0)return NULL;
