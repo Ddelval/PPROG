@@ -24,17 +24,18 @@ typedef struct _Wlabel Wlabel;
 /*-----------------------------------------------------------------*/
 /// Creates a new label
 /// @param t    Text that will be displayed. This data is copied
-/// @param f    Pointer to the font that will be used to represent
-///             the text. Note that this is not copied, so if the
-///             font is changed (which it should not),
+/// @param f    Pointer to the font that will be used to represent the text.
+///             Note that this is not copied, so if the font is changed (which it should not),
 ///             the display font will also be changed.
-/// @param vgap Vertical separation between two lines of text,
-///             besides the height of the text itself
-Wlabel* wl_ini(char* t, const Font* f, int vgap);
+/// @param vgap Vertical separation between two lines of text, besides the height of the text itself
 
+Wlabel* wl_ini(char* t, const Font* f,int vgap);
+
+/*-----------------------------------------------------------------*/
 /// Frees the allocated memory
 void wl_free(Wlabel* l);
 
+/*-----------------------------------------------------------------*/
 /// Copies the label
 /// @param src  Label to be copied
 /// @return     A new label with the same data
@@ -51,11 +52,21 @@ Wlabel* wl_copy(Wlabel* src);
 /// @param width    Maximum width that the canvas can take;
 Canvas* wl_render(Wlabel* l,int width);
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Returns a render that only takes the minimum width needed
+ * 
+ * Note that the function will not center the label in the space.
+ * 
+ * @param l 	Label to be rendered
+ * @param width Maximum width of the label
+ * @return 		New canvas with the render
+ */
 Canvas* wl_renderSmall(Wlabel* l,int width);
 
 /*-----------------------------------------------------------------*/
 /// Change the back color of this Wlabel
-/// @param w    Element to be selected
+/// @param w    	Element to be selected
 /// @param r		Red channel of the background
 /// @param g		Green channel of the background
 /// @param b		Blue channel of the background

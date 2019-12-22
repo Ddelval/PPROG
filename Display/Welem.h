@@ -32,6 +32,8 @@ Welem* we_ini(Wtype t, void* data);
 /*-----------------------------------------------------------------*/
 /// Free the allocated memory
 void we_free(Welem* w);
+
+/*-----------------------------------------------------------------*/
 /**
  * @brief Creates a Welem that contains a label.
  * Note that this function takes exactly the same arguments as the 
@@ -44,6 +46,7 @@ void we_free(Welem* w);
  */
 Welem* we_createLabel(char* t, const Font* f,int vgap);
 
+/*-----------------------------------------------------------------*/
 /**
  * @brief Creates a Welem that contains a labic (text+ icon). 
  * 
@@ -57,6 +60,7 @@ Welem* we_createLabel(char* t, const Font* f,int vgap);
  * @return Welem* 
  */
 Welem* we_createLabic(char*t, const Font*f,int vgap,int hgap, Canvas* c,wi_align l);
+
 /*-----------------------------------------------------------------*/
 /// Return a copy of the given window element
 /// @param w Element to be copied

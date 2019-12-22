@@ -13,6 +13,20 @@ struct _Wlabic{
     int gap;
 };
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Creates a new Wlabic element.
+ * 
+ * This function only sets the text portion of the element and the
+ * gap between both sections
+ * 
+ * @param t     Text to be displayed
+ * @param f     Font for this text. Note that it will NOT be copied
+ * @param vgap  Vertical gap between lines of text
+ * @param hgap  Gap between the picture and the text
+ * @param l     Relative position of the text
+ * @return      New Wlabic
+ */
 Wlabic* wi_ini(char *t, const Font* f,int lgap, int igap, wi_align l){
     if(!t||!f)return NULL;
     Wlabic* v = calloc(1, sizeof(Wlabic));
@@ -26,18 +40,9 @@ Wlabic* wi_ini(char *t, const Font* f,int lgap, int igap, wi_align l){
     v->gap=igap;
     return v;
 }
-void wi_free(Wlabic* w){
-    if(!w)return;
-    canv_free(w->pic);
-    wl_free(w->wl);
-    free(w);
-}
-Wlabic* wi_setCanvas(Wlabic* sr, Canvas* can){
-    if(!sr||!can)return NULL;
-    sr->pic=canv_copy(can);
-    if(!sr->pic)return NULL;
-    return sr;
-}
+
+/*-----------------------------------------------------------------*/
+/// Copies the given element
 Wlabic* wi_copy(const Wlabic* src){
     if(!src)return NULL;
     Wlabic* v=calloc(1, sizeof(Wlabic));
@@ -51,6 +56,42 @@ Wlabic* wi_copy(const Wlabic* src){
     }
     return v;
 }
+
+/*-----------------------------------------------------------------*/
+/// Free the memory allocated to the Wlabic element
+void wi_free(Wlabic* w){
+    if(!w)return;
+    canv_free(w->pic);
+    wl_free(w->wl);
+    free(w);
+}
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Sets the canvas of the Wlabic
+ * 
+ * @param sr    Wlabic whose canvas will be modified
+ * @param can   Canvas that will be set in the Wlabic
+ * @return      NULL if there was an error,
+ *              sr otherwise 
+ */
+Wlabic* wi_setCanvas(Wlabic* sr, Canvas* can){
+    if(!sr||!can)return NULL;
+    sr->pic=canv_copy(can);
+    if(!sr->pic)return NULL;
+    return sr;
+}
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Renders the Wlabic
+ * 
+ * If the Wlabic is not as wide as width, it will be centered
+ * 
+ * @param wi    Wlabic to be rendered
+ * @param width Width that the resulting canvas will have
+ * @return      Canvas containing the render
+ */
 Canvas* wi_render (Wlabic* wi, int width){
     if(!wi)return NULL;
     if(!wi->wl||!wi->pic)return NULL;

@@ -12,7 +12,10 @@ struct _Wlabel{
 	int br, bg, bb, ba;
 	const Font *f;
 };
+/** Prototypes */
+char* _charSplit(char* txt, int width, const Font* f,char** endpos);
 
+/*-----------------------------------------------------------------*/
 /// Creates a new label
 /// @param t    Text that will be displayed. This data is copied
 /// @param f    Pointer to the font that will be used to represent the text.
@@ -35,6 +38,8 @@ Wlabel* wl_ini(char* t, const Font* f,int vgap){
 	w->br=w->bg=w->bb=w->ba=0;
 	return w;
 }
+
+/*-----------------------------------------------------------------*/
 /// Frees the allocated memory
 void wl_free(Wlabel* l){
 	if(!l)return;
@@ -44,60 +49,23 @@ void wl_free(Wlabel* l){
 	free(l);
 }
 
+/*-----------------------------------------------------------------*/
 /// Copies the label
-/// @param src Label to be copied
+/// @param src  Label to be copied
+/// @return     A new label with the same data
 Wlabel* wl_copy(Wlabel* src){
     return wl_ini(src->txt,src->f,src->vgap);
 }
 
-/// Internal function used to split the string to display it.
-/// It will always try to split the text where there is a space
-/// The endpos argument should be passed to the function
-/// @param txt Text to be splitted
-/// @param width Available width
-/// @param f Font to be used. It is used to calculate the width of a piece of text
-/// @param endpos This is used to tell the caller where the copy process ended.
-char* _charSplit(char* txt, int width, const Font* f,char** endpos){
-	char c=txt[0];
-	char* res;
-	int n=(int)strlen(txt);
-	int ps=-1;
-	for(int i=0;i<n;++i){
-		if(txt[i]==' ')ps=i;
-		c=txt[i];
-		txt[i]=0;
-		if(font_calcWidth(f, txt)>width){
-			txt[i]=c;
-			if(ps!=-1){
-				txt[ps]=0;
-				res=calloc(strlen(txt)+1, sizeof(char));
-				strcpy(res, txt);
-				txt[ps]=' ';
-				*endpos=txt+ps+1;
-				return res;
-			}
-			else{
-				txt[i]=0;
-				res=calloc(strlen(txt)+1, sizeof(char));
-				strcpy(res, txt);
-				txt[i]=c;
-				*endpos=txt+i;
-				return res;
-			}
-		}
-		txt[i]=c;
-	}
-	*endpos=txt+n;
-	res=calloc(strlen(txt)+1, sizeof(char));
-	strcpy(res, txt);
-	return res;
-
-}
-
-
-/// Returns a canvas with the text displayed
-/// @param l Label to be processed
-/// @param width Maximum width that the canvas can take;
+/*-----------------------------------------------------------------*/
+/// Returns a canvas with the text displayed.
+/// If the text is too wide to fit on a single lines. It will be
+/// splitted into several lines.
+/// As long as it is possible, this separation will be done on whitespaces.
+/// However, if this is not enough to make the text fit in less width
+/// than the maximum specified, it will be cut at any given character.
+/// @param l        Label to be processed
+/// @param width    Maximum width that the canvas can take;
 Canvas* wl_render(Wlabel* l,int width){
 	if(!l)return NULL;
 	if(font_calcWidth(l->f, l->txt)<width){
@@ -144,12 +112,21 @@ Canvas* wl_render(Wlabel* l,int width){
 	canv_free(cc);
 	return cb;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Returns a render that only takes the minimum width needed
+ * 
+ * Note that the function will not center the label in the space.
+ * 
+ * @param l 	Label to be rendered
+ * @param width Maximum width of the label
+ * @return 		New canvas with the render
+ */
 Canvas* wl_renderSmall(Wlabel* l,int width){
     if(!l)return NULL;
     if(font_calcWidth(l->f, l->txt)<width){
         Canvas* c= font_renderText(l->f, l->txt);
-        //Canvas*cc=canv_AdjustCrop(c, width, canv_getHeight(c));
-        //canv_free(c);
 				Canvas* cb=canv_backGrnd(l->br, l->bg, l->bb, l->ba, canv_getWidth(c), canv_getHeight(c));
 				if(!canv_addOverlay(cb, c, 0, 0)) {
 					canv_free(cb);
@@ -190,7 +167,7 @@ Canvas* wl_renderSmall(Wlabel* l,int width){
 
 /*-----------------------------------------------------------------*/
 /// Change the back color of this Wlabel
-/// @param w    Element to be selected
+/// @param w    	Element to be selected
 /// @param r		Red channel of the background
 /// @param g		Green channel of the background
 /// @param b		Blue channel of the background
@@ -202,4 +179,54 @@ Wlabel* wl_setBackColor(Wlabel* w, int r,int g,int b,int a) {
 		w->bb=b;
 		w->ba=a;
 		return w;
+}
+
+/* ##################################################################### */
+/* ######################### PRIVATE FUNCTIONS ######################### */
+/* ##################################################################### */
+
+/*-----------------------------------------------------------------*/
+/// Internal function used to split the string to display it.
+/// It will always try to split the text where there is a space
+/// The endpos argument should be passed to the function
+/// @param txt 		Text to be splitted
+/// @param width 	Available width
+/// @param f 		Font to be used. It is used to calculate the 
+///					width of a piece of text
+/// @param endpos 	This is used to tell the caller where the copy process ended.
+char* _charSplit(char* txt, int width, const Font* f,char** endpos){
+	char c=txt[0];
+	char* res;
+	int n=(int)strlen(txt);
+	int ps=-1;
+	for(int i=0;i<n;++i){
+		if(txt[i]==' ')ps=i;
+		c=txt[i];
+		txt[i]=0;
+		if(font_calcWidth(f, txt)>width){
+			txt[i]=c;
+			if(ps!=-1){
+				txt[ps]=0;
+				res=calloc(strlen(txt)+1, sizeof(char));
+				strcpy(res, txt);
+				txt[ps]=' ';
+				*endpos=txt+ps+1;
+				return res;
+			}
+			else{
+				txt[i]=0;
+				res=calloc(strlen(txt)+1, sizeof(char));
+				strcpy(res, txt);
+				txt[i]=c;
+				*endpos=txt+i;
+				return res;
+			}
+		}
+		txt[i]=c;
+	}
+	*endpos=txt+n;
+	res=calloc(strlen(txt)+1, sizeof(char));
+	strcpy(res, txt);
+	return res;
+
 }

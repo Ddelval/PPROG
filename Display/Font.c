@@ -18,9 +18,9 @@ struct _Font{
 };
 
 /* Prototypes*/
-Canvas* _font_getCharacterCanvas(const Font* f, char c);
+char* _remQuotes(char* src);
 
-
+/*-----------------------------------------------------------------*/
 /// Initalizes the font with these values
 /// @param hei          Height of each character
 /// @param wid          Widht of the characters
@@ -43,6 +43,9 @@ Font* font_ini(int hei, int wid, int size, int spacing, int whitespace){
     }
     return f;
 }
+
+/*-----------------------------------------------------------------*/
+/// Free all the memory allocated to the font
 void font_free(Font* f){
     if(!f)return;
     if(f->data)for(int i=0;i<MAX_CHARS;++i)cha_free(f->data[i]);
@@ -50,15 +53,32 @@ void font_free(Font* f){
     free(f->id);
     free(f);
 }
+
+/*-----------------------------------------------------------------*/
 /// Loads a font from a file. The format should be:
 ///
-/// <name_length> <name> <size> <width> <height> <spacing> <whitespace>
-/// <List of the characters included>, one after the other
-/// Canvas with all the characters one after the other
+/// name_length  name   size   width   height   spacing   whitespace
+/// List of chars (l)
+/// Canvas with all the characters(c)
 ///
-/// @param fil file with the font
+/// This elements represent:
+/// name_length: the length of the name field of the font.
+/// name:           Actual name of the font
+/// size:           Amount of characters that will be described in
+///                 the file. Therefore it is the amount of different
+///                 characters that can be printed to the screen using
+///                 this font
+/// width:          Width of a single character (in pixels)
+/// height:         Height of a line (in pixels)
+/// spacing:        Space left between two characters (in pixels)
+/// whitespace:     Space left when a whitespace is encountered
+/// l               String with all the chars. E.g. abcde
+/// c               Canvas with all the characters. They have to be
+///                 rendered with a black font over a transparent
+///                 background
+/// @param      fil file with the font
+/// @return     New font with all the data loaded
 ///
-/// @remark The caracters have to be rendered with a white font over a transparent background
 Font* font_load(FILE* fil){
 	if(!fil)return NULL;
     int l,si;
@@ -106,6 +126,14 @@ Font* font_load(FILE* fil){
     free(split);
     return f;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Copies the font
+ * 
+ * @param f Source font
+ * @return  An exact copy of the font
+ */
 Font* font_copy(const Font*f){
 	if(!f)return NULL;
 	Font * nf=font_ini(f->hei, f->wid, f->size, f->padding, f->whitespace);
@@ -121,8 +149,15 @@ Font* font_copy(const Font*f){
 	return nf;
 	
 }
-/// Calculate the width that a
-/// given string needs to be displayed with a font
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Calculates the width needed to display txt using f
+ * 
+ * @param f     Font that will be used to display the text
+ * @param txt   Text whose width will be measured
+ * @return      Width required to display the text with this font
+ */
 int font_calcWidth(const Font* f,char* txt){
     int ch=0,sp=0;
     for(int i=0;i<strlen(txt);++i){
@@ -133,31 +168,8 @@ int font_calcWidth(const Font* f,char* txt){
     return f->wid*ch+(ch+sp)*f->padding+sp*f->whitespace;
 }
 
-/// Get the height of the font
-int font_getHeight(const Font* f){
-    return f->hei;
-}
-char* _remQuotes(char* src){
-    int cnt=0;
-    int n=(int)strlen(src);
-    for(int i=0;i<n;++i)cnt+=src[i]=='"';
-    char * res= calloc(n+cnt+1, sizeof(char));
-    if(!res)return NULL;
-    int j=0;
-    for(int i=0;i<n;++i){
-        if(src[i]=='\"'){
-            res[j]='\'';
-            j++;
-            res[j]='\'';
-        }
-        else{
-            res[j]=src[i];
-        }
-        ++j;
-    }
-    return res;
-}
-/// Renders the given string in a canvas with the given font
+/*-----------------------------------------------------------------*/
+/// @brief Renders the given string in a canvas with the given font
 /// @param f    Font to be used in the render
 /// @param txt  String to be rendered
 Canvas* font_renderText(const Font* f,char* txt){
@@ -179,7 +191,8 @@ Canvas* font_renderText(const Font* f,char* txt){
         else{
             //printf("%c",mod_txt[i]);
             fflush(stdout);
-            tmp=_font_getCharacterCanvas(f, mod_txt[i]);
+            tmp=cha_getCanvas(f->data[mod_txt[i]]);
+            //tmp=_font_getCharacterCanvas(f, mod_txt[i]);
             if(!tmp){
                 canv_free(res);
                 return NULL;
@@ -197,6 +210,47 @@ Canvas* font_renderText(const Font* f,char* txt){
     free(mod_txt);
     return res;
 }
-Canvas* _font_getCharacterCanvas(const Font* f, char c){
-    return cha_getCanvas(f->data[c]);
+/*-----------------------------------------------------------------*/
+/// Get the height of the font
+int font_getHeight(const Font* f){
+    return f->hei;
+}
+
+
+/* ##################################################################### */
+/* ######################### PRIVATE FUNCTIONS ######################### */
+/* ##################################################################### */
+
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Remove the double quotes in a string
+ * 
+ * This function substitutes the double quotes
+ * in the string by two single quotes so that
+ * the transparent gap does not interfere with
+ * the detection of characters
+ * 
+ * @param src Original string
+ * @return    New string without double quotes
+ */
+char* _remQuotes(char* src){
+    int cnt=0;
+    int n=(int)strlen(src);
+    for(int i=0;i<n;++i)cnt+=(src[i]=='"');
+    char * res= calloc(n+cnt+1, sizeof(char));
+    if(!res)return NULL;
+    int j=0;
+    for(int i=0;i<n;++i){
+        if(src[i]=='\"'){
+            res[j]='\'';
+            j++;
+            res[j]='\'';
+        }
+        else{
+            res[j]=src[i];
+        }
+        ++j;
+    }
+    return res;
 }

@@ -18,13 +18,19 @@
 typedef struct _Wlabic Wlabic;
 typedef enum {TEXT_EAST,TEXT_WEST,TEXT_NORTH,TEXT_SOUTH} wi_align;
 /*-----------------------------------------------------------------*/
-/// Create a new Wlabic element.
-/// This function only sets the text portion of the element and the
-/// gap between both sections
-/// @param t    Text to be displayed
-/// @param f    Font for this text. Note that it will NOT be copied
-/// @param vgap Vertical gap between lines of text
-/// @param hgap Gap between the picture and the text
+/**
+ * @brief Creates a new Wlabic element.
+ * 
+ * This function only sets the text portion of the element and the
+ * gap between both sections
+ * 
+ * @param t     Text to be displayed
+ * @param f     Font for this text. Note that it will NOT be copied
+ * @param vgap  Vertical gap between lines of text
+ * @param hgap  Gap between the picture and the text
+ * @param l     Relative position of the text
+ * @return      New Wlabic
+ */
 Wlabic* wi_ini(char *t, const Font* f,int vgap, int hgap, wi_align l);
 
 /*-----------------------------------------------------------------*/
@@ -35,12 +41,32 @@ void wi_free(Wlabic* w);
 /// Copies the given element
 Wlabic* wi_copy(const Wlabic* src);
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Renders the Wlabic
+ * 
+ * If the Wlabic is not as wide as width, it will be centered
+ * 
+ * @param wi    Wlabic to be rendered
+ * @param width Width that the resulting canvas will have
+ * @return      Canvas containing the render
+ */
 Canvas* wi_render (Wlabic* wi, int width);
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Sets the canvas of the Wlabic
+ * 
+ * @param sr    Wlabic whose canvas will be modified
+ * @param can   Canvas that will be set in the Wlabic
+ * @return      NULL if there was an error,
+ *              sr otherwise 
+ */
 Wlabic* wi_setCanvas(Wlabic* sr, Canvas* can);
 
 /*-----------------------------------------------------------------*/
 /// Change the background color for the Wlabic element
-/// @param w    Element to be selected
+/// @param w        Element to be selected
 /// @param r		Red channel of the background
 /// @param g		Green channel of the background
 /// @param b		Blue channel of the background
