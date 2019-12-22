@@ -241,6 +241,10 @@ Window* win_setSelected(Window* win, int selected_elem) {
 	// FILE* f=fopen("file", "w");
 	// fprintf(f, "Hola");
 	// fclose(f);
+	if(selected_elem==-1) {	/*	If we want to deselect and not select anything	*/
+		win->selected_elem=selected_elem;
+		return win;
+	}
 	if(!we_setBackColor(win->Win_elem[selected_elem], pix_retR(win->forecol), pix_retG(win->forecol), pix_retB(win->forecol), pix_retA(win->forecol))) return NULL;
 	win->selected_elem=selected_elem;
 	return win;

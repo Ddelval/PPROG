@@ -121,8 +121,8 @@ Display* disp_setSelIndex(Display* dis, int winIndex, int selIndex){
 }
 
 int disp_getSelIndex(Display* dis, int winIndex){
-  if(!dis) return NULL;
-  if(winIndex>=dis->nLatWindow) return NULL;
+  if(!dis) return -1;
+  if(winIndex>=dis->nLatWindow) return -1;
 
   return win_getSelectedIndex(dis->latWindow[winIndex]);
 }
@@ -199,7 +199,7 @@ Display* print_Window(Display*dis, int index){
 }
 Display* disp_DialogWindow(Display* dis, DialogMan* dman){
     if(!dis||!dman)return NULL;
-    
+
     Canvas* bottom,*back;
     Canvas* rend=disp_Render(dis);
     int h=150;
@@ -432,8 +432,8 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     if(!base)return NULL;
     canv_print(stdout,base,0,0);
     _disp_reprintCraft(coordinates,size,selindex,base);
-    
-    
+
+
     while(1){
         char c=getch1();
         switch(c){
@@ -520,7 +520,7 @@ int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
 
     //Center the popup
     el=calloc(siz,sizeof(Welem*));
-    
+
     if(!el){ fail=true; goto END; }
     for(int i=0;i<siz;++i){
         el[i]=we_createLabel(tr_getDesc(dat[i]),fcat_lookup(M6),0);
@@ -529,7 +529,7 @@ int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
     win=win_ini("Choose an action:",el,siz,wid,hei,jpos,ipos,fcat_lookup(M8));
     if(!win){ fail=true; goto END; }
     win_setSelected(win,0);
-    
+
 
     Pixel* p=pix_ini(255,255,255,255);
     win_addBorder(win,p,1);
@@ -544,10 +544,10 @@ int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
     if(!rend){ fail=true; goto END; }
     canv_print(stdout,rend,ipos,jpos);
     char c;
-   
+
     while(1){
         c=getch1();
-        switch (c)      
+        switch (c)
         {
         case 'W': case 'O':
             win_incrementSelected(win,-1);
@@ -558,7 +558,7 @@ int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
             rend=rend2;
             rend2=NULL;
             break;
-        
+
         case 'S': case 'L':
             win_incrementSelected(win,1);
             rend2=win_render(win);
@@ -568,7 +568,7 @@ int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
             rend=rend2;
             rend2=NULL;
             break;
-        
+
         case 'J':
             chosen=true;
             break;
@@ -579,7 +579,7 @@ int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
        if(exit||chosen)break;
     }
 END:
-    
+
     crender=disp_Render(dis);
     rend2=canv_subCopy(crender,ipos,ipos+hei,jpos,jpos+wid);
     canv_print(stdout,rend2,ipos,jpos);
@@ -592,7 +592,7 @@ END:
     if(chosen)res=win_getSelectedIndex(win);
     win_free(win);
     if(chosen) return res;
-    
+
     return -1;
 }
 
@@ -606,7 +606,7 @@ Display* disp_execute(Display* dis, int index, int room_index, void* en){
 
         if(a>1){
             int r=disp_chooseWindow(dis,f,dat,a);
-            
+
             if(r>=0)f(dat[r],en,dis);
         }
         else if (a==1)f(dat[0],en,dis);
