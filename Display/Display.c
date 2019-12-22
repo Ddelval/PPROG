@@ -227,9 +227,11 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     int dim;
     int *dimens;
     char ** text;
-    Canvas *** dat=inv_render(inv,&dim,&dimens,&text,ftext,fnumbers);
+    pairii* sizes;
+    Canvas *** dat=inv_render(inv,&dim,&dimens,&text,&sizes,ftext,fnumbers);
     Wlabel* tit=wl_ini("Inventory",ftitle,10);
     Canvas* c=wl_render(tit,dis->width);
+    pairii** coordinates = calloc(OBJ_TYPE_SIZE,sizeof(pairii*));
     for(int i=0;i<dim;++i){
         //Iterate through each type of element
         if(dimens[i]>0){
@@ -239,10 +241,16 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
         }
         else continue;
         Canvas * b=dat[i][0];
+        coordinates[i]=calloc(dimens[i],sizeof(pairii));
         for(int j=1;j<dimens[i];++j){
             Canvas*bc=canv_backGrnd(0,0,0,0,10,10);
             canv_appendHI(b,bc);
+            coordinates[i][j].se=canv_getWidth(b);
             canv_appendHI(b,dat[i][j]);
+        }
+        for(int j=0;j<dimens[i];++j){
+            coordinates[i][j].fi=canv_getHeight(c);
+            coordinates[i][j].se+=(canv_getWidth(c)-canv_getWidth(b))/2;
         }
         canv_appendVI(c,b);
     }
@@ -252,9 +260,49 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     canv_darken(back2,DARKEN);
     canv_addOverlay(back2,c,10,0);
     canv_print(stdout,back2,0,0);
-    dis->pop_inv=true;
+    char cha;
+    int selindex=inv_getSelectedIndex(inv,WEAPON);
+
+    while(1){
+        cha=getch1();
+        switch(cha){
+            case 'A':
+                inv_incrementSelected(inv, WEAPON,-1);
+                break;
+            case 'D':
+                inv_incrementSelected(inv, WEAPON,1);
+                break;
+            case 'E': case 'Q':
+                goto END;
+                break;
+        }
+        Canvas* nsel=inv_renderObj(inv,WEAPON,sizes[WEAPON].fi,sizes[WEAPON].se,ftext,fnumbers,selindex,false);
+        canv_print(stdout,nsel,coordinates[WEAPON][selindex].fi+10,coordinates[WEAPON][selindex].se+1);
+        canv_free(nsel);
+
+        selindex=inv_getSelectedIndex(inv,WEAPON);
+        Canvas* sel=inv_renderObj(inv,WEAPON,sizes[WEAPON].fi,sizes[WEAPON].se,ftext,fnumbers,selindex,true);
+        canv_print(stdout,sel,coordinates[WEAPON][selindex].fi+10,coordinates[WEAPON][selindex].se+1);
+        canv_free(sel);
+    }
+END:
+    canv_free(back2);
+    Canvas* ccc=disp_Render(dis);
+    if(!ccc)return NULL;
+    canv_print(stdout,ccc,0,0);
     return dis;
 }
+
+Display* disp_remInventory(Display* d){
+    if(!d)return NULL;
+    if(!d->pop_inv)return d;
+    d->pop_inv=false;
+    Canvas* c=disp_Render(d);
+    if(!c)return NULL;
+    canv_print(stdout,c,0,0);
+    return d;
+}
+
 Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv, int size, pairii* coord){
     if(!dis||!inv)return NULL;
 
@@ -414,15 +462,7 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     canv_free(base);
     return dis;
 }
-Display* disp_remInventory(Display* d){
-    if(!d)return NULL;
-    if(!d->pop_inv)return d;
-    d->pop_inv=false;
-    Canvas* c=disp_Render(d);
-    if(!c)return NULL;
-    canv_print(stdout,c,0,0);
-    return d;
-}
+
 
 
 Room* disp_getrefRoom(Display* dis){

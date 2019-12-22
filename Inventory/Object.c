@@ -185,7 +185,7 @@ Object* obj_renderDims(Object* ob, int number,Font* ftext, Font* fnum,int*h,int*
     canv_free(back);
     return ob;
 }
-Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h, int w){
+Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h, int w, bool selected){
     if(!ob)return 0;
     Sprite* sp=sdic_lookup(ob->icon_id);
     Canvas* imag=canv_copy(spr_getDispData(sp));
@@ -198,7 +198,9 @@ Canvas* obj_render(Object* ob, int number,Font* ftext, Font* fnum, int h, int w)
 
     Canvas* text=wl_render(nam,canv_getWidth(imag));
     Canvas* numb =wl_render(num,canv_getWidth(imag));
-    Canvas* bb=canv_backGrnd(50,50,150,255,w-2*MARGIN,h-MARGIN);
+    Canvas* bb;
+    if(!selected)   bb=canv_backGrnd(50 ,  50, 150, 255, w-2*MARGIN, h-MARGIN);
+    else            bb=canv_backGrnd(158, 158,  36, 255, w-2*MARGIN, h-MARGIN);
     //Blue part
     Canvas* bottom2=canv_appendV(text,numb);
     Canvas* bottom=canv_AdjustCrop(bottom2,canv_getWidth(bb),canv_getHeight(bottom2));

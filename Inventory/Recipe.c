@@ -149,14 +149,14 @@ Canvas* _rec_renderLeft(Recipe* r,int obj_wid,int hei){
         Canvas* plus=_rec_renderPlus(hei/2);
         Wlabel* wl=wl_ini(r->name,fcat_lookup(M6),0);
         Object* ob=odic_lookup(r->elements[0]);
-        Canvas* l=obj_render(ob,r->quantities[0],fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei);
+        Canvas* l=obj_render(ob,r->quantities[0],fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei,false);
         Canvas* aux=NULL;
         obj_free(ob);
 
         for(int i=1;i<r->size;++i){
                 canv_appendHI(l,plus);
                 ob=odic_lookup(r->elements[i]);
-                aux=obj_render(ob,r->quantities[i],fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei);
+                aux=obj_render(ob,r->quantities[i],fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei,false);
                 canv_appendHI(l,aux);
                 canv_free(aux);
                 obj_free(ob);
@@ -172,7 +172,7 @@ Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei, int max_wid){
         
         Canvas* l2=_rec_renderLeft(r,obj_wid,hei);
         Object* ob=odic_lookup(r->result_id);
-        Canvas* aux=obj_render(ob,r->quant,fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei);
+        Canvas* aux=obj_render(ob,r->quant,fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei,false);
         Canvas* eq=_rec_renderEqual(hei/2);
         Wlabel* wl=wl_ini(r->name,fcat_lookup(M6),0);
         Canvas* txt=wl_renderSmall(wl,max_wid-canv_getWidth(aux)-canv_getWidth(eq)-canv_getWidth(l2));

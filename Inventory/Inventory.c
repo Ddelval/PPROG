@@ -58,7 +58,7 @@ void inv_free(Inventory* inv){
     free(inv);
 }
 
-Inventory* inv_copy(Inventory* inv) {
+Inventory* inv_copy(const Inventory* inv) {
     if(!inv) return NULL;
     Inventory* in =inv_ini();
     memcpy(in,inv,sizeof(Inventory));
@@ -82,7 +82,7 @@ Inventory* inv_copy(Inventory* inv) {
   return in;
 }
 
-Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity){
+Inventory* inv_insertSeveral(Inventory* inv,const Object*ob,int quantity){
     if(!inv||!ob)return NULL;
     obj_type ob_ty=obj_getType(ob);
 
@@ -111,7 +111,7 @@ Inventory* inv_insertSeveral(Inventory* inv,Object*ob,int quantity){
     inv->size[ob_ty]++;
     return inv;
 }
-Inventory* inv_insert(Inventory* inv, Object* ob){
+Inventory* inv_insert(Inventory* inv, const Object* ob){
     if(!inv||!ob)return NULL;
     obj_type ob_ty=obj_getType(ob);
 
@@ -140,7 +140,7 @@ Inventory* inv_insert(Inventory* inv, Object* ob){
     inv->size[ob_ty]++;
     return inv;
 }
-Inventory* inv_remove(Inventory* inv, Object* ob){
+Inventory* inv_remove(Inventory* inv, const Object* ob){
     if(!inv||!ob)return NULL;
     obj_type ob_ty=obj_getType(ob);
     bool found=false;
@@ -162,7 +162,7 @@ Inventory* inv_remove(Inventory* inv, Object* ob){
     inv->size[ob_ty]-=found;
     return found? inv: NULL;
 }
-Inventory* inv_decrease(Inventory* inv, Object* ob, int quantity){
+Inventory* inv_decrease(Inventory* inv, const Object* ob, int quantity){
     if(!inv||!ob)return NULL;
     obj_type ob_ty=obj_getType(ob);
 
@@ -177,12 +177,13 @@ Inventory* inv_decrease(Inventory* inv, Object* ob, int quantity){
     }
     return inv;
 }
-Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Font* ftext, Font* fnum){
+Canvas *** inv_render(const Inventory* inv, int* dim, int ** dimens,char *** texts, pairii** sizes,const Font* ftext, const Font* fnum){
     if(!inv)return NULL;
     *dim=OBJ_TYPE_SIZE;
     *texts=obj_type_def();
     Canvas*** tot=calloc(OBJ_TYPE_SIZE,sizeof(Canvas**));
     *dimens=calloc(OBJ_TYPE_SIZE,sizeof(int));
+    *sizes=calloc(OBJ_TYPE_SIZE,sizeof(pairii));
     if(!tot||!(*dimens)||!texts){
         free(dimens);
         free(tot);
@@ -200,8 +201,10 @@ Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Fon
             he=max(he,h);
             wi=max(wi,w);
         }
+        (*sizes)[ty].fi=he;
+        (*sizes)[ty].se=wi;
         for(int el=0;el<inv->size[ty];++el){
-            tot[ty][el]=obj_render(inv->items[ty][el],inv->times[ty][el],ftext,fnum,he,wi);
+            tot[ty][el]=obj_render(inv->items[ty][el],inv->times[ty][el],ftext,fnum,he,wi,ty==WEAPON && el==inv->selected[ty]);
             if(!tot[ty][el]){
                 for(int z=0;z<ty;++z)for(int j=0;j<inv->size[z];++j)canv_free(tot[z][j]);
                 for(int j=0;j<el;++j)canv_free(tot[ty][j]);
@@ -217,7 +220,7 @@ Canvas *** inv_render(Inventory* inv, int* dim, int ** dimens,char *** texts,Fon
 }
 
 
-int inv_getQuantity(Inventory* inv, int obj_id){
+int inv_getQuantity(const Inventory* inv, int obj_id){
     if(!inv)return -1;
     for (int i=0;i<OBJ_TYPE_SIZE;++i){
         for(int j=0;j<inv->size[i];++j){
@@ -253,8 +256,22 @@ Inventory* inv_load(FILE* f){
     return inv;
 }
 
-const Object* inv_getSelected(Inventory * inv, obj_type t){
+const Object* inv_getSelected(const Inventory * inv, obj_type t){
   if(!inv) return NULL;
   return inv->items[inv->selected[t]];
+}
+Inventory* inv_incrementSelected(Inventory* inv, obj_type t, int incr){
+    if(!inv)return NULL;
+    if(inv->size[t]==0)return NULL;
+    inv->selected[t]=(inv->selected[t]+incr+inv->size[t])%inv->size[t];
+    return inv;
+}
+Canvas* inv_renderObj(Inventory* inv, obj_type t, int hei, int wid, const Font* ftext, const Font* fnum, int pos,bool selected){
+    if(!inv)return NULL;
+    if(inv->size[t]==0||pos>inv->size[t])return NULL;
+    return obj_render(inv->items[t][pos],inv->times[t][pos],ftext,fnum,hei,wid,selected);
+}
+int inv_getSelectedIndex(const Inventory* inv, obj_type t){
+    return inv? inv->selected[t]:-1;
 }
 
