@@ -76,8 +76,24 @@ The RESA potatoes are remote-controlled by Charo, nobody can escape from them, n
 1
 -90 0 0 0 0
 0 120 0 0 0
-
-
+14
+Nuclear strike
+The uraniun contained in your sword allows you to brutally impact our enemies, but reduces your defense A LOT
+3
+0 0 -20 0 0
+0 100 0 0 0
+15
+Glaciar air
+Some weapons are very cold, its better to take a cloat when fighting with one of these
+0
+0 0 0 0 -10
+0 50 0 0 -5
+16
+Laser shot
+A shot but with lasers in between rarely misses
+1
+0 0 0 0 0
+0 10 0 0 0
 
 
 
