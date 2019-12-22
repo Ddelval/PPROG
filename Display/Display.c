@@ -197,7 +197,7 @@ Display* print_Window(Display*dis, int index){
     canv_print(stdout,c,ipos,dis->vdiv+1+2*LINE_WIDTH);
     return dis;
 }
-
+Display* disp_Dialog(Display* dis,)
 Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f){
     if(!dis||!txt)return NULL;
     Canvas* c=disp_Render(dis);
@@ -291,16 +291,6 @@ END:
     if(!ccc)return NULL;
     canv_print(stdout,ccc,0,0);
     return dis;
-}
-
-Display* disp_remInventory(Display* d){
-    if(!d)return NULL;
-    if(!d->pop_inv)return d;
-    d->pop_inv=false;
-    Canvas* c=disp_Render(d);
-    if(!c)return NULL;
-    canv_print(stdout,c,0,0);
-    return d;
 }
 
 Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv, int size, pairii* coord){

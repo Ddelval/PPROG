@@ -215,7 +215,6 @@ World* wo_launch(World* w){
             disp_execute(w->dis,0,entity_getRoomIndex(w->player),w->player);
         }
         if(c=='Q'){
-            disp_remInventory(w->dis);
             disp_remDialog(w->dis);
         }
         if(c=='E'){
