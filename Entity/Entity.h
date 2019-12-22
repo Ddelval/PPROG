@@ -81,7 +81,7 @@ const Inventory* entity_getInvRef(Entity*en);
 /*
     Sets the DialogMan of a given entity, copying it.
 */
-Entity* entity_setDialogs(Entity* e, DialogMan* ddic);
+Entity* entity_setDialogs(Entity* e, DialogMan* dman);
 
 /*
     Gets the next line in the current dialog.

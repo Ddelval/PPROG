@@ -32,7 +32,7 @@ struct _Entity {
   int room_index;
   Display* dis;
   bool has_dialog;
-  DialogMan* ddic;
+  DialogMan* dman;
 };
 
 
@@ -112,7 +112,7 @@ Entity* entity_copy(Entity* e) {
     return NULL;
   }
 
-  if(!entity_setDialogs(r,e->ddic)) {
+  if(!entity_setDialogs(r,e->dman)) {
     entity_free(r);
     return NULL;
   }
@@ -289,32 +289,32 @@ const Inventory* entity_getInvRef(Entity*en){
   return en? en->inv:NULL;
 }
 
-Entity* entity_setDialogs(Entity* e, DialogMan* ddic) {
+Entity* entity_setDialogs(Entity* e, DialogMan* dman) {
   if(!e) return NULL;
-  DialogMan* d=ddic_copy(ddic);
-  e->ddic=d;
+  DialogMan* d=dman_copy(dman);
+  e->dman=d;
   return e;
 }
 
 char* entity_getLine(Entity* e) {
-  if(!e||!e->ddic) return NULL;
-  return ddic_getLine(e->ddic);
+  if(!e||!e->dman) return NULL;
+  return dman_getLine(e->dman);
 }
 
 Entity* entity_resetDialog(Entity* e) {
-  if(!e||!e->ddic) return NULL;
-  if(!ddic_resetDialog(e->ddic)) return NULL;
+  if(!e||!e->dman) return NULL;
+  if(!dman_resetDialog(e->dman)) return NULL;
   return e;
 }
 
 Entity* entity_setDialog(Entity* e, int dialogid) {
   if(!e) return NULL;
-  ddic_setDialog(e->ddic,dialogid);
+  dman_setDialog(e->dman,dialogid);
   return e;
 }
 Entity* entity_advanceDialog(Entity* e){
   if(!e)return NULL;
-  ddic_advance(e->ddic);
+  dman_advance(e->dman);
 }
 
 int entity_getId(Entity* e){

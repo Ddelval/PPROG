@@ -17,31 +17,31 @@ typedef struct _DialogMan DialogMan;
 /*
     Initializes a new DialogMan from a file.
 */
-DialogMan* ddic_ini(FILE* df);
+DialogMan* dman_ini(FILE* df);
 
 /*
     Frees a DialogMan.
 */
-void ddic_free(DialogMan* ddic);
+void dman_free(DialogMan* dman);
 
 /*
     Returns a copy of the given DialogMan.
 */
-DialogMan* ddic_copy(DialogMan* ddic);
+DialogMan* dman_copy(DialogMan* dman);
 
 /*
     Searches for a Dialog with matching ID in the DialogMan. Returns it if found
     and otherwise gives back NULL;
 */
-Dialog* ddic_lookup(DialogMan* ddic, int did);
+Dialog* dman_lookup(DialogMan* dman, int did);
 
 /*
     Resets a given dialog to its beggining state.
 */
-DialogMan* ddic_resetDialog(DialogMan* dd);
+DialogMan* dman_resetDialog(DialogMan* dd);
 
 
-char* ddic_getLine(DialogMan* dic);
-DialogMan* ddic_setDialog(DialogMan* ddic, int did);
-DialogMan* ddic_advance(DialogMan* dd);
+char* dman_getLine(DialogMan* dic);
+DialogMan* dman_setDialog(DialogMan* dman, int did);
+DialogMan* dman_advance(DialogMan* dd);
 #endif /* DIALOGMAN.H */

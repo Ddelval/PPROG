@@ -198,7 +198,16 @@ Display* print_Window(Display*dis, int index){
     return dis;
 }
 Display* disp_DialogWindow(Display* dis, DialogMan* dman){
+    if(!dis||!dman)return NULL;
     
+    Canvas* bottom,*back;
+    Canvas* rend=disp_Render(dis);
+    int h=150;
+    bottom=canv_subCopy(rend,dis->height-h,dis->height,0,dis->width);
+    back=canv_blur(bottom,10);
+    canv_darken(back,DARKEN);
+    char* c=dman_getLine(dman);
+
 }
 Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f){
     if(!dis||!txt)return NULL;
