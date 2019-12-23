@@ -238,7 +238,7 @@ Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ena
 
     txt=dman_getLine(dman);
     if(!txt) txt=strdup("... ... ...");
-    
+
 
     wl=wl_ini(txt,fcat_lookup(M4),0);
     wl_rend=wl_render(wl, dis->width-100);
@@ -253,7 +253,7 @@ Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ena
         canv_free(wl_rend); wl_rend=NULL;
 
         txt=dman_getLine(dman);
-        if(!txt)goto END; 
+        if(!txt)goto END;
         wl=wl_ini(txt,fcat_lookup(M4),0);
         wl_rend=wl_render(wl, dis->width-100);
         if(!wl_rend)goto ERR_END;
@@ -706,4 +706,5 @@ int* disp_getDimensions(Display* d) {
   r[0]=d->width;
   r[1]=d->height;
   r[2]=d->vdiv;
+  return r;
 }

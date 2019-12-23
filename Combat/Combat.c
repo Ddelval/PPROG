@@ -97,8 +97,8 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
   c->stunplayer = false;
   c->stunenemy = false;
 
-  c->weapons[PLAYER] = inv_getSelected(entity_getInventory(player), WEAPON);
-  c->weapons[ENEMY]= inv_getSelected(entity_getInventory(enemy), WEAPON);
+  c->weapons[PLAYER] = inv_getSelectedCopy(entity_getInventory(player), WEAPON);
+  c->weapons[ENEMY]= inv_getSelectedCopy(entity_getInventory(enemy), WEAPON);
 
 
   c->moveset[PLAYER] = obj_getAttacks(c->weapons[PLAYER]);
