@@ -128,6 +128,7 @@ Attributes * skill_getAtbatk(Skill *s){
 }
 
 void skill_free(Skill * s){
+    if(!s)return;
     attb_free(s->atbatk);
     attb_free(s->atbself);
     free(s);

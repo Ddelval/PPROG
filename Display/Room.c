@@ -9,10 +9,20 @@
 #define MEM_INCREMENT 1.5
 #define MEM_INI 5
 #define MAX_TRIG 20
-
+/**
+ * @brief Description of the position of a sprite
+ * 
+ * This structure is used to keep track of the position
+ * that each sprite had when the Room was rendered for the last
+ * time.
+ * Thus, it allows us to update only the area that has canged
+ * after every movement
+ * 
+ */
 typedef struct _box{
     int i,j,w,h;
 }box;
+
 
 typedef struct _trigger{
     int code;
