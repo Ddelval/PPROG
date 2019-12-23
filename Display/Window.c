@@ -128,7 +128,26 @@ Window* win_copy(Window* win) {
 	if(!win) return NULL;
     Window* win2=win_ini(win->title, win->Win_elem, win->num_elems, win->width, win->height, win->jpos, win->ipos, win->titlef);
     if(!win2) return NULL;
-	memcpy(win2,win,sizeof(Window));
+	
+
+	win2->num_elems=win->num_elems;
+	win2->num_elems_siz=win->num_elems_siz;
+	win2->selected_elem=win->selected_elem;
+	win2->width=win->width;
+	win2->height=win->height;
+	win2->scroll_pos=win->scroll_pos;
+	win2->leftm=win->leftm;
+	win2->rightm=win->rightm;
+	win2->topm=win->topm;
+	win2->botm=win->botm;
+	win2->jpos=win->jpos;
+	win2->ipos=win->ipos;
+	win2->action_size=win->action_size;
+	win2->borderColor=pix_copy(win->borderColor);
+	win2->hasBorder=win->hasBorder;
+	win2->borderWidth=win->borderWidth;
+
+	
 
 	win2->act_type=calloc(win->action_size,sizeof(trig_type));
 	memcpy(win2->act_type,win->act_type,win->action_size*sizeof(trig_type));
