@@ -335,6 +335,6 @@ Room* room_setSpriteI(Room* r,int index, int i);
 
 /*-----------------------------------------------------------------*/
 /// Gets the j-coordinate of the sprite r->overs[index]
-Room* room_setSpriteJ(Room* r,int index, int j)
+Room* room_setSpriteJ(Room* r,int index, int j);
 
 #endif /* Room_h */
