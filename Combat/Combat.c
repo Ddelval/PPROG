@@ -53,7 +53,7 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
     font_free(f8);
     return NULL;
   }
-  Room* cr=room_ini(902, "Combat_room", DISP_HEIGHT, DISP_WIDTH-800, pb);
+  Room* cr=room_ini(902, "Combat_room", DISP_HEIGHT, DISP_WIDTH, pb);
   if(!cr) {
     free(c);
     pix_free(pb);
@@ -667,7 +667,7 @@ Combat* combat_load(Combat*c) {
   }
 
   for(int i=0;i<4;++i) {
-      movs[i]=we_createLabel(skill_getName(c->moveset[PLAYER][i]),fcat_lookup(M6),0);
+      movs[i]=we_createLabel(skill_getName(c->moveset[PLAYER][i]),fcat_lookup(M4),0);
       if(!movs[i]) {
         for(int j=0;j<5;++j)we_free(pstats[j]);
         for(int j=0;j<5;++j)we_free(estats[j]);
@@ -675,7 +675,7 @@ Combat* combat_load(Combat*c) {
         return NULL;
       }
   }
-  movs[4]=we_createLabel(obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE)), fcat_lookup(M6),0);
+  movs[4]=we_createLabel(obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE)), fcat_lookup(M4),0);
   if(!movs[4]) {
     for(int j=0;j<5;++j)we_free(pstats[j]);
     for(int j=0;j<5;++j)we_free(estats[j]);
@@ -683,7 +683,7 @@ Combat* combat_load(Combat*c) {
     return NULL;
   }
   int* y=disp_getDimensions(c->cd);
-  Window* winplayer=win_ini("Your stats",pstats,5,y[0]-y[2]-1,y[2]/4-20,0,0,fcat_lookup(M8));
+  Window* winplayer=win_ini("Your stats",pstats,5,y[0]-y[2]-1,y[2]/4-100,0,0,fcat_lookup(M8));
   if(!winplayer) {
     for(int j=0;j<5;++j)we_free(pstats[j]);
     for(int j=0;j<5;++j)we_free(estats[j]);
@@ -692,7 +692,7 @@ Combat* combat_load(Combat*c) {
     return NULL;
   }
 
-  Window* winenemy=win_ini("Enemy's stats",estats,5,y[0]-y[2]-1,y[2]/4-20,y[2]/4-20,0,fcat_lookup(M8));
+  Window* winenemy=win_ini("Enemy's stats",estats,5,y[0]-y[2]-1,y[2]/4-100,y[2]/4-100,0,fcat_lookup(M8));
   if(!winenemy) {
     for(int j=0;j<5;++j)we_free(pstats[j]);
     for(int j=0;j<5;++j)we_free(estats[j]);
@@ -701,7 +701,7 @@ Combat* combat_load(Combat*c) {
     free(y);
     return NULL;
   }
-  Window* winoptions=win_ini("Movements",movs,5,y[0]-y[2]-1,y[2]/4-20, y[2]/2-40,0,fcat_lookup(M8));
+  Window* winoptions=win_ini("Movements",movs,5,y[0]-y[2]-1,y[2]/4-100, y[2]/2-200,0,fcat_lookup(M8));
   if(!winoptions) {
     for(int j=0;j<5;++j)we_free(pstats[j]);
     for(int j=0;j<5;++j)we_free(estats[j]);
@@ -711,7 +711,7 @@ Combat* combat_load(Combat*c) {
     free(y);
     return NULL;
   }
-  Window* wininfo=win_ini("State of the combat",NULL,0,y[0]-y[2]-1,y[2]/4-20,y[2]-80,0,fcat_lookup(M8));
+  Window* wininfo=win_ini("State of the combat",NULL,0,y[0]-y[2]-1,y[2]/4-20,y[2]-300,0,fcat_lookup(M8));
   if(!wininfo) {
     for(int j=0;j<5;++j)we_free(pstats[j]);
     for(int j=0;j<5;++j)we_free(estats[j]);
