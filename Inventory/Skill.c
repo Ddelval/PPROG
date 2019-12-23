@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include "Skill.h"
-extern int errno;
 
 
 
@@ -47,7 +46,7 @@ Skill* skill_load(FILE* f) {
   sk->name[strlen(sk->name)-1]=0;
   sk->desc[0]='\n';
   while(sk->desc[0]=='\n')fgets(sk->desc,20,f);
-  sk->name[strlen(sk->desc)-1]=0;
+  sk->desc[strlen(sk->desc)-1]=0;
 
   fscanf(f,"%d",&sk->special_skill);
   sk->atbself=attb_load(f);
@@ -144,4 +143,5 @@ Skill* skill_copy(Skill* sk) {
   sc->atbself=attb_copy(sk->atbself);
   sc->atbatk=attb_copy(sk->atbatk);
   sc->special_skill=sk->special_skill;
+  return sc;
 }

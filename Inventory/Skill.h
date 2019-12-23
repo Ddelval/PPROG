@@ -16,6 +16,7 @@
 
 
 #include "Attributes.h"
+#include "Utility.h"
 typedef enum {STUNNER = 0, UNDODGE = 1, NORMAL = 2} specialSkill;
 typedef struct _skill Skill;
 //typedef struct _entity entity;
@@ -46,6 +47,7 @@ Skill* skill_load(FILE* f);
 
 
 void skill_destroy(Skill* skill);
+Skill* skill_copy(Skill* sk);
 /*
 Function name: skill_load
  Utility: It takes a file with skill camps and inserts them into an object struct
