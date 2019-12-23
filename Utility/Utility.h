@@ -17,8 +17,8 @@
 #include <termios.h>
 #include <assert.h>
 
-#define DISP_HEIGHT 471
-#define DISP_WIDTH 1209
+#define DISP_HEIGHT 400
+#define DISP_WIDTH 1200
 
 #define ENTITY_TALK_RAD 20
 /*

@@ -7,17 +7,13 @@
  */
 
 
-#ifndef atb_H
-#define atb_H
+#ifndef ATTRIBUTES_H
+#define ATTRIBUTES_H
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#include "Utility.h"
 
 typedef struct _Attributes Attributes;
 typedef enum {HEALTH,ATTACK,DEFENSE,SPEED,AGILITY} attb_type;
-
-
 
 /*
    Function name: attb_ini

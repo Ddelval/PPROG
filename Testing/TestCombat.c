@@ -19,5 +19,6 @@ int main() {
 
   if(!combat_load(c)) return 1;
   printf("Combat loaded\n");
+  combat_execute(c);
   return 0;
 }

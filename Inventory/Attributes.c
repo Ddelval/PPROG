@@ -1,8 +1,6 @@
 /*File creator : Jaime Pons Garrido*/
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+
 #include "Attributes.h"
 
 

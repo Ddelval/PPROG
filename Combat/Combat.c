@@ -3,7 +3,6 @@
 #include "Combat.h"
 #include "Display.h"
 #include "Attributes.h"
-#include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -75,21 +74,21 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
     font_free(f8);
     return NULL;
   }
-  if(!entity_addtoDisplay(c->player, c->cd)) {
+  /*if(!entity_addtoDisplay(c->player, c->cd)) {
     combat_free(c);
     font_free(f8);
     return NULL;
-  }
+  }*/
   c->enemy = entity_copy(enemy);
   if(!c->enemy) {
     combat_free(c);
     return NULL;
   }
-  if(!entity_addtoDisplay(c->enemy, c->cd)) {
+  /*if(!entity_addtoDisplay(c->enemy, c->cd)) {
     combat_free(c);
     font_free(f8);
     return NULL;
-  }
+  }*/
   c->name[PLAYER] = entity_getName(player);
   c->name[ENEMY] = entity_getName(enemy);
   c->stats[PLAYER] = attb_copy(entity_getAttributes(player));
@@ -130,6 +129,7 @@ Combat* combat_execute(Combat* c) {
       }
       selindex=(selindex+MAX_ATTACKS+1)%(MAX_ATTACKS+1);
       if(!disp_setSelIndex(c->cd, PLAYER_ACTIONS,selindex)) return NULL;
+      
   }
 }
 
@@ -711,7 +711,7 @@ Combat* combat_load(Combat*c) {
     free(y);
     return NULL;
   }
-  Window* wininfo=win_ini("State of the combat",NULL,0,y[0]-y[2]-1,y[2]/4-20,y[2]-300,0,fcat_lookup(M8));
+  Window* wininfo=win_ini("State of the combat",NULL,0,y[0]-y[2]-1,y[2]/4-100,y[2]-300,0,fcat_lookup(M8));
   if(!wininfo) {
     for(int j=0;j<5;++j)we_free(pstats[j]);
     for(int j=0;j<5;++j)we_free(estats[j]);

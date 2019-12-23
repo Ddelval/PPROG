@@ -177,6 +177,11 @@ Canvas* font_renderText(const Font* f,char* txt){
     int y=0;
     int len=(int)strlen(txt);
     char *mod_txt=_remQuotes(txt);
+    for(int i=0;i<strlen(mod_txt);++i){
+        Canvas* tmp=cha_getCanvas(f->data[mod_txt[i]]);
+        if(mod_txt[i]<' '||mod_txt[i]>255||!tmp)mod_txt[i]=' ';
+        canv_free(tmp);
+    }
     Canvas* tmp;
     Canvas* res=canv_backGrnd(0, 0, 0, 0, font_calcWidth(f, mod_txt)+f->padding, f->hei);
     if(!res){

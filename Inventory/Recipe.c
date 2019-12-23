@@ -4,9 +4,7 @@
    Created on: 6 december 2019
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+
 #include "Recipe.h"
 
 

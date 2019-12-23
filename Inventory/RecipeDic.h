@@ -8,9 +8,6 @@
 #ifndef RecipeDic_H
 #define RecipeDic_H
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 
 #include "Inventory.h"
 #include "Recipe.h"
