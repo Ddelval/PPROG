@@ -84,6 +84,7 @@ struct _Room{
     
     trigger*** trig;
 };
+
 /*-----------------------------------------------------------------*/
 /**
  * @brief Allocates all the memory required for the new room
@@ -150,13 +151,7 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
 
 }
 
-/// Loads a map from a file, the format should be the following
-/// id lengthOfName name
-/// height width backgroudColor
-/// numberOfSprites
-/// id ipos jpos
-/// @param f File that contains the description of the room
-
+/*-----------------------------------------------------------------*/
 /**
  * @brief Loads a room from a file
  * 
@@ -214,6 +209,18 @@ Room* room_load(FILE* f){
     }
     return r;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Adds a sprite to the background layer
+ * 
+ * This is the function that should be called when we want to add
+ * a sprite that does not proceed from an entity
+ * 
+ * @param r Room in which the sprite will be added
+ * @param s Sprite to be added
+ * @return  NULL in case of error
+ */
 Room* room_addBSprite(Room* r, Sprite* s){
     if(!r||!s)return NULL;
     if(r->backpos==r->backgsiz){
@@ -235,6 +242,21 @@ Room* room_addBSprite(Room* r, Sprite* s){
     room_processTriggers(r,s,r->backpos-1);
     return r;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Add a sprite to the top layer
+ * 
+ * This is the function that should be called to add sprites that
+ * come from entities. In doing so, they will be able to interact
+ * with the player in a different way (talk and combat)
+ * 
+ * @param r Room in which the sprite will be added
+ * @param s Sprite to add
+ * @return  -1 in case of error
+ *          Otherwise, the index of the sprite in r->overs after 
+ *          it has been added  
+ */
 int room_addOSprite(Room* r, Sprite* s){
     if(!r||!s)return -1;
     if(r->overpos==r->overssiz){
@@ -255,12 +277,35 @@ int room_addOSprite(Room* r, Sprite* s){
     r->overpos++;
     return r->overpos-1;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Gets the position of a background sprite
+ * 
+ * @param r     Room in which the sprite is
+ * @param index Position of the sprite in r->backg
+ * @param i     Pointer to a variable where the i-coordinate will be
+ *              stored
+ * @param j     Pointer to a variable where the j-coordinate will be
+ *              stored
+ * @return      NULL in case of error
+ */
 Room* room_getBSpritePos(Room *r, int index, int* i, int *j){
     if(!r||index<0||index>=r->backpos||!i||!j)return NULL;
     *i=spr_getOI(r->backg[index]);
     *j=spr_getOJ(r->backg[index]);
     return r;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Renders the room
+ * 
+ * Note that this function will not redraw the base layer
+ * 
+ * @param r Room to be rendered
+ * @return Graphical representation of the room
+ */
 Canvas* room_getRender(Room* r){
     if(!r)return NULL;
     Canvas* canv=canv_copy(r->map);
@@ -281,27 +326,31 @@ Canvas* room_getRender(Room* r){
     canv_free(canv);
     return res;
 }
-Canvas* room_getSubRender(Room* r, int i, int j, int wid, int hei){
-    if(!r)return NULL;
-    Canvas* c=room_getRender(r);
-    if(i>=canv_getHeight(c)||j>=canv_getWidth(c)){
-        canv_free(c);
-        return NULL;
-    }
-    Canvas *cc=canv_subCopy(c, i, i+hei, j, j+wid);
-    //Canvas *ccc=canv_AdjustCrop(cc, wid, hei);
-    //canv_free(cc);
-    canv_free(c);
-    return cc;
-}
-/*
--1:error
- 0: ok
- 1: top border
- 2: right border
- 3: bottom border
- 4: left border
- 5: collison 
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Modifies the position of a sprite of the top layer
+ * 
+ * Note that this function will change the position if possible 
+ * and will renturn a value that represents the current position
+ * of the sprite.
+ * 
+ * 
+ * 
+ * @param r      Room in which the sprite is
+ * @param index  Index of the sprite in r->overs
+ * @param i      New i-coordinate of the top left corner of the sprite
+ * @param j      New j-coordinate of the top left corner of the sprite
+ * @param scroll Whether or not the movement of this sprite should 
+ *               affect the scrolling of the room
+ * @return       Integer code:
+ *               -1: error
+ *                0: the position is completely free
+ *                1: the sprite is in contact with the top border
+ *                2: the sprite is in contact with the right border
+ *                3: the sprite is in contact with the bottom border
+ *                4: the sprite is in contact with the left border
+ *                5: the sprite cannot move because of a collision 
  */
 int room_modPos(Room* r, int index, int i, int j, bool scroll){
     if(!r||index>=r->overpos){
@@ -352,15 +401,46 @@ int room_modPos(Room* r, int index, int i, int j, bool scroll){
     spr_setOI(r->overs[index], i);
     return retval;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Increments the position of a sprite of the top layer
+ * 
+ * Note that this function will change the position if possible 
+ * and will renturn a value that represents the current position
+ * of the sprite.
+ * 
+ * 
+ * 
+ * @param r      Room in which the sprite is
+ * @param index  Index of the sprite in r->overs
+ * @param i      Increment in the i axis
+ * @param j      Increment in the j axis
+ * @param scroll Whether or not the movement of this sprite should 
+ *               affect the scrolling of the room
+ * @return       Integer code:
+ *               -1: error
+ *                0: the position is completely free
+ *                1: the sprite is in contact with the top border
+ *                2: the sprite is in contact with the right border
+ *                3: the sprite is in contact with the bottom border
+ *                4: the sprite is in contact with the left border
+ *                5: the sprite cannot move because of a collision 
+ */
 int room_incPos(Room* r, int index, int i, int j,bool scroll){
     if(!r||index>=r->overpos){
         return -1;
     }
     return room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]),scroll);
 }
+
+/*-----------------------------------------------------------------*/
 /**
- * @brief Sets the are of the window that will be rendered when the rendering functions are called
- * This should be used when the player moves to another section of the map or when 
+ * @brief Sets the are of the window that will be rendered when 
+ *        the rendering functions are called
+ * 
+ * This is used when the player moves to another section of the map
+ * or when the room is set up initially.
  * 
  * @param ro Room
  * @param t  Top limit,      included
@@ -396,6 +476,17 @@ Room* room_setBounds(Room*ro, int t, int l, int b, int r){
     return ro;
 }
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Prints the modifications to the room, after the position 
+ *        of an entity has changed
+ * 
+ * @param r      Room to be updated
+ * @param index  Index of the sprite in overs that has changed
+ * @param disp_i Vertical offset of the room (generally 0)
+ * @param disp_j Horizontal offset of the room (generally 0)
+ * @return Room* 
+ */
 Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
     int wid=r->c_r-r->c_l;
     int hei=r->c_b-r->c_t;
@@ -442,6 +533,20 @@ Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
     
     return r;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Scrolls the window by a factor of (i,j)
+ * 
+ * Usually the factors are (-1 <= i <= 1)
+ * 
+ * @param r Room to be scrolled
+ * @param i Horizontal factor 
+ * @param j Vertical factor
+ * @return  -1 if there was an error
+ *           0 if there was no scrolling to be done
+ *           1 if the room scrolled
+ */
 int room_scroll(Room* r, double i, double j){
     if(!r)return -1;
     int di,dj;
@@ -454,7 +559,12 @@ int room_scroll(Room* r, double i, double j){
     room_setBounds(r,r->c_t+di,r->c_l+dj,r->c_b+di,r->c_r+dj);
     return 1;
 }
-
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Frees the memory allocated by the room
+ * 
+ * @param r Room to be freed
+ */
 void room_free(Room* r){
     if(!r)return;
     free(r->name);
@@ -495,7 +605,15 @@ void room_free(Room* r){
     pix_free(r->backcol);
     free(r);
 }
-
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Adds the trigges of sp to the room
+ * 
+ * @param r     Room to which the triggers are added
+ * @param sp    Sprite that contains the triggers
+ * @param index Index of sp in the array overs
+ * @return      NULL in case of error
+ */
 Room* room_processTriggers(Room * r, Sprite * sp, int index){
     if(!r||!sp)return NULL;
     int i0,j0;
@@ -525,6 +643,19 @@ Room* room_processTriggers(Room * r, Sprite * sp, int index){
     free(tr_id);
     return r;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Get the trigers in position (i,j)
+ * 
+ * @param r   Room that contains the triggers
+ * @param tt  Type of triggers that we are searching
+ * @param i   I--coordinate
+ * @param j   J-coordinate
+ * @param siz Pointer to a variable where the size will of the
+ *            resultin array will be stored
+ * @return Trigger** 
+ */
 Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz){
     if(!r||i<0||j<0||i>=r->hei||j>=r->wid)return NULL;
     trigger* dat=r->trig[i][j];
@@ -545,6 +676,19 @@ Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz){
     *siz=jj;
     return t;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Triggers associated to the position of the sprite
+ *        r->overs[sp_index]
+ * 
+ * @param r         Room that contains the sprite
+ * @param tt        Type of trigger that we are searching for
+ * @param sp_index  Index of the sprite in the array overs
+ * @param siz       Pointer to a variable where the size will of the
+ *                  resultin array will be stored
+ * @return Trigger** 
+ */
 Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){
     if(!r||sp_index>=r->overpos)return NULL;
     int cn[4];
@@ -577,7 +721,16 @@ Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){
     *siz=index;
     return tot;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Renders the map again
+ * 
+ * @param r Room to be recalculated
+ * @return  NULL if error
+ */
 Canvas* room_redrawMap(Room*r){
+    if(!r)return NULL;
     Canvas* b=canv_backGrnd(pix_retR(r->backcol),pix_retG(r->backcol),pix_retB(r->backcol),pix_retA(r->backcol),r->wid,r->hei);
     for(int i=0;i<r->backpos;++i){
         if(canv_addOverlay(b,spr_getDispData(r->backg[i]),spr_getOI(r->backg[i]),spr_getOJ(r->backg[i]))==NULL)return NULL;
@@ -586,6 +739,15 @@ Canvas* room_redrawMap(Room*r){
     r->map=b;
     return b;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Updates all the data in room after the deletion of a 
+ *        sprite
+ * 
+ * @param r Room to be updated
+ * @return  NULL if error
+ */
 Room* room_updateData(Room*r){
 
     if(r->colision){
@@ -658,7 +820,16 @@ Room* room_updateData(Room*r){
     return r;
 }
 
-
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Prints the changes to the background after deletion of
+ *        a sprite
+ * 
+ * @param r      Room to be updated
+ * @param disp_i Horizontal offset of the screen
+ * @param disp_j Vertical offset of the screen
+ * @return       NULL if error
+ */
 Room* room_printModBackg(Room* r, int disp_i, int disp_j){
     if(!r)return NULL;
     Canvas* p=room_getRender(r);
@@ -668,6 +839,15 @@ Room* room_printModBackg(Room* r, int disp_i, int disp_j){
     canv_printDiff(stdout,c,p,disp_i,disp_j);
     return r;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Removes the sprite in position index from r->backg
+ * 
+ * @param r     Room to be updated
+ * @param index Index of the sprite to be removed
+ * @return      NULL if error
+ */
 Room* room_removeB(Room* r, int index){
     if(!r||index>=r->backpos)return NULL;
     spr_free(r->backg[index]);
@@ -680,6 +860,18 @@ Room* room_removeB(Room* r, int index){
     return r;
 }
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Displays the building interface
+ * 
+ * @param r      Room in which the building will be placed
+ * @param spid   Sprite id of the building
+ * @param ai     Initial vertical coordinate of the sprite
+ * @param aj     Initial horizontal coordinate of the sprite
+ * @param room_i Horizontal offset of the room
+ * @param room_j Vertical offset of the room
+ * @return       NULL if error
+ */
 Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int room_j){
     if(!r)return NULL;
     Sprite* s=sdic_lookup(spid);
@@ -765,12 +957,27 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
     return r;
 
 }
+
+/*-----------------------------------------------------------------*/
+/// Set height and width of the display area
 Room* room_setHW(Room* r, int he,int wi){
     if(!r)return NULL;
     r->c_b=min(r->hei,r->c_t+he);
     r->c_r=min(r->wid,r->c_l+wi);
     return r;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Modifies the room when an ally has been added
+ * 
+ * @param r            Room to be updated 
+ * @param e            Entity that represents the ally
+ * @param s            Sprite of the ally
+ * @param ally_index   Index of the ally in the sprite array
+ * @param rad          Radius of the interactions with the player
+ * @return             NULL if error
+ */
 Room* room_processAlly(Room* r, void *e,Sprite* s,int ally_index, int rad){
     if(!r||!s)return NULL;
     int oi,oj;
@@ -798,6 +1005,9 @@ Room* room_processAlly(Room* r, void *e,Sprite* s,int ally_index, int rad){
     spr_processCollisions(r->overs[ally_index],r->colision,r->wid,r->hei);
     return r;
 }
+
+/*-----------------------------------------------------------------*/
+///Gets the name of the room
 char* room_getName(Room* r){
     if(!r)return NULL;
     char * c=calloc(strlen(r->name)+1,sizeof(char));
@@ -805,15 +1015,23 @@ char* room_getName(Room* r){
     strcpy(c,r->name);
     return c;
 }
+
+/*-----------------------------------------------------------------*/
+/// Gets the id of the room
 int room_getId(Room* r){
     return r? r->id:-1;
 }
+
+/*-----------------------------------------------------------------*/
+/// Gets the i-coordinate of the sprite r->overs[index]
 Room* room_setSpriteI(Room* r,int index, int i){
     if(!r||r->overpos<=index)return NULL;
     spr_setOI(r->overs[index],i);
     return r->overs[index]? r:NULL;
 }
 
+/*-----------------------------------------------------------------*/
+/// Gets the j-coordinate of the sprite r->overs[index]
 Room* room_setSpriteJ(Room* r,int index, int j){
     if(!r||r->overpos<=index)return NULL;
     spr_setOJ(r->overs[index],j);
