@@ -9,6 +9,8 @@
 #define MEM_INCREMENT 1.5
 #define MEM_INI 5
 #define MAX_TRIG 20
+
+
 /**
  * @brief Description of the position of a sprite
  * 
@@ -23,12 +25,45 @@ typedef struct _box{
     int i,j,w,h;
 }box;
 
-
+/**
+ * @brief Information that we have to store to identify a trigger
+ * 
+ * This structure will allow us to keep track of a specific trigger
+ * with just two integer values. The first one is the id that 
+ * identifies the trigger in the dictionary of triggers. 
+ * The second one is the index of the sprite that is causing it.
+ * 
+ */
 typedef struct _trigger{
     int code;
     int spindex;
 }trigger;
 
+/**
+ * @brief Information required to represent a map
+ * 
+ * The fields wid and hei contain the total width and 
+ * height of the map while c_t, c_l, c_r and c_b are used to
+ * limit the area that will be rendered on the screen. These
+ * variables define:
+ * c_t: top limit (included)
+ * c_l: left limit (included)
+ * c_r: right limit (excluded)
+ * c_b: bottom limit (excluded)
+ * 
+ * The Room will store the sprites that are used to make
+ * the background as well as all the static objects on backg.
+ * The sprites that correspond to entities will be stored in 
+ * overs. 
+ * 
+ * The structure also contains a Canvas (map) that stores the
+ * result of rendering the map so that we can render the map 
+ * less often. The other Canvas (shadows) contains the pixels
+ * that should be rendered on top of the entities. That is to
+ * say, the elements that cast a shadow on the entities.
+ * 
+ * 
+ */
 struct _Room{
     int id;
     char* name;
@@ -40,17 +75,26 @@ struct _Room{
     int backgsiz;
     int backpos;
     Sprite** overs;
-    box* ov;
     int overssiz;
     int overpos;
+    box* ov;
     Canvas* map;
     Canvas* shadows;
     bool** colision;
     
     trigger*** trig;
 };
-
-
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Allocates all the memory required for the new room
+ * 
+ * @param id      Id of the room
+ * @param name    Name of the room
+ * @param hei     Total height of the room
+ * @param wid     Total width of the room
+ * @param backcol Background color of the room
+ * @return        New room
+ */
 Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     Room* r=calloc(1, sizeof(Room));
     if(!r)return NULL;
@@ -112,6 +156,22 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
 /// numberOfSprites
 /// id ipos jpos
 /// @param f File that contains the description of the room
+
+/**
+ * @brief Loads a room from a file
+ * 
+ * The format of the room should be:
+ * <id> <length of Name> <name>
+ * <height> <width>
+ * <background color> (as a Pixel)
+ * <number of background sprites>
+ * 
+ * For each sprite:
+ * <id> <ipos> <jpos>
+ * 
+ * @param f File from where the room will be read
+ * @return  New room containing all the data
+ */
 Room* room_load(FILE* f){
     int h,w,id;
     int len;
