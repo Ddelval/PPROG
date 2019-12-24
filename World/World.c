@@ -2,6 +2,9 @@
 //	World.c
 //  Created by David del Val on 15/12/2019
 
+//valgrind --leak-check=full ./WorldTest 2>out.txt
+
+
 #include "World.h"
 #define MAX_NAME_ENTITY 50
 char* w_dir="Worlds/";
@@ -127,6 +130,7 @@ void wo_free(World *w){
     disp_free(w->dis);
     free(w);
 }
+
 Entity* _wo_eload(FILE* f,World * w){
     if(!f)return NULL;
     int id;
@@ -140,10 +144,11 @@ Entity* _wo_eload(FILE* f,World * w){
     fgets(c,MAX_NAME_ENTITY,f);
     int re=0;
     while(re<MAX_NAME_ENTITY&&c[re]==' ')++re;
-    char* c2=calloc(strlen(c)-re,sizeof(char));
+    char* c2=calloc(strlen(c)-re+1,sizeof(char));
     strcpy(c2,c+re);
     if(strlen(c2)>0)c2[strlen(c2)-1]=0;
     entity_setName(e,c2);
+    free(c2);
     free(c);
     return e;
 }

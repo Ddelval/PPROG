@@ -24,9 +24,9 @@ struct _Object
 };
 char** obj_type_def(){
     char** c=calloc(3,sizeof(char*));
-    c[0]=calloc(10,sizeof(char));
-    c[1]=calloc(10,sizeof(char));
-    c[2]=calloc(10,sizeof(char));
+    c[0]=calloc(15,sizeof(char));
+    c[1]=calloc(15,sizeof(char));
+    c[2]=calloc(15,sizeof(char));
     char* cc="Weapons";
     strcpy(c[0],cc);
     cc="Consumables";
