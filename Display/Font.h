@@ -81,6 +81,7 @@ int font_calcWidth(const Font* f,char* txt);
 /// @param f    Font to be used in the render
 /// @param txt  String to be rendered
 Canvas* font_renderText(const Font* f,char* txt);
+
 /*-----------------------------------------------------------------*/
 /// Get the height of the font
 int font_getHeight(const Font* f);

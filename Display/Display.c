@@ -10,6 +10,7 @@
 #define TITLE_MULTILINE 10
 #define DARKEN 0.40
 #define BLUR_RAD 10
+// Selected and not selected colours
 #define NSEL_VALS 255,255,255,255
 #define  SEL_VALS 150,150,255,255
 #define CIRC_RAD 10
@@ -31,14 +32,22 @@ struct _Display{
     bool pop_craf;
 };
 
+/**
+ * @brief Allocates all the memory required for a new Display ADT
+ * 
+ * @param wid   Width of the new display
+ * @param hei   Height of the new display
+ * @param room  Room that the display will have on its left half
+ * @param vdiv  Position of the vertical dividor between both halves
+ * @param tit   Title of the display
+ * @param titf  Font for the tile
+ * @return Display* 
+ */
 Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* titf){
     if(!room) return NULL;
     Display* dis=(Display*)calloc(1, sizeof(Display));
     if(!dis) return NULL;
-    dis->width=wid;
-    dis->height=hei;
-    dis->titf=titf;
-    dis->vdiv=vdiv;
+    
     dis->title=calloc(strlen(tit)+1, sizeof(char));
     if(!dis->title){
         disp_free(dis);
@@ -48,7 +57,12 @@ Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* 
         disp_free(dis);
         return NULL;
     }
-    dis->room=room;
+
+    dis->width=wid;
+    dis->height=hei;
+    dis->titf=titf;
+    dis->vdiv=vdiv;
+    dis->room=room_copy(room);
     dis->nLatWindow=0;
     dis->latWinalloc=3;
     dis->rendered=false;

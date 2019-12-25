@@ -96,13 +96,15 @@ struct _Room{
  * @param backcol Background color of the room
  * @return        New room
  */
-Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
+Room* room_ini(int id, const char* name,int hei, int wid, const Pixel* backcol){
     Room* r=calloc(1, sizeof(Room));
     if(!r)return NULL;
-    r->id =id;
+    
     r->name=calloc(strlen(name)+1, sizeof(char));
     if(!r->name)ret_free(r)
     strcpy(r->name, name);
+
+    r->id =id;
     r->hei=hei;
     r->wid=wid;
     r->c_t=0;
@@ -110,6 +112,7 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
     r->c_l=0;
     r->c_r=wid;
     r->backgsiz=MEM_INI;
+
     r->backg=calloc(MEM_INI, sizeof(Sprite*));
     if(!r->backg)ret_free(r);
 
@@ -146,9 +149,58 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol){
                }
            }
        }
+
+    //Initalise backgroud
     r->map=canv_backGrnd(pix_retR(backcol), pix_retG(backcol), pix_retB(backcol), pix_retA(backcol), wid, hei);
     return r;
 
+}
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Frees the memory allocated by the room
+ * 
+ * @param r Room to be freed
+ */
+void room_free(Room* r){
+    if(!r)return;
+    free(r->name);
+
+    //Background sprite array
+    if(r->backg){
+        for(int i=0;i<r->backpos;++i) {
+            spr_free(r->backg[i]);
+        }
+        free(r->backg);
+    }
+
+    //Foreground sprite array
+    if(r->overs){
+        for(int i=0;i<r->overpos;++i)spr_free(r->overs[i]);
+        free(r->overs);
+    }
+
+    //Colision bool array
+    if(r->colision){
+        for(int i=0;i<r->hei;++i)free(r->colision[i]);
+        free(r->colision);
+    }
+    //Shadow 
+    canv_free(r->shadows);
+    //Trigger array
+    if(r->trig){
+        for(int i=0;i<r->hei;++i){
+           for(int j=0;j<r->wid;++j){
+               free(r->trig[i][j]);
+           }
+           free(r->trig[i]);
+       }
+    free(r->trig);
+    }
+    canv_free(r->map);
+    free(r->ov);
+    pix_free(r->backcol);
+    free(r);
 }
 
 /*-----------------------------------------------------------------*/
@@ -221,7 +273,7 @@ Room* room_load(FILE* f){
  * @param s Sprite to be added
  * @return  NULL in case of error
  */
-Room* room_addBSprite(Room* r, Sprite* s){
+Room* room_addBSprite(Room* r, const Sprite* s){
     if(!r||!s)return NULL;
     if(r->backpos==r->backgsiz){
         int nsiz=(int)ceil(r->backgsiz*MEM_INCREMENT);
@@ -230,6 +282,7 @@ Room* room_addBSprite(Room* r, Sprite* s){
         r->backg=tmp;
         r->backgsiz=nsiz;
     }
+    
     r->backg[r->backpos]=spr_copy(s);
     if(!r->backg[r->backpos]){
         return NULL;
@@ -257,7 +310,7 @@ Room* room_addBSprite(Room* r, Sprite* s){
  *          Otherwise, the index of the sprite in r->overs after 
  *          it has been added  
  */
-int room_addOSprite(Room* r, Sprite* s){
+int room_addOSprite(Room* r, const Sprite* s){
     if(!r||!s)return -1;
     if(r->overpos==r->overssiz){
         int nsiz=(int)ceil(r->overssiz*MEM_INCREMENT);
@@ -270,6 +323,7 @@ int room_addOSprite(Room* r, Sprite* s){
         if(!bb) return -1;
 
     }
+
     r->overs[r->overpos]=spr_copy(s);
     if(!r->overs[r->overpos]){
         return -1;
@@ -290,11 +344,11 @@ int room_addOSprite(Room* r, Sprite* s){
  *              stored
  * @return      NULL in case of error
  */
-Room* room_getBSpritePos(Room *r, int index, int* i, int *j){
+Room* room_getBSpritePos(const Room *r, int index, int* i, int *j){
     if(!r||index<0||index>=r->backpos||!i||!j)return NULL;
     *i=spr_getOI(r->backg[index]);
     *j=spr_getOJ(r->backg[index]);
-    return r;
+    return (Room*)r;
 }
 
 /*-----------------------------------------------------------------*/
@@ -306,7 +360,7 @@ Room* room_getBSpritePos(Room *r, int index, int* i, int *j){
  * @param r Room to be rendered
  * @return Graphical representation of the room
  */
-Canvas* room_getRender(Room* r){
+Canvas* room_getRender(const Room* r){
     if(!r)return NULL;
     Canvas* canv=canv_copy(r->map);
     Canvas* tmp;
@@ -359,7 +413,7 @@ int room_modPos(Room* r, int index, int i, int j, bool scroll){
     if(!scroll){
         //We only want to check against borders and collisions
         if(i+spr_getHeight(r->overs[index])>=r->hei||i<0||j<0||j+spr_getWidth(r->overs[index])>=r->wid) return 5;
-        int a=spr_checkCollisions(r->overs[index],r->colision,r->wid,r->hei,i,j);
+        int a=spr_checkCollisions(r->overs[index],(const bool**)r->colision,r->wid,r->hei,i,j);
         if(a)return a;
         spr_setOJ(r->overs[index], j);
         spr_setOI(r->overs[index], i);
@@ -392,7 +446,7 @@ int room_modPos(Room* r, int index, int i, int j, bool scroll){
         else retval= 2;
     }
     //Fits:
-    aux=spr_checkCollisions(r->overs[index],r->colision,r->wid,r->hei,i,j);
+    aux=spr_checkCollisions(r->overs[index],(const bool**)r->colision,r->wid,r->hei,i,j);
     if(aux==-1)return -1;
     if(aux==1)return 5;
     spr_setOJ(r->overs[index], j);
@@ -494,43 +548,54 @@ Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
     int ipos=0;
     int i=index;
     int i1,i2,j1,j2;
+
+    // Print the background where the sprite was before
     i1=max(r->ov[i].i,r->c_t);
     j1=max(r->ov[i].j,r->c_l);
 
     i2=min(r->ov[i].i+r->ov[i].h,r->c_b);
     j2=min(r->ov[i].j+r->ov[i].w,r->c_r);
+
+
     if(i1>=i2||j1>=j2)return r;
     Canvas* cbck=canv_copy(r->map);
     for(int i=0;i<r->overpos;++i){
-        if(i==index)continue;
-        canv_addOverlay(cbck,spr_getDispData(r->overs[i]),spr_getOI(r->overs[i]),spr_getOJ(r->overs[i]));
+        if(i!=index) canv_addOverlay(cbck,spr_getDispData(r->overs[i]),spr_getOI(r->overs[i]),spr_getOJ(r->overs[i]));
     }
     Canvas* c=canv_subCopy(cbck,i1,i2,j1,j2);
     canv_print(stdout,c,i1-r->c_t+disp_i, j1-r->c_l+disp_j+1);
-    fflush(stdout);
     canv_free(c);
-    
+
+    // Print the sprite on the screen
     i1=max(spr_getOI(r->overs[i]),r->c_t);
     j1=max(spr_getOJ(r->overs[i]),r->c_l);
 
     j2=min(spr_getOJ(r->overs[i])+spr_getWidth (r->overs[i]),r->c_r);
     i2=min(spr_getOI(r->overs[i])+spr_getHeight(r->overs[i]),r->c_b);
+
     Canvas* torender=canv_subCopy(spr_getDispData(r->overs[i]),i1-spr_getOI(r->overs[i]),i2-spr_getOI(r->overs[i]), j1-spr_getOJ(r->overs[i]), j2-spr_getOJ(r->overs[i]));
     Canvas* bc=canv_subCopy(cbck, i1, i2, j1, j2);
     Canvas* b2=canv_subCopy(r->shadows, i1, i2, j1, j2);
     canv_addOverlay(torender,b2,0,0);
     canv_printAllSolid(stdout,torender,bc,disp_i-r->c_t+i1, disp_j-r->c_l+j1+1);
+
+    /**
+     * Updates the position of the sprite in the array of boxes
+     * In doing so, we will know the area that we have to cover the next
+     * time that this function is called
+     */
     box b;
     b.i=spr_getOI(r->overs[i]);
     b.j=spr_getOJ(r->overs[i]);
     b.w=canv_getWidth(spr_getDispData(r->overs[i]));
     b.h=canv_getHeight(spr_getDispData(r->overs[i]));
     r->ov[i]=b;
+
+
     canv_free(bc);
     canv_free(torender);
     canv_free(b2);
     canv_free(cbck);
-    
     return r;
 }
 
@@ -559,52 +624,8 @@ int room_scroll(Room* r, double i, double j){
     room_setBounds(r,r->c_t+di,r->c_l+dj,r->c_b+di,r->c_r+dj);
     return 1;
 }
-/*-----------------------------------------------------------------*/
-/**
- * @brief Frees the memory allocated by the room
- * 
- * @param r Room to be freed
- */
-void room_free(Room* r){
-    if(!r)return;
-    free(r->name);
 
-    //Background sprite array
-    if(r->backg){
-        for(int i=0;i<r->backpos;++i) {
-            spr_free(r->backg[i]);
-        }
-        free(r->backg);
-    }
 
-    //Foreground sprite array
-    if(r->overs){
-        for(int i=0;i<r->overpos;++i)spr_free(r->overs[i]);
-        free(r->overs);
-    }
-
-    //Colision bool array
-    if(r->colision){
-        for(int i=0;i<r->hei;++i)free(r->colision[i]);
-        free(r->colision);
-    }
-    //Shadow 
-    canv_free(r->shadows);
-    //Trigger array
-    if(r->trig){
-        for(int i=0;i<r->hei;++i){
-           for(int j=0;j<r->wid;++j){
-               free(r->trig[i][j]);
-           }
-           free(r->trig[i]);
-       }
-    free(r->trig);
-    }
-    canv_free(r->map);
-    free(r->ov);
-    pix_free(r->backcol);
-    free(r);
-}
 /*-----------------------------------------------------------------*/
 /**
  * @brief Adds the trigges of sp to the room
@@ -614,7 +635,7 @@ void room_free(Room* r){
  * @param index Index of sp in the array overs
  * @return      NULL in case of error
  */
-Room* room_processTriggers(Room * r, Sprite * sp, int index){
+Room* room_processTriggers(Room * r, const Sprite * sp, int index){
     if(!r||!sp)return NULL;
     int i0,j0;
     i0=spr_getOI(sp);
@@ -682,12 +703,16 @@ Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz){
  * @brief Triggers associated to the position of the sprite
  *        r->overs[sp_index]
  * 
+ * The trigger will be returned if it is associated to the
+ * position of any of the four corners of the sprite
+ * 
  * @param r         Room that contains the sprite
  * @param tt        Type of trigger that we are searching for
  * @param sp_index  Index of the sprite in the array overs
  * @param siz       Pointer to a variable where the size will of the
  *                  resultin array will be stored
- * @return Trigger** 
+ * @return          NULL if error
+ *                  The array of triggers otherwise
  */
 Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){
     if(!r||sp_index>=r->overpos)return NULL;
@@ -733,7 +758,10 @@ Canvas* room_redrawMap(Room*r){
     if(!r)return NULL;
     Canvas* b=canv_backGrnd(pix_retR(r->backcol),pix_retG(r->backcol),pix_retB(r->backcol),pix_retA(r->backcol),r->wid,r->hei);
     for(int i=0;i<r->backpos;++i){
-        if(canv_addOverlay(b,spr_getDispData(r->backg[i]),spr_getOI(r->backg[i]),spr_getOJ(r->backg[i]))==NULL)return NULL;
+        if(canv_addOverlay(b,spr_getDispData(r->backg[i]),spr_getOI(r->backg[i]),spr_getOJ(r->backg[i]))==NULL){
+            canv_free(b);
+            return NULL;
+        }
     }
     canv_free(r->map);
     r->map=b;
@@ -750,45 +778,21 @@ Canvas* room_redrawMap(Room*r){
  */
 Room* room_updateData(Room*r){
 
-    if(r->colision){
-        for(int i=0;i<r->hei;++i)free(r->colision[i]);
-        free(r->colision);
-    }
-    canv_free(r->shadows);
-    if(r->trig){
-        for(int i=0;i<r->hei;++i){
-           for(int j=0;j<r->wid;++j){
-               free(r->trig[i][j]);
-           }
-           free(r->trig[i]);
-       }
-    free(r->trig);
-    }
-
-
-    r->colision=calloc(r->hei, sizeof(bool*));
-    if(!r->colision)ret_free(r);
+    // Clear the data in the arrays
+    
     for(int i=0;i<r->hei;++i){
-        r->colision[i]=calloc(r->wid, sizeof(bool));
-        if(!r->colision[i])ret_free(r);
-    }
-    r->shadows=canv_backGrnd(0,0,0,0,r->wid,r->hei);
-    r->trig=calloc(r->hei, sizeof(trigger**));
-    if(!r->trig)ret_free(r);
-    for(int i=0;i<r->hei;++i){
-        r->trig[i]=calloc(r->wid, sizeof(trigger*));
-        if(!r->trig[i])ret_free(r);
         for(int j=0;j<r->wid;++j){
-            r->trig[i][j]=calloc(MAX_TRIG,sizeof(trigger));
-            if(!r->trig[i][j])ret_free(r);
+            r->colision[i][j]=0;
             for(int w=0;w<MAX_TRIG;++w){
                    r->trig[i][j][w].code=-1;
                    r->trig[i][j][w].spindex=-1;
-               }
+            }
         }
     }
+    canv_free(r->shadows);
+    r->shadows=canv_backGrnd(0,0,0,0,r->wid,r->hei);
     
-
+    // Populates the data in the arrays
     for(int i=0;i<r->backpos;++i){
         spr_processCollisions(r->backg[i],r->colision,r->wid,r->hei);
         spr_processShadows(r->backg[i],r->shadows);
@@ -874,9 +878,11 @@ Room* room_removeB(Room* r, int index){
  */
 Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int room_j){
     if(!r)return NULL;
+    Canvas* aux=NULL;
+    Canvas* fin=NULL;
     Sprite* s=sdic_lookup(spid);
     Canvas* base=room_getRender(r);
-
+    
     int ipos,jpos;
     ipos = ai-r->c_t;
     jpos = aj-r->c_l;
@@ -886,25 +892,26 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
     Pixel* green=pix_ini(150,255,150,255);
     Pixel* rred=pix_ini(255,0,0,255);
 
+    if(!red||!green||!rred||!s||!base)goto END;
+
     int ** placement=calloc(r->hei,sizeof(int*));
     if(!placement){
-        //ERROR
+        goto END;
     }
     for(int i=0;i<r->hei;++i){
         placement[i]=calloc(r->wid,sizeof(int));
         if(!placement[i]){
-        //ERROR
+            goto END;
         }
         for(int j=0;j<r->wid;++j)placement[i][j]=!pix_transparent(canv_getPixel(r->shadows,i,j));
     }
 
 
-    p= spr_checkCollisions(s,placement,r->wid,r->hei,ipos+r->c_t,jpos+r->c_l)? red:green;
-    Canvas* aux=canv_filter(spr_getDispData(s),p);
+    p= spr_checkCollisions(s,(const bool**)placement,r->wid,r->hei,ipos+r->c_t,jpos+r->c_l)? red:green;
+    aux=canv_filter(spr_getDispData(s),p);
     canv_darken(aux,1.2);
-
-    Canvas* c=canv_Overlay(base,aux,ipos,jpos);
-    canv_print(stdout,c,0,0);
+    fin=canv_Overlay(base,aux,ipos,jpos);
+    canv_print(stdout,fin,0,0);
     while(1){
         char ch=getch1();
         if(ch=='D'){
@@ -920,7 +927,7 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
             ipos-=10;
         }
         if(ch=='J'){
-            if(!spr_checkCollisions(s,placement,r->wid,r->hei,ipos+r->c_t,jpos+r->c_l)){
+            if(!spr_checkCollisions(s,(const bool**)placement,r->wid,r->hei,ipos+r->c_t,jpos+r->c_l)){
                 spr_setOI(s,ipos+r->c_t);
                 spr_setOJ(s,jpos+r->c_l);
                 room_addBSprite(r,s);
@@ -931,40 +938,37 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
                 Canvas* aux=canv_filter(spr_getDispData(s),p);
                 canv_darken(aux,1.2);
                 Canvas*cc =canv_Overlay(base,aux,ipos,jpos);
-                canv_printDiff(stdout,cc,c,room_i,room_j);
-                canv_free(c);
-                c=cc;
+                canv_printDiff(stdout,cc,fin,room_i,room_j);
+                canv_free(fin);
+                fin=cc;
             }
         }
         if(ch=='Q')break;
 
-        p= spr_checkCollisions(s,placement,r->wid,r->hei,ipos+r->c_t,jpos+r->c_l)? red:green;
+        p= spr_checkCollisions(s,(const bool**)placement,r->wid,r->hei,ipos+r->c_t,jpos+r->c_l)? red:green;
         canv_free(aux);
         aux=canv_filter(spr_getDispData(s),p);
         canv_darken(aux,1.2);
-        Canvas*cc =canv_Overlay(base,aux,ipos,jpos);
-        canv_printDiff(stdout,cc,c,room_i,room_j);
-        canv_free(c);
-        c=cc;
+        Canvas* cc =canv_Overlay(base,aux,ipos,jpos);
+        canv_printDiff(stdout,cc,fin,room_i,room_j);
+        canv_free(fin);
+        fin=cc;
     }
-    Canvas* res=room_getRender(r);
-    canv_printDiff(stdout,res,c,room_i,room_j);
+END:
+    spr_free(s);
     pix_free(red);
     pix_free(rred);
     pix_free(green);
-    canv_free(c);
+    canv_free(fin);
     canv_free(aux);
+
+    //Print the initial room
+    Canvas* res=room_getRender(r);
+    canv_printDiff(stdout,res,fin,room_i,room_j);
+    canv_free(res);
+    
     return r;
 
-}
-
-/*-----------------------------------------------------------------*/
-/// Set height and width of the display area
-Room* room_setHW(Room* r, int he,int wi){
-    if(!r)return NULL;
-    r->c_b=min(r->hei,r->c_t+he);
-    r->c_r=min(r->wid,r->c_l+wi);
-    return r;
 }
 
 /*-----------------------------------------------------------------*/
@@ -978,17 +982,18 @@ Room* room_setHW(Room* r, int he,int wi){
  * @param rad          Radius of the interactions with the player
  * @return             NULL if error
  */
-Room* room_processAlly(Room* r, void *e,Sprite* s,int ally_index, int rad){
+Room* room_processAlly(Room* r, void *e,const Sprite* s,int ally_index, int rad){
     if(!r||!s)return NULL;
     int oi,oj;
     oi=spr_getOI(r->overs[ally_index]);
     oj=spr_getOJ(r->overs[ally_index]);
+
     Trigger *t =tr_createTalk(e,ally_index);
     if(!t)return NULL;
     int tid=trdic_insert(t);
-    
     tr_free(t);
     if(tid>0)return NULL;
+
 
     for(int i=oi-rad;i<oi+rad+spr_getHeight(s);++i){
         if(i<0||i>=r->hei)continue;
@@ -1023,7 +1028,7 @@ int room_getId(Room* r){
 }
 
 /*-----------------------------------------------------------------*/
-/// Gets the i-coordinate of the sprite r->overs[index]
+/// Sets the i-coordinate of the sprite r->overs[index]
 Room* room_setSpriteI(Room* r,int index, int i){
     if(!r||r->overpos<=index)return NULL;
     spr_setOI(r->overs[index],i);
@@ -1031,9 +1036,47 @@ Room* room_setSpriteI(Room* r,int index, int i){
 }
 
 /*-----------------------------------------------------------------*/
-/// Gets the j-coordinate of the sprite r->overs[index]
+/// Sets the j-coordinate of the sprite r->overs[index]
 Room* room_setSpriteJ(Room* r,int index, int j){
     if(!r||r->overpos<=index)return NULL;
     spr_setOJ(r->overs[index],j);
     return r->overs[index]? r:NULL;
+}
+
+/*-----------------------------------------------------------------*/
+/// Set height and width of the display area
+Room* room_setHW(Room* r, int he,int wi){
+    if(!r)return NULL;
+    r->c_b=min(r->hei,r->c_t+he);
+    r->c_r=min(r->wid,r->c_l+wi);
+    return r;
+}
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Copies the room
+ * 
+ * @param r     Room to be copied
+ * @return      Identical copy of r
+ */
+Room* room_copy(const Room* r){
+    if(!r)return NULL;
+    Room* r2=room_ini(r->id,r->name,r->hei,r->wid,r->backcol);
+    r2->c_t=r->c_t;
+    r2->c_l=r->c_l;
+    r2->c_r=r->c_r;
+    r2->c_b=r->c_b;
+    for(int i=0;i<r->backpos;++i){
+        room_addBSprite(r2,r->backg[i]);
+    }
+    for(int i=0;i<r->overpos;++i){
+        room_addOSprite(r2,r->overs[i]);
+        spr_processCollisions(r->overs[i],r2->colision,r2->wid,r2->hei);
+    }
+    for(int i=0;i<r->hei;++i){
+        for(int j=0;j<r->wid;++j){
+            memcpy(r2->trig[i][j],r->trig[i][j],MAX_TRIG*sizeof(trigger));
+        }
+    }
+    return r2;
 }

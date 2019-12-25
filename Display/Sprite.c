@@ -199,7 +199,7 @@ Sprite* spr_printTrigger(Sprite* s){
         fprintf(stderr,"\n");
     }
 */
-Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei){
+Sprite* spr_processCollisions(const Sprite* s,bool** rarr,int rwid, int rhei){
     if(!rarr)return NULL;
     int i2,j2;
     for(int i=0;i<s->height;++i){
@@ -213,7 +213,7 @@ Sprite* spr_processCollisions(Sprite* s,bool** rarr,int rwid, int rhei){
     }
     return s;
 }
-int spr_checkCollisions(Sprite*s,bool**rarr,int rwid,int rhei, int ni,int nj){
+int spr_checkCollisions(const Sprite*s, const bool**rarr,int rwid,int rhei, int ni,int nj){
     if(!rarr)return -1;
     int i2,j2;
     for(int i=0;i<s->height;++i){
@@ -232,7 +232,7 @@ int spr_checkCollisions(Sprite*s,bool**rarr,int rwid,int rhei, int ni,int nj){
     return 0;
 }
 
-Sprite* spr_processShadows(Sprite* s,Canvas* shad){
+Sprite* spr_processShadows(const Sprite* s,Canvas* shad){
     if(!s||!shad)return NULL;
     int i2,j2;
     int rhei=canv_getHeight(shad);
@@ -251,27 +251,27 @@ Sprite* spr_processShadows(Sprite* s,Canvas* shad){
     }
     return s;
 }
-const Canvas* spr_getDispData(Sprite* spr){
+const Canvas* spr_getDispData(const Sprite* spr){
     if(!spr)return NULL;
     return spr->canvas;
 }
-int spr_getOI(Sprite* spr){
+int spr_getOI(const Sprite* spr){
     if(!spr)return 0;
     return spr->iPos;
 }
-int spr_getOJ(Sprite* spr){
+int spr_getOJ(const Sprite* spr){
     if(!spr)return 0;
     return spr->jPos;
 }
-int spr_getWidth(Sprite* spr){
+int spr_getWidth(const Sprite* spr){
     if(!spr)return -1;
     return spr->width;
 }
-int spr_getHeight(Sprite* spr){
+int spr_getHeight(const Sprite* spr){
     if(!spr) return -1;
     return spr->height;
 }
-void spr_setOI(Sprite* spr,int ipos){
+void spr_setOI( Sprite* spr,int ipos){
     if(!spr)return;
     spr->iPos=ipos;
 }
@@ -283,7 +283,7 @@ int spr_getId(const Sprite* sp){
     if(!sp)return 0;
     return sp->id;
 }
-int spr_getTriginfo(Sprite*s, int** tr_id, int** i1,int** i2, int** j1, int** j2){
+int spr_getTriginfo(const Sprite*s, int** tr_id, int** i1,int** i2, int** j1, int** j2){
     if(!s)return -1;
     *tr_id=calloc(s->trsize,sizeof(int));
     *i1=calloc(s->trsize,sizeof(int));

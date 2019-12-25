@@ -41,5 +41,5 @@ int min(int a,int b);
 char getch1(void);
 void term_restore();
 void term_init();
-//void handle_winch(Display* dis);
+int sendToScreen(FILE* f, char* ch);
 #endif /* Utility_h */

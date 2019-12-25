@@ -1160,7 +1160,7 @@ Canvas* canv_darken(Canvas* c,double light){
  * @param p     Color that will be applied in the filter
  * @return      A new canvas with the filter applied
  */
-Canvas* canv_filter(Canvas* c,Pixel* p){
+Canvas* canv_filter(const Canvas* c,const Pixel* p){
     if(!c||!p)return NULL;
     Canvas* cc=canv_copy(c);
     int r,g,b;

@@ -17,7 +17,6 @@
 #include "Trigger.h"
 typedef struct _Room Room;
 
-
 /*-----------------------------------------------------------------*/
 /**
  * @brief Allocates all the memory required for the new room
@@ -29,7 +28,15 @@ typedef struct _Room Room;
  * @param backcol Background color of the room
  * @return        New room
  */
-Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol);
+Room* room_ini(int id, const char* name,int hei, int wid, const Pixel* backcol);
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Frees the memory allocated by the room
+ * 
+ * @param r Room to be freed
+ */
+void room_free(Room* r);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -49,6 +56,17 @@ Room* room_ini(int id, char* name,int hei, int wid, Pixel* backcol);
  */
 Room* room_load(FILE* f);
 
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Copies the room
+ * 
+ * @param r     Room to be copied
+ * @return      Identical copy of r
+ */
+Room* room_copy(const Room* r);
+
+
 /*-----------------------------------------------------------------*/
 /**
  * @brief Adds a sprite to the background layer
@@ -60,7 +78,7 @@ Room* room_load(FILE* f);
  * @param s Sprite to be added
  * @return  NULL in case of error
  */
-Room* room_addBSprite(Room* r, Sprite* s);
+Room* room_addBSprite(Room* r, const Sprite* s);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -76,7 +94,7 @@ Room* room_addBSprite(Room* r, Sprite* s);
  *          Otherwise, the index of the sprite in r->overs after 
  *          it has been added  
  */
-int room_addOSprite(Room* r, Sprite* s);
+int room_addOSprite(Room* r, const Sprite* s);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -90,7 +108,7 @@ int room_addOSprite(Room* r, Sprite* s);
  *              stored
  * @return      NULL in case of error
  */
-Room* room_getBSpritePos(Room *r, int index, int* i, int *j);
+Room* room_getBSpritePos(const Room *r, int index, int* i, int *j);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -101,7 +119,7 @@ Room* room_getBSpritePos(Room *r, int index, int* i, int *j);
  * @param r Room to be rendered
  * @return Graphical representation of the room
  */
-Canvas* room_getRender(Room* r);
+Canvas* room_getRender(const Room* r);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -202,13 +220,6 @@ Room* room_printMod(Room* r, int index, int disp_i, int disp_j);
  */
 int room_scroll(Room* r, double i, double j);
 
-/*-----------------------------------------------------------------*/
-/**
- * @brief Frees the memory allocated by the room
- * 
- * @param r Room to be freed
- */
-void room_free(Room* r);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -219,33 +230,24 @@ void room_free(Room* r);
  * @param index Index of sp in the array overs
  * @return      NULL in case of error
  */
-Room* room_processTriggers(Room * r, Sprite * sp, int index);
+Room* room_processTriggers(Room * r, const Sprite * sp, int index);
 
-/*-----------------------------------------------------------------*/
-/**
- * @brief Get the trigers in position (i,j)
- * 
- * @param r   Room that contains the triggers
- * @param tt  Type of triggers that we are searching
- * @param i   I--coordinate
- * @param j   J-coordinate
- * @param siz Pointer to a variable where the size will of the
- *            resultin array will be stored
- * @return Trigger** 
- */
-Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz);
 
 /*-----------------------------------------------------------------*/
 /**
  * @brief Triggers associated to the position of the sprite
  *        r->overs[sp_index]
  * 
+ * The trigger will be returned if it is associated to the
+ * position of any of the four corners of the sprite
+ * 
  * @param r         Room that contains the sprite
  * @param tt        Type of trigger that we are searching for
  * @param sp_index  Index of the sprite in the array overs
  * @param siz       Pointer to a variable where the size will of the
  *                  resultin array will be stored
- * @return Trigger** 
+ * @return          NULL if error
+ *                  The array of triggers otherwise
  */
 Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz);
 
@@ -305,10 +307,6 @@ Room* room_removeB(Room* r, int index);
 Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int room_j);
 
 /*-----------------------------------------------------------------*/
-/// Set height and width of the display area
-Room* room_setHW(Room* r, int he,int wi);
-
-/*-----------------------------------------------------------------*/
 /**
  * @brief Modifies the room when an ally has been added
  * 
@@ -319,7 +317,7 @@ Room* room_setHW(Room* r, int he,int wi);
  * @param rad          Radius of the interactions with the player
  * @return             NULL if error
  */
-Room* room_processAlly(Room* r, void *e,Sprite* s,int ally_index, int rad);
+Room* room_processAlly(Room* r, void *e,const Sprite* s,int ally_index, int rad);
 
 /*-----------------------------------------------------------------*/
 ///Gets the name of the room
@@ -330,11 +328,15 @@ char* room_getName(Room* r);
 int room_getId(Room* r);
 
 /*-----------------------------------------------------------------*/
-/// Gets the i-coordinate of the sprite r->overs[index]
+/// Sets the i-coordinate of the sprite r->overs[index]
 Room* room_setSpriteI(Room* r,int index, int i);
 
 /*-----------------------------------------------------------------*/
-/// Gets the j-coordinate of the sprite r->overs[index]
+/// Sets the j-coordinate of the sprite r->overs[index]
 Room* room_setSpriteJ(Room* r,int index, int j);
 
-#endif /* Room_h */
+/*-----------------------------------------------------------------*/
+/// Set height and width of the display area
+Room* room_setHW(Room* r, int he,int wi);
+
+#endif
