@@ -21,7 +21,7 @@
 #include "FontCatalog.h"
 #include "DialogMan.h"
 
-typedef struct _Display Display;
+typedef struct _Display  Display;
 /*-----------------------------------------------------------------*/
 /// Create a new Display object
 /// @param wid  Total width of the display

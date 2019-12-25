@@ -73,7 +73,11 @@ Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* 
     }
     return dis;
 }
-
+/**
+ * @brief Frees all the memory allocated for this window
+ * 
+ * @param dat Window to free
+ */
 void disp_free(Display* dat){
     if(!dat)return;
 
@@ -87,6 +91,13 @@ void disp_free(Display* dat){
     free(dat);
 }
 
+/**
+ * @brief Adds a window to the right column
+ * 
+ * @param dis   Display where the window will be added.
+ * @param w     Window to add to the display
+ * @return      NULL if error
+ */
 Display* disp_AddLWindow(Display*dis, Window* w){
     if(!dis||!w)return NULL;
     if(dis->nLatWindow+1>dis->latWinalloc){
@@ -100,6 +111,15 @@ Display* disp_AddLWindow(Display*dis, Window* w){
     dis->nLatWindow++;
     return dis;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Removes a window from the right column
+ * 
+ * @param dis       Display from which the window 
+ * @param index     Position of the window that will be removed
+ * @return          NULL if error
+ */
 Display* disp_RemLwindow(Display* dis, int index){
     if(!dis) return NULL;
     if(index<0||index>=dis->nLatWindow)return NULL;
@@ -115,6 +135,17 @@ Display* disp_RemLwindow(Display* dis, int index){
     return dis;
 }
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Moves the selection focus of a window in the right column
+ *        increment positions down
+ * 
+ * @param dis       Display whose selection will be changed
+ * @param winIndex  Index of the window whose selection will be changed
+ * @param increment Number of positions that the focus will go down
+ *                  A negative number to make the focus go up
+ * @return          NULL if error
+ */
 Display* disp_incSelIndex(Display* dis, int winIndex, int increment){
   if(!dis)return NULL;
   if(winIndex>=dis->nLatWindow) return NULL;
@@ -125,6 +156,16 @@ Display* disp_incSelIndex(Display* dis, int winIndex, int increment){
   return print_Window(dis,winIndex);
 }
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Moves the selection focus of a window in the right column
+ *        to selIndex
+ * 
+ * @param dis       Display whose selection will be changed
+ * @param winIndex  Index of the window whose selection will be changed
+ * @param selIndes  New selection element for the window
+ * @return          NULL if error
+ */
 Display* disp_setSelIndex(Display* dis, int winIndex, int selIndex){
   if(!dis)return NULL;
   if(winIndex>=dis->nLatWindow) return NULL;
@@ -134,6 +175,16 @@ Display* disp_setSelIndex(Display* dis, int winIndex, int selIndex){
   return print_Window(dis,winIndex);
 }
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Gets the select index of a window in the right 
+ *        column of the display
+ * 
+ * @param dis       Display in which the window is 
+ * @param winIndex  Index of the window whose selected index will
+ *                  be returned
+ * @return          -1 if error 
+ */
 int disp_getSelIndex(Display* dis, int winIndex){
   if(!dis) return -1;
   if(winIndex>=dis->nLatWindow) return -1;
@@ -141,28 +192,26 @@ int disp_getSelIndex(Display* dis, int winIndex){
   return win_getSelectedIndex(dis->latWindow[winIndex]);
 }
 
-Display* disp_SetPopup(Display* dis, Window* p){
-    if(!dis||!p) {
-        return NULL;
-    }
-    dis->popup=win_copy(p);
-    if(!dis->popup) return NULL;
-
-    return dis;
-}
-void disp_RemPopup(Display* dis){
-    if(!dis->popup) return;
-    win_free(dis->popup);
-}
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Renders the display by rendering all its components
+ *        
+ * 
+ * @param dis    Display to be redered
+ * @return       A new Canvas containing the graphical 
+ *               representation of the display
+ */
 Canvas* disp_Render(Display* dis){
     Canvas* left=NULL;
     Canvas* res=NULL;
     Canvas* t=NULL,*t2=NULL;
+
     Wlabel* l = wl_ini(dis->title, dis->titf, TITLE_MULTILINE);
     Canvas* right=wl_render(l, dis->width-dis->vdiv);
     dis->rendered=true;
     dis->tithei=canv_getHeight(right);
     wl_free(l);
+
     Canvas* bar=canv_backGrnd(255,255,255,255,dis->width-dis->vdiv,LINE_WIDTH);
     for(int i=0;i<dis->nLatWindow;++i){
         canv_appendVI(right,bar);
@@ -175,9 +224,7 @@ Canvas* disp_Render(Display* dis){
     }
     canv_appendVI(right,bar);
     room_setHW(dis->room,dis->height,dis->vdiv);
-    //room_setBounds(dis->room,0,0,dis->height,dis->vdiv);
     left=room_getRender(dis->room);
-    //left =room_getSubRender(dis->room, 0, 0, dis->vdiv, dis->height);
     if(!left)goto CLEAN;
     dis->topm=(canv_getHeight(left)-canv_getHeight(right))/2;
     Canvas* vbar=canv_backGrnd(255,255,255,255,LINE_WIDTH*2,canv_getHeight(right));
@@ -193,24 +240,72 @@ CLEAN:
     canv_free(t2);
     return res;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Scrolls the window associated with this display
+ * 
+ * @param dis Display whose window has to be scrolled
+ * @param i   Horizontal percentage of the room that will
+ *            be scrolled
+ * @param j   Vertical percentage of the room that will
+ *            be scrolled
+ *          
+ * @return  -1 if there was an error
+ *           0 if there was no scrolling to be done
+ *           1 if the room scrolled
+ */
 int disp_scroll(Display* dis,double i,double j){
     if(!dis)return -1;
     return room_scroll(dis->room,i,j);
 
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Prints an updated render of the window in the <index>
+ *        position of the right column. 
+ * 
+ * This function will calculate the position that this window will
+ * have on the screen and print the new render of the window on
+ * that position
+ * 
+ * @param dis   Display whose window will be rendered
+ * @param index Position of the window in the right column
+ * @return Display* 
+ */
 Display* print_Window(Display*dis, int index){
     if(!dis) return NULL;
     if(index<0 || index>dis->nLatWindow) return NULL;
     Canvas* c=win_render(dis->latWindow[index]);
-    //int ipos=dis->tithei+dis->topm;
     int ipos=dis->tithei+LINE_WIDTH;
+
     for(int i=0;i<index;++i){
         ipos+=LINE_WIDTH;
         ipos+=win_getHeight(dis->latWindow[i]);
     }
+
     canv_print(stdout,c,ipos,dis->vdiv+1+2*LINE_WIDTH);
     return dis;
 }
+
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Enters the dialogmode of ghe display
+ * 
+ * When this function is called, it will take control
+ * of the entire game. 
+ * Key presses will mean advancing the dialog except 'Q' or 'E',
+ * those keys will end the dialog mode and return to 
+ * the usual gameplay.
+ * 
+ * 
+ * @param dis   Display 
+ * @param dman 
+ * @param ename 
+ * @return Display* 
+ */
 Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ename){
     if(!dis||!dman)return NULL;
 
@@ -262,10 +357,15 @@ Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ena
     canv_print(stdout,result,ipos,0);
     char in;
     while(1){
-        in=getch1();
         wl_free(wl); wl=NULL;
         canv_free(wl_rend); wl_rend=NULL;
 
+        //Waits for a new character
+        in=getch1();
+        if(in=='Q'||in=='E'){
+            goto END;
+        }
+        
         txt=dman_getLine(dman);
         if(!txt)goto END;
         wl=wl_ini(txt,fcat_lookup(M4),0);
@@ -274,11 +374,9 @@ Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ena
         result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),10);
         if(!result)goto ERR_END;
         canv_print(stdout,result,ipos,0);
-
     }
     goto END;
-
-SUCC_END:
+    
 
 
 ERR_END:
@@ -291,6 +389,8 @@ END:
     free(txt);
     return err? NULL:dis;
 }
+
+/*
 Display* disp_DiaglogWindow(Display* dis, char * txt,const Font* f){
     if(!dis||!txt)return NULL;
     Canvas* c=disp_Render(dis);
@@ -314,7 +414,25 @@ Display* disp_remDialog(Display* dis){
     dis->pop_dial=false;
     return dis;
 }
+*/
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Enters the inventory mode of this display
+ * 
+ * When this function is called, the inventory window 
+ * will appear and it will take control of the input. 
+ * 
+ * This mode will allow the player to
+ * 
+ * @param dis       Display that will enter the inventory mode
+ * @param inv       Inventory that will be displayed
+ * @param ftitle    Font for the "Inventory" text
+ * @param fsubtitle Font for the title of sections
+ * @param ftext     Font for the name of items
+ * @param fnumbers  Font for the amount of items
+ * @return          NULL if error
+ */
 Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers){
     if(!dis||!inv)return NULL;
     int dim;
@@ -385,9 +503,25 @@ END:
     canv_print(stdout,ccc,0,0);
     return dis;
 }
-
-Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv, int size, pairii* coord){
-    if(!dis||!inv)return NULL;
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Creates the render of the crafting window of that list
+ *        of recipies
+ * 
+ * 
+ * @param dis   Display to which the crafting window will be
+ *              attached to
+ * @param rec   Array of recipies that will be included in the
+ *              window
+ * @param size  Amount of elements in the arrays
+ * @param coord Array in which the positions of the selectin 
+ *              indicators will be rendered
+ * @return      New canvas with the graphical representation of 
+ *              the crafting window. 
+ *              NULL if error
+ */
+Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii* coord){
+    if(!dis)return NULL;
 
     int gap_w=10;
     Pixel* nsel=pix_ini(0,0,0,0);
@@ -432,7 +566,6 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, Inventory* inv, i
 
     canv_free(lat);
     canv_free(fdot_1);
-
 
 
     Canvas* gap=canv_backGrnd(0,0,0,0,wid,gap_w);
@@ -510,7 +643,7 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
         //ERROR CONTROL
     }
     int selindex=0;
-    Canvas* base=_disp_renderCraftingWindow(dis,rec,inv,size,coordinates);
+    Canvas* base=_disp_renderCraftingWindow(dis,rec,size,coordinates);
     if(!base)return NULL;
     canv_print(stdout,base,0,0);
     _disp_reprintCraft(coordinates,size,selindex,base);

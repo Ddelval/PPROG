@@ -606,8 +606,11 @@ Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
  * Usually the factors are (-1 <= i <= 1)
  * 
  * @param r Room to be scrolled
- * @param i Horizontal factor 
- * @param j Vertical factor
+ * @param i   Horizontal percentage of the room that will
+ *            be scrolled
+ * @param j   Vertical percentage of the room that will
+ *            be scrolled
+ * 
  * @return  -1 if there was an error
  *           0 if there was no scrolling to be done
  *           1 if the room scrolled
