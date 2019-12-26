@@ -33,36 +33,7 @@ typedef struct _Display  Display;
  * @param titf  Font for the tile
  * @return Display* 
  */
-Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* titf){
-    if(!room) return NULL;
-    Display* dis=(Display*)calloc(1, sizeof(Display));
-    if(!dis) return NULL;
-    
-    dis->title=calloc(strlen(tit)+1, sizeof(char));
-    if(!dis->title){
-        disp_free(dis);
-        return NULL;
-    }
-    if(!strcpy(dis->title, tit)){
-        disp_free(dis);
-        return NULL;
-    }
-
-    dis->width=wid;
-    dis->height=hei;
-    dis->titf=titf;
-    dis->vdiv=vdiv;
-    dis->room=room_copy(room);
-    dis->nLatWindow=0;
-    dis->latWinalloc=3;
-    dis->rendered=false;
-    dis->latWindow=(Window**)calloc(ARR_INC, sizeof(Window*));
-    if(!dis->latWindow){
-        disp_free(dis);
-        return NULL;
-    }
-    return dis;
-}
+Display* disp_ini(int wid, int hei, Room* room, int vdiv,char* tit, const Font* titf);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -132,20 +103,7 @@ int disp_scroll(Display* dis,double i,double j);
  * @param index Position of the window in the right column
  * @return Display* 
  */
-Display* print_Window(Display*dis, int index){
-    if(!dis) return NULL;
-    if(index<0 || index>dis->nLatWindow) return NULL;
-    Canvas* c=win_render(dis->latWindow[index]);
-    int ipos=dis->tithei+LINE_WIDTH;
-
-    for(int i=0;i<index;++i){
-        ipos+=LINE_WIDTH;
-        ipos+=win_getHeight(dis->latWindow[i]);
-    }
-
-    canv_print(stdout,c,ipos,dis->vdiv+1+2*LINE_WIDTH);
-    return dis;
-}
+Display* print_Window(Display*dis, int index);
 
 
 /*-----------------------------------------------------------------*/

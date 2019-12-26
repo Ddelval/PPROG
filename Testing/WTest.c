@@ -103,7 +103,7 @@ int main(){
         }
         if(c=='Q'){
             //disp_remInventory(dis);
-            disp_remDialog(dis);
+            //disp_remDialog(dis);
         }
         //usleep(100000);
 

@@ -31,6 +31,11 @@ struct _Display{
     bool pop_inv;
     bool pop_craf;
 };
+/** PROTOTYPES **/
+Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii* coord);
+Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,Canvas* bckg);
+
+/** FUNCTION DECLARATION **/
 
 /*-----------------------------------------------------------------*/
 /**

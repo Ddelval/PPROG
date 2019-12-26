@@ -225,9 +225,6 @@ World* wo_launch(World* w){
         if(c=='J'){
             disp_execute(w->dis,0,entity_getRoomIndex(w->player),w->player);
         }
-        if(c=='Q'){
-            disp_remDialog(w->dis);
-        }
         if(c=='E'){
             break;
         }
