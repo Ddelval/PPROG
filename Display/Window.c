@@ -84,7 +84,7 @@ Window* win_ini(char* title, Welem** Win_elem, int num_elems, int wid, int hei, 
 	win->jpos=jpos;
     win->scroll_pos=0;
 	win->selected_elem=-1;
-	!win_setMargins(win, 0, 0, 0, 0);
+	win_setMargins(win, 0, 0, 0, 0);
 
 	win->backcol = pix_ini(80, 85, 222, 255);
 	if(!win->backcol) return win_free(win);
@@ -557,6 +557,7 @@ Window* win_addBorder(Window* win,Pixel* color, int width){
 	if(win->borderColor)pix_free(win->borderColor);
 	win->borderColor=pix_copy(color);
 	win->hasBorder=true;
+	return win;
 }
 
 /*-----------------------------------------------------------------*/

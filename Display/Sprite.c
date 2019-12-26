@@ -6,10 +6,40 @@
 
 #include "Sprite.h"
 #define ret_free(spr) {spr_free(spr); return NULL;}
+
+/**
+ * @brief Stores the information related with the triggers
+ * 
+ * Triggers will only affect rectangles of the canvas
+ * 
+ * (i1,j1) top left corner of the box
+ * (i2,j2) bottom right corner of the box
+ * tr_id   id of the trigger associated with this ara
+ * 
+ * The id of the trigger will be used to get the trigger
+ * from the trigger dictionary
+ * 
+ */
 typedef struct {
     int tr_id;
     int i1,i2,j1,j2;
 }trigdata;
+
+
+/**
+ * @brief A object that can move on the screen
+ * 
+ * A sprite has the graphical representation of an 
+ * object or entity, the collision and shadow data
+ * associated with it and the position on the screen
+ * 
+ * Some of this fields will be unused when 
+ * sprites are used as icons. 
+ * However, this implementation will allow us to
+ * avoid having a separate dictionary for sprites
+ * and canvases.
+ * 
+ */
 struct _Sprite{
   int id;
   int iPos, jPos;
@@ -20,6 +50,20 @@ struct _Sprite{
   bool** shadow;
   Canvas* canvas;
 };
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Initialises a sprite
+ * 
+ * All the memory will be allocated, however,
+ * the canvas will still be NULL
+ * 
+ * @param id        Id of the new sprite
+ * @param width     Width of the new sprite
+ * @param height    Height of the sprite
+ * @return          NULL if error
+ *                  The new sprite otherwise 
+ */
 Sprite* spr_ini(int id, int width, int height){
     Sprite* spr= calloc(1, sizeof(Sprite));
     if(!spr)return NULL;
@@ -43,23 +87,14 @@ Sprite* spr_ini(int id, int width, int height){
     spr->iPos=spr->jPos=-1;
     return spr;
 }
-void spr_setCoordinates(Sprite* sp,int i,int j){
-    if(!sp)return;
-    sp->iPos=i;
-    sp->jPos=j;
-}
-void spr_free(Sprite* sp){
-    if(!sp)return;
-    if(sp->collision){
-        for(int i=0;i<sp->height;++i){
-            free(sp->collision[i]);
-        }
-        free(sp->collision);
-    }
-    free(sp->tr);
-    canv_free(sp->canvas);
-    free(sp);
-}
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Copies the sprite
+ * 
+ * @param spr   Source sprite
+ * @return      Copy of the sprite
+ */
 Sprite* spr_copy(const Sprite* spr){
     if(!spr)return NULL;
     Sprite* sp=spr_ini(spr->id, spr->width, spr->height);
@@ -81,18 +116,25 @@ Sprite* spr_copy(const Sprite* spr){
     return sp;
 }
 
+/*-----------------------------------------------------------------*/
 /**
- File format:
- <id> <format> (0 if the collision canvas is the canvas, 1 otherwise)
- <Canvas>
- <Collision_canvas>
- <nº triggers>
- <list of triggers>
- The format of a trigger has to be: i1, i2, j1, j2 id
- where i1 is the initial row, i2 is the last row,
- j1 is the first row, j2 is the last row
- (All included)
-
+ * @brief Loads a sprite from the file
+ * 
+ * The format is the following:
+ * <id> <format>
+ * <canvas>
+ * 
+ * If format is 1, the file will also contain:
+ * <collision_canvas>
+ * 
+ * If format is 0, the collision canvas will 
+ * be the canvas.
+ * 
+ * If format is 2, the collision and shadow
+ * will be empty 
+ * 
+ * @param f 
+ * @return Sprite* 
  */
 Sprite* spr_load(FILE* f){
     if(!f)return NULL;
@@ -104,52 +146,67 @@ Sprite* spr_load(FILE* f){
     if(!c){
         return NULL;
     }
-    w=canv_getWidth(c);
-    h=canv_getHeight(c);
-    Sprite* res=spr_ini(id, w, h);
+    Sprite* res=spr_ini(id, canv_getWidth(c), canv_getHeight(c));
     if(!res){
         canv_free(c);
         return NULL;
     }
     res->canvas=c;
     
-    
     if(ff==1){
         Canvas* colldata=canv_load(f);
         for(int i=0;i<h;++i){
             for(int j=0;j<w;++j){
-                if(((double)i)/h>((double)sh)/100)res->collision[i][j]=!pix_halfTransparent(canv_getPixel(colldata,i,j));
-                else res->shadow[i][j]=!pix_halfTransparent(canv_getPixel(colldata,i,j));
-                
+                if(i*100>h*sh)res->collision[i][j]=!pix_halfTransparent(canv_getPixel(colldata,i,j));
+                else          res->shadow[i][j]   =!pix_halfTransparent(canv_getPixel(colldata,i,j));
             }
         }
         free(colldata);
     }
     else if(ff==0){
         for(int i=0;i<h;++i){
-            
             for(int j=0;j<w;++j){
                 if(i*100>h*sh)res->collision[i][j]=!pix_halfTransparent(canv_getPixel(c,i,j));
-                else {
-                    
-                    res->shadow[i][j]=!pix_halfTransparent(canv_getPixel(c,i,j));
-                    //fprintf(stderr,"-%d %d %d %d \n",id,i,j,res->shadow[i][j]);
-                }
+                else          res->shadow[i][j]   =!pix_halfTransparent(canv_getPixel(c,i,j));
             }
         }
     }
-    int n=0;
-    fscanf(f, "%d",&n);
-    if(n==0){
-        return res;
-    }
-    int i1,i2,j1,j2;
-    for(int i=0;i<n;++i){
-        scanf("%d %d %d %d %d",&i1,&i2,&j1,&j2,&id);
-        spr_addTrigger(res,id,i1,i2,j1,j2);
-    }
+    //Compatibility
+    fscanf(f, "%*d");
     return res;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Frees the memory allocated for the sprite
+ * 
+ * @param sp Sprite to be freed
+ */
+void spr_free(Sprite* sp){
+    if(!sp)return;
+    if(sp->collision){
+        for(int i=0;i<sp->height;++i){
+            free(sp->collision[i]);
+        }
+        free(sp->collision);
+    }
+    free(sp->tr);
+    canv_free(sp->canvas);
+    free(sp);
+}
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Adds a trigger to the sprite
+ * 
+ * @param s       Sprite to which the trigger will be added
+ * @param tr_id   Id of the trigger that will be stored in
+ *                the trigger
+ * @param i1      Horizontal starting position
+ * @param i2      Horizontal ending position
+ * @param j1      Vertical starting position
+ * @param j2      Vertical ending position
+ * @return        NULL if error
+ */
 Sprite* spr_addTrigger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
     if(!s)return NULL;
     if(!s->tr){
@@ -169,36 +226,18 @@ Sprite* spr_addTrigger(Sprite* s, int tr_id, int i1, int i2, int j1, int j2){
     s->trsize++;
     return s;
 
-    /*
-    int jj1;
-    while(i1<=i2){
-        jj1=j1;
-        while(jj1<=j2){
-            if(jj1>=s->width||i1>=s->height||i1<0||jj1<0){
-                continue;
-            }
-            for(int w=0;w<SPR_NTRIGGERS;++w){
-                if(s->trigger[i1][jj1][w]==-1){
-                    s->trigger[i1][jj1][w]=tr_id;
-                }
-            }
-            jj1++;
-        }
-        i1++;
-    }
-    return s;
-    */
 }
-/*
-Sprite* spr_printTrigger(Sprite* s){
-    fprintf(stderr,"\n\n\n-----------\n%d\n",spr_getId(s));
-    for(int i=0;i<s->height;++i){
-        for(int j=0;j<s->width;++j){
-            fprintf(stderr,"%d ",s->trigger[i][j][0]);
-        }
-        fprintf(stderr,"\n");
-    }
-*/
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Adds the collition data of the sprite to rarr
+ * 
+ * @param s     Sprite whose collition data will be added to arr
+ * @param rarr  Array of collision data in the room
+ * @param rwid  Height of the room
+ * @param rhei  Width of the room
+ * @return      NULL if error
+ */
 Sprite* spr_processCollisions(const Sprite* s,bool** rarr,int rwid, int rhei){
     if(!rarr)return NULL;
     int i2,j2;
@@ -211,27 +250,17 @@ Sprite* spr_processCollisions(const Sprite* s,bool** rarr,int rwid, int rhei){
             rarr[i2][j2]= rarr[i2][j2]||s->collision[i][j];
         }
     }
-    return s;
-}
-int spr_checkCollisions(const Sprite*s, const bool**rarr,int rwid,int rhei, int ni,int nj){
-    if(!rarr)return -1;
-    int i2,j2;
-    for(int i=0;i<s->height;++i){
-        i2=i+ni;
-        if(i2>=rhei)break;
-        for(int j=0;j<s->width;++j){
-            j2=j+nj;
-            if(j2>=rwid)break;
-            if(!s->collision[i][j])continue;
-            if(rarr[i2][j2]){
-                
-                return 1;
-            }
-        }
-    }
-    return 0;
+    return (Sprite*)s;
 }
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Adds the shadow data of the sprite to shad
+ * 
+ * @param s     Sprite whose shadow data will be added to shad
+ * @param shad  Canvas with the shadow data
+ * @return      NULL if error
+ */
 Sprite* spr_processShadows(const Sprite* s,Canvas* shad){
     if(!s||!shad)return NULL;
     int i2,j2;
@@ -243,14 +272,47 @@ Sprite* spr_processShadows(const Sprite* s,Canvas* shad){
         for(int j=0;j<s->width;++j){
             j2=j+s->jPos;
             if(j2<0||j2>=rwid)continue;
-                //fprintf(stderr,"%d %d %d %d \n",s->id,i,j,s->shadow[i][j]);
             if(s->shadow[i][j]||s->collision[i][j]){
                 assert(canv_setPixel(shad,canv_getPixel(s->canvas,i,j),i2,j2)!=NULL);
             }
         }
     }
-    return s;
+    return (Sprite*)s;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Checks if the moving the sprite to the new position will
+ *        make it collide with another object
+ * 
+ * @param s     Sprite that we are moving
+ * @param rarr  Array of collision data of the room
+ * @param rwid  Width of the room
+ * @param rhei  Height of the room
+ * @param ni    New horizontal position of the sprite
+ * @param nj    New vertical position of the sprite
+ * @return      -1 if error
+ *               0 if there is no collition
+ *               1 if there is a  collition 
+ */
+int spr_checkCollisions(const Sprite*s, const bool**rarr,int rwid,int rhei, int ni,int nj){
+    if(!rarr)return -1;
+    int i2,j2;
+    for(int i=0;i<s->height;++i){
+        i2=i+ni;
+        if(i2>=rhei)break;
+        for(int j=0;j<s->width;++j){
+            j2=j+nj;
+            if(j2>=rwid)break;
+            if(!s->collision[i][j])continue;
+            
+            if(rarr[i2][j2]) return 1;
+            
+        }
+    }
+    return 0;
+}
+/** GETTERS **/
 const Canvas* spr_getDispData(const Sprite* spr){
     if(!spr)return NULL;
     return spr->canvas;
@@ -271,18 +333,6 @@ int spr_getHeight(const Sprite* spr){
     if(!spr) return -1;
     return spr->height;
 }
-void spr_setOI( Sprite* spr,int ipos){
-    if(!spr)return;
-    spr->iPos=ipos;
-}
-void spr_setOJ(Sprite* spr, int jpos){
-    if(!spr)return;
-    spr->jPos=jpos;
-}
-int spr_getId(const Sprite* sp){
-    if(!sp)return 0;
-    return sp->id;
-}
 int spr_getTriginfo(const Sprite*s, int** tr_id, int** i1,int** i2, int** j1, int** j2){
     if(!s)return -1;
     *tr_id=calloc(s->trsize,sizeof(int));
@@ -298,4 +348,22 @@ int spr_getTriginfo(const Sprite*s, int** tr_id, int** i1,int** i2, int** j1, in
         *tr_id[i]=s->tr[i].tr_id;
     }
     return s->trsize;
+}
+/** SETTERS **/
+void spr_setCoordinates(Sprite* sp,int i,int j){
+    if(!sp)return;
+    sp->iPos=i;
+    sp->jPos=j;
+}
+void spr_setOI( Sprite* spr,int ipos){
+    if(!spr)return;
+    spr->iPos=ipos;
+}
+void spr_setOJ(Sprite* spr, int jpos){
+    if(!spr)return;
+    spr->jPos=jpos;
+}
+int spr_getId(const Sprite* sp){
+    if(!sp)return 0;
+    return sp->id;
 }

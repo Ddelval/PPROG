@@ -260,7 +260,7 @@ Display* print_Window(Display*dis, int index){
  * @param ename 
  * @return Display* 
  */
-Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ename){
+Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
     if(!dis||!dman)return NULL;
 
     char* txt=NULL;
@@ -341,7 +341,7 @@ END:
     canv_free(back);
     canv_free(rend);
     free(txt);
-    return err? NULL:dis;
+    return err? NULL:(Display*)dis;
 }
 
 /*-----------------------------------------------------------------*/

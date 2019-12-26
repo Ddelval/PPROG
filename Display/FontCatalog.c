@@ -2,7 +2,7 @@
 #include "FontCatalog.h"
 
 Font** dat=NULL;
-Font* fcat_ini(){
+void fcat_ini(){
     dat=calloc(FSIZE,sizeof(Font*));
     FILE* f=NULL;
     f=fopen("Display/Fonts/Robo_Mono/04.txt", "r");

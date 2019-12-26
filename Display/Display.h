@@ -122,7 +122,7 @@ Display* print_Window(Display*dis, int index);
  * @param ename 
  * @return Display* 
  */
-Display* disp_DialogWindow(const Display* dis, const DialogMan* dman, char * ename);
+Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename);
 
 /*-----------------------------------------------------------------*/
 /**

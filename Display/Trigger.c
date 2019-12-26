@@ -25,19 +25,34 @@ struct _Trigger
     int ally_id;
     void * entit;
 };
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Allocates the memory for the new trigger
+ * 
+ * @return The new trigger
+ */
 Trigger* tr_ini(){
     Trigger* t=calloc(1,sizeof(Trigger));
     return t;
 }
 
-void tr_free(Trigger* t){
-    free(t);
+Trigger* tr_createTalk(void* e,int ally_id){
+    Trigger* t=tr_ini();
+    if(!t)return NULL;
+    t->ally_id=ally_id;
+    t->entit=e;
+    t->type=TALK;
+    return t;
 }
-Trigger* tr_setSpr(Trigger* tr, int i){
-    if(!tr)return NULL;
-    tr->sprite_index=i;
-    return tr;
+
+Trigger* tr_copy(const Trigger * src){
+    if(!src)return NULL;
+    Trigger* t2=tr_ini();
+    memcpy(t2,src,sizeof(Trigger));
+    return t2;
 }
+
 Trigger * tr_load(FILE* f){
     if(!f)return NULL;
     Trigger * t=tr_ini();
@@ -56,12 +71,25 @@ Trigger * tr_load(FILE* f){
     }
     return t;
 }
-Trigger* tr_copy(const Trigger * src){
-    if(!src)return NULL;
-    Trigger* t2=tr_ini();
-    memcpy(t2,src,sizeof(Trigger));
-    return t2;
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Frees the Trigger
+ * 
+ * @param t Trigger to be freed
+ */
+void tr_free(Trigger* t){
+    free(t);
 }
+
+bool tr_completeEqual(Trigger* t1,Trigger* t2){
+    if(!t1||!t2)return -1;
+    return memcmp(t1,t2,sizeof(Trigger))==0;
+}
+
+
+/** GETTERS */
+
 int tr_getId(const Trigger* tr){
     return tr? tr->trig_id: -1;
 }
@@ -85,29 +113,27 @@ bool tr_needsTrigger(trig_type t){
     if(t==SHOW)return false;
     return true;
 }
-void tr_setId(Trigger * t, int id){
-    if(!t)return;
-    t->trig_id=id;
-}
-Trigger* tr_createTalk(void* e,int ally_id){
-    Trigger* t=tr_ini();
-    if(!t)return NULL;
-    t->ally_id=ally_id;
-    t->entit=e;
-    t->type=TALK;
-    return t;
-}
+
 void* tr_getEntityRef(Trigger* t){
     if(!t)return NULL;
     return t->entit;
 }
-const char* tr_getDesc(Trigger* t){
+
+char* tr_getDesc(Trigger* t){
     return t? strdup(t->name):NULL;
 }
-bool tr_completeEqual(Trigger* t1,Trigger* t2){
-    if(!t1||!t2)return -1;
-    return memcmp(t1,t2,sizeof(Trigger))==0;
-}
+
 int tr_getAlly_id(Trigger * t){
     return t? t->ally_id:-1;
+}
+/** SETTERS **/
+void tr_setId(Trigger * t, int id){
+    if(!t)return;
+    t->trig_id=id;
+}
+
+Trigger* tr_setSpr(Trigger* tr, int i){
+    if(!tr)return NULL;
+    tr->sprite_index=i;
+    return tr;
 }
