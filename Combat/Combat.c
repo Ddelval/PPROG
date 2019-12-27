@@ -129,7 +129,7 @@ Combat* combat_execute(Combat* c) {
       }
       selindex=(selindex+OBJ_MAX_ATTACKS+1)%(OBJ_MAX_ATTACKS+1);
       if(!disp_setSelIndex(c->cd, PLAYER_ACTIONS,selindex)) return NULL;
-      
+
   }
 }
 
@@ -518,8 +518,8 @@ int* _combat_enemyMove(Combat* c) {
 
   int max_attack=0;
   //EMERGENCY HEALING
-  if(attb_get(c->stats[ENEMY], HEALTH)<30) {
-    for(int i=1; i<4; ++i) {
+  if(attb_get(c->stats[ENEMY], HEALTH)<26) {
+    for(int i=0; i<4; ++i) {
       if(attb_get(skill_getAtbself(c->moveset[ENEMY][i]), HEALTH)>attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), HEALTH)) {
         max_attack = i;
       }
@@ -528,10 +528,23 @@ int* _combat_enemyMove(Combat* c) {
       return _combat_executeEnemyMove(c, max_attack);
     }
   }
+
+  //STUN TACTICS
+  max_attack=0;
+  if(attb_get(c->stats[ENEMY], ATTACK)<attb_get(c->stats[PLAYER],ATTACK)-35){
+  for(int i=0;i<4;i++) {
+    if(attb_get(skill_getAtbatk(c->moveset[ENEMY][i]), ATTACK) > attb_get(skill_getAtbatk(c->moveset[ENEMY][max_attack]), ATTACK) && skill_getSpecial(c->moveset[ENEMY][i]) == STUNNER) {
+        max_attack = i;
+    }
+  }
+  if(skill_getSpecial(c->moveset[ENEMY][max_attack]) == STUNNER){
+    return _combat_executeEnemyMove(c, max_attack);
+  }
+}
   //STAT BOOSTING ATTACK
   max_attack=0;
   if(attb_get(c->stats[ENEMY], ATTACK)<attb_get(c->stats[PLAYER],ATTACK)-20) {
-    for(int i=1; i<4; ++i) {
+    for(int i=0; i<4; ++i) {
       if(attb_get(skill_getAtbself(c->moveset[ENEMY][i]), ATTACK) > attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), ATTACK)) {
         max_attack = i;
       }
@@ -543,7 +556,7 @@ int* _combat_enemyMove(Combat* c) {
   //STAT BOOSTING DEF
   max_attack=0;
   if(attb_get(c->stats[ENEMY], DEFENSE)<attb_get(c->stats[PLAYER],ATTACK)-25) {
-    for(int i=1;i<4;++i) {
+    for(int i=0;i<4;++i) {
       if(attb_get(skill_getAtbself(c->moveset[ENEMY][i]), DEFENSE)>attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), DEFENSE)) {
         max_attack = i;
       }
@@ -555,7 +568,7 @@ int* _combat_enemyMove(Combat* c) {
   //STAT BOOSTING AGL
   max_attack=0;
   if(attb_get(c->stats[ENEMY], DEFENSE)<attb_get(c->stats[PLAYER],DEFENSE)-15) {
-    for(int i=1;i<4;++i) {
+    for(int i=0;i<4;++i) {
       if (attb_get(skill_getAtbself(c->moveset[ENEMY][i]),SPEED) > attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), SPEED)) {
         max_attack = i;
       }
@@ -566,7 +579,7 @@ int* _combat_enemyMove(Combat* c) {
   }
   //DEFAULT BEHAVIOUR
   max_attack=0;
-  for(int i=1;i<4;i++) {
+  for(int i=0;i<4;i++) {
     if(attb_get(skill_getAtbatk(c->moveset[ENEMY][i]), ATTACK) > attb_get(skill_getAtbatk(c->moveset[ENEMY][max_attack]), ATTACK)) {
         max_attack = i;
     }
@@ -645,7 +658,7 @@ Combat* combat_load(Combat*c) {
   for(int i=0;i<sizeof(estats)/sizeof(estats[0]);++i)estats[i]=0;
   for(int i=0;i<sizeof(movs)/sizeof(movs[0]);++i)movs[i]=0;
 
-  
+
   char ch[ATT_NUMBER][128];
 
   Window* winplayer=NULL;
