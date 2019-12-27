@@ -121,7 +121,7 @@ Combat* combat_execute(Combat* c) {
               break;
           case 'J':
               if(!_combat_executeMove(c, selindex)) return NULL;
-              if(!attb_get(c->stats[PLAYER], HEALTH)||!attb_get(c->stats[ENEMY], HEALTH)) return c;
+              if(attb_get(c->stats[PLAYER], HEALTH)<0||!attb_get(c->stats[ENEMY], HEALTH)<0) return c;
               break;
           case 'Q': //NOTE: THIS IS ONLY TO BE ABLE TO EXIT MID-COMBAT WHILE DEVELOPING THE GAME. REMOVE THIS WHEN THE DELIVERY IS DUE.
               return c;
