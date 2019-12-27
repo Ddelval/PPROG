@@ -23,7 +23,7 @@ int main() {
   if(!combat_load(c)) return 1;
   printf("Combat loaded\n");
   combat_execute(c);
-
+  combat_free(c);
   term_restore();
   return 0;
 }

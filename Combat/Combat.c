@@ -199,19 +199,25 @@ Combat* _combat_executeMove(Combat* c, int choice) {
     }
     free(p);
     free(e);
-    char ch[5][128];
+    char ch[ATT_NUMBER][128];
     sprintf(ch[0], "Health: %d", attb_get(c->stats[PLAYER], HEALTH));
     sprintf(ch[1], "Attack: %d", attb_get(c->stats[PLAYER], ATTACK));
     sprintf(ch[2], "Defense: %d", attb_get(c->stats[PLAYER], DEFENSE));
     sprintf(ch[3], "Speed: %d", attb_get(c->stats[PLAYER], SPEED));
     sprintf(ch[4], "Agility: %d", attb_get(c->stats[PLAYER], AGILITY));
-    Welem* pstats[5];
-    for(int i=0;i<5;++i) {
+    Welem* pstats[ATT_NUMBER];
+    for(int i=0;i<ATT_NUMBER;++i) {
         pstats[i]=we_createLabel(ch[i],fcat_lookup(M4),0);
         if(!pstats[i]) {
           for(int j=0;j<i;++j)we_free(pstats[j]);
           return NULL;
         }
+    }
+    for(int i=0;i<ATT_NUMBER;++i) {
+      if(!win_addWindowElement(disp_getLWindow(c->cd,PLAYER_STATS), pstats[i])) {
+        for(int j=0;j<ATT_NUMBER;++j)we_free(pstats[j]);
+        return NULL;
+      }
     }
     /*  ENEMY STATS */
     if(!win_clear(disp_getLWindow(c->cd,ENEMY_STATS))) {
@@ -223,25 +229,32 @@ Combat* _combat_executeMove(Combat* c, int choice) {
     sprintf(ch[2], "Defense: %d", attb_get(c->stats[ENEMY], DEFENSE));
     sprintf(ch[3], "Speed: %d", attb_get(c->stats[ENEMY], SPEED));
     sprintf(ch[4], "Agility: %d", attb_get(c->stats[ENEMY], AGILITY));
-    Welem* estats[5];
-    for(int i=0;i<5;++i) {
+    Welem* estats[ATT_NUMBER];
+    for(int i=0;i<ATT_NUMBER;++i) {
         estats[i]=we_createLabel(ch[i],fcat_lookup(M4),0);
         if(!estats[i]) {
-          for(int j=0;j<5;++j)we_free(pstats[j]);
+          for(int j=0;j<ATT_NUMBER;++j)we_free(pstats[j]);
           for(int j=0;j<i;++j)we_free(estats[j]);
           return NULL;
         }
     }
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
+    for(int i=0;i<ATT_NUMBER;++i) {
+      if(!win_addWindowElement(disp_getLWindow(c->cd,ENEMY_STATS), estats[i])) {
+        for(int j=0;j<ATT_NUMBER;++j)we_free(pstats[j]);
+        for(int j=0;j<ATT_NUMBER;++j)we_free(estats[j]);
+        return NULL;
+      }
+    }
+    for(int j=0;j<ATT_NUMBER;++j)we_free(pstats[j]);
+    for(int j=0;j<ATT_NUMBER;++j)we_free(estats[j]);
   }
-  free(p);
-  free(e);
+
   _combat_message(c, "Please select a movement");
   if(!win_setSelected(disp_getLWindow(c->cd, PLAYER_ACTIONS), -1)) {
     return NULL;
   }
-
+  print_Window(c->cd, PLAYER_STATS);
+  print_Window(c->cd, ENEMY_STATS);
   return c;
 }
 
@@ -321,6 +334,7 @@ int* _combat_playerMove(Combat* c, int choice) {
 
   /*  RISING OUR ATTACK  */
   attack = min(attb_get(c->stats[PLAYER], ATTACK) + attb_get(self, ATTACK), attb_get(entity_getAttributes(c->player), ATTACK));
+  if(attack<0) attack=0;
   if(!attb_set(c->stats[PLAYER], attack, ATTACK)) {
     attb_free(self);
     attb_free(attk);
@@ -331,6 +345,7 @@ int* _combat_playerMove(Combat* c, int choice) {
 
   /*  OUR SPEED  */
   slowing = min(attb_get(c->stats[PLAYER], SPEED) + attb_get(self, SPEED), attb_get(entity_getAttributes(c->player), SPEED));
+  if(slowing<0) slowing=0;
   if(!attb_set(c->stats[PLAYER], slowing, SPEED)) {
     attb_free(self);
     attb_free(attk);
@@ -341,6 +356,7 @@ int* _combat_playerMove(Combat* c, int choice) {
 
   /*  OUR AGILITY  */
   clumnsiness = min(attb_get(c->stats[PLAYER], AGILITY) + attb_get(self, AGILITY), attb_get(entity_getAttributes(c->player), AGILITY));
+  if(clumnsiness<0) clumnsiness=0;
   if(!attb_set(c->stats[PLAYER], clumnsiness, AGILITY)) {
     attb_free(self);
     attb_free(attk);
@@ -351,6 +367,7 @@ int* _combat_playerMove(Combat* c, int choice) {
 
   /*  OUR DEFENSE  */
   defense = min(attb_get(c->stats[PLAYER], DEFENSE) + attb_get(self, DEFENSE), attb_get(entity_getAttributes(c->player), DEFENSE));
+  if(defense<0) defense=0;
   if(!attb_set(c->stats[PLAYER], defense, DEFENSE)) {
     attb_free(self);
     attb_free(attk);
@@ -437,7 +454,7 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
   ret[3]=defense;
 
   /*  DAMAGE  */
-  int damage = attb_get(attk, HEALTH) - attb_get(c->stats[PLAYER], DEFENSE);
+  int damage = attb_get(attk, ATTACK) - attb_get(c->stats[PLAYER], DEFENSE);
   if(damage < 0) damage = 0;
   if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], HEALTH) - damage, HEALTH)) {
     attb_free(self);
