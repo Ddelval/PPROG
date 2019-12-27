@@ -151,8 +151,8 @@ Combat* _combat_executeMove(Combat* c, int choice) {
   srand(time(NULL));
   double random = (double)rand()/RAND_MAX;
   double res=((double)p1/100)*2 - ((double)p2/100) - random;
-  int* e;
-  int* p;
+  int* e=NULL;
+  int* p=NULL;
   if(skill_getSpecial(ps)==NORMAL) res += 0.3;
   if(skill_getSpecial(ps)==UNDODGE) res=1;
   if(res<0) { /*  Your attack is dodged */
@@ -605,7 +605,7 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
 
 void _combat_message(Combat* c, char* message) {
   if(!c||!message||!c->cd) return;
-  if(!win_remWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), 0)) return;
+  win_remWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), 0);
   FILE* f=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
   Font* f6=font_load(f);
   fclose(f);

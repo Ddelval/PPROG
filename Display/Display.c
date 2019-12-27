@@ -869,7 +869,7 @@ int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j, bool scr
  * @param windex    Index of the window in the display
  * @return          NULL if error
  */
-const Window* disp_getLWindow(Display* d, int windex) {
+Window* disp_getLWindow(Display* d, int windex) {
   if(!d||windex<0||windex>=d->nLatWindow) return NULL;
 
   return d->latWindow[windex];

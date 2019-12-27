@@ -39,6 +39,7 @@ Welem* we_ini(Wtype t, void* data){
 /*-----------------------------------------------------------------*/
 /// Free the allocated memory
 void we_free(Welem* w){
+    if(!w)return;
     if(w->t==LABEL){
         wl_free(w->dat);
     }
@@ -102,14 +103,14 @@ Welem* we_copy(Welem* w){
     void *data=NULL;
     if(w->t==LABEL){
         data= wl_copy((Wlabel*)w->dat);
-				Welem* e=we_ini(w->t, data);
-				wl_free(data);
+		Welem* e=we_ini(w->t, data);
+		wl_free(data);
         return e;
     }
     if(w->t==ICONLABEL){
         data= wi_copy((Wlabic*)w->dat);
-				Welem* e=we_ini(w->t, data);
-				wl_free(data);
+		Welem* e=we_ini(w->t, data);
+		wl_free(data);
         return e;
     }
 
