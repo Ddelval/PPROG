@@ -21,6 +21,10 @@
 #include "FontCatalog.h"
 #include "DialogMan.h"
 
+#define W_DATA 0
+#define H_DATA 1
+#define VD_DATA 2
+
 typedef struct _Display  Display;
 /**
  * @brief Allocates all the memory required for a new Display ADT
@@ -254,7 +258,12 @@ int disp_getNLatWindow(Display* d);
 
 /*-----------------------------------------------------------------*/
 /**
- * @brief Gets the dimensions of the window
+ * @brief Gets the dimensions of the window.
+ * 
+ * These macros should be used when accessing this array:
+ * W_DATA  -> width
+ * H_DATA  -> height 
+ * VD_DATA -> vertical divisor
  * 
  * @param d     Display whose dimensions will be returned
  * @return      Array with the dimensions in this order:

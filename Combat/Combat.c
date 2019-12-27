@@ -114,10 +114,10 @@ Combat* combat_execute(Combat* c) {
       char ch=getch1();
       switch(ch){
           case 'W': case 'O':
-              selindex++;
+              selindex--;
               break;
           case 'S': case 'L':
-              selindex--;
+              selindex++;
               break;
           case 'J':
               if(!_combat_executeMove(c, selindex)) return NULL;
@@ -127,14 +127,14 @@ Combat* combat_execute(Combat* c) {
               return c;
 
       }
-      selindex=(selindex+MAX_ATTACKS+1)%(MAX_ATTACKS+1);
+      selindex=(selindex+OBJ_MAX_ATTACKS+1)%(OBJ_MAX_ATTACKS+1);
       if(!disp_setSelIndex(c->cd, PLAYER_ACTIONS,selindex)) return NULL;
       
   }
 }
 
 Combat* _combat_executeMove(Combat* c, int choice) {
-  if(!c||choice>MAX_ATTACKS) return NULL;
+  if(!c||choice>OBJ_MAX_ATTACKS) return NULL;
 
   if(choice==COMBAT_CONSUMABLE) {
     _combat_applyConsumable(c, c->player, PLAYER);
@@ -246,7 +246,7 @@ Combat* _combat_executeMove(Combat* c, int choice) {
 }
 
 int* _combat_playerMove(Combat* c, int choice) {
-  if(!c||choice<0||choice>=MAX_ATTACKS) return NULL;
+  if(!c||choice<0||choice>=OBJ_MAX_ATTACKS) return NULL;
   int* ret=(int*)calloc(10, sizeof(int));
   for(int i=0;i<10;i++) ret[i]=0;
   if(c->stunplayer) {
@@ -378,7 +378,7 @@ int* _combat_playerMove(Combat* c, int choice) {
 }
 
 int* _combat_executeEnemyMove(Combat *c, int choice) {
-  if(!c||choice<0||choice>=MAX_ATTACKS) return NULL;
+  if(!c||choice<0||choice>=OBJ_MAX_ATTACKS) return NULL;
 
   if(skill_getSpecial(c->moveset[ENEMY][choice])==STUNNER) c->stunplayer=true;
 
@@ -635,21 +635,35 @@ Combat* combat_load(Combat*c) {
       if(!disp_RemLwindow(c->cd, i)) return NULL;
     }
   }
-  Welem* pstats[5];
-  Welem* estats[5];
-  Welem* movs[5];
-  char ch[5][128];
+
+  int* disp_dim=disp_getDimensions(c->cd);
+  Welem* pstats[ATT_NUMBER];
+  Welem* estats[ATT_NUMBER];
+  Welem* movs[OBJ_MAX_ATTACKS+1]; //Attacks + consumable
+
+  for(int i=0;i<sizeof(pstats)/sizeof(pstats[0]);++i)pstats[i]=0;
+  for(int i=0;i<sizeof(estats)/sizeof(estats[0]);++i)estats[i]=0;
+  for(int i=0;i<sizeof(movs)/sizeof(movs[0]);++i)movs[i]=0;
+
+  
+  char ch[ATT_NUMBER][128];
+
+  Window* winplayer=NULL;
+  Window* winenemy =NULL;
+  Window* winoptions=NULL;
+  Window* wininfo=NULL;
+
+  Sprite* ps;
+  Sprite* es;
+
   sprintf(ch[0], "Health: %d", attb_get(c->stats[PLAYER], HEALTH));
   sprintf(ch[1], "Attack: %d", attb_get(c->stats[PLAYER], ATTACK));
   sprintf(ch[2], "Defense: %d", attb_get(c->stats[PLAYER], DEFENSE));
   sprintf(ch[3], "Speed: %d", attb_get(c->stats[PLAYER], SPEED));
   sprintf(ch[4], "Agility: %d", attb_get(c->stats[PLAYER], AGILITY));
-  for(int i=0;i<5;++i) {
+  for(int i=0;i<ATT_NUMBER;++i) {
       pstats[i]=we_createLabel(ch[i],fcat_lookup(M4),0);
-      if(!pstats[i]) {
-        for(int j=0;j<i;++j)we_free(pstats[j]);
-        return NULL;
-      }
+      if(!pstats[i])goto ERR_END;
   }
 
   sprintf(ch[0], "Health: %d", attb_get(c->stats[ENEMY], HEALTH));
@@ -657,130 +671,60 @@ Combat* combat_load(Combat*c) {
   sprintf(ch[2], "Defense: %d", attb_get(c->stats[ENEMY], DEFENSE));
   sprintf(ch[3], "Speed: %d", attb_get(c->stats[ENEMY], SPEED));
   sprintf(ch[4], "Agility: %d", attb_get(c->stats[ENEMY], AGILITY));
-  for(int i=0;i<5;++i) {
+  for(int i=0;i<ATT_NUMBER;++i) {
       estats[i]=we_createLabel(ch[i],fcat_lookup(M4),0);
-      if(!estats[i]) {
-        for(int j=0;j<5;++j)we_free(pstats[j]);
-        for(int j=0;j<i;++j)we_free(estats[j]);
-        return NULL;
-      }
+      if(!estats[i])goto ERR_END;
   }
 
-  for(int i=0;i<4;++i) {
+  for(int i=0;i<OBJ_MAX_ATTACKS;++i) {
       movs[i]=we_createLabel(skill_getName(c->moveset[PLAYER][i]),fcat_lookup(M4),0);
-      if(!movs[i]) {
-        for(int j=0;j<5;++j)we_free(pstats[j]);
-        for(int j=0;j<5;++j)we_free(estats[j]);
-        for(int j=0;j<i;++j)we_free(movs[j]);
-        return NULL;
-      }
+      if(!movs[i])goto ERR_END;
   }
   movs[4]=we_createLabel(obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE)), fcat_lookup(M4),0);
-  if(!movs[4]) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
-    for(int j=0;j<4;++j)we_free(movs[j]);
-    return NULL;
-  }
-  int* y=disp_getDimensions(c->cd);
-  Window* winplayer=win_ini("Your stats",pstats,5,y[0]-y[2]-1,y[2]/4-100,0,0,fcat_lookup(M8));
-  if(!winplayer) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
-    for(int j=0;j<5;++j)we_free(movs[j]);
-    free(y);
-    return NULL;
-  }
+  if(!movs[4])goto ERR_END;
 
-  Window* winenemy=win_ini("Enemy's stats",estats,5,y[0]-y[2]-1,y[2]/4-100,y[2]/4-100,0,fcat_lookup(M8));
-  if(!winenemy) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
-    for(int j=0;j<5;++j)we_free(movs[j]);
-    win_free(winplayer);
-    free(y);
-    return NULL;
-  }
-  Window* winoptions=win_ini("Movements",movs,5,y[0]-y[2]-1,y[2]/4-100, y[2]/2-200,0,fcat_lookup(M8));
-  if(!winoptions) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
-    for(int j=0;j<5;++j)we_free(movs[j]);
-    win_free(winplayer);
-    win_free(winenemy);
-    free(y);
-    return NULL;
-  }
-  Window* wininfo=win_ini("State of the combat",NULL,0,y[0]-y[2]-1,y[2]/4-100,y[2]-300,0,fcat_lookup(M8));
-  if(!wininfo) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
-    for(int j=0;j<5;++j)we_free(movs[j]);
-    win_free(winplayer);
-    win_free(winenemy);
-    win_free(winoptions);
-    free(y);
-    return NULL;
-  }
+  winplayer=win_ini("Your stats",pstats,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,0,0,fcat_lookup(M8));
+  if(!winplayer)goto ERR_END;
 
-  if(!disp_AddLWindow(c->cd, winplayer)) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
-    for(int j=0;j<5;++j)we_free(movs[j]);
-    win_free(winplayer);
-    win_free(winenemy);
-    win_free(winoptions);
-    free(y);
-    return NULL;
-  }
-  if(!disp_AddLWindow(c->cd, winenemy)) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
-    for(int j=0;j<5;++j)we_free(movs[j]);
-    win_free(winplayer);
-    win_free(winenemy);
-    win_free(winoptions);
-    return NULL;
-  }
-  if(!disp_AddLWindow(c->cd, winoptions)) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
-    for(int j=0;j<5;++j)we_free(movs[j]);
-    win_free(winplayer);
-    win_free(winenemy);
-    win_free(winoptions);
-    free(y);
-    return NULL;
-  }
-  if(!disp_AddLWindow(c->cd, wininfo)) {
-    for(int j=0;j<5;++j)we_free(pstats[j]);
-    for(int j=0;j<5;++j)we_free(estats[j]);
-    for(int j=0;j<5;++j)we_free(movs[j]);
-    win_free(winplayer);
-    win_free(winenemy);
-    win_free(winoptions);
-    free(y);
-    return NULL;
-  }
+  winenemy=win_ini("Enemy's stats",estats,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,disp_dim[H_DATA]/4-10,0,fcat_lookup(M8));
+  if(!winenemy)goto ERR_END;
 
-  Sprite* ps=entity_getSprite(c->player);
-  if(!ps) return NULL;
+  winoptions=win_ini("Movements",movs,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10, disp_dim[H_DATA]/2-20,0,fcat_lookup(M8));
+  if(!winoptions)goto ERR_END;
+
+  wininfo=win_ini("State of the combat",NULL,0,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,disp_dim[H_DATA]-30,0,fcat_lookup(M8));
+  if(!wininfo)goto ERR_END;
+
+  if(!disp_AddLWindow(c->cd, winplayer))goto ERR_END;
+  if(!disp_AddLWindow(c->cd, winenemy))goto ERR_END;
+  if(!disp_AddLWindow(c->cd, winoptions))goto ERR_END;
+  if(!disp_AddLWindow(c->cd, wininfo))goto ERR_END;
+
+  ps=entity_getSprite(c->player);
+  if(!ps)goto ERR_END;
   spr_setCoordinates(ps, 200,200);
-  Sprite* es=entity_getSprite(c->enemy);
-  if(!es) return NULL;
+  es=entity_getSprite(c->enemy);
+  if(!es)goto ERR_END;
   spr_setCoordinates(es, 50,600);
-  if(!room_addBSprite(disp_getrefRoom(c->cd), ps)) return NULL;
-  if(!room_addBSprite(disp_getrefRoom(c->cd), es)) return NULL;
+  if(!room_addBSprite(disp_getrefRoom(c->cd), ps))goto ERR_END;
+  if(!room_addBSprite(disp_getrefRoom(c->cd), es))goto ERR_END;
   Canvas* d=disp_Render(c->cd);
   canv_print(stdout,d,0,0);
   canv_free(d);
+
+  goto END;
+ERR_END:
+  c=NULL;
+END:
   for(int j=0;j<5;++j)we_free(pstats[j]);
   for(int j=0;j<5;++j)we_free(estats[j]);
   for(int j=0;j<5;++j)we_free(movs[j]);
   win_free(winplayer);
   win_free(winenemy);
   win_free(winoptions);
-  free(y);
+  free(disp_dim);
+  spr_free(ps);
+  spr_free(es);
   return c;
 }
 

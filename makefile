@@ -1,5 +1,5 @@
 .SECONDARY:
-CC= gcc -g  
+CC= gcc -g  -fsanitize=address
 EXE:=WorldTest WTest TestCombat
 
 

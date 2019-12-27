@@ -8,7 +8,7 @@
 #include "Skill.h"
 
 #define NAME_SIZE 50
-#define MAX_ATTACKS 4
+
 #define MARGIN 2
 struct _Object
 {
@@ -18,7 +18,7 @@ struct _Object
     int spr_id;
     obj_type type;
     Attributes* atb;
-    Skill * attacks[MAX_ATTACKS];
+    Skill * attacks[OBJ_MAX_ATTACKS];
     int n_attacks;
     bool destroyable;
 };

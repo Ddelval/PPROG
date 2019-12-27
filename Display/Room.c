@@ -103,7 +103,7 @@ Room* room_ini(int id, const char* name,int hei, int wid, const Pixel* backcol){
     r->name=calloc(strlen(name)+1, sizeof(char));
     if(!r->name)ret_free(r)
     strcpy(r->name, name);
-
+    r->backcol=backcol;
     r->id =id;
     r->hei=hei;
     r->wid=wid;

@@ -14,7 +14,7 @@
 
 typedef struct _Attributes Attributes;
 typedef enum {HEALTH,ATTACK,DEFENSE,SPEED,AGILITY} attb_type;
-
+#define ATT_NUMBER 5
 /*
    Function name: attb_ini
    Utility: It creates a new attb structure with 0 in each camp

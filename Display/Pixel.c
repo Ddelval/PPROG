@@ -187,6 +187,7 @@ bool pix_transparent(const Pixel* a){
  * @return false if the pixel is more than half opaque
  */
 bool pix_halfTransparent(const Pixel* a){
+    if(!a)return true;
     return a->a<=255/2+1;
 }
 

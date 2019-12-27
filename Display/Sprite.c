@@ -146,7 +146,9 @@ Sprite* spr_load(FILE* f){
     if(!c){
         return NULL;
     }
-    Sprite* res=spr_ini(id, canv_getWidth(c), canv_getHeight(c));
+    w=canv_getWidth(c);
+    h=canv_getHeight(c);
+    Sprite* res=spr_ini(id, w, h);
     if(!res){
         canv_free(c);
         return NULL;
