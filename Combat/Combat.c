@@ -633,10 +633,10 @@ void _combat_message(Combat* c, char* message) {
     we_free(we);
     return;
   }
-  font_free(f6);
-  we_free(we);
 
   if(!print_Window(c->cd, PLAYER_INFO)) return;
+  font_free(f6);
+  we_free(we);
   return;
 }
 

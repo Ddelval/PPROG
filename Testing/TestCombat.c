@@ -11,9 +11,9 @@
 #include "Object.h"
 
 int main() {
- 
+
   term_init();
-  
+
   Entity* player=edic_lookup(0, NULL);
   Entity* enemy=edic_lookup(0, NULL);
 

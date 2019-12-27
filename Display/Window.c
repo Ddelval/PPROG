@@ -128,7 +128,7 @@ Window* win_copy(Window* win) {
 	if(!win) return NULL;
     Window* win2=win_ini(win->title, win->Win_elem, win->num_elems, win->width, win->height, win->jpos, win->ipos, win->titlef);
     if(!win2) return NULL;
-	
+
 
 	win2->num_elems=win->num_elems;
 	win2->num_elems_siz=win->num_elems_siz;
@@ -147,7 +147,7 @@ Window* win_copy(Window* win) {
 	win2->hasBorder=win->hasBorder;
 	win2->borderWidth=win->borderWidth;
 
-	
+
 
 	win2->act_type=calloc(win->action_size,sizeof(trig_type));
 	memcpy(win2->act_type,win->act_type,win->action_size*sizeof(trig_type));
@@ -214,7 +214,7 @@ Window* win_addWelems(Window* w, Welem** we, int n) {
  * @return 		NULL in case of error
  */
 Window* win_remWindowElement(Window* win, int index) {
-	if(!win||index>win->num_elems||index<win->num_elems) return NULL;
+	if(!win||index>=win->num_elems||index<0) return NULL;
 	we_free(win->Win_elem[index]);
 
 	if(win->selected_elem==index)win->selected_elem=-1;
