@@ -81,7 +81,7 @@ Entity* entity_moveLeft(Entity* p,bool scroll);
 Entity* entity_moveRight(Entity* p,bool scroll);
 int entity_getRoomIndex(const Entity* en);
 Entity* entity_addItem(Entity* en,int itemId, int quantity);
-const Inventory* entity_getInvRef(Entity*en);
+Inventory* entity_getInvRef(Entity*en);
 
 /*
     Sets the DialogMan of a given entity, copying it.
@@ -108,5 +108,7 @@ int entity_getId(Entity* e);
 Entity* entity_setInventory(Entity* e, Inventory* inv);
 bool entity_getHasDialog(Entity *e);
 Entity* entity_processAlly(Entity* e);
-const DialogMan* entity_getDialogs(Entity *e);
+DialogMan* entity_getDialogs(Entity *e);
+Entity* entity_addQuest(Entity* en, Quest* q);
+Quest** entity_getQuests(Entity* e, int* siz);
 #endif

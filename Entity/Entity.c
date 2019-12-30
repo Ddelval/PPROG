@@ -6,7 +6,7 @@
 #define HORIZONTAL_STEP 30
 #define VERTICAL_STEP 10
 #define SPRITES 4
-
+#define MAX_QUESTS 30
 
 /*
    name: Entitys's name.
@@ -33,6 +33,7 @@ struct _Entity {
   Display* dis;
   bool has_dialog;
   DialogMan* dman;
+  Quest * adq_quests[MAX_QUESTS];
 };
 
 
@@ -118,6 +119,11 @@ Entity* entity_copy(Entity* e) {
     return NULL;
   }
   r->room_index=e->room_index;
+
+  for(int i=0;i<MAX_QUESTS;++i){
+    r->adq_quests[i]=quest_copy(e->adq_quests[i]);
+  }
+
   return r;
 }
 
@@ -188,9 +194,7 @@ char * entity_getName(Entity* p){
 }
 
 ent_type entity_getEntType(Entity* p){
-  ent_type e = 0;
-  if ((!p) || (p->t != 1) && (p->t != 2) && (p->t != 3)) return e;
-  return p->t;
+  return p? p->t:0;
 }
 
 int entity_getCoordX(Entity* p){
@@ -257,6 +261,8 @@ void entity_free(Entity *p){
 
   if(p->inv) inv_free(p->inv);
 
+  for(int i=0;i<MAX_QUESTS;++i)quest_free(p->adq_quests[i]);
+
   free(p);
 
   return;
@@ -277,6 +283,7 @@ Entity* entity_processAlly(Entity* e){
   if(!e&&!e->dis)return NULL;
   Room* r=disp_getrefRoom(e->dis);
   room_processAlly(r,e,e->s,e->room_index,ENTITY_TALK_RAD);
+  return e;
 }
 int entity_getRoomIndex(const Entity* en){
   return en? en->room_index: -1;
@@ -287,7 +294,7 @@ Entity* entity_addItem(Entity* en,int itemId, int quantity) {
   inv_insertSeveral(en->inv,ob,quantity);
   return en;
 }
-const Inventory* entity_getInvRef(Entity*en){
+Inventory* entity_getInvRef(Entity*en){
   return en? en->inv:NULL;
 }
 
@@ -317,6 +324,7 @@ Entity* entity_setDialog(Entity* e, int dialogid) {
 Entity* entity_advanceDialog(Entity* e){
   if(!e)return NULL;
   dman_advance(e->dman);
+  return e;
 }
 
 int entity_getId(Entity* e){
@@ -325,7 +333,28 @@ int entity_getId(Entity* e){
 bool entity_getHasDialog(Entity *e){
   return e? e->has_dialog:false;
 }
-const DialogMan* entity_getDialogs(Entity *e){
+DialogMan* entity_getDialogs(Entity *e){
   if(!e)return NULL;
   return e->dman;
+}
+
+Entity* entity_addQuest(Entity* en, Quest* q){
+  if(!en||!q)return NULL;
+  int i=0;
+  while(i<MAX_QUESTS&&en->adq_quests[i])i++;
+  if(i==MAX_QUESTS)return NULL;
+  en->adq_quests[i]=quest_copy(q);
+  return en;
+}
+Quest** entity_getQuests(Entity* e, int* siz){
+    if(!e||!siz)return NULL;
+
+    int cnt=0;
+    while(cnt<MAX_QUESTS&&e->adq_quests[cnt])cnt++;
+    Quest** ret=calloc(cnt,sizeof(Quest*));
+    for(int i=0;i<cnt;++i){
+      ret[i]=quest_copy(e->adq_quests[i]);
+    }
+    *siz=cnt;
+    return ret;
 }

@@ -178,6 +178,18 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv);
  */
 int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz);
 
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Opens the window that displays the quests.
+ * 
+ * @param dis       Display to which the window will be attached
+ * @param amount    Number of quests to display
+ * @param quests    Quests to display
+ * @return          NULL if error
+ */
+Display* disp_QuestWindow(Display* dis, int amount, Quest** quests);
+
 /*-----------------------------------------------------------------*/
 /**
  * @brief Finds the selected element in the window that is in the 

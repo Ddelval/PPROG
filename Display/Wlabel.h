@@ -29,7 +29,7 @@ typedef struct _Wlabel Wlabel;
 ///             the display font will also be changed.
 /// @param vgap Vertical separation between two lines of text, besides the height of the text itself
 
-Wlabel* wl_ini(char* t, const Font* f,int vgap);
+Wlabel* wl_ini(const char* t, const Font* f,int vgap);
 
 /*-----------------------------------------------------------------*/
 /// Frees the allocated memory

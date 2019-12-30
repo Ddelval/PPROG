@@ -57,13 +57,14 @@ Display* _wo_gameDisplay(Room* r){
     if(!dis)goto FAIL;
 
     /** Actions Window **/
-    int act_size=4;
+    int act_size=5;
     ch=calloc(act_size,sizeof(char*));
     if(!ch)goto FAIL;
     ch[0]="Collect";
     ch[1]="Inventory";
     ch[2]="Craft";
-    ch[3]="Talk";
+    ch[3]="Quests";
+    ch[4]="Talk";
     wel=calloc(act_size,sizeof(Welem*));
     if(!wel)goto FAIL;
 
@@ -77,7 +78,8 @@ Display* _wo_gameDisplay(Room* r){
     win_addAction(act,trig_give,0,OBTAIN);
     win_addAction(act,trig_showInv,1,SHOW);
     win_addAction(act,trig_showRec,2,SHOW);
-    win_addAction(act,trig_talk,3,TALK);
+    win_addAction(act,trig_showQuest,3,SHOW);
+    win_addAction(act,trig_talk,4,TALK);
 
     /** Controls **/
     int cont_size=3;
@@ -230,4 +232,5 @@ World* wo_launch(World* w){
         }
 
     }
+    return w;
 }

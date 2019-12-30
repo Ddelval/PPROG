@@ -4,6 +4,7 @@
 #define DIALOG_H
 
 #include "Utility.h"
+#include "Quest.h"
 
 typedef struct _Dialog Dialog;
 
@@ -58,5 +59,7 @@ Dialog* diag_jumpLines(Dialog* diag, int lines);
 */
 Dialog* diag_load(FILE* f);
 
+
+Quest* diag_getQuest(Dialog* d);
 
 #endif /* DIALOG_H */

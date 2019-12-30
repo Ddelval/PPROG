@@ -23,7 +23,7 @@ char* _charSplit(char* txt, int width, const Font* f,char** endpos);
 ///             the display font will also be changed.
 /// @param vgap Vertical separation between two lines of text, besides the height of the text itself
 
-Wlabel* wl_ini(char* t, const Font* f,int vgap){
+Wlabel* wl_ini(const char* t, const Font* f,int vgap){
 	if(!t||!f)return NULL;
 	Wlabel* w= calloc(1, sizeof(Wlabel));
 	if(!w) return NULL;

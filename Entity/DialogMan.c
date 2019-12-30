@@ -101,3 +101,7 @@ DialogMan* dman_resetDialog(DialogMan* dd) {
   return dd;
   return NULL;
 }
+Quest* dman_fetchQuest(DialogMan* dd){
+  if(!dd)return NULL;
+  return diag_getQuest(dd->d[dd->position]);
+}

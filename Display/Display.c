@@ -290,6 +290,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
     wl_free(wl);
 
     int h=150;
+    int hmargin=50;
     int ipos=dis->height-h;
 
     rend=disp_Render(dis);
@@ -307,7 +308,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
     wl_rend=wl_render(wl, dis->width-100);
     if(!wl_rend)goto ERR_END;
 
-    result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),50);
+    result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),hmargin);
     canv_print(stdout,result,ipos,0);
     char in;
     while(1){
@@ -325,7 +326,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
         wl=wl_ini(txt,fcat_lookup(M4),0);
         wl_rend=wl_render(wl, dis->width-100);
         if(!wl_rend)goto ERR_END;
-        result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),10);
+        result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),hmargin);
         if(!result)goto ERR_END;
         canv_print(stdout,result,ipos,0);
     }
@@ -600,6 +601,50 @@ END:
     return -1;
 }
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Opens the window that displays the quests.
+ * 
+ * @param dis       Display to which the window will be attached
+ * @param amount    Number of quests to display
+ * @param quests    Quests to display
+ * @return          NULL if error
+ */
+Display* disp_QuestWindow(Display* dis, int amount, Quest** quests){
+    if(!quests||!dis)return NULL;
+
+    int hmargin=20;
+    int vgap=10;
+    Wlabel* wl=wl_ini("Quests",fcat_lookup(M8),0);
+    Canvas* tit=wl_render(wl,dis->width-2*hmargin);
+    Canvas* cc=canv_backGrnd(0,0,0,0,dis->width-2*hmargin,vgap);
+    canv_appendVI(tit,cc);
+    canv_free(cc);
+
+    for(int i=0;i<amount;++i){
+        Canvas* tmp=quest_render(quests[i],dis->width-2*hmargin);
+        canv_appendVI(tit,tmp);
+        canv_free(tmp);
+    }
+    
+
+    Canvas* backg=disp_Render(dis);
+    Canvas* backg2=canv_blur(backg,BLUR_RAD);
+    canv_darken(backg2,DARKEN);
+
+    canv_addOverlay(backg2,tit,10,hmargin);
+    canv_print(stdout,backg2,0,0);
+
+    char c=getch1();
+    while(c!='Q'&&c!='E'){
+        c=getch1();
+        fprintf(stderr,"\n%c",c);
+    }
+    canv_print(stdout,backg,0,0);
+
+    return dis;
+
+}
 
 /*-----------------------------------------------------------------*/
 /**

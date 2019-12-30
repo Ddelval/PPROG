@@ -1,9 +1,6 @@
 /*  Dialog.c  */
 
 #include "Dialog.h"
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 // #define BUFFER_SIZE 1000
 // #define NUMBER_TXT 10
@@ -14,6 +11,8 @@ struct _Dialog {
   int id;
   int nlines;
   int linepos;
+  bool has_quest;
+  Quest* q;
 };
 
 Dialog* diag_ini() {
@@ -25,7 +24,9 @@ void diag_free(Dialog* diag){
   if(!diag) return;
   for(int i=0;i<diag->nlines;i++) if(diag->lines[i]) free(diag->lines[i]);
   free(diag->lines);
+  free(diag->q);
   free(diag);
+  
 }
 
 Dialog* diag_copy(Dialog* diag) {
@@ -35,6 +36,8 @@ Dialog* diag_copy(Dialog* diag) {
   d->id=diag->id;
   d->nlines=diag->nlines;
   d->linepos=diag->linepos;
+  d->has_quest=diag->has_quest;
+  d->q=quest_copy(diag->q);
   d->lines=(char**)calloc(d->nlines,sizeof(char*));
   for(int i=0;i<d->nlines;i++) {
     d->lines[i]=(char *)calloc(MAX_DIALOG, sizeof(char));
@@ -48,6 +51,13 @@ Dialog* diag_copy(Dialog* diag) {
     }
   }
   return d;
+}
+Quest* diag_getQuest(Dialog* d){
+  if(!d)return NULL;
+  if(!d->has_quest)return NULL;
+  d->has_quest=false;
+  if(d->linepos!=d->nlines)return NULL;
+  return quest_copy(d->q);
 }
 
 char* diag_getNext(Dialog* diag) {
@@ -89,7 +99,7 @@ Dialog* diag_load(FILE* f) {
   if(!f) return NULL;
   Dialog* d=diag_ini();
   if(!d) return NULL;
-  fscanf(f,"%d %d\n",&d->id,&d->nlines);
+  fscanf(f,"%d %d %d\n",&d->id,&d->nlines,&d->has_quest);
   d->linepos=0;
   d->lines=(char**)calloc(d->nlines,sizeof(char*));
   for(int i=0;i<d->nlines;i++) {
@@ -103,6 +113,9 @@ Dialog* diag_load(FILE* f) {
       return NULL;
     }
     strtok(d->lines[i], "\n");
+  }
+  if(d->has_quest){
+    d->q=quest_load(f);
   }
   return d;
 }

@@ -187,7 +187,7 @@ Object* obj_renderDims(const Object* ob, int number, const Font* ftext, const Fo
     *h=canv_getHeight(back);
     *w=canv_getWidth(back);
     canv_free(back);
-    return ob;
+    return (Object*)ob;
 }
 Canvas* obj_render(const Object* ob, int number, const Font* ftext, const Font* fnum, int h, int w, bool selected){
     if(!ob)return 0;
