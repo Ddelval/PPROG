@@ -48,15 +48,15 @@ Object* obj_load(FILE* f);
  *              =0 if ob1=ob2
  *              <0 if ob1<ob2
  */
-int obj_cmp(Object* ob1, Object* ob2);
+int obj_cmp(const Object* ob1, const Object* ob2);
 
 Sprite* obj_getIcon(Object* ob);
 Object* obj_copy(Object* ob);
 Sprite* obj_getSprite(Object* ob);
 
-char* obj_getName(Object* ob);
+const char* obj_getName(Object* ob);
 Attributes * obj_getAttributes(Object * ob);
-obj_type obj_getType(Object* ob);
+obj_type obj_getType(const Object* ob);
 Canvas* obj_render(const Object* ob, int number, const Font* ftext, const Font* fnum, int h,int w,bool selected);
 int obj_getId(Object* ob);
 Object* obj_renderDims(const Object* ob, int number, const Font* ftext, const Font* fnum,int*h,int*w);

@@ -24,6 +24,13 @@ int main() {
   printf("Combat loaded\n");
   combat_execute(c);
   combat_free(c);
+  entity_free(player);
+  entity_free(enemy);
+  sdic_free();
+  edic_free();
+  fcat_free();
+  odic_free();
+  trdic_free();
   term_restore();
   return 0;
 }

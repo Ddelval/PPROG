@@ -61,6 +61,7 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
   }
 
   c->cd = disp_ini(DISP_WIDTH, DISP_HEIGHT, cr, 800, "COMBAT!", f8);
+  room_free(cr);
   if(!c->cd) {
     combat_free(c);
     pix_free(pb);
@@ -752,6 +753,7 @@ END:
   win_free(winplayer);
   win_free(winenemy);
   win_free(winoptions);
+  win_free(wininfo);
   free(disp_dim);
   spr_free(ps);
   spr_free(es);
@@ -765,10 +767,8 @@ void combat_free(Combat* c) {
   attb_free(c->stats[1]);
   entity_free(c->player);
   entity_free(c->enemy);
-  for(int i=0; i<4; i++) {
-      skill_free(c->moveset[0][i]);
-      skill_free(c->moveset[1][i]);
-  }
+  obj_free(c->weapons[0]);
+  obj_free(c->weapons[1]);
   free(c->name[0]);
   free(c->name[1]);
   disp_free(c->cd);

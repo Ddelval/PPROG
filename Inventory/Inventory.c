@@ -62,9 +62,12 @@ void inv_free(Inventory* inv){
 Inventory* inv_copy(const Inventory* inv) {
     if(!inv) return NULL;
     Inventory* in =inv_ini();
+    for(int i=0;i<OBJ_TYPE_SIZE;++i){
+        free(in->times[i]);
+        free(in->items[i]);
+    }
     memcpy(in,inv,sizeof(Inventory));
     for(int i=0;i<OBJ_TYPE_SIZE;i++) {
-
         in->times[i]=(int*)    calloc(in->alloc[i], sizeof(int));
         in->items[i]=(Object**) calloc(in->alloc[i], sizeof(Object*));
         if(!in->times[i]||!in->items[i]) {

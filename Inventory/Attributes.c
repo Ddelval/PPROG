@@ -34,7 +34,6 @@ Attributes* attb_ini(){
    Outputs:
  */
 void attb_free(Attributes* attb) {
-	if(!attb) return;
 	free(attb);
 }
 

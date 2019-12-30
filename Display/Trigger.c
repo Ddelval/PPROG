@@ -57,7 +57,7 @@ Trigger * tr_load(FILE* f){
     if(!f)return NULL;
     Trigger * t=tr_ini();
     if(!t)return NULL;
-    fscanf(f,"%d %d\n",&t->trig_id,&t->type);
+    fscanf(f,"%d %d\n",&t->trig_id,(int*)&t->type);
     fgets(t->name,MAX_NAME,f);
     if(strlen(t->name))t->name[strlen(t->name)-1]=0;
     if(t->type==OBTAIN){

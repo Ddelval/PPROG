@@ -99,7 +99,7 @@ Dialog* diag_load(FILE* f) {
   if(!f) return NULL;
   Dialog* d=diag_ini();
   if(!d) return NULL;
-  fscanf(f,"%d %d %d\n",&d->id,&d->nlines,&d->has_quest);
+  fscanf(f,"%d %d %d\n",&d->id,&d->nlines,(bool*)&d->has_quest);
   d->linepos=0;
   d->lines=(char**)calloc(d->nlines,sizeof(char*));
   for(int i=0;i<d->nlines;i++) {

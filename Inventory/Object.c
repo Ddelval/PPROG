@@ -49,7 +49,6 @@ void obj_free(Object* ob){
     for(int i=0;i<ob->n_attacks;++i){
       skill_free(ob->attacks[i]);
     }
-    //free(ob->attacks);
   }
   free(ob);
 }
@@ -106,7 +105,7 @@ Object* obj_load(FILE* f){
  *              =0 if ob1=ob2
  *              <0 if ob1<ob2
  */
-int obj_cmp(Object* ob1, Object* ob2){
+int obj_cmp(const Object* ob1, const Object* ob2){
     if(!ob1||!ob2)return 0;
     return ob1->id-ob2->id;
 }
@@ -121,7 +120,7 @@ Object* obj_copy(Object* ob){
     res->spr_id     = ob->spr_id;
     res->type       = ob->type;
     res->destroyable= ob->destroyable;
-    //res->atb=atb_copy(ob->atb);
+    res->atb=attb_copy(ob->atb);
     strcpy(res->name,ob->name);
     for(int i=0;i<ob->n_attacks;++i){
         res->attacks[i]=skill_copy(ob->attacks[i]);
@@ -149,14 +148,11 @@ Attributes * obj_getAttributes(Object * ob){
   return ob->atb;
 }
 
-char* obj_getName(Object* ob){
+const char* obj_getName(Object* ob){
     if(!ob)return NULL;
-    char* ch=calloc(strlen(ob->name)+1,sizeof(char));
-    if(!ch)return NULL;
-    strcpy(ch,ob->name);
-    return ch;
+    return ob->name;
 }
-obj_type obj_getType(Object* ob){
+obj_type obj_getType(const Object* ob){
     return ob? ob->type: -1;
 }
 int obj_getId(Object* ob){

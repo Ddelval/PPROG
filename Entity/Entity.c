@@ -70,10 +70,10 @@ Entity *entity_load(FILE* f, Display *d){
   inv_free(e->inv);
 
   int spindex;
-  fscanf(f,"%d %d %d\n",&(e->id),&(e->t),&spindex);
+  fscanf(f,"%d %d %d\n",&(e->id),(ent_type*)&(e->t),&spindex);
   fgets(e->name,MAX_NAME_LENGTH,f);
   if(strlen(e->name)>0)e->name[strlen(e->name)-1]=0;
-  fscanf(f,"%d %d %d",&(e->ipos),&(e->jpos),&e->has_dialog);
+  fscanf(f,"%d %d %d",&(e->ipos),&(e->jpos),(bool*)&e->has_dialog);
   e->attr= attb_load(f);
   e->inv=  inv_load(f);
 
@@ -102,12 +102,13 @@ Entity* entity_copy(Entity* e) {
     entity_free(r);
     return NULL;
   }
+  attb_free(r->attr);
   r->attr=attb_copy(e->attr);
   if(!r->attr) {
     entity_free(r);
     return NULL;
   }
-
+  inv_free(r->inv);
   r->inv=inv_copy(e->inv);
   if(!r->inv) {
     entity_free(r);

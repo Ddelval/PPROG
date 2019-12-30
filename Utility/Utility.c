@@ -79,8 +79,8 @@ void term_init(){
 
 
 int sendToScreen(FILE* f, char* ch){
-    if(!f||!ch)return NULL;
+    if(!f||!ch)return -1;
     //sem_wait(&mut);
-    fprintf(f,ch);
+    return fprintf(f,"%s",ch);
     //sem_post(&mut);
 }

@@ -28,8 +28,6 @@ Skill* skill_ini(){
   skil=(Skill*)calloc(1,sizeof(Skill));
   if(!skil) return NULL;
 
-  skil->atbself = attb_ini();
-  skil->atbatk = attb_ini();
   return skil;
 }
 
