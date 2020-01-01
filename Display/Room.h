@@ -88,13 +88,17 @@ Room* room_addBSprite(Room* r, const Sprite* s);
  * come from entities. In doing so, they will be able to interact
  * with the player in a different way (talk and combat)
  * 
- * @param r Room in which the sprite will be added
- * @param s Sprite to add
- * @return  -1 in case of error
- *          Otherwise, the index of the sprite in r->overs after 
- *          it has been added  
+ * @param r     Room in which the sprite will be added
+ * @param s     Sprite to add
+ * @param ent_t Type of the entity that is associated with the sprite
+ *              1 -> Player
+ *              2 -> Enemy
+ *              3 -> Ally
+ * @return      -1 in case of error
+ *              Otherwise, the index of the sprite in r->overs after 
+ *              it has been added  
  */
-int room_addOSprite(Room* r, const Sprite* s);
+int room_addOSprite(Room* r, const Sprite* s,int ent_t);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -175,6 +179,17 @@ int room_modPos(Room* r, int index, int i, int j, bool scroll);
  */
 int room_incPos(Room* r, int index, int i, int j,bool scroll);
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Checks if a combat should be started
+ * 
+ * @param r     Room in which the entities are
+ * @param index Index of the entity that has moved
+ * @return      NULL if no combat should be started
+ *              Pointer to the enemy that should take part in the
+ *              combat
+ */
+void* room_checkCombat(Room* r,int index);
 /*-----------------------------------------------------------------*/
 /**
  * @brief Sets the are of the window that will be rendered when 
@@ -320,6 +335,25 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
 Room* room_processAlly(Room* r, void *e,const Sprite* s,int ally_index, int rad);
 
 /*-----------------------------------------------------------------*/
+/**
+ * @brief Adds an enemy to the room
+ * 
+ * Note that the sprite will already be in the overs array sice it 
+ * is added to that one as soon as the entity is initalized.
+ * 
+ * @param r             Room in which the enemy will be inserted
+ * @param e             Pointer to the entity
+ * @param enemy_index   Index of the sprite of the enemy in the 
+ *                      array overs
+ * @param i1            Top limit of the attack area
+ * @param i2            Bottom limit of the attack area
+ * @param j1            Left limit of the attack area
+ * @param j2            Right limit of the attack area
+ * @return Room* 
+ */
+Room* room_processEnemy(Room* r,void* e,int enemy_index, int i1,int i2,int j1,int j2);
+
+/*-----------------------------------------------------------------*/
 ///Gets the name of the room
 char* room_getName(Room* r);
 
@@ -339,4 +373,7 @@ Room* room_setSpriteJ(Room* r,int index, int j);
 /// Set height and width of the display area
 Room* room_setHW(Room* r, int he,int wi);
 
+/*-----------------------------------------------------------------*/
+/// Set the player in the room
+Room* room_setPlayer(Room* r, void* e);
 #endif

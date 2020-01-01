@@ -108,6 +108,7 @@ int entity_getId(Entity* e);
 Entity* entity_setInventory(Entity* e, Inventory* inv);
 bool entity_getHasDialog(Entity *e);
 Entity* entity_processAlly(Entity* e);
+Entity* entity_processEnemy(Entity* e);
 DialogMan* entity_getDialogs(Entity *e);
 Entity* entity_addQuest(Entity* en, Quest* q);
 Quest** entity_getQuests(Entity* e, int* siz);

@@ -32,6 +32,7 @@ struct _Entity {
   int room_index;
   Display* dis;
   bool has_dialog;
+  int i1,i2,j1,j2;
   DialogMan* dman;
   Quest * adq_quests[MAX_QUESTS];
 };
@@ -73,7 +74,15 @@ Entity *entity_load(FILE* f, Display *d){
   fscanf(f,"%d %d %d\n",&(e->id),(ent_type*)&(e->t),&spindex);
   fgets(e->name,MAX_NAME_LENGTH,f);
   if(strlen(e->name)>0)e->name[strlen(e->name)-1]=0;
-  fscanf(f,"%d %d %d",&(e->ipos),&(e->jpos),(bool*)&e->has_dialog);
+  if(e->t==ALLY){
+      fscanf(f,"%d",(bool*)&e->has_dialog);
+  }
+  else if(e->t==ENEMY){
+    fscanf(f,"%d %d %d %d",&e->i1, &e->i2, &e->j1, &e->j2);
+  }
+  
+  e->ipos=0;
+  e->jpos=0;
   e->attr= attb_load(f);
   e->inv=  inv_load(f);
 
@@ -120,7 +129,10 @@ Entity* entity_copy(Entity* e) {
     return NULL;
   }
   r->room_index=e->room_index;
-
+  r->i1=e->i1;
+  r->i2=e->i2;
+  r->j1=e->j1;
+  r->j2=e->j2;
   for(int i=0;i<MAX_QUESTS;++i){
     r->adq_quests[i]=quest_copy(e->adq_quests[i]);
   }
@@ -273,7 +285,7 @@ Entity* entity_addtoDisplay(Entity* e, Display* dis){
   int aux;
   e->dis=dis;
   Room * r=disp_getrefRoom(dis);
-  aux = room_addOSprite(r, e->s);
+  aux = room_addOSprite(r, e->s,e->t);
   if(aux < 0) {
     return NULL;
   }
@@ -281,11 +293,17 @@ Entity* entity_addtoDisplay(Entity* e, Display* dis){
   return e;
 }
 Entity* entity_processAlly(Entity* e){
-  if(!e&&!e->dis)return NULL;
+  if(!e||!e->dis)return NULL;
   Room* r=disp_getrefRoom(e->dis);
   room_processAlly(r,e,e->s,e->room_index,ENTITY_TALK_RAD);
   return e;
 }
+
+Entity* entity_processEnemy(Entity* e){
+  if(!e||!e->dis)return NULL;
+  room_processEnemy(disp_getrefRoom(e->dis),e,e->room_index,e->i1,e->i2,e->j1,e->j2);
+}
+
 int entity_getRoomIndex(const Entity* en){
   return en? en->room_index: -1;
 }

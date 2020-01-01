@@ -35,6 +35,16 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id);
 void _combat_message(Combat* c, char* message);
 
 
+Combat* combat_launch(Entity* player, Entity* enemy){
+  if(!player||!enemy)return NULL;
+  Combat* c=combat_ini(player, enemy);
+  if(!combat_load(c)) return 1;
+  combat_execute(c);
+  combat_free(c);
+  return c;
+}
+
+
 Combat* combat_ini(Entity* player, Entity* enemy) {
   if(!player||!enemy) return NULL;
   Combat* c = (Combat*)calloc(1, sizeof(Combat));

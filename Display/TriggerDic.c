@@ -89,3 +89,12 @@ int trdic_talksearch(int ally_id){
     }
     return -1;
 }
+int trdic_attacksearch(int entity_id){
+    if(trdic_data==NULL)return -1;
+    for(int i=0;i<trdic_data->size;++i){
+        if(tr_getAlly_id(trdic_data->dat[i])==entity_id){
+            return tr_getId(trdic_data->dat[i]);
+        }
+    }
+    return -1;
+}

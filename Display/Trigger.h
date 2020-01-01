@@ -8,12 +8,13 @@
 
 #include "Utility.h"
 typedef struct _Trigger Trigger;
-typedef enum{OBTAIN, ENTER,TALK,SHOW} trig_type;
+typedef enum{OBTAIN, ENTER,TALK,SHOW, COMBAT} trig_type;
 typedef void (*func_trig)(Trigger* t, void* en, void* r);
 
 Trigger* tr_ini();
 void tr_free(Trigger* tr);
 Trigger* tr_load(FILE* f);
+Trigger* tr_createAttack(void*e, int enemy_id);
 Trigger* tr_copy(const Trigger* t);
 Trigger* tr_setSpr(Trigger* tr, int i);
 trig_type tr_getType(const Trigger* tr);

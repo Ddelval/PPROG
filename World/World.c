@@ -183,6 +183,10 @@ World* wo_load(FILE* f){
     w->id=room_getId(r);
     w->dis=_wo_gameDisplay(r);
     w->player=_wo_eload(f,w);
+
+    Room* rr=disp_getrefRoom(w->dis);
+    room_setPlayer(rr,w->player);
+
     fscanf(f,"%d",&(w->allSiz));
     w->allies=calloc(w->allSiz,sizeof(Entity*));
     for(int i=0;i<w->allSiz;++i){
@@ -194,6 +198,7 @@ World* wo_load(FILE* f){
     w->enemies=calloc(w->enSiz,sizeof(Entity*));
     for(int i=0;i<w->enSiz;++i){
         w->enemies[i]=_wo_eload(f,w);
+        entity_processEnemy(w->enemies[i]);
     }
     return w;
 }
@@ -201,6 +206,7 @@ World* wo_load(FILE* f){
 World* wo_launch(World* w){
     if(!w)return NULL;
     Canvas* d=disp_Render(w->dis);
+    Room *r=disp_getrefRoom(w->dis);
     canv_print(stdout,d,0,0);
     canv_free(d);
     while(1){
@@ -229,6 +235,10 @@ World* wo_launch(World* w){
         }
         if(c=='E'){
             break;
+        }
+        Entity* e=room_checkCombat(r,0);
+        if(e){
+            combat_launch(w->player,e);
         }
 
     }

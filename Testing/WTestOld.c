@@ -34,7 +34,7 @@ int main(){
     spr_setOI(sp, 20);
     spr_setOJ(sp,600);
     fclose(f);
-    room_addOSprite(r, sp);
+    room_addOSprite(r, sp,0);
     //canv_print(stdout, spr_getDispData(sp), 10, 10);
     char* c="Room 1";
     Display* dis= disp_ini(w, h, r, vdiv, c, f8);

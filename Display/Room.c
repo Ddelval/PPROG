@@ -75,15 +75,20 @@ struct _Room{
     int backgsiz;
     int backpos;
     Sprite** overs;
+    int* ent_typ;
     int overssiz;
     int overpos;
     box* ov;
     Canvas* map;
     Canvas* shadows;
     bool** colision;
+    void* player;
     
     trigger*** trig;
 };
+
+
+Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -118,7 +123,9 @@ Room* room_ini(int id, const char* name,int hei, int wid, const Pixel* backcol){
 
     r->overssiz=MEM_INI;
     r->overs=calloc(MEM_INI, sizeof(Sprite*));
-    if(!r->overs)ret_free(r);
+    r->ent_typ=calloc(MEM_INI, sizeof(int));
+    if(!r->overs||!r->ent_typ)ret_free(r);
+    
     r->backpos=r->overpos=0;
 
     r->ov=calloc(MEM_INI, sizeof(box));
@@ -179,6 +186,7 @@ void room_free(Room* r){
         for(int i=0;i<r->overpos;++i)spr_free(r->overs[i]);
         free(r->overs);
     }
+    free(r->ent_typ);
 
     //Colision bool array
     if(r->colision){
@@ -310,13 +318,15 @@ Room* room_addBSprite(Room* r, const Sprite* s){
  *          Otherwise, the index of the sprite in r->overs after 
  *          it has been added  
  */
-int room_addOSprite(Room* r, const Sprite* s){
+int room_addOSprite(Room* r, const Sprite* s, int e_t){
     if(!r||!s)return -1;
     if(r->overpos==r->overssiz){
         int nsiz=(int)ceil(r->overssiz*MEM_INCREMENT);
         Sprite** tmp=realloc(r->overs,nsiz*sizeof(Sprite*));
-        if(!tmp)return -1;
+        int* tmp2=realloc(r->ent_typ,nsiz*sizeof(int));
+        if(!tmp||!tmp2)return -1;
         r->overs=tmp;
+        r->ent_typ=tmp2;
         r->overssiz=nsiz;
 
         box* bb=realloc(r->ov, nsiz*sizeof(box));
@@ -328,6 +338,8 @@ int room_addOSprite(Room* r, const Sprite* s){
     if(!r->overs[r->overpos]){
         return -1;
     }
+    r->ent_typ[r->overpos]=e_t;
+
     r->overpos++;
     return r->overpos-1;
 }
@@ -487,7 +499,33 @@ int room_incPos(Room* r, int index, int i, int j,bool scroll){
     }
     return room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]),scroll);
 }
+void* room_checkCombat(Room* r,int index){
+    if(!r)return NULL;
+    int siz;
+    int i,j,w,h;
+    void *e2;
+    i=spr_getOI(r->overs[index]);
+    j=spr_getOJ(r->overs[index]);
+    w=spr_getWidth(r->overs[index]);
+    h=spr_getHeight(r->overs[index]);
 
+    Trigger** t=_room_getTriggersLoc(r,COMBAT,i,j,&siz);
+    if(siz) goto FOUND;
+    t=_room_getTriggersLoc(r,COMBAT,i+h,j,&siz);
+    if(siz) goto FOUND;
+    t=_room_getTriggersLoc(r,COMBAT,i,j+w,&siz);
+    if(siz) goto FOUND;
+    t=_room_getTriggersLoc(r,COMBAT,i+h,j+w,&siz);
+    if(siz) goto FOUND;
+
+    return NULL;
+
+FOUND:
+    e2=tr_getEntityRef(t[0]);
+    for(int i=0;i<siz;++i)tr_free(t[i]);
+    free(t);
+    return e2;
+}
 /*-----------------------------------------------------------------*/
 /**
  * @brief Sets the are of the window that will be rendered when 
@@ -635,7 +673,7 @@ int room_scroll(Room* r, double i, double j){
  * 
  * @param r     Room to which the triggers are added
  * @param sp    Sprite that contains the triggers
- * @param index Index of sp in the array overs
+ * @param index Index of sp in the corresponding array
  * @return      NULL in case of error
  */
 Room* room_processTriggers(Room * r, const Sprite * sp, int index){
@@ -801,23 +839,28 @@ Room* room_updateData(Room*r){
         spr_processShadows(r->backg[i],r->shadows);
         room_processTriggers(r,r->backg[i],i);
     }
-    for(int i=1;i<r->overpos;++i){
-        int oi,oj;
-        int rad= ENTITY_TALK_RAD;
-        oi=spr_getOI(r->overs[i]);
-        oj=spr_getOJ(r->overs[i]);
-        int tid=trdic_talksearch(i);
-        if(tid>0)return NULL;
-
-        for(int i2=oi-rad;i2<oi+rad+spr_getHeight(r->overs[i]);++i2){
-            if(i2<0||i2>=r->hei)continue;
-            for(int j=oj-rad;j<oj+rad*2+spr_getWidth(r->overs[i]);++j){
-                if(j<0||j>=r->wid)continue;
-                int l=0;
-                while(l<MAX_TRIG&&r->trig[i2][j][l].spindex!=-1)l++;
-                if(l!=MAX_TRIG){
-                    r->trig[i2][j][l].code=tid;
-                    r->trig[i2][j][l].spindex=i;
+    for(int i=0;i<r->overpos;++i){
+        if(r->ent_typ[i]==1)continue; //It is the player
+        if(r->ent_typ[i]==2){ //It is an enemy
+            room_processTriggers(r,r->overs[i],i);
+        }
+        if(r->ent_typ[i]==3){ //It is an ally
+            int oi,oj;
+            int rad= ENTITY_TALK_RAD;
+            oi=spr_getOI(r->overs[i]);
+            oj=spr_getOJ(r->overs[i]);
+            int tid=trdic_talksearch(i);
+            if(tid>0)return NULL;
+            for(int i2=oi-rad;i2<oi+rad+spr_getHeight(r->overs[i]);++i2){
+                if(i2<0||i2>=r->hei)continue;
+                for(int j=oj-rad;j<oj+rad*2+spr_getWidth(r->overs[i]);++j){
+                    if(j<0||j>=r->wid)continue;
+                    int l=0;
+                    while(l<MAX_TRIG&&r->trig[i2][j][l].spindex!=-1)l++;
+                    if(l!=MAX_TRIG){
+                        r->trig[i2][j][l].code=tid;
+                        r->trig[i2][j][l].spindex=i;
+                    }
                 }
             }
         }
@@ -1015,6 +1058,28 @@ Room* room_processAlly(Room* r, void *e,const Sprite* s,int ally_index, int rad)
 }
 
 /*-----------------------------------------------------------------*/
+/**
+ * @brief Adds an enemy to the room
+ * 
+ * Note that the sprite will already be in the overs array sice it 
+ * is added to that one as soon as the entity is initalized.
+ * 
+ * @param r             Room in which the enemy will be inserted
+ * @param enemy_index   Index of the sprite of the enemy in the 
+ *                      array overs
+ * @return Room* 
+ */
+Room* room_processEnemy(Room* r,void* e,int enemy_index, int i1,int i2,int j1,int j2){
+    if(!r)return NULL;
+    Trigger* t=tr_createAttack(e,enemy_index);
+    int id=trdic_insert(t);
+    tr_free(t);
+    spr_addTrigger(r->overs[enemy_index],id,i1,i2,j1,j2);
+    room_processTriggers(r,r->overs[enemy_index],enemy_index);
+    spr_processCollisions(r->overs[enemy_index],r->colision,r->wid,r->hei);
+    return r;
+}
+/*-----------------------------------------------------------------*/
 ///Gets the name of the room
 char* room_getName(Room* r){
     if(!r)return NULL;
@@ -1054,7 +1119,12 @@ Room* room_setHW(Room* r, int he,int wi){
     r->c_r=min(r->wid,r->c_l+wi);
     return r;
 }
-
+/*-----------------------------------------------------------------*/
+/// Set the player in the room
+Room* room_setPlayer(Room* r, void* e){
+    if(!r)return NULL;
+    r->player=e;
+}
 /*-----------------------------------------------------------------*/
 /**
  * @brief Copies the room
@@ -1069,11 +1139,12 @@ Room* room_copy(const Room* r){
     r2->c_l=r->c_l;
     r2->c_r=r->c_r;
     r2->c_b=r->c_b;
+    r2->player=r->player;
     for(int i=0;i<r->backpos;++i){
         room_addBSprite(r2,r->backg[i]);
     }
     for(int i=0;i<r->overpos;++i){
-        room_addOSprite(r2,r->overs[i]);
+        room_addOSprite(r2,r->overs[i],r->ent_typ[i]);
         spr_processCollisions(r->overs[i],r2->colision,r2->wid,r2->hei);
     }
     for(int i=0;i<r->hei;++i){

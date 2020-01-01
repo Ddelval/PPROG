@@ -22,7 +22,7 @@ struct _Trigger
     int room_id;
 
     /* Engage in conversation */
-    int ally_id;
+    int ent_id;
     void * entit;
 };
 
@@ -40,9 +40,18 @@ Trigger* tr_ini(){
 Trigger* tr_createTalk(void* e,int ally_id){
     Trigger* t=tr_ini();
     if(!t)return NULL;
-    t->ally_id=ally_id;
+    t->ent_id=ally_id;
     t->entit=e;
     t->type=TALK;
+    return t;
+}
+
+Trigger* tr_createAttack(void*e, int enemy_id){
+    Trigger* t=tr_ini();
+    if(!t)return NULL;
+    t->ent_id=enemy_id;
+    t->entit=e;
+    t->type=COMBAT;
     return t;
 }
 
@@ -67,7 +76,7 @@ Trigger * tr_load(FILE* f){
         fscanf(f,"%d",&t->room_id);
     }
     if(t->type==TALK){
-        fscanf(f,"%d",&t->ally_id);
+        fscanf(f,"%d",&t->ent_id);
     }
     return t;
 }
@@ -124,7 +133,7 @@ char* tr_getDesc(Trigger* t){
 }
 
 int tr_getAlly_id(Trigger * t){
-    return t? t->ally_id:-1;
+    return t? t->ent_id:-1;
 }
 /** SETTERS **/
 void tr_setId(Trigger * t, int id){
