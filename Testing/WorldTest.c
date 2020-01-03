@@ -1,7 +1,7 @@
 #include "World.h"
 int main(){
     term_init();
-    World* w=wo_get("s1");
+    World* w=wo_get("Main");
     wo_launch(w);
     sdic_free();
     edic_free();

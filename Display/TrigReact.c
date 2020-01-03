@@ -41,3 +41,7 @@ void trig_talk(Trigger* t,void* e, void* d){
     }
     free(n);
 }
+void trig_enter(Trigger* t, void* e, void* d){
+    extern char* next_world;
+    next_world=tr_getNWorld(t);
+}

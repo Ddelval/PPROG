@@ -376,4 +376,7 @@ Room* room_setHW(Room* r, int he,int wi);
 /*-----------------------------------------------------------------*/
 /// Set the player in the room
 Room* room_setPlayer(Room* r, void* e);
+
+
+Sprite* room_getSpriteO(Room* r, int index);
 #endif

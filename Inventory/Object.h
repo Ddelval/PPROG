@@ -62,4 +62,6 @@ int obj_getId(Object* ob);
 Object* obj_renderDims(const Object* ob, int number, const Font* ftext, const Font* fnum,int*h,int*w);
 Skill ** obj_getAttacks(Object * ob);
 
+bool obj_toplace(Object* o);
+
 #endif

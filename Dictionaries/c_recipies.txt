@@ -1,4 +1,4 @@
-2
+3
 
 5 1
 Iron
@@ -10,4 +10,10 @@ Iron
 Inverse Iron
 2
 4 3
+1 1
+
+10 1
+House
+2
+2 1
 1 1

@@ -226,3 +226,9 @@ Canvas* obj_render(const Object* ob, int number, const Font* ftext, const Font* 
     wl_free(num);
     return fin;
 }
+
+
+bool obj_toplace(Object* o){
+    if(!o)return false;
+    return o->icon_id!=o->spr_id;
+}

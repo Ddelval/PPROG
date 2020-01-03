@@ -75,7 +75,7 @@ Recipe** rdic_getAllDoable(Inventory* inv, int * size){
                         (*size)++;
                         if(r) r = realloc(r, (*size) * sizeof(Recipe*));
                         if(!r) r = (Recipe **) calloc ((*size), sizeof(Recipe*));
-                        r[i] = rec_copy(rdic->rec[i]);
+                        r[*size-1] = rec_copy(rdic->rec[i]);
                 }
         }
         return r;

@@ -1,4 +1,4 @@
-4
+5
 0 0
 Cut wood
 2 1 1
@@ -17,3 +17,7 @@ Get Coal
 3 0
 Get Iron
 4 1 1
+
+4 1
+Enter rocket
+World2

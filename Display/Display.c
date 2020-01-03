@@ -476,7 +476,24 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
                 selindex--;
                 break;
             case 'J':
-                rec_make(rec[selindex],inv);
+                selindex++;selindex--;
+                Object* ob=odic_lookup(rec_getResult_id(rec[selindex]));
+               
+                if(obj_toplace(ob)){
+                    
+                    Sprite* place=obj_getSprite(ob);
+                    Sprite* player=room_getSpriteO(disp_getrefRoom(dis),0);
+                    if(room_buildingInterface(disp_getrefRoom(dis),spr_getId(place),spr_getOI(player),spr_getOJ(player),0,0)){
+                        rec_decrease(rec[selindex],inv);
+                    }
+                    spr_free(place);
+                    spr_free(player);
+
+                }
+                else{
+                    rec_make(rec[selindex],inv);
+                }
+                obj_free(ob);
                 selindex=-10;
                 break;
             case 'Q':
@@ -720,14 +737,14 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii*
     Canvas* cc=rec_render(rec[0],ob_wid,wid,hei,dis->width-2*margin-box_w);
     Canvas* c;
     c=canv_appendH(fdot,cc);
-    coord[0].fi=0;
+    coord[0].fi=0.5*canv_getHeight(c);
     coord[0].se=canv_getWidth(c);
     for(int i=1;i<size;++i){
         canv_appendVI(c,gap);
         Canvas* c2=rec_render(rec[i],ob_wid,wid,hei,dis->width-2*margin-box_w);
         Canvas* c3;
         c3=canv_appendH(fdot,c2);
-        coord[i].fi=canv_getHeight(c);
+        coord[i].fi=canv_getHeight(c)+0.5*canv_getHeight(c3);
         coord[i].se=canv_getWidth(c3);
         canv_appendVIA(c,c3,RIGHT);
         canv_free(c2);
@@ -742,7 +759,8 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii*
 
     for(int i=0;i<size;++i){
         coord[i].se=canv_getWidth(c)-coord[i].se +(dis->width-canv_getWidth(c))/2+1;
-        coord[i].fi+=canv_getHeight(wl_rr)+ceil(canv_getHeight(fdot)/2.0);
+        //coord[i].fi+=canv_getHeight(wl_rr)+ceil(canv_getHeight(fdot)/2.0);
+        coord[i].fi+=canv_getHeight(wl_rr)-ceil(CIRC_RAD/2.0);
     }
 
     Canvas* c_r=canv_AdjustCrop(c,dis->width,canv_getHeight(c));

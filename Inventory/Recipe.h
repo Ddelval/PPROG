@@ -50,4 +50,5 @@ Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei, int max_wid);
 Recipe* rec_getObjDimensions(Recipe* r,int *ob_wid, int* hei);
 int rec_getMinWidth(Recipe* r, int obj_wid, int hei);
 Recipe* rec_make(Recipe* r, Inventory* inv);
+Recipe* rec_decrease(Recipe* r, Inventory* inv);
 #endif

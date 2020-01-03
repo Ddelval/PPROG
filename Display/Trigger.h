@@ -25,7 +25,7 @@ int tr_getObj_id(const Trigger* tr);
 int tr_getSpr_index(const Trigger* tr);
 bool tr_getSpr_remove(const Trigger* tr);
 int tr_getQuantity(const Trigger* tr);
-
+char* tr_getNWorld(Trigger* t);
 bool tr_needsTrigger(trig_type t);
 void tr_setId(Trigger * t, int id);
 Trigger* tr_createTalk(void* e,int ally_id);

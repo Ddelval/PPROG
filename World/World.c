@@ -8,6 +8,11 @@
 #include "World.h"
 #define MAX_NAME_ENTITY 50
 char* w_dir="Worlds/";
+
+
+char* next_world;
+
+
 struct _World{
     char*    name;
     int      id;
@@ -57,7 +62,7 @@ Display* _wo_gameDisplay(Room* r){
     if(!dis)goto FAIL;
 
     /** Actions Window **/
-    int act_size=5;
+    int act_size=6;
     ch=calloc(act_size,sizeof(char*));
     if(!ch)goto FAIL;
     ch[0]="Collect";
@@ -65,6 +70,7 @@ Display* _wo_gameDisplay(Room* r){
     ch[2]="Craft";
     ch[3]="Quests";
     ch[4]="Talk";
+    ch[5]="Enter";
     wel=calloc(act_size,sizeof(Welem*));
     if(!wel)goto FAIL;
 
@@ -80,6 +86,7 @@ Display* _wo_gameDisplay(Room* r){
     win_addAction(act,trig_showRec,2,SHOW);
     win_addAction(act,trig_showQuest,3,SHOW);
     win_addAction(act,trig_talk,4,TALK);
+    win_addAction(act,trig_enter,5,ENTER);
 
     /** Controls **/
     int cont_size=3;
@@ -211,6 +218,7 @@ World* wo_launch(World* w){
     canv_free(d);
     while(1){
         char c=getch1();
+        next_world=NULL;
         if(c=='W'){
             entity_moveUp(w->player,true);
         }
@@ -240,7 +248,9 @@ World* wo_launch(World* w){
         if(e){
             combat_launch(w->player,e);
         }
-
+        if(next_world!=NULL){
+            fprintf(stderr,"Information is here: %s",next_world);
+        }
     }
     return w;
 }

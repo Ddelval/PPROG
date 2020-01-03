@@ -219,13 +219,18 @@ int rec_getMinWidth(Recipe* r, int obj_wid, int hei){
         canv_free(eq);
         return s;
 }
-Recipe* rec_make(Recipe* r, Inventory* inv){
+Recipe* rec_decrease(Recipe* r, Inventory* inv){
         if(!r||!inv)return NULL;
         for(int i=0;i<r->size;++i){
                 Object* ob=odic_lookup(r->elements[i]);
                 inv_decrease(inv,ob,r->quantities[i]);
                 obj_free(ob);
         }
+        return r;
+}
+Recipe* rec_make(Recipe* r, Inventory* inv){
+        if(!r||!inv)return NULL;
+        if(!rec_decrease(r,inv))return NULL;
         Object* ob=odic_lookup(r->result_id);
         inv_insertSeveral(inv,ob,r->quant);
         return r;

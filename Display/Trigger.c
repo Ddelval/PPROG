@@ -5,6 +5,7 @@
 //
 #include "Trigger.h"
 #define MAX_NAME 150
+#define MAX_ROOM 100
 struct _Trigger
 {
     int trig_id;
@@ -19,7 +20,7 @@ struct _Trigger
     bool spr_remove;
 
     /* Change place */
-    int room_id;
+    char next_room[MAX_ROOM];
 
     /* Engage in conversation */
     int ent_id;
@@ -73,7 +74,9 @@ Trigger * tr_load(FILE* f){
         fscanf(f,"%d %d %d", &t->obj_id, &t->quantity,&t->spr_remove); 
     }
     if(t->type==ENTER){
-        fscanf(f,"%d",&t->room_id);
+        t->next_room[0]='\n';
+        t->next_room[1]='\0';
+        while(!strcmp(t->next_room,"\n"))fgets(t->next_room,MAX_ROOM,f);
     }
     if(t->type==TALK){
         fscanf(f,"%d",&t->ent_id);
@@ -134,6 +137,10 @@ char* tr_getDesc(Trigger* t){
 
 int tr_getAlly_id(Trigger * t){
     return t? t->ent_id:-1;
+}
+char* tr_getNWorld(Trigger* t){
+    if(!t)return NULL;
+    return strdup(t->next_room);
 }
 /** SETTERS **/
 void tr_setId(Trigger * t, int id){

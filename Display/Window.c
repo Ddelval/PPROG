@@ -410,6 +410,7 @@ Window* win_setSelected(Window* win, int selected_elem) {
 	}
 	if(!we_setBackColor(win->Win_elem[selected_elem], pix_retR(win->forecol), pix_retG(win->forecol), pix_retB(win->forecol), pix_retA(win->forecol))) return NULL;
 	win->selected_elem=selected_elem;
+
 	return win;
 }
 
@@ -471,7 +472,6 @@ Window* win_scrollDown(Window* win) {
 	if(!win) return NULL;
     win->scroll_pos+=win->height;
 	if(!win_render(win)) return NULL;
-	win->scroll_pos++;
 	return win;
 }
 
@@ -489,7 +489,6 @@ Window* win_scrollUp(Window* win) {
 	if(!win) return NULL;
     win->scroll_pos=max(0,win->scroll_pos-win->height);
 	if(!win_render(win)) return NULL;
-	win->scroll_pos--;
 	return win;
 }
 
