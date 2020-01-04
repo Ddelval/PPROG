@@ -132,7 +132,10 @@ Combat* combat_execute(Combat* c) {
               break;
           case 'J':
               if(!_combat_executeMove(c, selindex)) return NULL;
-              if(attb_get(c->stats[PLAYER], HEALTH)<0||!attb_get(c->stats[ENEMY], HEALTH)<0) return c;
+              if(attb_get(c->stats[PLAYER], HEALTH)<0||!attb_get(c->stats[ENEMY], HEALTH)<0) {
+                _combat_message(c, "1... 2... 3... This combat is over!");
+                return c;
+              }
               break;
           case 'Q': //NOTE: THIS IS ONLY TO BE ABLE TO EXIT MID-COMBAT WHILE DEVELOPING THE GAME. REMOVE THIS WHEN THE DELIVERY IS DUE.
               return c;
@@ -333,7 +336,9 @@ int* _combat_playerMove(Combat* c, int choice) {
   ret[3]=defense;
 
   /*  DAMAGE  */
-  int damage = attb_get(attk, HEALTH) - attb_get(c->stats[ENEMY], DEFENSE);
+  int damage = attb_get(attk, ATTACK) + attb_get(c->stats[PLAYER], ATTACK) - attb_get(c->stats[ENEMY], DEFENSE);
+  FILE* g=fopen("tty2", "w");
+  fprintf(g, "%d\n%d", damage, attb_get(c->stats[ENEMY], HEALTH));
   if(damage < 0) damage = 0;
   if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], HEALTH) - damage, HEALTH)) {
     attb_free(self);
@@ -396,6 +401,8 @@ int* _combat_playerMove(Combat* c, int choice) {
     return NULL;
   }
   ret[9]=damage;
+  fprintf(g, "\n%d", damage);
+  fclose(g);
 
   attb_free(self);
   attb_free(attk);
@@ -465,7 +472,9 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
   ret[3]=defense;
 
   /*  DAMAGE  */
-  int damage = attb_get(attk, ATTACK) - attb_get(c->stats[PLAYER], DEFENSE);
+  int damage = attb_get(attk, ATTACK) + attb_get(c->stats[ENEMY], ATTACK)- attb_get(c->stats[PLAYER], DEFENSE);
+  FILE* g=fopen("tty", "w");
+  fprintf(g, "%d\n%d", damage, attb_get(c->stats[PLAYER], HEALTH));
   if(damage < 0) damage = 0;
   if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], HEALTH) - damage, HEALTH)) {
     attb_free(self);
@@ -524,7 +533,8 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
     return NULL;
   }
   ret[9]=damage;
-
+  fprintf(g, "\n%d", damage);
+  fclose(g);
   attb_free(self);
   attb_free(attk);
   char message[128];
@@ -651,7 +661,7 @@ void _combat_message(Combat* c, char* message) {
   Font* f6=font_load(f);
   fclose(f);
   if(!f6) return;
-  Welem* we =we_createLabel(message,f6,10);
+  Welem* we =we_createLabel(message,f6,3);
   if(!we) {
     font_free(f6);
     return;
@@ -733,7 +743,7 @@ Combat* combat_load(Combat*c) {
   winoptions=win_ini("Movements",movs,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10, disp_dim[H_DATA]/2-20,0,fcat_lookup(M8));
   if(!winoptions)goto ERR_END;
 
-  wininfo=win_ini("State of the combat",NULL,0,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,disp_dim[H_DATA]-30,0,fcat_lookup(M8));
+  wininfo=win_ini("Status window",NULL,0,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,disp_dim[H_DATA]-30,0,fcat_lookup(M8));
   if(!wininfo)goto ERR_END;
 
   if(!disp_AddLWindow(c->cd, winplayer))goto ERR_END;

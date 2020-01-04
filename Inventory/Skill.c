@@ -41,7 +41,7 @@ Skill* skill_load(FILE* f) {
   while(sk->name[0]=='\n')fgets(sk->name,20,f);
   sk->name[strlen(sk->name)-1]=0;
   sk->desc[0]='\n';
-  while(sk->desc[0]=='\n')fgets(sk->desc,20,f);
+  while(sk->desc[0]=='\n')fgets(sk->desc,200,f);
   sk->desc[strlen(sk->desc)-1]=0;
 
   fscanf(f,"%d",&sk->special_skill);
