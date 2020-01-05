@@ -247,6 +247,9 @@ World* wo_launch(World* w){
         Entity* e=room_checkCombat(r,0);
         if(e){
             combat_launch(w->player,e);
+            Canvas* c=disp_Render(w->dis);
+            canv_print(stdout,c,0,0);
+            canv_free(c);
         }
         if(next_world!=NULL){
             fprintf(stderr,"Information is here: %s",next_world);

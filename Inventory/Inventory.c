@@ -262,11 +262,12 @@ Inventory* inv_load(FILE* f){
 
 const Object* inv_getSelected(const Inventory * inv, obj_type t){
   if(!inv) return NULL;
-  return inv->items[inv->selected[t]];
+  if(inv->selected[t]>=inv->size[t])return NULL;
+  return inv->items[t][inv->selected[t]];
 }
 Object* inv_getSelectedCopy(const Inventory* inv, obj_type t){
   if(!inv) return NULL;
-  return obj_copy(inv->items[inv->selected[t]][t]);
+  return obj_copy(inv->items[t][inv->selected[t]]);
 }
 Inventory* inv_incrementSelected(Inventory* inv, obj_type t, int incr){
     if(!inv)return NULL;
