@@ -51,7 +51,7 @@ Object* obj_load(FILE* f);
 int obj_cmp(const Object* ob1, const Object* ob2);
 
 Sprite* obj_getIcon(Object* ob);
-Object* obj_copy(Object* ob);
+Object* obj_copy(const Object* ob);
 Sprite* obj_getSprite(Object* ob);
 
 const char* obj_getName(Object* ob);

@@ -1142,6 +1142,7 @@ Room* room_setHW(Room* r, int he,int wi){
 Room* room_setPlayer(Room* r, void* e){
     if(!r)return NULL;
     r->player=e;
+    return r;
 }
 /*-----------------------------------------------------------------*/
 /**

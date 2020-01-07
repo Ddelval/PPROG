@@ -8,6 +8,7 @@
 
 #include <pthread.h>
 #include "Entity.h"
+#include "Combat.h"
 #include "Display.h"
 #include "TrigReact.h"
 #include "EntityDic.h"

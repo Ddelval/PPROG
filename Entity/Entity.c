@@ -302,6 +302,7 @@ Entity* entity_processAlly(Entity* e){
 Entity* entity_processEnemy(Entity* e){
   if(!e||!e->dis)return NULL;
   room_processEnemy(disp_getrefRoom(e->dis),e,e->room_index,e->i1,e->i2,e->j1,e->j2);
+  return e;
 }
 
 int entity_getRoomIndex(const Entity* en){

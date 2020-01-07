@@ -111,7 +111,7 @@ int obj_cmp(const Object* ob1, const Object* ob2){
 }
 
 
-Object* obj_copy(Object* ob){
+Object* obj_copy(const Object* ob){
     if(!ob)return NULL;
     Object* res= obj_ini();
     res->id         = ob->id;

@@ -1,5 +1,5 @@
 .SECONDARY:
-CC= gcc -g  #-fsanitize=address
+CC= @gcc -g  #-fsanitize=address
 EXE:=WorldTest TestCombat
 
 
@@ -18,7 +18,7 @@ COMBAT:=$(foreach F,$(wildcard Combat/*.c),$(subst Combat/, Compile_obj/Combat/,
 
 OBJECTS:= $(DISPLAY) $(ENTITY) $(INVENTORY) $(WORLD) $(UTILITY) $(COMBAT)
 
-MIDDLE = @printf "\033[1m\033[1;34m $@ \033[0;30m\033[0m\t"
+MIDDLE = @printf "Generated: \033[1m\033[1;34m $@ \033[0;30m\033[0m\t\n"
 LIB= -I Display/ -I Utility/ -I Entity/ -I Inventory/ -I World/ -I Combat/
 
 all: $(EXE_O)
