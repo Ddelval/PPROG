@@ -19,5 +19,5 @@ Get Iron
 4 1 1
 
 4 1
-Enter rocket
-World2
+Enter cave
+Cave 1

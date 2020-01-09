@@ -1,14 +1,19 @@
 #include "World.h"
 int main(){
     term_init();
-    World* w=wo_get("Cave 1");
+    World* w=wo_get("Main");
+   
     wo_launch(w);
+    wo_free(w);
+    while((w=wo_getNext())){
+        wo_launch(w);
+        wo_free(w);
+    }
     sdic_free();
     edic_free();
     trdic_free();
     fcat_free();
     odic_free();
-    wo_free(w);
     term_restore();
     return 0;
 }

@@ -38,5 +38,5 @@ void wo_free(World *w);
  */
 World* wo_load(FILE* f);
 World* wo_launch(World* w);
-
+World* wo_getNext();
 #endif

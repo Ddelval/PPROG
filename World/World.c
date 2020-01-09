@@ -39,6 +39,7 @@ World* wo_get(char* c){
     if(!f)return NULL;
     World* w=wo_load(f);
     fclose(f);
+    next_world=NULL;
     return w;
 }
 
@@ -252,8 +253,16 @@ World* wo_launch(World* w){
             canv_free(c);
         }
         if(next_world!=NULL){
-            fprintf(stderr,"Information is here: %s",next_world);
+            return w;
         }
     }
+    return w;
+}
+
+World* wo_getNext(){
+    if(next_world==NULL)return NULL;
+    char *c =next_world;
+    World* w=wo_get(c);
+    free(c);
     return w;
 }
