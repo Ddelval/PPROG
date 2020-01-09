@@ -9,7 +9,7 @@
 
 typedef struct _Combat Combat;
 
-Combat* combat_launch(Entity* player, Entity* enemy);
+int combat_launch(Entity* player, Entity* enemy);
 /*
 Name: combat_ini
 Imputs: entity * player | entity * enemy

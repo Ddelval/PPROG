@@ -379,6 +379,7 @@ Canvas* room_getRender(const Room* r){
     Canvas* canv=canv_copy(r->map);
     Canvas* tmp;
     for(int i=0;i<r->overpos;++i){
+        if(!r->overs[i])continue;
         const Canvas * tmpc=spr_getDispData(r->overs[i]);
         tmp=canv_addOverlay(canv, spr_getDispData(r->overs[i]), spr_getOI(r->overs[i]), spr_getOJ(r->overs[i]));
         if(!tmp)return NULL;
@@ -501,9 +502,10 @@ int room_incPos(Room* r, int index, int i, int j,bool scroll){
     }
     return room_modPos(r,index,i+spr_getOI(r->overs[index]),j+spr_getOJ(r->overs[index]),scroll);
 }
-void* room_checkCombat(Room* r,int index){
+Trigger* room_checkCombat(Room* r,int index){
     if(!r)return NULL;
     int siz;
+    Trigger* res;
     int i,j,w,h;
     void *e2;
     i=spr_getOI(r->overs[index]);
@@ -523,10 +525,10 @@ void* room_checkCombat(Room* r,int index){
     return NULL;
 
 FOUND:
-    e2=tr_getEntityRef(t[0]);
-    for(int i=0;i<siz;++i)tr_free(t[i]);
+    res=t[0];
+    for(int i=1;i<siz;++i)tr_free(t[i]);
     free(t);
-    return e2;
+    return res;
 }
 /*-----------------------------------------------------------------*/
 /**
@@ -600,6 +602,7 @@ Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
     if(i1>=i2||j1>=j2)return r;
     Canvas* cbck=canv_copy(r->map);
     for(int i=0;i<r->overpos;++i){
+        if(!r->overs[i])continue;
         if(i!=index) canv_addOverlay(cbck,spr_getDispData(r->overs[i]),spr_getOI(r->overs[i]),spr_getOJ(r->overs[i]));
     }
     Canvas* c=canv_subCopy(cbck,i1,i2,j1,j2);
@@ -842,6 +845,7 @@ Room* room_updateData(Room*r){
         room_processTriggers(r,r->backg[i],i);
     }
     for(int i=0;i<r->overpos;++i){
+        if(!r->overs[i])continue;
         if(r->ent_typ[i]==1)continue; //It is the player
         if(r->ent_typ[i]==2){ //It is an enemy
             room_processTriggers(r,r->overs[i],i);
@@ -1177,4 +1181,14 @@ Room* room_copy(const Room* r){
 Sprite* room_getSpriteO(Room* r, int index){
     if(!r||index>=r->overpos)return NULL;
     return spr_copy(r->overs[index]);
+}
+Room* room_removeOver(Room* r, int index){
+    if(!r||index>=r->overpos)return NULL;
+    spr_free(r->overs[index]);
+    r->overs[index]=NULL;
+    room_updateData(r);
+    Canvas* c=room_getRender(r);
+    canv_print(stdout,c,0,0);
+    canv_free(c);
+    return r;
 }

@@ -186,10 +186,10 @@ int room_incPos(Room* r, int index, int i, int j,bool scroll);
  * @param r     Room in which the entities are
  * @param index Index of the entity that has moved
  * @return      NULL if no combat should be started
- *              Pointer to the enemy that should take part in the
- *              combat
+ *              Pointer to the trigger associated with the enemy
+ *              that should take part in the combat
  */
-void* room_checkCombat(Room* r,int index);
+Trigger* room_checkCombat(Room* r,int index);
 /*-----------------------------------------------------------------*/
 /**
  * @brief Sets the are of the window that will be rendered when 
@@ -379,4 +379,5 @@ Room* room_setPlayer(Room* r, void* e);
 
 
 Sprite* room_getSpriteO(Room* r, int index);
+Room* room_removeOver(Room* r, int index);
 #endif
