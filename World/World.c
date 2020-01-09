@@ -245,12 +245,31 @@ World* wo_launch(World* w){
         if(c=='E'){
             break;
         }
-        Entity* e=room_checkCombat(r,0);
-        if(e){
-            combat_launch(w->player,e);
-            Canvas* c=disp_Render(w->dis);
-            canv_print(stdout,c,0,0);
-            canv_free(c);
+        Trigger* t=room_checkCombat(r,0);
+
+        if(t){
+            Entity* e=tr_getEntityRef(t);
+            int index=combat_launch(w->player,e);
+            if(index==-1){
+                return NULL;
+            }
+            if(index==0){
+                room_removeOver(r,tr_getSpr_index(t));
+                int index=-1;
+                for(int i =0;i<w->enSiz;++i)if(e==w->enemies[i])index=i;
+                if(index!=-1){
+                    entity_free(w->enemies[index]);
+                    w->enemies[index]=NULL;
+                }
+                
+                
+            }
+            else{
+                Canvas* c=disp_Render(w->dis);
+                canv_print(stdout,c,0,0);
+                canv_free(c);
+            }
+            
         }
         if(next_world!=NULL){
             return w;

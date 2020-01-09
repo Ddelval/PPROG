@@ -35,13 +35,26 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id);
 void _combat_message(Combat* c, char* message);
 
 
-Combat* combat_launch(Entity* player, Entity* enemy){
-  if(!player||!enemy)return NULL;
+/**
+ * @brief Starts and executes a combat
+ * 
+ * @param player Player entity
+ * @param enemy  Enemy entity
+ * @return  -1 if there has been any error
+ *           0 if the combat was won by the player
+ *           1 if the combat was won by the enemy
+ */
+int combat_launch(Entity* player, Entity* enemy){
+  if(!player||!enemy)return -1;
+  int retval=-1;
   Combat* c=combat_ini(player, enemy);
-  if(!combat_load(c)) return 1;
+  if(!combat_load(c)) return -1;
   combat_execute(c);
+  if(attb_get(c->stats[ENEMY], HEALTH)<0)retval=0;
+  if(attb_get(c->stats[PLAYER], HEALTH)<0)retval=1;
   combat_free(c);
-  return c;
+  
+  return retval;
 }
 
 
@@ -132,7 +145,7 @@ Combat* combat_execute(Combat* c) {
               break;
           case 'J':
               if(!_combat_executeMove(c, selindex)) return NULL;
-              if(attb_get(c->stats[PLAYER], HEALTH)<0||!attb_get(c->stats[ENEMY], HEALTH)<0) {
+              if(attb_get(c->stats[PLAYER], HEALTH)<0||attb_get(c->stats[ENEMY], HEALTH)<0) {
                 _combat_message(c, "1... 2... 3... This combat is over!");
                 return c;
               }
