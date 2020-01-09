@@ -37,7 +37,7 @@ void _combat_message(Combat* c, char* message);
 
 /**
  * @brief Starts and executes a combat
- * 
+ *
  * @param player Player entity
  * @param enemy  Enemy entity
  * @return  -1 if there has been any error
@@ -53,7 +53,7 @@ int combat_launch(Entity* player, Entity* enemy){
   if(attb_get(c->stats[ENEMY], HEALTH)<0)retval=0;
   if(attb_get(c->stats[PLAYER], HEALTH)<0)retval=1;
   combat_free(c);
-  
+
   return retval;
 }
 
@@ -145,7 +145,7 @@ Combat* combat_execute(Combat* c) {
               break;
           case 'J':
               if(!_combat_executeMove(c, selindex)) return NULL;
-              if(attb_get(c->stats[PLAYER], HEALTH)<0||attb_get(c->stats[ENEMY], HEALTH)<0) {
+              if(attb_get(c->stats[PLAYER], HEALTH)<=0||attb_get(c->stats[ENEMY], HEALTH)<=0) {
                 _combat_message(c, "1... 2... 3... This combat is over!");
                 return c;
               }
@@ -177,7 +177,7 @@ Combat* _combat_executeMove(Combat* c, int choice) {
   int p2 = attb_get(c->stats[ENEMY], AGILITY);
   srand(time(NULL));
   double random = (double)rand()/RAND_MAX;
-  double res=((double)p1/100)*2 - ((double)p2/100) - random;
+  double res=((double)p1/100)*2.5 - ((double)p2/100) - random;
   int* e=NULL;
   int* p=NULL;
   if(skill_getSpecial(ps)==NORMAL) res += 0.3;
@@ -349,7 +349,7 @@ int* _combat_playerMove(Combat* c, int choice) {
   ret[3]=defense;
 
   /*  DAMAGE  */
-  int damage = attb_get(attk, ATTACK) + attb_get(c->stats[PLAYER], ATTACK) - attb_get(c->stats[ENEMY], DEFENSE);
+  int damage = attb_get(attk, ATTACK) + attb_get(c->stats[PLAYER], ATTACK)*0.2 - attb_get(c->stats[ENEMY], DEFENSE);
   // FILE* g=fopen("tty2", "w");
   // fprintf(g, "%d\n%d", damage, attb_get(c->stats[ENEMY], HEALTH));
   if(damage < 0) damage = 0;
@@ -485,7 +485,7 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
   ret[3]=defense;
 
   /*  DAMAGE  */
-  int damage = attb_get(attk, ATTACK) + attb_get(c->stats[ENEMY], ATTACK)- attb_get(c->stats[PLAYER], DEFENSE);
+  int damage = attb_get(attk, ATTACK) + attb_get(c->stats[ENEMY], ATTACK)*0.2- attb_get(c->stats[PLAYER], DEFENSE);
   // FILE* g=fopen("tty", "w");
   // fprintf(g, "%d\n%d", damage, attb_get(c->stats[PLAYER], HEALTH));
   if(damage < 0) damage = 0;
@@ -580,61 +580,72 @@ int* _combat_enemyMove(Combat* c) {
     }
   }
 
-  //STUN TACTICS
-  max_attack=0;
-  if(attb_get(c->stats[ENEMY], ATTACK)<attb_get(c->stats[PLAYER],ATTACK)-35){
-  for(int i=0;i<4;i++) {
-    if(attb_get(skill_getAtbatk(c->moveset[ENEMY][i]), ATTACK) > attb_get(skill_getAtbatk(c->moveset[ENEMY][max_attack]), ATTACK) && skill_getSpecial(c->moveset[ENEMY][i]) == STUNNER) {
-        max_attack = i;
-    }
-  }
-  if(skill_getSpecial(c->moveset[ENEMY][max_attack]) == STUNNER){
-    return _combat_executeEnemyMove(c, max_attack);
-  }
-}
-  //STAT BOOSTING ATTACK
-  max_attack=0;
-  if(attb_get(c->stats[ENEMY], ATTACK)<attb_get(c->stats[PLAYER],ATTACK)-20) {
-    for(int i=0; i<4; ++i) {
-      if(attb_get(skill_getAtbself(c->moveset[ENEMY][i]), ATTACK) > attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), ATTACK)) {
-        max_attack = i;
-      }
-    }
-    if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]),ATTACK) != 0){
-      return _combat_executeEnemyMove(c, max_attack);
-    }
-  }
-  //STAT BOOSTING DEF
-  max_attack=0;
-  if(attb_get(c->stats[ENEMY], DEFENSE)<attb_get(c->stats[PLAYER],ATTACK)-25) {
-    for(int i=0;i<4;++i) {
-      if(attb_get(skill_getAtbself(c->moveset[ENEMY][i]), DEFENSE)>attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), DEFENSE)) {
-        max_attack = i;
-      }
-    }
-    if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), DEFENSE) != 0) {
-      return _combat_executeEnemyMove(c, max_attack);
-    }
-  }
-  //STAT BOOSTING AGL
-  max_attack=0;
-  if(attb_get(c->stats[ENEMY], DEFENSE)<attb_get(c->stats[PLAYER],DEFENSE)-15) {
-    for(int i=0;i<4;++i) {
-      if (attb_get(skill_getAtbself(c->moveset[ENEMY][i]),SPEED) > attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), SPEED)) {
-        max_attack = i;
-      }
-    }
-    if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), SPEED) != 0){
-      return _combat_executeEnemyMove(c, max_attack);
-    }
-  }
+//   //STUN TACTICS
+//   max_attack=0;
+//   if(attb_get(c->stats[ENEMY], ATTACK)<attb_get(c->stats[PLAYER],ATTACK)-35){
+//   for(int i=0;i<4;i++) {
+//     if(attb_get(skill_getAtbatk(c->moveset[ENEMY][i]), ATTACK) > attb_get(skill_getAtbatk(c->moveset[ENEMY][max_attack]), ATTACK) && skill_getSpecial(c->moveset[ENEMY][i]) == STUNNER) {
+//         max_attack = i;
+//     }
+//   }
+//   if(skill_getSpecial(c->moveset[ENEMY][max_attack]) == STUNNER){
+//     return _combat_executeEnemyMove(c, max_attack);
+//   }
+// }
+//   //STAT BOOSTING ATTACK
+//   max_attack=0;
+//   if(attb_get(c->stats[ENEMY], ATTACK)<attb_get(c->stats[PLAYER],ATTACK)-20) {
+//     for(int i=0; i<4; ++i) {
+//       if(attb_get(skill_getAtbself(c->moveset[ENEMY][i]), ATTACK) > attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), ATTACK)) {
+//         max_attack = i;
+//       }
+//     }
+//     if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]),ATTACK) != 0){
+//       return _combat_executeEnemyMove(c, max_attack);
+//     }
+//   }
+//   //STAT BOOSTING DEF
+//   max_attack=0;
+//   if(attb_get(c->stats[ENEMY], DEFENSE)<attb_get(c->stats[PLAYER],ATTACK)-25) {
+//     for(int i=0;i<4;++i) {
+//       if(attb_get(skill_getAtbself(c->moveset[ENEMY][i]), DEFENSE)>attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), DEFENSE)) {
+//         max_attack = i;
+//       }
+//     }
+//     if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), DEFENSE) != 0) {
+//       return _combat_executeEnemyMove(c, max_attack);
+//     }
+//   }
+//   //STAT BOOSTING AGL
+//   max_attack=0;
+//   if(attb_get(c->stats[ENEMY], DEFENSE)<attb_get(c->stats[PLAYER],DEFENSE)-15) {
+//     for(int i=0;i<4;++i) {
+//       if (attb_get(skill_getAtbself(c->moveset[ENEMY][i]),SPEED) > attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), SPEED)) {
+//         max_attack = i;
+//       }
+//     }
+//     if(attb_get(skill_getAtbself(c->moveset[ENEMY][max_attack]), SPEED) != 0){
+//       return _combat_executeEnemyMove(c, max_attack);
+//     }
+//   }
   //DEFAULT BEHAVIOUR
   max_attack=0;
+  FILE* aa=fopen("aa", "w");
   for(int i=0;i<4;i++) {
-    if(attb_get(skill_getAtbatk(c->moveset[ENEMY][i]), ATTACK) > attb_get(skill_getAtbatk(c->moveset[ENEMY][max_attack]), ATTACK)) {
+    fprintf(aa, "%d %d \n", attb_get(skill_getAtbatk(c->moveset[ENEMY][i]), HEALTH), attb_get(skill_getAtbatk(c->moveset[ENEMY][max_attack]), HEALTH));
+    if(attb_get(skill_getAtbatk(c->moveset[ENEMY][i]), HEALTH) > attb_get(skill_getAtbatk(c->moveset[ENEMY][max_attack]), HEALTH)) {
         max_attack = i;
     }
   }
+  srand(time(NULL));
+  fprintf(aa, "%d\n", max_attack);
+  double random = (double)rand();
+  if((int)random%2) {
+    while(random>=MAX_ATTACKS) random/=2;
+    max_attack=random;
+  }
+  fprintf(aa, "%f\n", random);
+  fclose(aa);
   return _combat_executeEnemyMove(c, max_attack);
 }
 
