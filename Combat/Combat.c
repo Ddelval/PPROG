@@ -755,7 +755,8 @@ Combat* combat_load(Combat*c) {
       movs[i]=we_createLabel(skill_getName(c->moveset[PLAYER][i]),fcat_lookup(M4),0);
       if(!movs[i])goto ERR_END;
   }
-  movs[4]=we_createLabel(obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE)), fcat_lookup(M4),0);
+  const char* caux=obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE));
+  movs[4]=we_createLabel(caux? caux:" ", fcat_lookup(M4),0);
   if(!movs[4])goto ERR_END;
 
   winplayer=win_ini("Your stats",pstats,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,0,0,fcat_lookup(M8));

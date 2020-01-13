@@ -13,6 +13,7 @@ typedef struct{
 
 char sdic_c[]= "Sprites/dic.txt";
 char* sdic_tr = "Dictionaries/trsp.txt";
+char* sdic_dup="Dictionaries/spr_dup.txt";
 SpriteDic* sdic_data=NULL;
 void sdic_free(){
     if(!sdic_data)return;
@@ -74,6 +75,32 @@ SpriteDic* sdic_ini(){
             }
         }
     }
+    fclose(f);
+    fopen(sdic_dup,"r");
+    fscanf(f,"%d",&num);
+    s->dat=realloc(s->dat,sizeof(Sprite*)*(siz+num));
+    for(int i=0;i<num;++i){
+        int nid, pid;
+        int ntrig;
+        fscanf(f, "%d %d %d", &nid, &pid,&ntrig);
+        fprintf (stderr,"%d %d %d",nid,pid,ntrig);
+        Sprite *spr;
+        for(int j=0;j<siz;++j){
+            if(spr_getId(s->dat[j])==pid){
+                spr=spr_copy(s->dat[j]);
+                spr_setId(spr,nid);
+                spr_clearTrig(spr);
+                break;
+            }
+        }
+        for(int j=0;j<ntrig;++j){
+            int t_id, i1,i2,j1,j2;
+            fscanf(f,"%d %d %d %d %d", &t_id, &i1, &i2, &j1, &j2);
+            spr_addTrigger(spr,t_id,i1,i2,j1,j2);
+        }
+        s->dat[siz+i]=spr;
+    }
+    s->size+=num;
     return s;
 }
 

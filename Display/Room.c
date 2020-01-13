@@ -918,6 +918,25 @@ Room* room_removeB(Room* r, int index){
 
 /*-----------------------------------------------------------------*/
 /**
+ * @brief Removes a sprite from the array overs
+ * 
+ * @param r     Room from which the sprite will be deleted
+ * @param index Index of the sprite in the array overs
+ * @return      NULL if error
+ */
+Room* room_removeOver(Room* r, int index){
+    if(!r||index>=r->overpos)return NULL;
+    spr_free(r->overs[index]);
+    r->overs[index]=NULL;
+    room_updateData(r);
+    Canvas* c=room_getRender(r);
+    canv_print(stdout,c,0,0);
+    canv_free(c);
+    return r;
+}
+
+/*-----------------------------------------------------------------*/
+/**
  * @brief Displays the building interface
  * 
  * @param r      Room in which the building will be placed
@@ -1118,6 +1137,12 @@ int room_getId(Room* r){
 }
 
 /*-----------------------------------------------------------------*/
+/// Gets a copy of the sprite in position index of the over sprites
+Sprite* room_getSpriteO(Room* r, int index){
+    if(!r||index>=r->overpos)return NULL;
+    return spr_copy(r->overs[index]);
+}
+/*-----------------------------------------------------------------*/
 /// Sets the i-coordinate of the sprite r->overs[index]
 Room* room_setSpriteI(Room* r,int index, int i){
     if(!r||r->overpos<=index)return NULL;
@@ -1178,17 +1203,4 @@ Room* room_copy(const Room* r){
     return r2;
 }
 
-Sprite* room_getSpriteO(Room* r, int index){
-    if(!r||index>=r->overpos)return NULL;
-    return spr_copy(r->overs[index]);
-}
-Room* room_removeOver(Room* r, int index){
-    if(!r||index>=r->overpos)return NULL;
-    spr_free(r->overs[index]);
-    r->overs[index]=NULL;
-    room_updateData(r);
-    Canvas* c=room_getRender(r);
-    canv_print(stdout,c,0,0);
-    canv_free(c);
-    return r;
-}
+

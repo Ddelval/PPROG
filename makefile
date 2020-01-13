@@ -1,6 +1,6 @@
 .SECONDARY:
 CC= @gcc -g  #-fsanitize=address
-EXE:=WorldTest TestCombat
+EXE:=WorldTest TestCombat GameTest
 
 
 EXE_O:=$(patsubst %,Compile_obj/%.o,$(EXE))

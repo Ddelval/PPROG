@@ -1,4 +1,4 @@
-//  Test
+//  PPROG
 //	Pixel.c
 //  Created by David del Val on 27/09/2019
 //

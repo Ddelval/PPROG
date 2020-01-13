@@ -77,6 +77,7 @@ Trigger * tr_load(FILE* f){
         t->next_room[0]='\n';
         t->next_room[1]='\0';
         while(!strcmp(t->next_room,"\n"))fgets(t->next_room,MAX_ROOM,f);
+        t->next_room[strlen(t->next_room)-1]=0;
     }
     if(t->type==TALK){
         fscanf(f,"%d",&t->ent_id);

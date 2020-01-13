@@ -309,6 +309,16 @@ Room* room_removeB(Room* r, int index);
 
 /*-----------------------------------------------------------------*/
 /**
+ * @brief Removes a sprite from the array overs
+ * 
+ * @param r     Room from which the sprite will be deleted
+ * @param index Index of the sprite in the array overs
+ * @return      NULL if error
+ */
+Room* room_removeOver(Room* r, int index);
+
+/*-----------------------------------------------------------------*/
+/**
  * @brief Displays the building interface
  * 
  * @param r      Room in which the building will be placed
@@ -362,6 +372,10 @@ char* room_getName(Room* r);
 int room_getId(Room* r);
 
 /*-----------------------------------------------------------------*/
+/// Gets a copy of the sprite in position index of the over sprites
+Sprite* room_getSpriteO(Room* r, int index);
+
+/*-----------------------------------------------------------------*/
 /// Sets the i-coordinate of the sprite r->overs[index]
 Room* room_setSpriteI(Room* r,int index, int i);
 
@@ -378,6 +392,4 @@ Room* room_setHW(Room* r, int he,int wi);
 Room* room_setPlayer(Room* r, void* e);
 
 
-Sprite* room_getSpriteO(Room* r, int index);
-Room* room_removeOver(Room* r, int index);
 #endif

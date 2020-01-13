@@ -369,3 +369,10 @@ int spr_getId(const Sprite* sp){
     if(!sp)return 0;
     return sp->id;
 }
+void spr_clearTrig(Sprite* sp){
+    if(!sp)return;
+    sp->trsize=0;
+}
+void spr_setId(Sprite* sp,int id){
+    if (sp)sp->id=id;
+}

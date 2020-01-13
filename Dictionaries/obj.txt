@@ -1,4 +1,4 @@
-10
+12
 
 1
 Rock
@@ -35,6 +35,12 @@ Iron
 2
 1
 
+6
+Concrete
+106
+106
+2
+1
 
 1100
 AlGeo grades
@@ -43,15 +49,29 @@ AlGeo grades
 2
 1
 
-10
+100
 House
-101
+107
 50
 2
 1
 
+101
+Hall
+108
+51
+2
+1
 
-6
+
+
+
+
+
+
+
+
+201
 Wooden stick
 102
 102
@@ -83,7 +103,7 @@ Hits the enemy restoring part of your health
 5 0 0 0 0
 1
 
-7
+301
 Wooden potion
 102
 102
@@ -91,7 +111,7 @@ Wooden potion
 10 5 0 0 0
 1
 
-8
+202
 Iron bar
 105
 105

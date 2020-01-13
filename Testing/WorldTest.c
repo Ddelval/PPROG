@@ -1,7 +1,8 @@
 #include "World.h"
 int main(){
     term_init();
-    World* w=wo_get("Main");
+    
+    World* w=wo_get("Cave 1");
    
     wo_launch(w);
     wo_free(w);

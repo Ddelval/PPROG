@@ -1,4 +1,4 @@
-5
+7
 0 0
 Cut wood
 2 1 1
@@ -21,3 +21,11 @@ Get Iron
 4 1
 Enter cave
 Cave 1
+
+5 0
+Get concrete
+6 1 1
+
+6 1
+Exit cave
+Main

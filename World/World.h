@@ -39,4 +39,7 @@ void wo_free(World *w);
 World* wo_load(FILE* f);
 World* wo_launch(World* w);
 World* wo_getNext();
+
+World* wo_setName(World* wp,char*c);
+const char* wo_getName(World* wp);
 #endif

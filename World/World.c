@@ -264,11 +264,9 @@ World* wo_launch(World* w){
                 
                 
             }
-            else{
-                Canvas* c=disp_Render(w->dis);
-                canv_print(stdout,c,0,0);
-                canv_free(c);
-            }
+            Canvas* c=disp_Render(w->dis);
+            canv_print(stdout,c,0,0);
+            canv_free(c);
             
         }
         if(next_world!=NULL){
@@ -284,4 +282,13 @@ World* wo_getNext(){
     World* w=wo_get(c);
     free(c);
     return w;
+}
+World* wo_setName(World* wp,char*c){
+    if(!wp||!c)return NULL;
+    if(wp->name)free(wp->name);
+    wp->name=strdup(c);
+    return wp;
+}
+const char* wo_getName(World* wp){
+    return wp? wp->name: NULL;
 }

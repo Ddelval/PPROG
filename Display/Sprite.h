@@ -154,6 +154,10 @@ void spr_setOI( Sprite* spr,int ipos);
 
 void spr_setOJ(Sprite* spr, int jpos);
 
-int spr_getId(const Sprite* sp);
 
+
+
+int spr_getId(const Sprite* sp);
+void spr_clearTrig(Sprite* sp);
+void spr_setId(Sprite* sp,int id);
 #endif /* Sprite_h */

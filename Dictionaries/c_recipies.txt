@@ -12,8 +12,9 @@ Inverse Iron
 4 3
 1 1
 
-10 1
+100 1
 House
 2
 2 1
 1 1
+
