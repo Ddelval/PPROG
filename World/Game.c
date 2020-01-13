@@ -2,6 +2,7 @@
 #include "Game.h"
 
 extern char* next_world;
+Entity* player;
 struct _Game{
     World** loaded;
     int loadedsize;
@@ -63,12 +64,14 @@ World* _game_getW(Game*g, char* c){
 
 int game_execute(Game* g){
     if(!g)return NULL;
-
+    World* p,*n;
     if(wo_launch(_game_getW(g,"Main"))==NULL)return 1;
+    p=_game_getW(g,"Main");
     while(next_world){
-        fprintf(stderr,"%s\n",next_world);
-        fflush(stderr);
-        if(!wo_launch(_game_getW(g,next_world)))return 1;
+        n=_game_getW(g,next_world);
+        wo_transferPlayer(n,p);
+        if(!wo_launch(n))return 1;
+        p=n;
     }
     return 0;
 
@@ -85,6 +88,7 @@ void game_closing(){
 int game_launch(){
     int retval=0;
     game_opening();
+    player=edic_lookup(0,NULL);
     Game* g=game_ini();
     if(game_loadWorlds(g)==NULL){
         retval=1;

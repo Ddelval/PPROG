@@ -378,3 +378,11 @@ Quest** entity_getQuests(Entity* e, int* siz){
     *siz=cnt;
     return ret;
 }
+Entity* entity_modPlayer(Entity* prev, Entity* new){
+  if(!prev||!new)return NULL;
+  inv_free(prev->inv); 
+  prev->inv=inv_copy(new->inv);
+  attb_free(prev->attr); 
+  prev->attr=attb_copy(new->attr);
+  return prev;
+}

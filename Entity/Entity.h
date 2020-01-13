@@ -112,4 +112,5 @@ Entity* entity_processEnemy(Entity* e);
 DialogMan* entity_getDialogs(Entity *e);
 Entity* entity_addQuest(Entity* en, Quest* q);
 Quest** entity_getQuests(Entity* e, int* siz);
+Entity* entity_modPlayer(Entity* prev, Entity* new);
 #endif

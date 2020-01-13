@@ -1,4 +1,4 @@
-7
+8
 0 0
 Cut wood
 2 1 1
@@ -29,3 +29,7 @@ Get concrete
 6 1
 Exit cave
 Main
+
+7 1
+Enter cave2
+Cave 2

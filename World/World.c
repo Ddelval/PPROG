@@ -210,6 +210,10 @@ World* wo_load(FILE* f){
     }
     return w;
 }
+World* wo_transferPlayer(World* next, World* prev){
+    if(!next||!prev)return NULL;
+    return entity_modPlayer(next->player,prev->player)? next:NULL;
+}
 
 World* wo_launch(World* w){
     if(!w)return NULL;
