@@ -44,7 +44,7 @@ void we_free(Welem* w);
  * @param vgap  Vertical gap between several lines of the label
  * @return      Welem* New welem with the label in it
  */
-Welem* we_createLabel(char* t, const Font* f,int vgap);
+Welem* we_createLabel(const char* t, const Font* f,int vgap);
 
 /*-----------------------------------------------------------------*/
 /**

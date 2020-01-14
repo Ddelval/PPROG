@@ -8,7 +8,7 @@
 #define  MAX_VAL 255
 
 struct _Pixel{
-    int r,g,b,a;
+    unsigned char r,g,b,a;
 };
 /**
  * @brief The pixel ADT represents a color

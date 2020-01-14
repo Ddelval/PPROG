@@ -25,8 +25,10 @@ void fcat_ini(){
  * 
  */
 void fcat_free(){
-    for(int i=0;i<FSIZE;++i){
-        font_free(dat[i]);
+    if(dat){
+        for(int i=0;i<FSIZE;++i){
+            font_free(dat[i]);
+        }
     }
     free(dat);
 }

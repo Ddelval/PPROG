@@ -192,6 +192,12 @@ void spr_free(Sprite* sp){
         }
         free(sp->collision);
     }
+    if(sp->shadow){
+        for(int i=0;i<sp->height;++i){
+            free(sp->shadow[i]);
+        }
+        free(sp->shadow);
+    }
     free(sp->tr);
     canv_free(sp->canvas);
     free(sp);

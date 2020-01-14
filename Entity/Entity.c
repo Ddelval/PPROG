@@ -210,12 +210,12 @@ ent_type entity_getEntType(Entity* p){
   return p? p->t:0;
 }
 
-int entity_getCoordX(Entity* p){
+int entity_getCoordI(Entity* p){
   if(!p) return -1;
   return p->ipos;
 }
 
-int entity_getCoordY(Entity* p){
+int entity_getCoordJ(Entity* p){
   if(!p) return -1;
   return p->jpos;
 }
@@ -276,8 +276,9 @@ void entity_free(Entity *p){
 
   for(int i=0;i<MAX_QUESTS;++i)quest_free(p->adq_quests[i]);
 
+  if(p->dman)dman_free(p->dman);
+  
   free(p);
-
   return;
 }
 Entity* entity_addtoDisplay(Entity* e, Display* dis){

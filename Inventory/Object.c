@@ -143,12 +143,12 @@ Skill ** obj_getAttacks(Object * ob){
   return ob->attacks;
 }
 
-Attributes * obj_getAttributes(Object * ob){
+Attributes * obj_getAttributes(const Object * ob){
   if(!ob) return NULL;
   return ob->atb;
 }
 
-const char* obj_getName(Object* ob){
+const char* obj_getName(const Object* ob){
     if(!ob)return NULL;
     return ob->name;
 }

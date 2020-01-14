@@ -948,6 +948,7 @@ void canv_printAllSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int 
                 continue;
             }
             char* cc2=pix_renderLine((const Pixel**)buff,l);
+            for(int i=0;i<l;++i)pix_free(buff[i]);
             l=0;
             char* c2=movecur(oi+i,oj+jj);
             char* segment=calloc(strlen(cc2)+strlen(c2)+1,sizeof(char));

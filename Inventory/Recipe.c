@@ -86,7 +86,6 @@ Recipe* rec_getData(Recipe * r, Object *** obj, int ** quant){
 //                   (list_of_quantites)
 Recipe* rec_load(FILE *f){
         Recipe *r = rec_ini();
-        int i = 0;
         if(!f || !r) return NULL;
 
         fscanf(f, "%d %d\n", &(r->result_id),&(r->quant));
@@ -145,7 +144,6 @@ Canvas* _rec_renderEqual(int size){
 Canvas* _rec_renderLeft(Recipe* r,int obj_wid,int hei){
         if(!r)return NULL;
         Canvas* plus=_rec_renderPlus(hei/2);
-        Wlabel* wl=wl_ini(r->name,fcat_lookup(M6),0);
         Object* ob=odic_lookup(r->elements[0]);
         Canvas* l=obj_render(ob,r->quantities[0],fcat_lookup(M4),fcat_lookup(M6),obj_wid,hei,false);
         Canvas* aux=NULL;

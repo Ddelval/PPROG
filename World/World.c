@@ -55,15 +55,17 @@ Display* _wo_gameDisplay(Room* r){
     Window* cont;
 
     int vdiv=800;
-    int w=1200;
-    int h=400;
+    int w=DISP_WIDTH;
+    int h=DISP_HEIGHT;
+    int act_size=6;
+
     char * tit=room_getName(r);
     if(!tit)goto FAIL;
     Display* dis=disp_ini(w,h,r,vdiv,tit,fcat_lookup(M8));
     if(!dis)goto FAIL;
 
     /** Actions Window **/
-    int act_size=6;
+    
     ch=calloc(act_size,sizeof(char*));
     if(!ch)goto FAIL;
     ch[0]="Collect";
@@ -116,12 +118,12 @@ FAIL:
 
 END:
     free(ch);
-    for(int i=0;i<act_size;++i)we_free(wel[i]);
+    if(wel)for(int i=0;i<act_size;++i)we_free(wel[i]);
     free(wel);
     win_free(act);
 
     free(cn);
-    for(int i=0;i<cont_size;++i)we_free(wec[i]);
+    if(wec) for(int i=0;i<cont_size;++i)we_free(wec[i]);
     free(wec);
     win_free(cont);
 
@@ -180,6 +182,7 @@ Entity* _wo_eload(FILE* f,World * w){
  */
 World* wo_load(FILE* f){
     if(!f)return NULL;
+    
     World* w=wo_ini();
     Room* r=room_load(f);
     if(!w||!r){
@@ -194,7 +197,44 @@ World* wo_load(FILE* f){
 
     Room* rr=disp_getrefRoom(w->dis);
     room_setPlayer(rr,w->player);
+    Sprite* s=entity_getSprite(w->player);
+    int i=entity_getCoordI(w->player);
+    int j=entity_getCoordJ(w->player);
+    spr_free(s);
+    int* dim= disp_getDimensions(w->dis);
+    int t2,b2,r2,l2;
+    int h, w2;
+    h=dim[H_DATA];
+    w2=dim[VD_DATA];
+    if(i-h/2<0){
+        t2=0;
+        b2=h;
+    }
+    else if(i+h/2>=room_getHeight(rr)){
+        t2=room_getHeight(rr)-h;
+        b2=room_getHeight(rr);
+    }
+    else{
+        t2=i-h/2;
+        b2=i+h/2;
+    }
 
+    if(j-w2/2<0){
+        l2=0;
+        r2=w2;
+    }
+    else if(j+w2/2>=room_getWidth(rr)){
+        l2=room_getWidth(rr)-w2;
+        r2=room_getWidth(rr);
+    }
+    else{
+        l2=j-w2/2;
+        r2=j+w2/2;
+    }
+    fprintf(stderr,"%s -> %d %d %d %d\n",w->name,i,j,b2,r2);
+    fflush(stderr);
+    room_setBounds(rr,t2,l2,b2,r2);
+    
     fscanf(f,"%d",&(w->allSiz));
     w->allies=calloc(w->allSiz,sizeof(Entity*));
     for(int i=0;i<w->allSiz;++i){
@@ -208,6 +248,7 @@ World* wo_load(FILE* f){
         w->enemies[i]=_wo_eload(f,w);
         entity_processEnemy(w->enemies[i]);
     }
+    room_free(r);
     return w;
 }
 World* wo_transferPlayer(World* next, World* prev){

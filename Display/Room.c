@@ -25,6 +25,9 @@ typedef struct _box{
     int i,j,w,h;
 }box;
 
+typedef struct _sprref{
+    int i, j,id;
+}sprref;
 /**
  * @brief Information that we have to store to identify a trigger
  * 
@@ -71,7 +74,7 @@ struct _Room{
     //Top and left are included, right and bottom are excluded
     int c_t, c_l, c_r, c_b;
     Pixel* backcol;
-    Sprite** backg;
+    sprref* backg;
     int backgsiz;
     int backpos;
     Sprite** overs;
@@ -118,7 +121,7 @@ Room* room_ini(int id, const char* name,int hei, int wid, const Pixel* backcol){
     r->c_r=wid;
     r->backgsiz=MEM_INI;
 
-    r->backg=calloc(MEM_INI, sizeof(Sprite*));
+    r->backg=calloc(MEM_INI, sizeof(sprref));
     if(!r->backg)ret_free(r);
 
     r->overssiz=MEM_INI;
@@ -175,9 +178,6 @@ void room_free(Room* r){
 
     //Background sprite array
     if(r->backg){
-        for(int i=0;i<r->backpos;++i) {
-            spr_free(r->backg[i]);
-        }
         free(r->backg);
     }
 
@@ -287,16 +287,15 @@ Room* room_addBSprite(Room* r, const Sprite* s){
     if(!r||!s)return NULL;
     if(r->backpos==r->backgsiz){
         int nsiz=(int)ceil(r->backgsiz*MEM_INCREMENT);
-        Sprite** tmp=realloc(r->backg,nsiz*sizeof(Sprite*));
+        sprref* tmp=realloc(r->backg,nsiz*sizeof(sprref));
         if(!tmp)return NULL;
         r->backg=tmp;
         r->backgsiz=nsiz;
     }
     
-    r->backg[r->backpos]=spr_copy(s);
-    if(!r->backg[r->backpos]){
-        return NULL;
-    }
+    r->backg[r->backpos].i=spr_getOI(s);
+    r->backg[r->backpos].j=spr_getOJ(s);
+    r->backg[r->backpos].id=spr_getId(s);
     //spr_printTrigger(s);
     r->backpos++;
     canv_addOverlay(r->map, spr_getDispData(s), spr_getOI(s), spr_getOJ(s));
@@ -360,8 +359,8 @@ int room_addOSprite(Room* r, const Sprite* s, int e_t){
  */
 Room* room_getBSpritePos(const Room *r, int index, int* i, int *j){
     if(!r||index<0||index>=r->backpos||!i||!j)return NULL;
-    *i=spr_getOI(r->backg[index]);
-    *j=spr_getOJ(r->backg[index]);
+    *i=r->backg[index].i;
+    *j=r->backg[index].j;
     return (Room*)r;
 }
 
@@ -507,7 +506,6 @@ Trigger* room_checkCombat(Room* r,int index){
     int siz;
     Trigger* res;
     int i,j,w,h;
-    void *e2;
     i=spr_getOI(r->overs[index]);
     j=spr_getOJ(r->overs[index]);
     w=spr_getWidth(r->overs[index]);
@@ -584,10 +582,6 @@ Room* room_setBounds(Room*ro, int t, int l, int b, int r){
  * @return Room* 
  */
 Room* room_printMod(Room* r, int index, int disp_i, int disp_j){
-    int wid=r->c_r-r->c_l;
-    int hei=r->c_b-r->c_t;
-    char * to_print=calloc(2*wid*hei, sizeof(char));
-    int ipos=0;
     int i=index;
     int i1,i2,j1,j2;
 
@@ -804,10 +798,12 @@ Canvas* room_redrawMap(Room*r){
     if(!r)return NULL;
     Canvas* b=canv_backGrnd(pix_retR(r->backcol),pix_retG(r->backcol),pix_retB(r->backcol),pix_retA(r->backcol),r->wid,r->hei);
     for(int i=0;i<r->backpos;++i){
-        if(canv_addOverlay(b,spr_getDispData(r->backg[i]),spr_getOI(r->backg[i]),spr_getOJ(r->backg[i]))==NULL){
+        Sprite* sp=sdic_lookup(r->backg[i].id);
+        if(canv_addOverlay(b,spr_getDispData(sp),r->backg[i].i,r->backg[i].j)==NULL){
             canv_free(b);
             return NULL;
         }
+        spr_free(sp);
     }
     canv_free(r->map);
     r->map=b;
@@ -840,9 +836,13 @@ Room* room_updateData(Room*r){
     
     // Populates the data in the arrays
     for(int i=0;i<r->backpos;++i){
-        spr_processCollisions(r->backg[i],r->colision,r->wid,r->hei);
-        spr_processShadows(r->backg[i],r->shadows);
-        room_processTriggers(r,r->backg[i],i);
+        Sprite* sp=sdic_lookup(r->backg[i].id);
+        spr_setOI(sp,r->backg[i].i);
+        spr_setOJ(sp,r->backg[i].j);
+        spr_processCollisions(sp,r->colision,r->wid,r->hei);
+        spr_processShadows(sp,r->shadows);
+        room_processTriggers(r,sp,i);
+        spr_free(sp);
     }
     for(int i=0;i<r->overpos;++i){
         if(!r->overs[i])continue;
@@ -906,11 +906,10 @@ Room* room_printModBackg(Room* r, int disp_i, int disp_j){
  */
 Room* room_removeB(Room* r, int index){
     if(!r||index>=r->backpos)return NULL;
-    spr_free(r->backg[index]);
     for(int i=index;i<r->backpos-1;++i){
         r->backg[i]=r->backg[i+1];
     }
-    r->backg[r->backpos-1]=NULL;
+    r->backg[r->backpos-1].id=-1;
     r->backpos--;
     
     return r;
@@ -953,6 +952,7 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
     Canvas* fin=NULL;
     Sprite* s=sdic_lookup(spid);
     Canvas* base=room_getRender(r);
+    bool buil=false;
     
     int ipos,jpos;
     ipos = ai-r->c_t;
@@ -992,7 +992,7 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
     canv_darken(aux,1.2);
     fin=canv_Overlay(base,aux,ipos,jpos);
     canv_print(stdout,fin,0,0);
-    bool buil=false;
+    
     while(1){
         char ch=getch1();
         if(ch=='D'){
@@ -1137,6 +1137,18 @@ int room_getId(Room* r){
 }
 
 /*-----------------------------------------------------------------*/
+/// Gets the height of the room
+int room_getHeight(Room*r){
+    return r? r->hei:-1;
+}
+
+/*-----------------------------------------------------------------*/
+/// Gets the width of the room
+int room_getWidth(Room*r){
+    return r? r->wid:-1;
+}
+
+/*-----------------------------------------------------------------*/
 /// Gets a copy of the sprite in position index of the over sprites
 Sprite* room_getSpriteO(Room* r, int index){
     if(!r||index>=r->overpos)return NULL;
@@ -1189,7 +1201,11 @@ Room* room_copy(const Room* r){
     r2->c_b=r->c_b;
     r2->player=r->player;
     for(int i=0;i<r->backpos;++i){
-        room_addBSprite(r2,r->backg[i]);
+        Sprite* ss=sdic_lookup(r->backg[i].id);
+        spr_setOI(ss,r->backg[i].i);
+        spr_setOJ(ss,r->backg[i].j);
+        room_addBSprite(r2,ss);
+        spr_free(ss);
     }
     for(int i=0;i<r->overpos;++i){
         room_addOSprite(r2,r->overs[i],r->ent_typ[i]);

@@ -185,6 +185,7 @@ Canvas* disp_Render(Display* dis){
     t=canv_appendHNL(left,vbar);
     t2=canv_appendHNL(right,vbar);
     res =canv_appendHNL(t, t2);
+    canv_free(vbar);
 
 CLEAN:
     canv_free(left);
@@ -271,6 +272,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
     Canvas *wl_rend=NULL,*result=NULL;
     Canvas *nam_rend=NULL;
     Wlabel* wl=NULL;
+    int ipos=0;
 
     en=calloc(strlen(ename)+2,sizeof(char));
     if(!en) goto ERR_END;
@@ -292,7 +294,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
 
     int h=150;
     int hmargin=50;
-    int ipos=dis->height-h;
+    ipos=dis->height-h;
 
     rend=disp_Render(dis);
     bottom=canv_subCopy(rend,ipos ,canv_getHeight(rend),0,canv_getWidth(rend));

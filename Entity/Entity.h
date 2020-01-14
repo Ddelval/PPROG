@@ -64,6 +64,9 @@ Entity* entity_setCoordI(Entity* p, int i);
    is smaller than 0 it will return ERROR */
 Entity* entity_setCoordJ(Entity* p, int j);
 
+int entity_getCoordI(Entity* p);
+
+int entity_getCoordJ(Entity* p);
 
 Entity* entity_addtoDisplay(Entity* e, Display* dis);
 

@@ -372,6 +372,14 @@ char* room_getName(Room* r);
 int room_getId(Room* r);
 
 /*-----------------------------------------------------------------*/
+/// Gets the height of the room
+int room_getHeight(Room*r);
+
+/*-----------------------------------------------------------------*/
+/// Gets the width of the room
+int room_getWidth(Room*r);
+
+/*-----------------------------------------------------------------*/
 /// Gets a copy of the sprite in position index of the over sprites
 Sprite* room_getSpriteO(Room* r, int index);
 

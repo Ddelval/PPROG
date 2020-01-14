@@ -674,7 +674,7 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   //attb_free(attr);
   if(id==ENEMY) _combat_message(c, "The enemy used a consumable to rise his stats!");
   else _combat_message(c, "You used your selected consumable to rise your stats!");
-  if(!inv_decrease(entity_getInventory(e),obj_getAttributes(inv_getSelected(entity_getInventory(e), CONSUMABLE)), CONSUMABLE)) return;
+  inv_decrease(entity_getInventory(e),inv_getSelected(entity_getInventory(e), CONSUMABLE), 1);
   return;
 }
 
