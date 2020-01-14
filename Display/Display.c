@@ -505,6 +505,15 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
         Canvas* sel=inv_renderObj(inv,typesel,sizes[typesel].fi,sizes[typesel].se,ftext,fnumbers,selindex,true);
         canv_print(stdout,sel,coordinates[typesel][selindex].fi+10,coordinates[typesel][selindex].se+1);
         canv_free(sel);
+
+  /*      Canvas* nsel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,false);
+        canv_print(stdout,nsel,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
+        canv_free(nsel);
+
+        consumableindex=inv_getSelectedIndex(inv,CONSUMABLE);
+        Canvas* sel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,true);
+        canv_print(stdout,sel2,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
+        canv_free(sel2); */
     }
 END:
     
