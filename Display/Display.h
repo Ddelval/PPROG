@@ -147,6 +147,9 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename);
  */
 Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers);
 
+
+Display* disp_InventoryConsumWindow(Display* dis, Inventory* inv, Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers);
+
 /*-----------------------------------------------------------------*/
 /**
  * @brief Starts the crafting mode of the display

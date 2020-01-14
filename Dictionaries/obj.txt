@@ -1,4 +1,4 @@
-12
+13
 
 1
 Rock
@@ -110,6 +110,15 @@ Wooden potion
 1
 10 5 0 0 0
 1
+
+302
+Glass potion
+102
+102
+1
+10 5 0 0 0
+1
+
 
 202
 Iron bar

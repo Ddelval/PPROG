@@ -373,13 +373,29 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     pairii* sizes;
     Canvas *** dat=inv_render(inv,&dim,&dimens,&text,&sizes,ftext,fnumbers);
     Wlabel* tit=wl_ini("Inventory",ftitle,10);
+    if(!tit||!dat)goto END;
+
     Canvas* c=wl_render(tit,dis->width);
     pairii** coordinates = calloc(OBJ_TYPE_SIZE,sizeof(pairii*));
+    pairii* titlecoord=calloc(OBJ_TYPE_SIZE,sizeof(pairii));
+    if(!c||!coordinates||!titlecoord) goto END;
+
+
+    for(int i=0;i<dim;++i){
+        char* c=calloc(strlen(text[i])+2,sizeof(char));
+        c[0]=' ';
+        strcpy(c+1,text[i]);
+        free(text[i]);
+        text[i]=c;
+    }
+
     for(int i=0;i<dim;++i){
         //Iterate through each type of element
         if(dimens[i]>0){
             Wlabel* w=wl_ini(text[i],fsubtitle,10);
             Canvas * c2=wl_render(w,dis->width);
+            titlecoord[i].fi=canv_getHeight(c);
+            titlecoord[i].se=canv_getWidth(c2);
             canv_appendVI(c,c2);
         }
         else continue;
@@ -397,6 +413,11 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
         }
         canv_appendVI(c,b);
     }
+    for(int i=0;i<OBJ_TYPE_SIZE;++i){
+        titlecoord[i].se=canv_getWidth(c)/2-titlecoord[i].se/2;
+        titlecoord[i].fi+=10;
+    }
+
     Canvas* back=disp_Render(dis);
     Canvas* back2=canv_blur(back,BLUR_RAD);
     canv_free(back);
@@ -405,30 +426,88 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     canv_print(stdout,back2,0,0);
     char cha;
     int selindex=inv_getSelectedIndex(inv,WEAPON);
-
+    int typesel=WEAPON;
     while(1){
         cha=getch1();
+
+        Wlabel* w;
+        Canvas * c2;
+        Canvas* c3;
+        char* txt;
+
         switch(cha){
+            case 'W':
+                
+                w=wl_ini(text[typesel],fsubtitle,10);
+                c2=wl_render(w,dis->width);
+                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                canv_addOverlay(c3,c2,0,0);
+                canv_print(stdout,c3,titlecoord[typesel].fi,0);
+
+
+
+                typesel=(typesel-1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
+                while(dimens[typesel]<=0)typesel=(typesel-1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
+
+                
+                txt=calloc(strlen(text[typesel]+2),sizeof(char));
+                txt[0]='-';
+                strcpy(txt+1,text[typesel]+1);
+                w=wl_ini(txt,fsubtitle,10);
+                free(txt);
+                c2=wl_render(w,dis->width);
+                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                canv_addOverlay(c3,c2,0,0);
+                canv_print(stdout,c3,titlecoord[typesel].fi,0);
+
+                
+                
+                break;
+            case 'S':
+
+                w=wl_ini(text[typesel],fsubtitle,10);
+                c2=wl_render(w,dis->width);
+                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                canv_addOverlay(c3,c2,0,0);
+                canv_print(stdout,c3,titlecoord[typesel].fi,0);
+
+                typesel=(typesel+1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
+                while(dimens[typesel]<=0)typesel=(typesel+1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
+                
+                txt=calloc(strlen(text[typesel]+2),sizeof(char));
+                txt[0]='-';
+                strcpy(txt+1,text[typesel]+1);
+                w=wl_ini(txt,fsubtitle,10);
+                free(txt);
+                c2=wl_render(w,dis->width);
+                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                canv_addOverlay(c3,c2,0,0);
+                canv_print(stdout,c3,titlecoord[typesel].fi,0);
+                
+                
+                
+                break;
             case 'A':
-                inv_incrementSelected(inv, WEAPON,-1);
+                inv_incrementSelected(inv, typesel,-1);
                 break;
             case 'D':
-                inv_incrementSelected(inv, WEAPON,1);
+                inv_incrementSelected(inv, typesel,1);
                 break;
             case 'E': case 'Q':
                 goto END;
                 break;
         }
-        Canvas* nsel=inv_renderObj(inv,WEAPON,sizes[WEAPON].fi,sizes[WEAPON].se,ftext,fnumbers,selindex,false);
-        canv_print(stdout,nsel,coordinates[WEAPON][selindex].fi+10,coordinates[WEAPON][selindex].se+1);
+        Canvas* nsel=inv_renderObj(inv,typesel,sizes[typesel].fi,sizes[typesel].se,ftext,fnumbers,selindex,false);
+        canv_print(stdout,nsel,coordinates[typesel][selindex].fi+10,coordinates[typesel][selindex].se+1);
         canv_free(nsel);
 
-        selindex=inv_getSelectedIndex(inv,WEAPON);
-        Canvas* sel=inv_renderObj(inv,WEAPON,sizes[WEAPON].fi,sizes[WEAPON].se,ftext,fnumbers,selindex,true);
-        canv_print(stdout,sel,coordinates[WEAPON][selindex].fi+10,coordinates[WEAPON][selindex].se+1);
+        selindex=inv_getSelectedIndex(inv,typesel);
+        Canvas* sel=inv_renderObj(inv,typesel,sizes[typesel].fi,sizes[typesel].se,ftext,fnumbers,selindex,true);
+        canv_print(stdout,sel,coordinates[typesel][selindex].fi+10,coordinates[typesel][selindex].se+1);
         canv_free(sel);
     }
 END:
+    
     canv_free(back2);
     Canvas* ccc=disp_Render(dis);
     if(!ccc)return NULL;
