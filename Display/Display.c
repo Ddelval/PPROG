@@ -405,15 +405,19 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     canv_print(stdout,back2,0,0);
     char cha;
     int selindex=inv_getSelectedIndex(inv,WEAPON);
-
+//    int consumableindex = inv_getSelectedIndex(inv,CONSUMABLE);
+//    int swapindex = 0
     while(1){
         cha=getch1();
         switch(cha){
+//            case 'R':
+//                swapindex++;
+//                if(swapindex >= 3) swapindex = 0;
             case 'A':
-                inv_incrementSelected(inv, WEAPON,-1);
+                inv_incrementSelected(inv, swapindex,-1);
                 break;
             case 'D':
-                inv_incrementSelected(inv, WEAPON,1);
+                inv_incrementSelected(inv, swapindex,1);
                 break;
             case 'E': case 'Q':
                 goto END;
@@ -427,6 +431,15 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
         Canvas* sel=inv_renderObj(inv,WEAPON,sizes[WEAPON].fi,sizes[WEAPON].se,ftext,fnumbers,selindex,true);
         canv_print(stdout,sel,coordinates[WEAPON][selindex].fi+10,coordinates[WEAPON][selindex].se+1);
         canv_free(sel);
+
+  /*      Canvas* nsel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,false);
+        canv_print(stdout,nsel,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
+        canv_free(nsel);
+
+        consumableindex=inv_getSelectedIndex(inv,CONSUMABLE);
+        Canvas* sel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,true);
+        canv_print(stdout,sel2,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
+        canv_free(sel2); */
     }
 END:
     canv_free(back2);
