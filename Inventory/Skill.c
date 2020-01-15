@@ -96,37 +96,37 @@ Skill* skill_readFromFile(char *file, int id){
 
 
 int skill_getSpecial(Skill *s){
-        if(!s) return -1;
-        return s->special_skill;
+  if(!s) return -1;
+  return s->special_skill;
 }
 
-int skill_getId(Skill *s){
-        return s->id;
+int skill_getId(Skill *s) {
+  return s->id;
 }
 
-char * skill_getName(Skill *s){
-        if(!s) return NULL;
-        return s->name;
+char* skill_getName(Skill *s) {
+  if(!s) return NULL;
+  return strdup(s->name);
 }
 
 char * skill_getDesc(Skill *s){
-        if(!s) return NULL;
-        return s->desc;
+  if(!s) return NULL;
+  return strdup(s->desc);
 }
 
 Attributes * skill_getAtbself(Skill *s){
-        return s->atbself;
+  return s->atbself;
 }
 
 Attributes * skill_getAtbatk(Skill *s){
-        return s->atbatk;
+  return s->atbatk;
 }
 
 void skill_free(Skill * s){
-    if(!s)return;
-    attb_free(s->atbatk);
-    attb_free(s->atbself);
-    free(s);
+  if(!s)return;
+  attb_free(s->atbatk);
+  attb_free(s->atbself);
+  free(s);
 }
 
 Skill* skill_copy(Skill* sk) {
