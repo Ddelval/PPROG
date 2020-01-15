@@ -365,8 +365,11 @@ int* _combat_playerMove(Combat* c, int choice) {
   }
   /*  LOWERING ENEMY'S DAMAGE  */
   FILE* pa=fopen("pa", "w");
-  int attack = attb_get(attk, ATTACK) - attb_get(c->stats[ENEMY], DEFENSE);
-  if(attack < 0) attack = 0;
+  int attack = attb_get(c->stats[PLAYER], ATTACK)*0.2- attb_get(c->stats[ENEMY], DEFENSE);
+  if(attack < 0) attack = attb_get(attk, ATTACK);
+  else attack+=attb_get(attk, ATTACK);
+  if(attb_get(attk, ATTACK)==0) attack=0;
+  if(attb_get(c->stats[ENEMY], ATTACK) - attack<0) attack=attb_get(c->stats[ENEMY], ATTACK);
   if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], ATTACK) - attack, ATTACK)) {
     attb_free(self);
     attb_free(attk);
@@ -376,8 +379,11 @@ int* _combat_playerMove(Combat* c, int choice) {
   ret[0]=attack;
   fprintf(pa, "%d\n", attack);
   /*  SLOWING UP ENEMY  */
-  int slowing = attb_get(attk, SPEED) - attb_get(c->stats[ENEMY], DEFENSE);
-  if(slowing < 0) slowing = 0;
+  int slowing = attb_get(c->stats[PLAYER], ATTACK)*0.2 - attb_get(c->stats[ENEMY], DEFENSE);
+  if(slowing < 0) slowing = attb_get(attk, SPEED);
+  else slowing+=attb_get(attk, SPEED);
+  if(attb_get(attk, SPEED)==0) slowing=0;
+  if(attb_get(c->stats[ENEMY], SPEED) - slowing<0) slowing=attb_get(c->stats[ENEMY], SPEED);
   if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], SPEED) - slowing, SPEED)) {
     attb_free(self);
     attb_free(attk);
@@ -387,8 +393,11 @@ int* _combat_playerMove(Combat* c, int choice) {
   ret[1]=slowing;
 
   /*  MAKING ENEMY LOSE AGILITY */
-  int clumnsiness = attb_get(attk, AGILITY) - attb_get(c->stats[ENEMY], DEFENSE);
-  if(clumnsiness < 0) clumnsiness = 0;
+  int clumnsiness = attb_get(c->stats[PLAYER], ATTACK)*0.2 - attb_get(c->stats[ENEMY], DEFENSE);
+  if(clumnsiness < 0) clumnsiness = attb_get(attk, AGILITY);
+  else clumnsiness+=attb_get(attk, AGILITY);
+  if(attb_get(attk, AGILITY)==0) clumnsiness=0;
+  if(attb_get(c->stats[ENEMY], AGILITY) - clumnsiness<0) clumnsiness=attb_get(c->stats[ENEMY], AGILITY);
   if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], AGILITY) - clumnsiness, AGILITY)) {
     attb_free(self);
     attb_free(attk);
@@ -398,8 +407,11 @@ int* _combat_playerMove(Combat* c, int choice) {
   ret[2]=clumnsiness;
 
   /*  LOWERING ENEMY'S DEFENSE  */
-  int defense = attb_get(attk, DEFENSE) - attb_get(c->stats[ENEMY], DEFENSE);
-  if(defense < 0) defense = 0;
+  int defense = attb_get(c->stats[PLAYER], ATTACK)*0.2 - attb_get(c->stats[ENEMY], DEFENSE);
+  if(defense < 0) defense = attb_get(attk, DEFENSE);
+  else defense=attb_get(attk, DEFENSE);
+  if(attb_get(attk, DEFENSE)==0) defense=0;
+  if(attb_get(c->stats[ENEMY], DEFENSE) - defense<0) defense=attb_get(c->stats[ENEMY], DEFENSE);
   if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], DEFENSE) - defense, DEFENSE)) {
     attb_free(self);
     attb_free(attk);
@@ -409,10 +421,13 @@ int* _combat_playerMove(Combat* c, int choice) {
   ret[3]=defense;
 
   /*  DAMAGE  */
-  int damage = attb_get(attk, HEALTH) + attb_get(c->stats[PLAYER], ATTACK)*0.2 - attb_get(c->stats[ENEMY], DEFENSE);
+  int damage = attb_get(c->stats[PLAYER], ATTACK)*0.5 + attb_get(c->stats[PLAYER], ATTACK)*0.2 - attb_get(c->stats[ENEMY], DEFENSE);
   // FILE* g=fopen("tty2", "w");
   // fprintf(g, "%d\n%d", damage, attb_get(c->stats[ENEMY], HEALTH));
-  if(damage < 0) damage = 0;
+  if(damage < 0) damage = attb_get(attk, HEALTH);
+  else damage+=attb_get(attk, HEALTH);
+  if(attb_get(attk, HEALTH)==0) damage=0;
+  if(attb_get(c->stats[ENEMY], HEALTH) - damage<0) damage=attb_get(c->stats[ENEMY], HEALTH);
   if(!attb_set(c->stats[ENEMY], attb_get(c->stats[ENEMY], HEALTH) - damage, HEALTH)) {
     attb_free(self);
     attb_free(attk);
@@ -501,10 +516,11 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
   for(int i=0;i<10;++i) ret[i]=0;
 
   /*  LOWERING ENEMY'S DAMAGE  */
-  int attack = attb_get(attk, ATTACK)+ attb_get(c->stats[ENEMY], ATTACK)*0.2 - attb_get(c->stats[PLAYER], DEFENSE);
-  if(attack < 0) attack = 0;
+  int attack =  attb_get(c->stats[ENEMY], ATTACK)*0.2 - attb_get(c->stats[PLAYER], DEFENSE);
+  if(attack < 0) attack = attb_get(attk, ATTACK);
+  else attack+=attb_get(attk, ATTACK);
   if(attb_get(attk, ATTACK)==0) attack=0;
-  if(attb_get(c->stats[PLAYER], ATTACK) - attack<0) attack=c->stats[PLAYER], ATTACK);
+  if(attb_get(c->stats[PLAYER], ATTACK) - attack<0) attack=attb_get(c->stats[PLAYER], ATTACK);
   if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], ATTACK) - attack, ATTACK)) {
     attb_free(self);
     attb_free(attk);
@@ -514,10 +530,11 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
   ret[0]=attack;
 
   /*  SLOWING UP ENEMY  */
-  int slowing = attb_get(attk, SPEED)+ attb_get(c->stats[ENEMY], ATTACK)*0.2 - attb_get(c->stats[PLAYER], DEFENSE);
-  if(slowing < 0) slowing = 0;
+  int slowing =  attb_get(c->stats[ENEMY], ATTACK)*0.2 - attb_get(c->stats[PLAYER], DEFENSE);
+  if(slowing < 0) slowing = attb_get(attk, SPEED);
+  else slowing+=attb_get(attk, SPEED);
   if(attb_get(attk, SPEED)==0) slowing=0;
-  if(attb_get(c->stats[PLAYER], SPEED) - slowing<0) slowing=c->stats[PLAYER], SPEED);
+  if(attb_get(c->stats[PLAYER], SPEED) - slowing<0) slowing=attb_get(c->stats[PLAYER], SPEED);
   if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], SPEED) - slowing, SPEED)) {
     attb_free(self);
     attb_free(attk);
@@ -527,10 +544,11 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
   ret[1]=slowing;
 
   /*  MAKING ENEMY LOSE AGILITY */
-  int clumnsiness = attb_get(attk, AGILITY)+ attb_get(c->stats[ENEMY], ATTACK)*0.2 - attb_get(c->stats[PLAYER], DEFENSE);
-  if(clumnsiness < 0) clumnsiness = 0;
+  int clumnsiness =  attb_get(c->stats[ENEMY], ATTACK)*0.2 - attb_get(c->stats[PLAYER], DEFENSE);
+  if(clumnsiness < 0) clumnsiness = attb_get(attk, AGILITY);
+  else clumnsiness+=attb_get(attk, AGILITY);
   if(attb_get(attk, AGILITY)==0) clumnsiness=0;
-  if(attb_get(c->stats[PLAYER], AGILITY) - clumnsiness<0) clumnsiness=c->stats[PLAYER], AGILITY);
+  if(attb_get(c->stats[PLAYER], AGILITY) - clumnsiness<0) clumnsiness=attb_get(c->stats[PLAYER], AGILITY);
   if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], AGILITY) - clumnsiness, AGILITY)) {
     attb_free(self);
     attb_free(attk);
@@ -540,10 +558,11 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
   ret[2]=clumnsiness;
 
   /*  LOWERING ENEMY'S DEFENSE  */
-  int defense = attb_get(attk, DEFENSE)+ attb_get(c->stats[ENEMY], ATTACK)*0.2 - attb_get(c->stats[PLAYER], DEFENSE);
-  if(defense < 0) defense = 0;
+  int defense = attb_get(c->stats[ENEMY], ATTACK)*0.2 - attb_get(c->stats[PLAYER], DEFENSE);
+  if(defense < 0) defense = attb_get(attk, DEFENSE);
+  else defense=attb_get(attk, DEFENSE);
   if(attb_get(attk, DEFENSE)==0) defense=0;
-  if(attb_get(c->stats[PLAYER], DEFENSE) - defense<0) defense=c->stats[PLAYER], DEFENSE);
+  if(attb_get(c->stats[PLAYER], DEFENSE) - defense<0) defense=attb_get(c->stats[PLAYER], DEFENSE);
   if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], DEFENSE) - defense, DEFENSE)) {
     attb_free(self);
     attb_free(attk);
@@ -553,12 +572,13 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
   ret[3]=defense;
 
   /*  DAMAGE  */
-  int damage = attb_get(attk, HEALTH) + attb_get(c->stats[ENEMY], ATTACK)*0.5- attb_get(c->stats[PLAYER], DEFENSE);
+  int damage = attb_get(c->stats[ENEMY], ATTACK)*0.5- attb_get(c->stats[PLAYER], DEFENSE);
   // FILE* g=fopen("tty", "w");
   // fprintf(g, "%d\n%d", damage, attb_get(c->stats[PLAYER], HEALTH));
-  if(damage < 0) damage = 0;
+  if(damage < 0) damage = attb_get(attk, HEALTH)-attb_get(c->stats[PLAYER], DEFENSE)*0.5;
+  else damage+=attb_get(attk, HEALTH);
   if(attb_get(attk, HEALTH)==0) damage=0;
-  if(attb_get(c->stats[PLAYER], HEALTH) - damage<0) damage=c->stats[PLAYER], HEALTH);
+  if(attb_get(c->stats[PLAYER], HEALTH) - damage<0) damage=attb_get(c->stats[PLAYER], HEALTH);
   if(!attb_set(c->stats[PLAYER], attb_get(c->stats[PLAYER], HEALTH) - damage, HEALTH)) {
     attb_free(self);
     attb_free(attk);
