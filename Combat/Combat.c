@@ -781,7 +781,11 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
 
 void _combat_message(Combat* c, char* message) {
   if(!c||!message||!c->cd) return;
-  win_remWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), 0);
+  //win_remWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), 0);
+  int* disp_dim=disp_getDimensions(c->cd);
+  if(!disp_dim) return;
+  Window* winmsg=win_ini("Combat status", NULL,0,disp_dim[VD_DATA], disp_dim[H_DATA]/4-10, disp_dim[H_DATA]-30, 0, fcat_lookup(M8));
+  if(!winmsg) return;
   FILE* f=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
   Font* f6=font_load(f);
   fclose(f);
@@ -789,17 +793,28 @@ void _combat_message(Combat* c, char* message) {
   Welem* we =we_createLabel(message,f6,3);
   if(!we) {
     font_free(f6);
+    free(disp_dim);
     return;
   }
-  if(!win_addWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), we)) {
+  if(!win_addWindowElement(winmsg, we)) {
     font_free(f6);
     we_free(we);
+    free(disp_dim);
     return;
   }
-
-  if(!print_Window(c->cd, PLAYER_INFO)) return;
+  Canvas* td=win_render(winmsg);
+  if(!td) {
+    font_free(f6);
+    we_free(we);
+    free(disp_dim);
+    return;
+  }
+  canv_print(stdout, td, disp_dim[H_DATA]-disp_dim[H_DATA]/4, 0);
+  canv_free(td);
+  win_free(winmsg);
   font_free(f6);
   we_free(we);
+  free(disp_dim);
   return;
 }
 
