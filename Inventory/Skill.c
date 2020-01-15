@@ -114,12 +114,12 @@ char * skill_getDesc(Skill *s){
   return strdup(s->desc);
 }
 
-Attributes * skill_getAtbself(Skill *s){
-  return s->atbself;
+Attributes* skill_getAtbself(Skill *s){
+  return attb_copy(s->atbself);
 }
 
-Attributes * skill_getAtbatk(Skill *s){
-  return s->atbatk;
+Attributes* skill_getAtbatk(Skill *s){
+  return attb_copy(s->atbatk);
 }
 
 void skill_free(Skill * s){
