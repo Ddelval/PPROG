@@ -16,6 +16,7 @@ struct _Recipe {
         int * elements;
         int result_id;
         int quant;
+        int tier;
         int size;
         char name[NAME_LENGTH];
 };
@@ -30,7 +31,7 @@ Recipe * rec_ini(){
         r->quant=0;
         r->result_id = -1;
         r->size = 0;
-
+        r->tier=0;
         return r;
 }
 
@@ -88,7 +89,7 @@ Recipe* rec_load(FILE *f){
         Recipe *r = rec_ini();
         if(!f || !r) return NULL;
 
-        fscanf(f, "%d %d\n", &(r->result_id),&(r->quant));
+        fscanf(f, "%d %d %d\n", &(r->tier),&(r->result_id),&(r->quant));
         fgets(r->name, NAME_LENGTH ,f);
         r->name[strlen(r->name)-1]=0;
         fscanf(f, "%d", &(r->size));
@@ -252,5 +253,8 @@ int rec_getSize(Recipe * r){
 char *rec_getName(Recipe * r){
   if(!r) return NULL;
   return r->name;
+}
+int rec_getTier(Recipe* r){
+  return r? r->tier: -1;
 }
 
