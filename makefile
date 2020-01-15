@@ -2,7 +2,7 @@
 CC= @gcc -g  ##-fsanitize=address -fno-omit-frame-pointer
 EXE:=WorldTest TestCombat GameTest
 
-## ASAN_OPTIONS=detect_leaks=1 ./GameTest 2>err.txt
+##ASAN_OPTIONS=detect_leaks=1 ./GameTest 2>err.txt
 
 EXE_O:=$(patsubst %,Compile_obj/%.o,$(EXE))
 DISPLAY:=$(foreach F,$(wildcard Display/*.c),$(subst Display/, Compile_obj/Display/, $(subst .c,.o, $F)))
