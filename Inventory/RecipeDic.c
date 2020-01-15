@@ -7,7 +7,7 @@
 
 #include "RecipeDic.h"
 #define NAME_LENGTH 50
-
+extern int tier;
 
 typedef struct {
         Recipe** rec;
@@ -71,6 +71,7 @@ Recipe** rdic_getAllDoable(Inventory* inv, int * size){
         if(!rdic) rdic_ini();
         if(!rdic) return NULL;
         for(int i=0; i < rdic->size; ++i) {
+                if(rec_getTier(rdic->rec[i])>tier)continue;
                 if(rec_doable(inv, rdic->rec[i]) == true) {
                         (*size)++;
                         if(r) r = realloc(r, (*size) * sizeof(Recipe*));

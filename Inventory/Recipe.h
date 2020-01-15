@@ -51,4 +51,5 @@ Recipe* rec_getObjDimensions(Recipe* r,int *ob_wid, int* hei);
 int rec_getMinWidth(Recipe* r, int obj_wid, int hei);
 Recipe* rec_make(Recipe* r, Inventory* inv);
 Recipe* rec_decrease(Recipe* r, Inventory* inv);
+int rec_getTier(Recipe* r);
 #endif

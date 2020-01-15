@@ -6,6 +6,8 @@
 
 #include "Utility.h"
 
+int tier=0;
+
 void append(char* dest, int* spos, const char* orig){
     if(!dest||!spos||!orig){
         //fprintf(stderr,"NULL pointer in append function\n");
@@ -48,7 +50,11 @@ int min(int a,int b){
 }
 char getch1(void)
 {
-    return fgetc(stdin);
+    char c=fgetc(stdin);
+    if(c>='a'&&c<='z'){
+        c-='A'-'a';
+    }
+    return c;
  }
 
 struct termios initial;
