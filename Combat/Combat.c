@@ -33,6 +33,7 @@ int* _combat_executeEnemyMove(Combat *c, int choice);
 int* _combat_enemyMove(Combat* c);
 void _combat_applyConsumable(Combat* c, Entity* e, int id);
 void _combat_message(Combat* c, char* message);
+void _combat_info(Combat* c, int index);
 
 
 /**
@@ -158,6 +159,7 @@ Combat* combat_execute(Combat* c) {
       }
       selindex=(selindex+OBJ_MAX_ATTACKS+1)%(OBJ_MAX_ATTACKS+1);
       if(!disp_setSelIndex(c->cd, PLAYER_ACTIONS,selindex)) return NULL;
+      _combat_info(c, selindex);
 
   }
 }
@@ -884,7 +886,7 @@ Combat* combat_load(Combat*c) {
   winoptions=win_ini("Movements",movs,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10, disp_dim[H_DATA]/2-20,0,fcat_lookup(M8));
   if(!winoptions)goto ERR_END;
 
-  wininfo=win_ini("Status window",NULL,0,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,disp_dim[H_DATA]-30,0,fcat_lookup(M8));
+  wininfo=win_ini(" ",NULL,0,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,disp_dim[H_DATA]-30,0,fcat_lookup(M4));
   if(!wininfo)goto ERR_END;
 
   if(!disp_AddLWindow(c->cd, winplayer))goto ERR_END;
@@ -903,6 +905,11 @@ Combat* combat_load(Combat*c) {
   Canvas* d=disp_Render(c->cd);
   canv_print(stdout,d,0,0);
   canv_free(d);
+  char message[256];
+  sprintf(message, "You are in a combat against %s!", entity_getName(c->enemy));
+  _combat_message(c, message);
+  _combat_info(c, 0);
+  disp_setSelIndex(c->cd, PLAYER_ACTIONS,0);
 
   goto END;
 ERR_END:
@@ -934,4 +941,52 @@ void combat_free(Combat* c) {
   free(c->name[1]);
   disp_free(c->cd);
   free(c);
+}
+
+void _combat_info(Combat* c, int index) {
+  if(index>MAX_ATTACKS||index<0||!c||!c->cd) return;
+
+  if(index==MAX_ATTACKS) {
+    win_remWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), 0);
+    FILE* f=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
+    Font* f6=font_load(f);
+    fclose(f);
+    if(!f6) return;
+    Welem* we =we_createLabel("Here you can use some consumables from your inventory",f6,3);
+    if(!we) {
+      font_free(f6);
+      return;
+    }
+    if(!win_addWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), we)) {
+      font_free(f6);
+      we_free(we);
+      return;
+    }
+
+    if(!print_Window(c->cd, PLAYER_INFO)) return;
+    font_free(f6);
+    we_free(we);
+    return;
+  }
+
+  win_remWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), 0);
+  FILE* f=fopen("Display/Fonts/Robo_Mono/06.txt", "r");
+  Font* f6=font_load(f);
+  fclose(f);
+  if(!f6) return;
+  Welem* we =we_createLabel(skill_getDesc(c->moveset[PLAYER][index]),f6,3);
+  if(!we) {
+    font_free(f6);
+    return;
+  }
+  if(!win_addWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), we)) {
+    font_free(f6);
+    we_free(we);
+    return;
+  }
+
+  if(!print_Window(c->cd, PLAYER_INFO)) return;
+  font_free(f6);
+  we_free(we);
+  return;
 }
