@@ -23,3 +23,11 @@ The Algebrist: Once upon a time, one of the most famous mathematicians in the wo
 ALL THIS IS VULNERABLE TO SUFFER SOME CHANGES DURING THE FINAL STAGES OF THE GAME
 
 This is the argument generally speaking, Gerald will have to make the new planet livable and led by Adolf will accomplish some quests and construct some buildings, in the process we will travel to other planets to do so and then he will find out the terrible story about the end of his old planet, the final of the game will lead to the exposure of Adolf's betrayal and then the player will be able to have some decision making in order to decide whether to forgive Adolf or not. 
+
+
+
+### INTRO
+Our support team in Berlin doesn't communicate with us anymore, we must expect the worst, they are probably dead because of the nuclear bomb.
+However their last report about this planet said it was filled with plenty of resources and it is one of the few adapted to human life conditions.
+There is only one minor issue, the satelite camera took a picture of a terrible creature, big, scary and mercyless, that lived here. Further research has identified him as Kazarum Kizariam.
+Your first task should be to erradicate him and all his minions from this planet, in order to do so I will provide you with our last military supplies, a sword and a gun choose wisely when you face the monsters.
