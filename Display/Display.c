@@ -388,17 +388,28 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
         free(text[i]);
         text[i]=c;
     }
-
     for(int i=0;i<dim;++i){
         //Iterate through each type of element
-        if(dimens[i]>0){
-            Wlabel* w=wl_ini(text[i],fsubtitle,10);
-            Canvas * c2=wl_render(w,dis->width);
-            titlecoord[i].fi=canv_getHeight(c);
-            titlecoord[i].se=canv_getWidth(c2);
-            canv_appendVI(c,c2);
+        if(dimens[i]<0)continue;
+        Wlabel* w;
+        Canvas* c2;
+        if(i==WEAPON){ //Add the indicator
+            char* txt=calloc(strlen(text[i]+2),sizeof(char));
+            txt[0]='-';
+            strcpy(txt+1,text[i]+1);
+            w=wl_ini(txt,fsubtitle,10);
+            free(txt);
+            c2=wl_render(w,dis->width);
         }
-        else continue;
+        else{
+            w=wl_ini(text[i],fsubtitle,10);
+            c2=wl_render(w,dis->width);
+        }
+        
+        titlecoord[i].fi=canv_getHeight(c);
+        titlecoord[i].se=canv_getWidth(c2);
+        canv_appendVI(c,c2);
+        
         Canvas * b=dat[i][0];
         coordinates[i]=calloc(dimens[i],sizeof(pairii));
         for(int j=1;j<dimens[i];++j){
