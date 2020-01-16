@@ -770,7 +770,7 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   // inv_decrease(entity_getInventory(e),inv_getSelected(entity_getInventory(e), CONSUMABLE), 1);
 
   Inventory* in =entity_getInvRef(e);
-  disp_InventoryWindow2(c->cd,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6));
+  disp_InventoryWindow(c->cd,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6));
   FILE* wod=fopen("wod", "w");
   fprintf(wod, "back\n");
   fclose(wod);
@@ -948,7 +948,7 @@ void _combat_info(Combat* c, int index) {
     Font* f6=font_load(f);
     fclose(f);
     if(!f6) return;
-    Welem* we =we_createLabel("Here you can use some consumables from your inventory",f6,3);
+    Welem* we =we_createLabel("Here you can use some consumables from your inventory",fcat_lookup(M6),3);
     if(!we) {
       font_free(f6);
       return;
