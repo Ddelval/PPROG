@@ -448,7 +448,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
 
         switch(cha){
             case 'W':
-                
+
                 w=wl_ini(text[typesel],fsubtitle,10);
                 c2=wl_render(w,dis->width);
                 c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
@@ -460,8 +460,8 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 typesel=(typesel-1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
                 while(dimens[typesel]<=0)typesel=(typesel-1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
 
-                
-                txt=calloc(strlen(text[typesel]+2),sizeof(char));
+
+                txt=calloc(strlen(text[typesel])+2,sizeof(char));
                 txt[0]='-';
                 strcpy(txt+1,text[typesel]+1);
                 w=wl_ini(txt,fsubtitle,10);
@@ -471,8 +471,8 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
 
-                
-                
+
+
                 break;
             case 'S':
 
@@ -484,8 +484,8 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
 
                 typesel=(typesel+1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
                 while(dimens[typesel]<=0)typesel=(typesel+1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
-                
-                txt=calloc(strlen(text[typesel]+2),sizeof(char));
+
+                txt=calloc(strlen(text[typesel])+2,sizeof(char));
                 txt[0]='-';
                 strcpy(txt+1,text[typesel]+1);
                 w=wl_ini(txt,fsubtitle,10);
@@ -494,9 +494,9 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
-                
-                
-                
+
+
+
                 break;
             case 'A':
                 inv_incrementSelected(inv, typesel,-1);
@@ -527,7 +527,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
         canv_free(sel2); */
     }
 END:
-    
+
     canv_free(back2);
     Canvas* ccc=disp_Render(dis);
     if(!ccc)return NULL;

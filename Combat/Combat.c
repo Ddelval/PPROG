@@ -744,16 +744,6 @@ int* _combat_enemyMove(Combat* c) {
 
 void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   if(!c||!e||id>1||id<0) return;
-/*  Display * auxInv;
-  int vdiv=800;
-  int w=DISP_WIDTH;
-  int h=DISP_HEIGHT;
-  int act_size=6;
-  char * tit = "Inventory";
-
-  auxInv = disp_ini(w,h,r,vdiv,tit,fcat_lookup(M8));
-  auxInv = disp_InventoryWindow(auxInv, entity_getInventory(c->player),fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6));
-  disp_free(auxInv); */
 
   Attributes* attr = obj_getAttributes(inv_getSelected(entity_getInventory(e), CONSUMABLE));
   if(!attr) return;
