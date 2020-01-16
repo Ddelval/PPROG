@@ -4,7 +4,7 @@
 
 // #define BUFFER_SIZE 1000
 // #define NUMBER_TXT 10
-#define MAX_DIALOG 128
+#define MAX_DIALOG 512
 
 struct _Dialog {
   char** lines;

@@ -5,6 +5,7 @@
 #define BUFFER_SIZE 1000
 #define NUMBER_TXT 10
 
+extern int tier;
 struct _DialogMan {
   Dialog** d;
   int size;
@@ -69,7 +70,7 @@ DialogMan* dman_copy(DialogMan* dman) {
 }
 char* dman_getLine(DialogMan* dic){
   if(!dic) return NULL;
-  return diag_getNext(dic->d[dic->position]);
+  return diag_getNext(dic->d[tier]);
 }
 
 Dialog* dman_lookup(DialogMan* dman, int did) {

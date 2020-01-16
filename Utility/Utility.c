@@ -53,7 +53,7 @@ char getch1(void)
 {
     char c=fgetc(stdin);
     if(c>='a'&&c<='z'){
-        c-='A'-'a';
+        c-='a'-'A';
     }
     return c;
  }

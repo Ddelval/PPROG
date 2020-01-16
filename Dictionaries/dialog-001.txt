@@ -1,15 +1,21 @@
 2
 
-0 2 1
-Hello Gerald, To start playing, you have to accept the first quest, it will only take you an eternity to fulfill it.
-you may want to start by collecting some wood and coal in order to survive for a few days
-The world has ended
-This is a pointless example quest that should not be in the final game (might be though)
-1
-2 1
+0 3 1
+Hello Gerald, our first priority right now is to get some basic resources so that we can repair the tools that were damaged by the rough landing.
+To begin with, I need you to bring us some wood and stone. Your equipement will enable you to gather them by just selecting collect in the menu.
+Good luck. I will be expecting the resources as soon as possible
+Basic gathering
+We need to get this resources to fix some of our broken equipment
+2
+1 2
+2 4
 
-0 4 0
-Our support team in Berlin doesn't communicate with us anymore, we must expect the worst, they are probably dead because of the nuclear bomb.
-However their last report about this planet said it was filled with plenty of resources and it is one of the few adapted to human life conditions.
-There is only one minor issue, the satelite camera took a picture of a terrible creature, big, scary and mercyless, that lived here. Further research has identified him as Kazarum Kizariam.
-Your first task should be to erradicate him and all his minions from this planet, in order to do so I will provide you with our last military supplies, a sword and a gun choose wisely when you face the monsters.
+1 4 1
+With these resources we will now be able to start fixing our tools.
+However, while you were collecting them, we were able to get our furnaces working so now you will be able to get iron from iron ore and coal.
+If you also get some wood, you will be able to craft a basic weapon that should be enough for you next mission.
+Get the iron ore and craft a basic Iron sword.
+Getting armed
+As Adolf told you, you have to get the iron ore, turn it into iron and use it to craft the sword
+1
+1 202

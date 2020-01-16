@@ -121,9 +121,9 @@ Attack potion
 
 
 202
-Iron bar
-105
-105
+Iron sword
+111
+111
 0
 4
 410

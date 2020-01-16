@@ -1,6 +1,6 @@
 #include "TrigReact.h"
 /*** Functions to process triggers ***/
-
+extern int tier;
 void trig_give(Trigger* t, void* e, void* d){
 
     if(!t||!e)return;
@@ -48,7 +48,10 @@ void trig_talk(Trigger* t,void* e, void* d){
     
 
     Quest* qa=entity_fetchFulfilledQuest(e,n);
-    
+    if(qa){
+        tier++;
+    }
+    fprintf(stderr, "tier: %d\n",tier);
     DialogMan* dd=entity_getDialogs(tr_getEntityRef(t));
     
     disp_DialogWindow(d,dd,n);
