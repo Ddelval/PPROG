@@ -231,8 +231,8 @@ World* wo_load(FILE* f){
         l2=j-w2/2;
         r2=j+w2/2;
     }
-    fprintf(stderr,"%s -> %d %d %d %d\n",w->name,i,j,b2,r2);
-    fflush(stderr);
+    //fprintf(stderr,"%s -> %d %d %d %d\n",w->name,i,j,b2,r2);
+    //fflush(stderr);
     room_setBounds(rr,t2,l2,b2,r2);
     
     fscanf(f,"%d",&(w->allSiz));
