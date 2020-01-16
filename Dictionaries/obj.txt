@@ -104,19 +104,19 @@ Hits the enemy restoring part of your health
 1
 
 301
-Wooden potion
-102
-102
+Health potion
+110
+110
 1
-10 5 0 0 0
+20 0 0 0 0
 1
 
 302
-Glass potion
-102
-102
+Attack potion
+109
+109
 1
-10 5 0 0 0
+0 20 0 0 0
 1
 
 

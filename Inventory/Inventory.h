@@ -27,6 +27,7 @@ Canvas *** inv_render(const Inventory* inv, int* dim, int ** dimens,char *** tex
 int inv_getQuantity(const Inventory* inv, int obj_id);
 Inventory* inv_insertSeveral(Inventory* inv,const Object*ob,int quantity);
 Inventory* inv_load(FILE* f);
+bool inv_checkPresent(const Inventory* inv, pairii* obj, int len);
 Object* inv_getSelectedCopy(const Inventory* inv, obj_type t);
 const Object* inv_getSelected(const Inventory * inv, obj_type t);
 int inv_getSelectedIndex(const Inventory* inv, obj_type t);

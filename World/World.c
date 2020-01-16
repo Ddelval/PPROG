@@ -12,6 +12,7 @@ char* w_dir="Worlds/";
 
 char* next_world;
 
+extern char* curr_world;
 
 struct _World{
     char*    name;
@@ -29,6 +30,10 @@ World* wo_ini(){
 }
 
 World* wo_get(char* c){
+
+    if(curr_world)free(curr_world);
+    curr_world=strdup(c);
+    
     char* n=calloc(strlen(w_dir)+strlen(c)+5,sizeof(char));
     int pos=0;
     append(n,&pos,w_dir);
@@ -258,6 +263,8 @@ World* wo_transferPlayer(World* next, World* prev){
 
 World* wo_launch(World* w){
     if(!w)return NULL;
+    if(curr_world)free(curr_world);
+    curr_world=strdup(w->name);
     Canvas* d=disp_Render(w->dis);
     Room *r=disp_getrefRoom(w->dis);
     canv_print(stdout,d,0,0);

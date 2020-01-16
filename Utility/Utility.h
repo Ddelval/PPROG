@@ -21,13 +21,10 @@
 #define DISP_WIDTH 1200
 
 #define ENTITY_TALK_RAD 20
-/*
-#include <signal.h>
-#include <ncurses.h>
-#define WINCH_ERR -10
-*/
+
+
+
 typedef enum{false,true}bool;
-//extern int err=0;
 typedef struct {
     int fi,se;
 }pairii;

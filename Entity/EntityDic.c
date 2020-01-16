@@ -62,7 +62,9 @@ EntityDic* edic_ini(){
             edic_free();
             return NULL;
         }
-        DialogMan* dd=dman_ini(g);
+        Sprite* spr=entity_getSprite(s->dat[i]);
+        DialogMan* dd=dman_ini(g,spr_getDispData(spr));
+        spr_free(spr);
         fclose(g);
         if(!dd){
             edic_free();

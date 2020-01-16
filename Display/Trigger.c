@@ -24,6 +24,7 @@ struct _Trigger
 
     /* Engage in conversation */
     int ent_id;
+    char* world;
     void * entit;
 };
 
@@ -153,4 +154,10 @@ Trigger* tr_setSpr(Trigger* tr, int i){
     if(!tr)return NULL;
     tr->sprite_index=i;
     return tr;
+}
+void tr_setWorld(Trigger* tr, char* wor){
+    if(tr)tr->world=strdup(wor);
+}
+char* tr_getWorld(Trigger* tr){
+    return (tr&&tr->world)? strdup(tr->world):NULL;
 }

@@ -510,7 +510,7 @@ Trigger* room_checkCombat(Room* r,int index){
     j=spr_getOJ(r->overs[index]);
     w=spr_getWidth(r->overs[index]);
     h=spr_getHeight(r->overs[index]);
-
+    
     Trigger** t=_room_getTriggersLoc(r,COMBAT,i,j,&siz);
     if(siz) goto FOUND;
     t=_room_getTriggersLoc(r,COMBAT,i+h,j,&siz);
@@ -846,6 +846,7 @@ Room* room_updateData(Room*r){
     }
     for(int i=0;i<r->overpos;++i){
         if(!r->overs[i])continue;
+        fprintf(stderr,"%d\n",r->ent_typ[i]);
         if(r->ent_typ[i]==1)continue; //It is the player
         if(r->ent_typ[i]==2){ //It is an enemy
             room_processTriggers(r,r->overs[i],i);

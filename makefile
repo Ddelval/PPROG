@@ -1,5 +1,5 @@
 .SECONDARY:
-CC= @gcc -g  ##-fsanitize=address -fno-omit-frame-pointer
+CC= @gcc -g  #-fsanitize=address -fno-omit-frame-pointer
 EXE:=WorldTest TestCombat GameTest
 
 ##ASAN_OPTIONS=detect_leaks=1 ./GameTest 2>err.txt

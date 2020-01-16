@@ -260,6 +260,15 @@ Inventory* inv_load(FILE* f){
     return inv;
 }
 
+bool inv_checkPresent(const Inventory* inv, pairii* obj, int len){
+    if(!inv||!obj)return false;
+
+    for(int i=0;i<len;++i){
+        if(inv_getQuantity(inv,obj[i].fi)<obj[i].se)return false;
+    }
+    return true;
+}
+
 const Object* inv_getSelected(const Inventory * inv, obj_type t){
   if(!inv) return NULL;
   if(inv->selected[t]>=inv->size[t])return NULL;

@@ -95,7 +95,7 @@ Dialog* diag_jumpLines(Dialog* diag, int lines) {
   return diag;
 }
 
-Dialog* diag_load(FILE* f) {
+Dialog* diag_load(FILE* f,Canvas* ent_pic) {
   if(!f) return NULL;
   Dialog* d=diag_ini();
   if(!d) return NULL;
@@ -115,7 +115,7 @@ Dialog* diag_load(FILE* f) {
     strtok(d->lines[i], "\n");
   }
   if(d->has_quest){
-    d->q=quest_load(f);
+    d->q=quest_load(f,ent_pic);
   }
   return d;
 }

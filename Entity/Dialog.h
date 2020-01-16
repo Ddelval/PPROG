@@ -57,7 +57,7 @@ Dialog* diag_jumpLines(Dialog* diag, int lines);
 /*
     Loads a dialog from file.
 */
-Dialog* diag_load(FILE* f);
+Dialog* diag_load(FILE* f,Canvas* entpic);
 
 
 Quest* diag_getQuest(Dialog* d);

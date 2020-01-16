@@ -7,6 +7,7 @@
 #include "Utility.h"
 
 int tier=0;
+char* curr_world=NULL;
 
 void append(char* dest, int* spos, const char* orig){
     if(!dest||!spos||!orig){

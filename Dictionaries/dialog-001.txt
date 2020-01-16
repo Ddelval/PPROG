@@ -1,11 +1,13 @@
 2
+
 0 2 1
 Hello Gerald, To start playing, you have to accept the first quest, it will only take you an eternity to fulfill it.
 you may want to start by collecting some wood and coal in order to survive for a few days
 The world has ended
 This is a pointless example quest that should not be in the final game (might be though)
 1
-1100 1
+2 1
+
 0 4 0
 Our support team in Berlin doesn't communicate with us anymore, we must expect the worst, they are probably dead because of the nuclear bomb.
 However their last report about this planet said it was filled with plenty of resources and it is one of the few adapted to human life conditions.

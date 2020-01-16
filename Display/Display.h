@@ -338,4 +338,5 @@ int disp_getSelIndex(Display* dis, int winIndex);
 
 
 Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers);
+Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest);
 #endif /* Display_h */

@@ -12,7 +12,7 @@ struct _DialogMan {
   
 };
 
-DialogMan* dman_ini(FILE* df) {
+DialogMan* dman_ini(FILE* df,Canvas* en_pic) {
   if(!df) return NULL;
   DialogMan* dman = (DialogMan*)calloc(1, sizeof(DialogMan));
   if(!dman) return NULL;
@@ -25,7 +25,7 @@ DialogMan* dman_ini(FILE* df) {
     return NULL;
   }
   for(int i=0;i<si;i++) {
-    dman->d[i]=diag_load(df);
+    dman->d[i]=diag_load(df,en_pic);
     if(!dman->d[i]) {
       dman_free(dman);
       return NULL;

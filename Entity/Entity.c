@@ -387,3 +387,41 @@ Entity* entity_modPlayer(Entity* prev, Entity* new){
   prev->attr=attb_copy(new->attr);
   return prev;
 }
+
+Quest* entity_fetchFulfilledQuest(Entity* e,char*n){
+  if(!e||!n)return NULL;
+  Quest* cr=NULL;
+
+  for(int i=0;i<MAX_QUESTS;++i){
+    if(!e->adq_quests[i]||!quest_getFulfilled(e->adq_quests[i]))continue;
+    char* cc=quest_getAsigner(e->adq_quests[i]);
+    if(strcmp(cc,n)==0){
+      cr=e->adq_quests[i];
+      for(int j=i+1;j<MAX_QUESTS;++j){
+        e->adq_quests[j-1]=e->adq_quests[j];
+        e->adq_quests[j]=NULL;
+      }
+    }
+    free(cc);
+  }
+  
+  return cr;
+}
+Quest** entity_questJustCompleted(Entity* e, int* size){
+  if(!e)return NULL;
+  Quest** res=NULL;
+  int siz=0;
+  for(int i=0;i<MAX_QUESTS;++i){
+    if(e->adq_quests[i]==NULL)break;
+    int len=0;
+    pairii* req= quest_getRequirements(e->adq_quests[i],&len);
+    if(inv_checkPresent(entity_getInventory(e),req,len)){
+      siz++;
+      res=realloc(res,siz*sizeof(Quest*));
+      quest_setCompleted(e->adq_quests[i],true);
+      res[siz-1]=quest_copy(e->adq_quests[i]);
+    }
+  }
+  *size=siz;
+  return res;
+}

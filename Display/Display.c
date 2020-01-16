@@ -390,7 +390,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     }
     for(int i=0;i<dim;++i){
         //Iterate through each type of element
-        if(dimens[i]<0)continue;
+        if(dimens[i]<=0)continue;
         Wlabel* w;
         Canvas* c2;
         if(i==WEAPON){ //Add the indicator
@@ -433,6 +433,8 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     Canvas* back2=canv_blur(back,BLUR_RAD);
     canv_free(back);
     canv_darken(back2,DARKEN);
+
+    Canvas* back3=canv_copy(back2);
     canv_addOverlay(back2,c,10,0);
     canv_print(stdout,back2,0,0);
     char cha;
@@ -451,7 +453,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
 
                 w=wl_ini(text[typesel],fsubtitle,10);
                 c2=wl_render(w,dis->width);
-                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                c3= canv_subCopy(back3,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
 
@@ -467,7 +469,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 w=wl_ini(txt,fsubtitle,10);
                 free(txt);
                 c2=wl_render(w,dis->width);
-                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                c3= canv_subCopy(back3,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
 
@@ -478,7 +480,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
 
                 w=wl_ini(text[typesel],fsubtitle,10);
                 c2=wl_render(w,dis->width);
-                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                c3= canv_subCopy(back3,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
 
@@ -491,7 +493,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 w=wl_ini(txt,fsubtitle,10);
                 free(txt);
                 c2=wl_render(w,dis->width);
-                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                c3= canv_subCopy(back3,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
 
@@ -517,17 +519,9 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
         canv_print(stdout,sel,coordinates[typesel][selindex].fi+10,coordinates[typesel][selindex].se+1);
         canv_free(sel);
 
-  /*      Canvas* nsel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,false);
-        canv_print(stdout,nsel,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
-        canv_free(nsel);
-
-        consumableindex=inv_getSelectedIndex(inv,CONSUMABLE);
-        Canvas* sel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,true);
-        canv_print(stdout,sel2,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
-        canv_free(sel2); */
     }
 END:
-
+    canv_free(back3);
     canv_free(back2);
     Canvas* ccc=disp_Render(dis);
     if(!ccc)return NULL;
@@ -764,6 +758,54 @@ Display* disp_QuestWindow(Display* dis, int amount, Quest** quests){
     return dis;
 
 }
+
+Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest){
+    if(!quest||!dis)return NULL;
+
+    int hmargin=20;
+    int vgap=10;
+    Wlabel* wl=wl_ini("Quest Completed",fcat_lookup(M8),0);
+    Canvas* tit=wl_render(wl,dis->width-2*hmargin);
+    Canvas* dd=canv_backGrnd(0,0,0,0,dis->width-2*hmargin,vgap);
+    canv_appendVI(tit,dd);
+    canv_free(dd);
+
+    Canvas* tmp=quest_render(quest,dis->width-2*hmargin);
+    canv_appendVI(tit,tmp);
+    canv_free(tmp);
+
+    char* o=quest_getAsigner(quest);
+    char* cc=calloc(120,sizeof(char));
+    sprintf(cc,"You have collected all the object required. You shall now return and talk to %s",o);
+    free(o);
+
+    Wlabel* wll=wl_ini(cc,fcat_lookup(M6),0);
+    Canvas* ccc=wl_render(wll,dis->width-2*hmargin);
+    canv_addMargin(ccc,10,0,0,0);
+    canv_appendVI(tit,ccc);
+    wl_free(wll);
+    canv_free(ccc);
+    free(cc);
+
+
+    Canvas* backg=disp_Render(dis);
+    Canvas* backg2=canv_blur(backg,BLUR_RAD);
+    canv_darken(backg2,DARKEN);
+
+    canv_addOverlay(backg2,tit,10,hmargin);
+    canv_print(stdout,backg2,0,0);
+
+    char c=getch1();
+    while(c!='Q'&&c!='E'){
+        c=getch1();
+        fprintf(stderr,"\n%c",c);
+    }
+    canv_print(stdout,backg,0,0);
+
+    return dis;
+
+}
+
 
 /*-----------------------------------------------------------------*/
 /**

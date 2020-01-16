@@ -12,6 +12,8 @@ typedef struct{
     int inserted;
 } TriggerDic;
 
+extern char* curr_world;
+
 char trdic_c[]= "Dictionaries/trig.txt";
 TriggerDic* trdic_data=NULL;
 
@@ -59,6 +61,7 @@ int trdic_insert(Trigger* t){
     if(trdic_data==NULL)return 1;
     trdic_data->inserted++;
     tr_setId(t,-trdic_data->inserted);
+    tr_setWorld(t,curr_world);
     Trigger ** aux=realloc(trdic_data->dat,(trdic_data->size+1)*sizeof(Trigger*));
     if(!aux)return 1;
     trdic_data->dat=aux;
@@ -83,18 +86,22 @@ int trdic_talksearch(int ally_id){
         return -1;
     }
     for(int i=0;i<trdic_data->size;++i){
-        if(tr_getAlly_id(trdic_data->dat[i])==ally_id){
+        char* c=tr_getWorld(trdic_data->dat[i]);
+        if(c&&tr_getAlly_id(trdic_data->dat[i])==ally_id&&strcmp(c,curr_world)==0){
             return tr_getId(trdic_data->dat[i]);
         }
+        free(c);
     }
     return -1;
 }
 int trdic_attacksearch(int entity_id){
     if(trdic_data==NULL)return -1;
     for(int i=0;i<trdic_data->size;++i){
-        if(tr_getAlly_id(trdic_data->dat[i])==entity_id){
+        char* c=tr_getWorld(trdic_data->dat[i]);
+        if(c&&tr_getAlly_id(trdic_data->dat[i])==entity_id&&strcmp(c,curr_world)==0){
             return tr_getId(trdic_data->dat[i]);
         }
+        free(c);
     }
     return -1;
 }

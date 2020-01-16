@@ -17,7 +17,7 @@ typedef struct _DialogMan DialogMan;
 /*
     Initializes a new DialogMan from a file.
 */
-DialogMan* dman_ini(FILE* df);
+DialogMan* dman_ini(FILE* df, Canvas* ent_pic);
 
 /*
     Frees a DialogMan.

@@ -116,4 +116,6 @@ DialogMan* entity_getDialogs(Entity *e);
 Entity* entity_addQuest(Entity* en, Quest* q);
 Quest** entity_getQuests(Entity* e, int* siz);
 Entity* entity_modPlayer(Entity* prev, Entity* new);
+Quest* entity_fetchFulfilledQuest(Entity* e,char*n);
+Quest** entity_questJustCompleted(Entity* e, int* size);
 #endif

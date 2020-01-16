@@ -55,6 +55,18 @@ Canvas* wi_render (Wlabic* wi, int width);
 
 /*-----------------------------------------------------------------*/
 /**
+ * @brief Renders the Wlabic
+ * 
+ * If the Wlabic is not as wide as width, it will be centered
+ * 
+ * @param wi    Wlabic to be rendered
+ * @param width Width that the resulting canvas will have
+ * @return      Canvas containing the render
+ */
+Canvas* wi_renderSmall (Wlabic* wi, int width);
+
+/*-----------------------------------------------------------------*/
+/**
  * @brief Sets the canvas of the Wlabic
  * 
  * @param sr    Wlabic whose canvas will be modified
