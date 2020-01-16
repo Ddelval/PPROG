@@ -30,7 +30,7 @@ struct _Inventory
     int selected[OBJ_TYPE_SIZE];
 };
 
-Inventory* inv_ini(){
+Inventory* inv_ini() {
     Inventory* inv = calloc(1,sizeof(Inventory));
     if(!inv)return NULL;
     for(int i=0;i<OBJ_TYPE_SIZE;++i){
