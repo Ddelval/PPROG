@@ -755,7 +755,7 @@ END:
 
     crender=disp_Render(dis);
     rend2=canv_subCopy(crender,ipos,ipos+hei,jpos,jpos+wid);
-    canv_print(stdout,rend2,ipos,jpos);
+    canv_print(stdout,rend2,ipos,jpos+1);
     for(int i=0;i<siz;++i)we_free(el[i]);
     free(el);
     canv_free(rend);

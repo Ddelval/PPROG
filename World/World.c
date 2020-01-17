@@ -95,7 +95,7 @@ Display* _wo_gameDisplay(Room* r){
     win_addAction(act,trig_showQuest,3,SHOW);
     win_addAction(act,trig_talk,4,TALK);
     win_addAction(act,trig_enter,5,ENTER);
-
+    win_setSelected(act,0);
     /** Controls **/
     int cont_size=4;
     cn=calloc(cont_size,sizeof(char*));
