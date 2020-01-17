@@ -52,6 +52,7 @@ int min(int a,int b){
 char getch1(void)
 {
     char c=fgetc(stdin);
+    fflush(stdin);
     if(c>='a'&&c<='z'){
         c-='a'-'A';
     }

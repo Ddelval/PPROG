@@ -754,8 +754,8 @@ int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
 END:
 
     crender=disp_Render(dis);
-    rend2=canv_subCopy(crender,ipos,ipos+hei,jpos,jpos+wid);
-    canv_print(stdout,rend2,ipos,jpos+1);
+    rend2=canv_subCopy(crender,ipos,ipos+hei,jpos-1,jpos+wid);
+    canv_print(stdout,rend2,ipos,jpos);
     for(int i=0;i<siz;++i)we_free(el[i]);
     free(el);
     canv_free(rend);
@@ -1273,7 +1273,7 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
         text[i]=c;
     }
 
-    for(int i=1;i<dim;++i){
+    for(int i=0;i<dim;++i){
         //Iterate through each type of element
         if(dimens[i]>0){
             Wlabel* w=wl_ini(text[i],fsubtitle,10);
@@ -1309,8 +1309,8 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
     canv_addOverlay(back2,c,10,0);
     canv_print(stdout,back2,0,0);
     char cha;
-    int selindex=inv_getSelectedIndex(inv,CONSUMABLE);
-    int typesel=CONSUMABLE;
+    int selindex=inv_getSelectedIndex(inv,WEAPON);
+    int typesel=WEAPON;
     while(1){
         cha=getch1();
 
@@ -1320,6 +1320,57 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
         char* txt;
 
         switch(cha){
+            case 'W':
+
+                w=wl_ini(text[typesel],fsubtitle,10);
+                c2=wl_render(w,dis->width);
+                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                canv_addOverlay(c3,c2,0,0);
+                canv_print(stdout,c3,titlecoord[typesel].fi,0);
+
+
+
+                typesel=(typesel-1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
+                while(dimens[typesel]<=0)typesel=(typesel-1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
+
+
+                txt=calloc(strlen(text[typesel])+2,sizeof(char));
+                txt[0]='-';
+                strcpy(txt+1,text[typesel]+1);
+                w=wl_ini(txt,fsubtitle,10);
+                free(txt);
+                c2=wl_render(w,dis->width);
+                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                canv_addOverlay(c3,c2,0,0);
+                canv_print(stdout,c3,titlecoord[typesel].fi,0);
+
+
+
+                break;
+            case 'S':
+
+                w=wl_ini(text[typesel],fsubtitle,10);
+                c2=wl_render(w,dis->width);
+                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                canv_addOverlay(c3,c2,0,0);
+                canv_print(stdout,c3,titlecoord[typesel].fi,0);
+
+                typesel=(typesel+1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
+                while(dimens[typesel]<=0)typesel=(typesel+1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
+
+                txt=calloc(strlen(text[typesel])+2,sizeof(char));
+                txt[0]='-';
+                strcpy(txt+1,text[typesel]+1);
+                w=wl_ini(txt,fsubtitle,10);
+                free(txt);
+                c2=wl_render(w,dis->width);
+                c3= canv_subCopy(back2,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
+                canv_addOverlay(c3,c2,0,0);
+                canv_print(stdout,c3,titlecoord[typesel].fi,0);
+
+
+
+                break;
             case 'A':
                 inv_incrementSelected(inv, typesel,-1);
                 break;
@@ -1339,6 +1390,14 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
         canv_print(stdout,sel,coordinates[typesel][selindex].fi+10,coordinates[typesel][selindex].se+1);
         canv_free(sel);
 
+  /*      Canvas* nsel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,false);
+        canv_print(stdout,nsel,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
+        canv_free(nsel);
+
+        consumableindex=inv_getSelectedIndex(inv,CONSUMABLE);
+        Canvas* sel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,true);
+        canv_print(stdout,sel2,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
+        canv_free(sel2); */
     }
 END:
 
