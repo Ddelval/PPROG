@@ -745,35 +745,33 @@ int* _combat_enemyMove(Combat* c) {
 void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   if(!c||!e||id>1||id<0) return;
 
-  // Attributes* attr = obj_getAttributes(inv_getSelected(entity_getInventory(e), CONSUMABLE));
-  // if(!attr) return;
-  // if(!attb_merge(c->stats[id], attr)) return;
-  //
-  // if(attb_get(c->stats[id], HEALTH)>attb_get(entity_getAttributes(e), HEALTH)) {
-  //   attb_set(c->stats[id], attb_get(entity_getAttributes(e), HEALTH), HEALTH);
-  // }
-  // if(attb_get(c->stats[id], ATTACK)>attb_get(entity_getAttributes(e), ATTACK)) {
-  //   attb_set(c->stats[id], attb_get(entity_getAttributes(e), ATTACK), ATTACK);
-  // }
-  // if(attb_get(c->stats[id], DEFENSE)>attb_get(entity_getAttributes(e), DEFENSE)) {
-  //   attb_set(c->stats[id], attb_get(entity_getAttributes(e), DEFENSE), DEFENSE);
-  // }
-  // if(attb_get(c->stats[id], SPEED)>attb_get(entity_getAttributes(e), SPEED)) {
-  //   attb_set(c->stats[id], attb_get(entity_getAttributes(e), SPEED), SPEED);
-  // }
-  // if(attb_get(c->stats[id], AGILITY)>attb_get(entity_getAttributes(e), AGILITY)) {
-  //   attb_set(c->stats[id], attb_get(entity_getAttributes(e), AGILITY), AGILITY);
-  // }
-  // //attb_free(attr);
-  // if(id==ENEMY) _combat_message(c, "The enemy used a consumable to rise his stats!");
-  // else _combat_message(c, "You used your selected consumable to rise your stats!");
-  // inv_decrease(entity_getInventory(e),inv_getSelected(entity_getInventory(e), CONSUMABLE), 1);
-
-  Inventory* in =entity_getInvRef(e);
+Inventory* in =entity_getInvRef(e);
   disp_InventoryWindow(c->cd,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6));
   FILE* wod=fopen("wod", "w");
   fprintf(wod, "back\n");
   fclose(wod);
+
+   Attributes* attr = obj_getAttributes(inv_getSelected(entity_getInventory(e), CONSUMABLE));
+
+   if(!attr) return;
+   if(!attb_merge(c->stats[id], attr)) return;
+  
+  int testing = attb_get(attr , 0);
+  if(testing == 20) _combat_message(c, "UPSSS");
+
+
+   //if(attb_get(c->stats[id], HEALTH)>attb_get(entity_getAttributes(e), HEALTH)) {
+   //  attb_set(c->stats[id], attb_get(entity_getAttributes(e), HEALTH), HEALTH);
+   //}
+   attb_free(attr);
+   if(id==ENEMY) _combat_message(c, "The enemy used a consumable to rise his stats!");
+   //else _combat_message(c, "You used your selected consumable to rise your stats!");
+
+   // inv_decrease(entity_getInventory(e),inv_getSelected(entity_getInventory(e), CONSUMABLE), 1);
+
+
+
+  
   return;
 }
 
@@ -873,10 +871,10 @@ Combat* combat_load(Combat*c) {
   movs[4]=we_createLabel(caux? caux:" ", fcat_lookup(M4),0);
   if(!movs[4])goto ERR_END;
 
-  winplayer=win_ini("Your stats",pstats,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,0,0,fcat_lookup(M8));
+  winplayer=win_ini(c->name[0],pstats,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,0,0,fcat_lookup(M8));
   if(!winplayer)goto ERR_END;
 
-  winenemy=win_ini("Enemy's stats",estats,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,disp_dim[H_DATA]/4-10,0,fcat_lookup(M8));
+  winenemy=win_ini(c->name[1],estats,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10,disp_dim[H_DATA]/4-10,0,fcat_lookup(M8));
   if(!winenemy)goto ERR_END;
 
   winoptions=win_ini("Movements",movs,5,disp_dim[W_DATA]-disp_dim[VD_DATA]-1,disp_dim[H_DATA]/4-10, disp_dim[H_DATA]/2-20,0,fcat_lookup(M8));
