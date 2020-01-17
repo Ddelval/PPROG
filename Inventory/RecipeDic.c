@@ -72,12 +72,12 @@ Recipe** rdic_getAllDoable(Inventory* inv, int * size){
         if(!rdic) return NULL;
         for(int i=0; i < rdic->size; ++i) {
                 if(rec_getTier(rdic->rec[i])>tier)continue;
-                if(rec_doable(inv, rdic->rec[i]) == true) {
+                //if(rec_doable(inv, rdic->rec[i]) == true) {
                         (*size)++;
                         if(r) r = realloc(r, (*size) * sizeof(Recipe*));
                         if(!r) r = (Recipe **) calloc ((*size), sizeof(Recipe*));
                         r[*size-1] = rec_copy(rdic->rec[i]);
-                }
+                //}
         }
         return r;
 }

@@ -7,7 +7,7 @@
 #include "Object.h"
 #include "Skill.h"
 
-#define NAME_SIZE 50
+#define NAME_SIZE 80
 
 #define MARGIN 2
 struct _Object
@@ -173,6 +173,7 @@ Object* obj_renderDims(const Object* ob, int number, const Font* ftext, const Fo
     canv_free(c2);
     c2=wl_render(num,canv_getWidth(c));
     canv_appendVI(c,c2);
+    canv_free(c2);
 
     Canvas* bb=canv_backGrnd(50,50,150,255,canv_getWidth(c)+4,canv_getHeight(c)+2);
     canv_addOverlay(bb,c,1,2);
@@ -183,6 +184,8 @@ Object* obj_renderDims(const Object* ob, int number, const Font* ftext, const Fo
     *h=canv_getHeight(back);
     *w=canv_getWidth(back);
     canv_free(back);
+    wl_free(num);
+    wl_free(nam);
     return (Object*)ob;
 }
 Canvas* obj_render(const Object* ob, int number, const Font* ftext, const Font* fnum, int h, int w, bool selected){

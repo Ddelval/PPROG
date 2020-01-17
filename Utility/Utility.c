@@ -89,5 +89,6 @@ int sendToScreen(FILE* f, char* ch){
     if(!f||!ch)return -1;
     //sem_wait(&mut);
     return fprintf(f,"%s",ch);
+    fflush(f);
     //sem_post(&mut);
 }

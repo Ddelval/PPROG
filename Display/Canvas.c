@@ -980,6 +980,7 @@ void canv_printAllSolid(FILE* f, const Canvas* c,const Canvas* backg,int oi,int 
     sendToScreen(f, rend);
     fflush(f);
     free(rend);
+    free(buff);
 }
 
 /*-----------------------------------------------------------------*/
@@ -1020,6 +1021,7 @@ void canv_printAllNonTransparent(FILE* f, const Canvas* c,int oi,int oj){
                 continue;
             }
             char* c=pix_renderLine((const Pixel**)buff,l);
+            for(int i=0;i<l;++i)pix_free(buff[i]);
             l=0;
             char* c2=movecur(oi+i,oj+jj+1);
             char* segment=calloc(strlen(c)+strlen(c2)+1,sizeof(char));
@@ -1049,6 +1051,8 @@ void canv_printAllNonTransparent(FILE* f, const Canvas* c,int oi,int oj){
     for(int i=0;i<strpos;++i)appendf(rend,&rpos,str[i]);
     free(str);
     sendToScreen(f, rend);
+    free(rend);
+    free(buff);
     fflush(f);
 }
 
@@ -1103,7 +1107,7 @@ Canvas* canv_blur(Canvas* c,int rad){
         }
     }
     int rad2=rad/2;
-    Canvas* c3=canv_copy(c2);
+    Canvas* c3=canv_ini(canv_getWidth(c2),canv_getHeight(c2));
     for(int i=0;i<canv_getWidth(c);++i){
         for(int j=0;j<canv_getHeight(c);++j){
             int r,g,b,a;
@@ -1116,6 +1120,7 @@ Canvas* canv_blur(Canvas* c,int rad){
                     a+=pix_retA(c2->data[j+k][i]);
                 }
             }
+            
             c3->data[j][i]=pix_ini(r/(2*rad2),g/(2*rad2),b/(2*rad2),a/(2*rad2));
             if(!c3->data[j][i]){
                 canv_free(c2);
@@ -1205,7 +1210,7 @@ Canvas* canv_circle(Pixel* p,int rad){
                 cnt+=(i2-rad)*(i2-rad)+(j2-rad)*(j2-rad)<rad*rad;
             }
             res->data[i][j]=pix_copy(p);
-            pix_setA(res->data[i][j],(int)((cnt/4.0)*255*pix_retA(p)));
+            pix_setA(res->data[i][j],(int)((cnt/4.0)*pix_retA(p)));
         }
     }
     Canvas* r2=canv_ini(2*rad,rad);

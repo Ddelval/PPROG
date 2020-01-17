@@ -1,4 +1,4 @@
-2
+3
 
 0 3 1
 Hello Gerald, our first priority right now is to get some basic resources so that we can repair the tools that were damaged by the rough landing.
@@ -18,4 +18,16 @@ Get the iron ore and craft a basic Iron sword.
 Getting armed
 As Adolf told you, you have to get the iron ore, turn it into iron and use it to craft the sword
 1
-1 202
+202 1
+
+2 6 1
+Hi Gerald. I see that you already got you first weapon. I know that it is not much but it is all we have until we can get the tools in the spacecraft ready.
+Now we need you to go explore a few caves that our intel team found before we got here. There are three of them in the north of this region.
+Our scanners confirmed that in one of them you will find a creature called Kazarum Kizarim.
+Beating it will not be easy but we cannot stablish a colony here with such creatures wandering around.
+Also, we just found some blueprints in the storage module that will allow us to build a city hall. Hopefully, you can get the materials there. 
+I will need you to bring 3 sacks of cement.
+Cave exploration
+To fulfill this quest you will need to explore the three caves and get the cement that you can find in them
+1
+6 3

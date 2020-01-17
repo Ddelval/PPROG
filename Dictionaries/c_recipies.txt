@@ -14,7 +14,7 @@ Iron Sword
 5 3
 2 1
 
-1
+2
 100 1
 House
 2

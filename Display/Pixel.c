@@ -100,7 +100,7 @@ Pixel * pix_copy(const Pixel* src){
  */
 Pixel* pix_average(const Pixel* p1,const Pixel*p2){
     if(!p1||!p2) return NULL;
-    return pix_ini((p1->r+p2->r)/2,(p1->g+p2->g)/2,(p1->b+p2->b)/2,(p1->a+p2->a)/2);
+    return pix_ini(((int)p1->r+p2->r)/2,((int)p1->g+p2->g)/2,((int)p1->b+p2->b)/2,((int)p1->a+p2->a)/2);
 }
 
 /*-----------------------------------------------------------------*/
@@ -241,9 +241,9 @@ char * pix_renderLine(const Pixel**a,int len){
  */
 Pixel* pix_darken(Pixel* p,double light){
     if(!p||light<0)return NULL;
-    p->r=min(p->r*light,255);
-    p->g=min(p->g*light,255);
-    p->b=min(p->b*light,255);
+    p->r=min((int)p->r*light,255);
+    p->g=min((int)p->g*light,255);
+    p->b=min((int)p->b*light,255);
     return p;
 }
 
@@ -257,7 +257,7 @@ Pixel* pix_darken(Pixel* p,double light){
 /// Changes the red value of p to r
 Pixel* pix_setR(Pixel* p, int r){
     if(!p)return NULL;
-    p->r=r;
+    p->r=_filter(r);
     return p;
 }
 
@@ -265,7 +265,7 @@ Pixel* pix_setR(Pixel* p, int r){
 /// Changes the green value of p to g
 Pixel* pix_setG(Pixel* p, int g){
     if(!p)return NULL;
-    p->g=g;
+    p->g=_filter(g);
     return p;
 }
 
@@ -273,7 +273,7 @@ Pixel* pix_setG(Pixel* p, int g){
 /// Changes the blue value of p to b
 Pixel* pix_setB(Pixel* p, int b){
     if(!p)return NULL;
-    p->b=b;
+    p->b=_filter(b);
     return p;
 }
 
@@ -281,7 +281,7 @@ Pixel* pix_setB(Pixel* p, int b){
 /// Changes the alpha value of p to a
 Pixel* pix_setA(Pixel* p, int a){
     if(!p)return NULL;
-    p->a=a;
+    p->a=_filter(a);
     return p;
 }
 

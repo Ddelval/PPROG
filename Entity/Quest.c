@@ -36,7 +36,7 @@ void quest_free(Quest*q){
  * @param f File from which the data will be read
  * @return  New quest 
  */
-Quest* quest_load(FILE* f,Canvas* ent_pic){
+Quest* quest_load(FILE* f,const Canvas* ent_pic){
     if(!f)return NULL;
     Quest* q=quest_ini();
     if(!q)return NULL;
@@ -66,47 +66,83 @@ Quest* quest_copy(const Quest* src){
 }
 Canvas* quest_render(Quest* src, int wid){
     if(!src)return NULL;
-    Canvas* mrg=canv_backGrnd(0,0,0,0,0,10);
-    Wlabel* wl=wl_ini(src->title,fcat_lookup(M8),0);
-    Canvas* t=wl_render(wl,wid);
+
+    Canvas* mrg, *res, *tmp;
+    Wlabel* wl;
+    Wlabic* wic;
+
+    mrg=canv_backGrnd(0,0,0,0,0,10);
+
+    //Title
+    wl=wl_ini(src->title,fcat_lookup(M8),0);
+    res=wl_render(wl,wid);
+
     wl_free(wl);
+    //Description
     wl=wl_ini(src->desc,fcat_lookup(M4),0);
-    Canvas* b=wl_render(wl,wid);
-    canv_appendVI(t,b);
-    canv_appendVI(t,mrg);
+    tmp=wl_render(wl,wid);
+    canv_appendVI(res,tmp);
+    canv_appendVI(res,mrg);
+
+    canv_free(tmp);
+    tmp=NULL;
+    //Requirements
+
     Canvas* c=canv_backGrnd(0,0,0,0,0,0);
     for(int i=0;i<src->len;++i){
         Object* o =odic_lookup(src->obj[i].fi);
         int h,w;
         obj_renderDims(o,src->obj[i].se,fcat_lookup(M4),fcat_lookup(M4),&h,&w);
-        Canvas* oc=obj_render(o,1,fcat_lookup(M4),fcat_lookup(M4),h,w,false);
-        canv_appendHI(c,oc);
+        Canvas* oc=obj_render(o,src->obj[i].se,fcat_lookup(M4),fcat_lookup(M4),h,w,false);
+        Canvas* ooc=oc;
+        if(i!=src->len-1)ooc=canv_addMargin(oc,0,10,0,0);
+        canv_appendHI(c,ooc);
+
+        if(i!=src->len-1)canv_free(ooc);
+        canv_free(oc);
+        obj_free(o);
     }
     
-    Wlabic* req=wi_ini("Requierements:",fcat_lookup(M6),0,5,TEXT_WEST);
-    wi_setCanvas(req,c);
-    Canvas* s=wi_render(req,wid);
-    canv_appendVI(t,s);
-    canv_appendVI(t,mrg);
+    wic=wi_ini("Requierements:",fcat_lookup(M6),0,5,TEXT_WEST);
+    wi_setCanvas(wic,c);
+    tmp=wi_render(wic,wid);
+    canv_appendVI(res,tmp);
+    canv_appendVI(res,mrg);
     
-    Wlabic* asn=wi_ini("Given by: ",fcat_lookup(M6),0,10,TEXT_WEST);
-    wi_setCanvas(asn,src->ent_pic);
-    Canvas* r=wi_renderSmall(asn,wid);
+    canv_free(c);
+    canv_free(tmp);
+    wi_free(wic);
+
+    wic=wi_ini("Given by: ",fcat_lookup(M6),0,10,TEXT_WEST);
+    wi_setCanvas(wic,src->ent_pic);
+    Canvas* lef=wi_renderSmall(wic,wid);
+
+    
 
     char* cc=calloc(strlen(src->asigner)+3,sizeof(char));
     sprintf(cc,"(%s)",src->asigner);
-    Wlabel* wla=wl_ini(cc,fcat_lookup(M6),0);
-    Canvas* r2=wl_renderSmall(wla,wid);
-    canv_appendHI(r,r2);
+    wl=wl_ini(cc,fcat_lookup(M6),0);
+    Canvas* r2=wl_renderSmall(wl,wid);
+    canv_appendHI(lef,r2);
 
-    Wlabel* down=wl_ini((src->completed? "Completed":"Not completed"),fcat_lookup(M6),0);
-    Canvas* stat=wl_renderSmall(down,wid);
-    Canvas* ccc=canv_backGrnd(0,0,0,0,wid-canv_getWidth(r)-canv_getWidth(stat),0);
-    canv_appendHI(r,ccc);
-    canv_appendHI(r,stat);
-    canv_appendVI(t,r);
+    wi_free(wic);
+    wl_free(wl);
+    canv_free(r2);
+    free(cc);
 
-    return t;
+    wl=wl_ini((src->completed? "Completed":"Not completed"),fcat_lookup(M6),0);
+    Canvas* stat=wl_renderSmall(wl,wid);
+    Canvas* ccc=canv_addMargin(stat,0,0,0,wid-canv_getWidth(lef)-canv_getWidth(stat));
+    canv_appendHI(lef,ccc);
+    canv_appendVI(res,lef);
+
+    canv_free(lef);
+    canv_free(ccc);
+    canv_free(mrg);
+    wl_free(wl);
+    canv_free(stat);
+
+    return res;
 
 
 }
@@ -122,7 +158,7 @@ void quest_setAsigner(Quest* q, char* a){
 char* quest_getAsigner(Quest* q){
     return q? strdup(q->asigner): NULL;
 }
-bool quest_getFulfilled(Quest* q){
+bool quest_getCompleted(Quest* q){
     return q? q->completed: false;
 }
 

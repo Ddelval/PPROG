@@ -111,6 +111,7 @@ Window* win_free(Window* win) {
 	free(win->Win_elem);
 	pix_free(win->forecol);
 	pix_free(win->backcol);
+	pix_free(win->borderColor);
 	free(win->actions);
 	free(win->act_type);
 	free(win);
