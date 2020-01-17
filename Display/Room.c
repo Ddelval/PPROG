@@ -10,7 +10,7 @@
 #define MEM_INI 5
 #define MAX_TRIG 20
 
-
+extern int tier;
 /**
  * @brief Description of the position of a sprite
  * 
@@ -726,7 +726,7 @@ Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz){
     int jj=0;
     for(int ii=0;ii<MAX_TRIG&&dat[ii].spindex!=-1;++ii){
         t[jj]=trdic_lookup(dat[ii].code);
-        if(tr_getType(t[jj])==tt){
+        if(tr_getType(t[jj])==tt && (tr_getTier(t[jj])==-1||tr_getTier(t[jj])<=tier)){
             tr_setSpr(t[jj],dat[ii].spindex);
             jj++;
         }
@@ -735,6 +735,10 @@ Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz){
         }
     }
     *siz=jj;
+    if(jj==0){
+        free(t);
+        return NULL;
+    }
     return t;
 }
 
@@ -776,13 +780,21 @@ Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){
                 }
             }
             if(!eq){
-                tot[index]=tr[i][j];
+                tot[index]=tr_copy(tr[i][j]);
                 index++;
             }
             
         }
     }
-    for(int i=0;i<4;++i)free(tr[i]);
+    for(int i=0;i<4;++i){
+        if(tr[i]){
+            for(int j=0;j<cn[i];++j){
+                tr_free(tr[i][j]);
+            }
+            free(tr[i]);
+        }
+        
+    }
     *siz=index;
     return tot;
 }
@@ -846,7 +858,7 @@ Room* room_updateData(Room*r){
     }
     for(int i=0;i<r->overpos;++i){
         if(!r->overs[i])continue;
-        fprintf(stderr,"%d\n",r->ent_typ[i]);
+        //fprintf(stderr,"%d\n",r->ent_typ[i]);
         if(r->ent_typ[i]==1)continue; //It is the player
         if(r->ent_typ[i]==2){ //It is an enemy
             room_processTriggers(r,r->overs[i],i);
@@ -894,6 +906,8 @@ Room* room_printModBackg(Room* r, int disp_i, int disp_j){
     if(room_redrawMap(r)==NULL)return NULL;
     Canvas * c=room_getRender(r);
     canv_printDiff(stdout,c,p,disp_i,disp_j);
+    canv_free(p);
+    canv_free(c);
     return r;
 }
 

@@ -11,7 +11,7 @@
 #define DARKEN 0.40
 #define BLUR_RAD 10
 // Selected and not selected colours
-#define NSEL_VALS 255,255,255,255
+#define NSEL_VALS 255,255,255,0
 #define  SEL_VALS 150,150,255,255
 #define CIRC_RAD 10
 struct _Display{
@@ -33,7 +33,7 @@ struct _Display{
 };
 /** PROTOTYPES **/
 Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii* coord);
-Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,Canvas* bckg);
+Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doable, Canvas* bckg);
 
 /** FUNCTION DECLARATION **/
 
@@ -291,6 +291,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
     nam_rend=wl_rend;
     wl_rend=NULL;
     wl_free(wl);
+    free(en);
 
     int h=150;
     int hmargin=50;
@@ -302,17 +303,21 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
     canv_darken(back,DARKEN);
     canv_addOverlay(back,nam_rend,0,0);
     if(!back)goto ERR_END;
-
+    
     txt=dman_getLine(dman);
     if(!txt) txt=strdup("... ... ...");
 
 
     wl=wl_ini(txt,fcat_lookup(M4),0);
+    free(txt);txt=NULL;
     wl_rend=wl_render(wl, dis->width-100);
     if(!wl_rend)goto ERR_END;
 
     result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),hmargin);
+    
     canv_print(stdout,result,ipos,0);
+    canv_free(result);
+    result=NULL;
     char in;
     while(1){
         wl_free(wl); wl=NULL;
@@ -327,11 +332,17 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
         txt=dman_getLine(dman);
         if(!txt)goto END;
         wl=wl_ini(txt,fcat_lookup(M4),0);
+        free(txt);
+        txt=NULL;
         wl_rend=wl_render(wl, dis->width-100);
         if(!wl_rend)goto ERR_END;
         result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),hmargin);
         if(!result)goto ERR_END;
         canv_print(stdout,result,ipos,0);
+
+        canv_free(result); result=NULL;
+        canv_free(wl_rend); wl_rend=NULL;
+        wl_free(wl); wl=NULL;
     }
     goto END;
 
@@ -342,6 +353,7 @@ ERR_END:
 END:
     canv_print(stdout,bottom,ipos,0);
     canv_free(bottom);
+    canv_free(nam_rend);
     canv_free(back);
     canv_free(rend);
     free(txt);
@@ -368,18 +380,22 @@ END:
 Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers){
     if(!dis||!inv)return NULL;
     int dim;
-    int *dimens;
-    char ** text;
-    pairii* sizes;
+    int *dimens=NULL;
+    char ** text=NULL;
+    pairii* sizes=NULL;
+    pairii** coordinates=NULL;
+    pairii* titlecoord=NULL;
+
     Canvas *** dat=inv_render(inv,&dim,&dimens,&text,&sizes,ftext,fnumbers);
     Wlabel* tit=wl_ini("Inventory",ftitle,10);
-    if(!tit||!dat)goto END;
+    if(!tit||!dat||!dimens||!text||!sizes)goto END;
 
     Canvas* c=wl_render(tit,dis->width);
-    pairii** coordinates = calloc(OBJ_TYPE_SIZE,sizeof(pairii*));
-    pairii* titlecoord=calloc(OBJ_TYPE_SIZE,sizeof(pairii));
+    coordinates = calloc(OBJ_TYPE_SIZE,sizeof(pairii*));
+    titlecoord=calloc(OBJ_TYPE_SIZE,sizeof(pairii));
     if(!c||!coordinates||!titlecoord) goto END;
 
+    wl_free(tit);
 
     for(int i=0;i<dim;++i){
         char* c=calloc(strlen(text[i])+2,sizeof(char));
@@ -394,27 +410,31 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
         Wlabel* w;
         Canvas* c2;
         if(i==WEAPON){ //Add the indicator
-            char* txt=calloc(strlen(text[i]+2),sizeof(char));
+            char* txt=calloc(strlen(text[i])+2,sizeof(char));
             txt[0]='-';
             strcpy(txt+1,text[i]+1);
             w=wl_ini(txt,fsubtitle,10);
             free(txt);
             c2=wl_render(w,dis->width);
+            wl_free(w);
         }
         else{
             w=wl_ini(text[i],fsubtitle,10);
             c2=wl_render(w,dis->width);
+            wl_free(w);
         }
         
         titlecoord[i].fi=canv_getHeight(c);
         titlecoord[i].se=canv_getWidth(c2);
         canv_appendVI(c,c2);
+        canv_free(c2);
         
         Canvas * b=dat[i][0];
         coordinates[i]=calloc(dimens[i],sizeof(pairii));
         for(int j=1;j<dimens[i];++j){
             Canvas*bc=canv_backGrnd(0,0,0,0,10,10);
             canv_appendHI(b,bc);
+            canv_free(bc);
             coordinates[i][j].se=canv_getWidth(b);
             canv_appendHI(b,dat[i][j]);
         }
@@ -436,6 +456,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
 
     Canvas* back3=canv_copy(back2);
     canv_addOverlay(back2,c,10,0);
+    canv_free(c);
     canv_print(stdout,back2,0,0);
     char cha;
     int selindex=inv_getSelectedIndex(inv,WEAPON);
@@ -456,7 +477,8 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 c3= canv_subCopy(back3,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
-
+                canv_free(c3);
+                c3=NULL;
 
 
                 typesel=(typesel-1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
@@ -472,6 +494,8 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 c3= canv_subCopy(back3,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
+                canv_free(c3);
+                c3=NULL;
 
 
 
@@ -483,6 +507,8 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 c3= canv_subCopy(back3,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
+                canv_free(c3);
+                c3=NULL;
 
                 typesel=(typesel+1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
                 while(dimens[typesel]<=0)typesel=(typesel+1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
@@ -496,6 +522,8 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 c3= canv_subCopy(back3,titlecoord[typesel].fi,titlecoord[typesel].fi+canv_getHeight(c2),0,canv_getWidth(c2));
                 canv_addOverlay(c3,c2,0,0);
                 canv_print(stdout,c3,titlecoord[typesel].fi,0);
+                canv_free(c3);
+                c3=NULL;
 
 
 
@@ -523,9 +551,31 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
 END:
     canv_free(back3);
     canv_free(back2);
+    
+    for(int i=0;i<OBJ_TYPE_SIZE;++i)free(text[i]);
+    free(text);
+    free(sizes);
+    for(int i=0;i<OBJ_TYPE_SIZE;++i)free(coordinates[i]);
+    free(coordinates);
+    free(titlecoord);
+    if(dat){
+        for(int i=0;i<OBJ_TYPE_SIZE;++i){
+            if(dat[i]){
+                for(int j=0;j<dimens[i];++j){
+                    fprintf(stderr,"%d %d",i,j); fflush(stderr);
+                    canv_free(dat[i][j]);
+                }
+            }
+            free(dat[i]);
+        }
+    }
+    free(dat);
+
+    free(dimens);
     Canvas* ccc=disp_Render(dis);
     if(!ccc)return NULL;
     canv_print(stdout,ccc,0,0);
+    canv_free(ccc);
     return dis;
 }
 /*-----------------------------------------------------------------*/
@@ -559,7 +609,7 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     Canvas* base=_disp_renderCraftingWindow(dis,rec,size,coordinates);
     if(!base)return NULL;
     canv_print(stdout,base,0,0);
-    _disp_reprintCraft(coordinates,size,selindex,base);
+    _disp_reprintCraft(coordinates,size,selindex,rec_doable(inv,rec[selindex]),base);
 
 
     while(1){
@@ -573,6 +623,7 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
                 break;
             case 'J':
                 selindex++;selindex--;
+                if(!rec_doable(inv,rec[selindex]))continue;
                 Object* ob=odic_lookup(rec_getResult_id(rec[selindex]));
 
                 if(obj_toplace(ob)){
@@ -599,7 +650,8 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
         }
         if(selindex==-10)break;
         else selindex=(selindex+size)%size;
-        _disp_reprintCraft(coordinates,size,selindex,base);
+        
+        _disp_reprintCraft(coordinates,size,selindex,rec_doable(inv,rec[selindex]),base);
     }
     dis->pop_craf=false;
     Canvas* c=disp_Render(dis);
@@ -641,8 +693,11 @@ int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
 
     if(!el){ fail=true; goto END; }
     for(int i=0;i<siz;++i){
-        el[i]=we_createLabel(tr_getDesc(dat[i]),fcat_lookup(M6),0);
+        char* tmp=tr_getDesc(dat[i]);
+        el[i]=we_createLabel(tmp,fcat_lookup(M6),0);
+        free(tmp);
         if(!el[i]){ fail=true; goto END; }
+        
     }
     win=win_ini("Choose an action:",el,siz,wid,hei,jpos,ipos,fcat_lookup(M8));
     if(!win){ fail=true; goto END; }
@@ -751,7 +806,7 @@ Display* disp_QuestWindow(Display* dis, int amount, Quest** quests){
     char c=getch1();
     while(c!='Q'&&c!='E'){
         c=getch1();
-        fprintf(stderr,"\n%c",c);
+        //fprintf(stderr,"\n%c",c);
     }
     canv_print(stdout,backg,0,0);
 
@@ -769,6 +824,7 @@ Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest){
     Canvas* dd=canv_backGrnd(0,0,0,0,dis->width-2*hmargin,vgap);
     canv_appendVI(tit,dd);
     canv_free(dd);
+    wl_free(wl);
 
     Canvas* tmp=quest_render(quest,dis->width-2*hmargin);
     canv_appendVI(tit,tmp);
@@ -781,10 +837,11 @@ Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest){
 
     Wlabel* wll=wl_ini(cc,fcat_lookup(M6),0);
     Canvas* ccc=wl_render(wll,dis->width-2*hmargin);
-    canv_addMargin(ccc,10,0,0,0);
-    canv_appendVI(tit,ccc);
+    Canvas* cccc=canv_addMargin(ccc,10,0,0,0);
+    canv_appendVI(tit,cccc);
     wl_free(wll);
     canv_free(ccc);
+    canv_free(cccc);
     free(cc);
 
 
@@ -795,13 +852,12 @@ Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest){
     canv_addOverlay(backg2,tit,10,hmargin);
     canv_print(stdout,backg2,0,0);
 
-    char c=getch1();
-    while(c!='Q'&&c!='E'){
-        c=getch1();
-        fprintf(stderr,"\n%c",c);
-    }
-    canv_print(stdout,backg,0,0);
+    char c=getch1(); //Wait for input
 
+    canv_print(stdout,backg,0,0);
+    canv_free(backg);
+    canv_free(backg2);
+    canv_free(tit);
     return dis;
 
 }
@@ -932,16 +988,19 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii*
  *                     indicators
  * @param size         Number of elements in the array
  * @param selected     Index of the selected element
+ * @param doable       Whether or not the selected recipe is doable
  * @param bckg         Background canvas, with all the recipies
  *                     rendered already
  * @return             NULL if error
  */
-Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,Canvas* bckg){
+Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doable,Canvas* bckg){
     if(!coordinates)return NULL;
 
     Pixel* nsel=pix_ini(NSEL_VALS);
     Canvas* dot=canv_circle(nsel,CIRC_RAD);
-    Pixel* sel=pix_ini(SEL_VALS);
+    Pixel* sel;
+    if(doable)sel=pix_ini(SEL_VALS);
+    else sel=pix_ini(200,0,0,255);
     Canvas* dotsel=canv_circle(sel,CIRC_RAD);
 
     for(int i=0;i<size;++i){
@@ -984,6 +1043,9 @@ Display* disp_execute(Display* dis, int index, int room_index, void* en){
             if(r>=0)f(dat[r],en,dis);
         }
         else if (a==1)f(dat[0],en,dis);
+        for(int i=0;i<a;++i){
+            tr_free(dat[i]);
+        }
         free(dat);
     }
     else{

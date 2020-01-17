@@ -313,6 +313,7 @@ Entity* entity_addItem(Entity* en,int itemId, int quantity) {
   Object* ob=odic_lookup(itemId);
   if(!ob)return NULL;
   inv_insertSeveral(en->inv,ob,quantity);
+  obj_free(ob);
   return en;
 }
 Inventory* entity_getInvRef(Entity*en){
@@ -393,7 +394,7 @@ Quest* entity_fetchFulfilledQuest(Entity* e,char*n){
   Quest* cr=NULL;
 
   for(int i=0;i<MAX_QUESTS;++i){
-    if(!e->adq_quests[i]||!quest_getFulfilled(e->adq_quests[i]))continue;
+    if(!e->adq_quests[i]||!quest_getCompleted(e->adq_quests[i]))continue;
     char* cc=quest_getAsigner(e->adq_quests[i]);
     if(strcmp(cc,n)==0){
       cr=e->adq_quests[i];
@@ -413,6 +414,7 @@ Quest** entity_questJustCompleted(Entity* e, int* size){
   int siz=0;
   for(int i=0;i<MAX_QUESTS;++i){
     if(e->adq_quests[i]==NULL)break;
+    if(quest_getCompleted(e->adq_quests[i]))continue;
     int len=0;
     pairii* req= quest_getRequirements(e->adq_quests[i],&len);
     if(inv_checkPresent(entity_getInventory(e),req,len)){
@@ -421,7 +423,9 @@ Quest** entity_questJustCompleted(Entity* e, int* size){
       quest_setCompleted(e->adq_quests[i],true);
       res[siz-1]=quest_copy(e->adq_quests[i]);
     }
+    free(req);
   }
   *size=siz;
+  
   return res;
 }

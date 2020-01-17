@@ -88,6 +88,7 @@ int trdic_talksearch(int ally_id){
     for(int i=0;i<trdic_data->size;++i){
         char* c=tr_getWorld(trdic_data->dat[i]);
         if(c&&tr_getAlly_id(trdic_data->dat[i])==ally_id&&strcmp(c,curr_world)==0){
+            free(c);
             return tr_getId(trdic_data->dat[i]);
         }
         free(c);

@@ -25,6 +25,7 @@ void trig_give(Trigger* t, void* e, void* d){
             quest_free(q[i]);
         }
     }
+    free(q);
 } 
 void trig_showInv(Trigger* t, void* e,void* d){
     if(!e||!d)return;
@@ -51,7 +52,8 @@ void trig_talk(Trigger* t,void* e, void* d){
     if(qa){
         tier++;
     }
-    fprintf(stderr, "tier: %d\n",tier);
+    quest_free(qa);
+    //fprintf(stderr, "tier: %d\n",tier);
     DialogMan* dd=entity_getDialogs(tr_getEntityRef(t));
     
     disp_DialogWindow(d,dd,n);
@@ -60,9 +62,9 @@ void trig_talk(Trigger* t,void* e, void* d){
     if(a){
         quest_setAsigner(a,n);
         entity_addQuest(e,a);
-        fprintf(stderr,"hello");
+        //fprintf(stderr,"hello");
     }
-    
+    quest_free(a);
     free(n);
     
 }

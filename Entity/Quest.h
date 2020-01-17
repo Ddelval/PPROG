@@ -21,12 +21,12 @@ void quest_free(Quest*q);
  * @param f File from which the data will be read
  * @return  New quest 
  */
-Quest* quest_load(FILE* f,Canvas* ent);
+Quest* quest_load(FILE* f, const Canvas* ent);
 Quest* quest_copy(const Quest* src);
 void quest_setCompleted(Quest* q, bool completed);
 Canvas* quest_render(Quest* src, int wid);
 void quest_setAsigner(Quest* q, char* a);
 char* quest_getAsigner(Quest* q);
-bool quest_getFulfilled(Quest* q);
+bool quest_getCompleted(Quest* q);
 pairii* quest_getRequirements(Quest* q, int* len);
 #endif

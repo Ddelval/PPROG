@@ -97,12 +97,13 @@ Display* _wo_gameDisplay(Room* r){
     win_addAction(act,trig_enter,5,ENTER);
 
     /** Controls **/
-    int cont_size=3;
+    int cont_size=4;
     cn=calloc(cont_size,sizeof(char*));
     if(!cn)goto FAIL;
     cn[0]="Move: W,A,S,D";
     cn[1]="Select action: O,L";
     cn[2]="Execute action: J";
+    cn[3]="Exit window: W";
 
     wec=calloc(cont_size,sizeof(Welem*));
     if(!wec)goto FAIL;
@@ -254,6 +255,7 @@ World* wo_load(FILE* f){
         entity_processEnemy(w->enemies[i]);
     }
     room_free(r);
+    free(dim);
     return w;
 }
 World* wo_transferPlayer(World* next, World* prev){

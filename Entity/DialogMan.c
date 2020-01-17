@@ -13,7 +13,7 @@ struct _DialogMan {
   
 };
 
-DialogMan* dman_ini(FILE* df,Canvas* en_pic) {
+DialogMan* dman_ini(FILE* df, const Canvas* en_pic) {
   if(!df) return NULL;
   DialogMan* dman = (DialogMan*)calloc(1, sizeof(DialogMan));
   if(!dman) return NULL;
@@ -70,6 +70,7 @@ DialogMan* dman_copy(DialogMan* dman) {
 }
 char* dman_getLine(DialogMan* dic){
   if(!dic) return NULL;
+  if(tier>=dic->size)return NULL;
   return diag_getNext(dic->d[tier]);
 }
 
@@ -105,5 +106,6 @@ DialogMan* dman_resetDialog(DialogMan* dd) {
 }
 Quest* dman_fetchQuest(DialogMan* dd){
   if(!dd)return NULL;
-  return diag_getQuest(dd->d[dd->position]);
+  if(tier>=dd->size)return NULL;
+  return diag_getQuest(dd->d[tier]);
 }

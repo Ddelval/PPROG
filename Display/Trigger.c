@@ -17,6 +17,7 @@ struct _Trigger
     int obj_id;
     int sprite_index;
     int quantity;
+    int tier;
     bool spr_remove;
 
     /* Change place */
@@ -24,7 +25,7 @@ struct _Trigger
 
     /* Engage in conversation */
     int ent_id;
-    char* world;
+    char world[MAX_ROOM];
     void * entit;
 };
 
@@ -36,6 +37,7 @@ struct _Trigger
  */
 Trigger* tr_ini(){
     Trigger* t=calloc(1,sizeof(Trigger));
+    t->tier=-1;
     return t;
 }
 
@@ -72,9 +74,10 @@ Trigger * tr_load(FILE* f){
     fgets(t->name,MAX_NAME,f);
     if(strlen(t->name))t->name[strlen(t->name)-1]=0;
     if(t->type==OBTAIN){
-        fscanf(f,"%d %d %d", &t->obj_id, &t->quantity,&t->spr_remove); 
+        fscanf(f,"%d %d %d %d", &t->tier, &t->obj_id, &t->quantity,&t->spr_remove); 
     }
     if(t->type==ENTER){
+        fscanf(f,"%d",&t->tier);
         t->next_room[0]='\n';
         t->next_room[1]='\0';
         while(!strcmp(t->next_room,"\n"))fgets(t->next_room,MAX_ROOM,f);
@@ -93,6 +96,7 @@ Trigger * tr_load(FILE* f){
  * @param t Trigger to be freed
  */
 void tr_free(Trigger* t){
+    if(!t)return;
     free(t);
 }
 
@@ -156,8 +160,12 @@ Trigger* tr_setSpr(Trigger* tr, int i){
     return tr;
 }
 void tr_setWorld(Trigger* tr, char* wor){
-    if(tr)tr->world=strdup(wor);
+    if(strlen(wor)+1>MAX_ROOM)return;
+    if(tr)strcpy(tr->world,wor);
 }
 char* tr_getWorld(Trigger* tr){
-    return (tr&&tr->world)? strdup(tr->world):NULL;
+    return (tr)? strdup(tr->world):NULL;
+}
+int tr_getTier(Trigger* tr){
+    return tr? tr->tier: -1;
 }

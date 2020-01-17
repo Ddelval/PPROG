@@ -7,8 +7,8 @@
 
 struct _skill {
   int id;
-  char name[20];
-  char desc[200];
+  char name[50];
+  char desc[256];
   Attributes * atbself;
   Attributes * atbatk;
   int special_skill;

@@ -35,4 +35,5 @@ bool tr_completeEqual(Trigger* t1,Trigger* t2);
 int tr_getAlly_id(Trigger * t);
 void tr_setWorld(Trigger* tr, char* wor);
 char* tr_getWorld(Trigger* tr);
+int tr_getTier(Trigger* tr);
 #endif

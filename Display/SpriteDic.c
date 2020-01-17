@@ -83,7 +83,7 @@ SpriteDic* sdic_ini(){
         int nid, pid;
         int ntrig;
         fscanf(f, "%d %d %d", &nid, &pid,&ntrig);
-        fprintf (stderr,"%d %d %d",nid,pid,ntrig);
+        //fprintf (stderr,"%d %d %d",nid,pid,ntrig);
         Sprite *spr;
         for(int j=0;j<siz;++j){
             if(spr_getId(s->dat[j])==pid){

@@ -24,7 +24,7 @@ void diag_free(Dialog* diag){
   if(!diag) return;
   for(int i=0;i<diag->nlines;i++) if(diag->lines[i]) free(diag->lines[i]);
   free(diag->lines);
-  free(diag->q);
+  quest_free(diag->q);
   free(diag);
   
 }
@@ -95,7 +95,7 @@ Dialog* diag_jumpLines(Dialog* diag, int lines) {
   return diag;
 }
 
-Dialog* diag_load(FILE* f,Canvas* ent_pic) {
+Dialog* diag_load(FILE* f,const Canvas* ent_pic) {
   if(!f) return NULL;
   Dialog* d=diag_ini();
   if(!d) return NULL;

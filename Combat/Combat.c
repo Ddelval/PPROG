@@ -51,8 +51,8 @@ int combat_launch(Entity* player, Entity* enemy){
   Combat* c=combat_ini(player, enemy);
   if(!combat_load(c)) return -1;
   combat_execute(c);
-  if(attb_get(c->stats[ENEMY], HEALTH)<0)retval=0;
-  if(attb_get(c->stats[PLAYER], HEALTH)<0)retval=1;
+  if(attb_get(c->stats[ENEMY], HEALTH)<=0)retval=0;
+  else if(attb_get(c->stats[PLAYER], HEALTH)<=0)retval=1;
   combat_free(c);
 
   return retval;
