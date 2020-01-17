@@ -1247,23 +1247,25 @@ int disp_getSelIndex(Display* dis, int winIndex){
   return win_getSelectedIndex(dis->latWindow[winIndex]);
 }
 
-
 Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font* fsubtitle, Font* ftext, Font* fnumbers){
     if(!dis||!inv)return NULL;
-    dis->nLatWindow=3;
     int dim;
-    int *dimens;
-    char ** text;
-    pairii* sizes;
+    int *dimens=NULL;
+    char ** text=NULL;
+    pairii* sizes=NULL;
+    pairii** coordinates=NULL;
+    pairii* titlecoord=NULL;
+
     Canvas *** dat=inv_render(inv,&dim,&dimens,&text,&sizes,ftext,fnumbers);
     Wlabel* tit=wl_ini("Inventory",ftitle,10);
-    if(!tit||!dat)goto END;
+    if(!tit||!dat||!dimens||!text||!sizes)goto END;
 
     Canvas* c=wl_render(tit,dis->width);
-    pairii** coordinates = calloc(OBJ_TYPE_SIZE,sizeof(pairii*));
-    pairii* titlecoord=calloc(OBJ_TYPE_SIZE,sizeof(pairii));
+    coordinates = calloc(OBJ_TYPE_SIZE,sizeof(pairii*));
+    titlecoord=calloc(OBJ_TYPE_SIZE,sizeof(pairii));
     if(!c||!coordinates||!titlecoord) goto END;
 
+    wl_free(tit);
 
     for(int i=0;i<dim;++i){
         char* c=calloc(strlen(text[i])+2,sizeof(char));
@@ -1272,22 +1274,37 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
         free(text[i]);
         text[i]=c;
     }
-
     for(int i=1;i<dim;++i){
         //Iterate through each type of element
-        if(dimens[i]>0){
-            Wlabel* w=wl_ini(text[i],fsubtitle,10);
-            Canvas * c2=wl_render(w,dis->width);
-            titlecoord[i].fi=canv_getHeight(c);
-            titlecoord[i].se=canv_getWidth(c2);
-            canv_appendVI(c,c2);
+        if(dimens[i]<=0)continue;
+        Wlabel* w;
+        Canvas* c2;
+        if(i==CONSUMABLE){ //Add the indicator
+            char* txt=calloc(strlen(text[i])+2,sizeof(char));
+            txt[0]='-';
+            strcpy(txt+1,text[i]+1);
+            w=wl_ini(txt,fsubtitle,10);
+            free(txt);
+            c2=wl_render(w,dis->width);
+            wl_free(w);
         }
-        else continue;
+        else{
+            w=wl_ini(text[i],fsubtitle,10);
+            c2=wl_render(w,dis->width);
+            wl_free(w);
+        }
+        
+        titlecoord[i].fi=canv_getHeight(c);
+        titlecoord[i].se=canv_getWidth(c2);
+        canv_appendVI(c,c2);
+        canv_free(c2);
+        
         Canvas * b=dat[i][0];
         coordinates[i]=calloc(dimens[i],sizeof(pairii));
         for(int j=1;j<dimens[i];++j){
             Canvas*bc=canv_backGrnd(0,0,0,0,10,10);
             canv_appendHI(b,bc);
+            canv_free(bc);
             coordinates[i][j].se=canv_getWidth(b);
             canv_appendHI(b,dat[i][j]);
         }
@@ -1306,7 +1323,10 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
     Canvas* back2=canv_blur(back,BLUR_RAD);
     canv_free(back);
     canv_darken(back2,DARKEN);
+
+    Canvas* back3=canv_copy(back2);
     canv_addOverlay(back2,c,10,0);
+    canv_free(c);
     canv_print(stdout,back2,0,0);
     char cha;
     int selindex=inv_getSelectedIndex(inv,CONSUMABLE);
@@ -1320,6 +1340,7 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
         char* txt;
 
         switch(cha){
+       
             case 'A':
                 inv_incrementSelected(inv, typesel,-1);
                 break;
@@ -1341,11 +1362,32 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
 
     }
 END:
-
+    canv_free(back3);
     canv_free(back2);
+    
+    for(int i=0;i<OBJ_TYPE_SIZE;++i)free(text[i]);
+    free(text);
+    free(sizes);
+    for(int i=0;i<OBJ_TYPE_SIZE;++i)free(coordinates[i]);
+    free(coordinates);
+    free(titlecoord);
+    if(dat){
+        for(int i=0;i<OBJ_TYPE_SIZE;++i){
+            if(dat[i]){
+                for(int j=0;j<dimens[i];++j){
+                    fprintf(stderr,"%d %d",i,j); fflush(stderr);
+                    canv_free(dat[i][j]);
+                }
+            }
+            free(dat[i]);
+        }
+    }
+    free(dat);
+
+    free(dimens);
     Canvas* ccc=disp_Render(dis);
     if(!ccc)return NULL;
     canv_print(stdout,ccc,0,0);
-    dis->nLatWindow=4;
+    canv_free(ccc);
     return dis;
 }
