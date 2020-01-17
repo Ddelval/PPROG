@@ -562,7 +562,6 @@ END:
         for(int i=0;i<OBJ_TYPE_SIZE;++i){
             if(dat[i]){
                 for(int j=0;j<dimens[i];++j){
-                    fprintf(stderr,"%d %d",i,j); fflush(stderr);
                     canv_free(dat[i][j]);
                 }
             }
@@ -1329,8 +1328,8 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
     canv_free(c);
     canv_print(stdout,back2,0,0);
     char cha;
-    int selindex=inv_getSelectedIndex(inv,WEAPON);
-    int typesel=WEAPON;
+    int selindex=inv_getSelectedIndex(inv,CONSUMABLE);
+    int typesel=CONSUMABLE;
     while(1){
         cha=getch1();
 
@@ -1340,13 +1339,14 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
         char* txt;
 
         switch(cha){
+       
             case 'A':
                 inv_incrementSelected(inv, typesel,-1);
                 break;
             case 'D':
                 inv_incrementSelected(inv, typesel,1);
                 break;
-            case 'E': case 'Q':
+            case 'E': case 'Q': case'J':
                 goto END;
                 break;
         }
@@ -1359,14 +1359,6 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
         canv_print(stdout,sel,coordinates[typesel][selindex].fi+10,coordinates[typesel][selindex].se+1);
         canv_free(sel);
 
-  /*      Canvas* nsel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,false);
-        canv_print(stdout,nsel,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
-        canv_free(nsel);
-
-        consumableindex=inv_getSelectedIndex(inv,CONSUMABLE);
-        Canvas* sel2=inv_renderObj(inv,CONSUMABLE,sizes[CONSUMABLE].fi,sizes[CONSUMABLE].se,ftext,fnumbers,consumableindex,true);
-        canv_print(stdout,sel2,coordinates[CONSUMABLE][consumableindex].fi+10,coordinates[CONSUMABLE][consumableindex].se+1);
-        canv_free(sel2); */
     }
 END:
     canv_free(back3);
@@ -1382,7 +1374,6 @@ END:
         for(int i=0;i<OBJ_TYPE_SIZE;++i){
             if(dat[i]){
                 for(int j=0;j<dimens[i];++j){
-                    fprintf(stderr,"%d %d",i,j); fflush(stderr);
                     canv_free(dat[i][j]);
                 }
             }
