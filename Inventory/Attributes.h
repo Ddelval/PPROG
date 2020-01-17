@@ -32,13 +32,13 @@ void attb_free(Attributes* attb);
 
 Attributes* attb_set(Attributes* attb, int p, attb_type index);
 
-int attb_get(Attributes* attb, attb_type index);
+int attb_get(const Attributes* attb, attb_type index);
 
 int * attb_getAll(Attributes* attb);
 
 Attributes* attb_setAll(Attributes* attb, int *p);
 
-void attb_mergeItself(Attributes * ori, Attributes * adder);
+void attb_mergeItself(Attributes * ori, const Attributes * adder);
 
 Attributes* attb_load(FILE* f);
 

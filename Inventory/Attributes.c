@@ -37,7 +37,7 @@ void attb_free(Attributes* attb) {
 	free(attb);
 }
 
-int attb_get(Attributes* attb, attb_type index) {
+int attb_get(const Attributes* attb, attb_type index) {
 	if(!attb||index<0||index>=ATTRIBUTE_SIZE) return -1;
 	return attb->data[index];
 }
@@ -92,7 +92,7 @@ Attributes* attb_copy(Attributes* a) {
 }
 
 
-void attb_mergeItself(Attributes * ori, Attributes * adder){
+void attb_mergeItself(Attributes * ori, const Attributes * adder){
 	if(!ori||!adder) return;
 	for(int i=0;i<ATTRIBUTE_SIZE;i++)
 		if(!attb_set(ori, attb_get(ori, i) + attb_get(adder, i), i)) return;

@@ -751,7 +751,7 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   fprintf(wod, "back\n");
   fclose(wod);
 
-   Attributes* attr = obj_getAttributesRef(inv_getSelected(in, CONSUMABLE));
+   const Attributes* attr = obj_getAttributesRef(inv_getSelected(in, CONSUMABLE));
 
    if(!attr) return;
    attb_mergeItself(c->stats[id], attr);
@@ -759,7 +759,7 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
    if(attb_get(c->stats[id], HEALTH)>attb_get(entity_getAttributes(e), HEALTH)) {
      attb_set(c->stats[id], attb_get(entity_getAttributes(e), HEALTH), HEALTH);
    }
-   
+
    if(id==ENEMY) _combat_message(c, "The enemy used a consumable to rise his stats!");
    else _combat_message(c, "You used your selected consumable to rise your stats!");
 
