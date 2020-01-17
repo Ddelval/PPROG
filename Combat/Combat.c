@@ -746,7 +746,7 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   if(!c||!e||id>1||id<0) return;
 
   Inventory* in =entity_getInvRef(e);
-  disp_InventoryWindow(c->cd,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6));
+  disp_InventoryWindow2(c->cd,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6));
   FILE* wod=fopen("wod", "w");
   fprintf(wod, "back\n");
   fclose(wod);
@@ -859,7 +859,8 @@ Combat* combat_load(Combat*c) {
       movs[i]=we_createLabel(skill_getName(c->moveset[PLAYER][i]),fcat_lookup(M4),0);
       if(!movs[i])goto ERR_END;
   }
-  const char* caux=obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE));
+  //const char* caux=obj_getName(inv_getSelected(entity_getInventory(c->player), CONSUMABLE));
+  const char* caux= "Select Consumable";
   movs[4]=we_createLabel(caux? caux:" ", fcat_lookup(M4),0);
   if(!movs[4])goto ERR_END;
 
