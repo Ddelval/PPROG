@@ -745,13 +745,13 @@ int* _combat_enemyMove(Combat* c) {
 void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   if(!c||!e||id>1||id<0) return;
 
-Inventory* in =entity_getInvRef(e);
+  Inventory* in =entity_getInvRef(e);
   disp_InventoryWindow(c->cd,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6));
   FILE* wod=fopen("wod", "w");
   fprintf(wod, "back\n");
   fclose(wod);
 
-   Attributes* attr = obj_getAttributes(inv_getSelected(in, CONSUMABLE));
+   Attributes* attr = obj_getAttributesRef(inv_getSelected(in, CONSUMABLE));
 
    if(!attr) return;
    attb_mergeItself(c->stats[id], attr);
@@ -759,7 +759,7 @@ Inventory* in =entity_getInvRef(e);
    if(attb_get(c->stats[id], HEALTH)>attb_get(entity_getAttributes(e), HEALTH)) {
      attb_set(c->stats[id], attb_get(entity_getAttributes(e), HEALTH), HEALTH);
    }
-   attb_free(attr);
+   
    if(id==ENEMY) _combat_message(c, "The enemy used a consumable to rise his stats!");
    else _combat_message(c, "You used your selected consumable to rise your stats!");
 

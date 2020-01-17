@@ -143,7 +143,7 @@ Skill ** obj_getAttacks(Object * ob){
   return ob->attacks;
 }
 
-Attributes * obj_getAttributes(const Object * ob){
+Attributes * obj_getAttributesRef(const Object * ob){
   if(!ob) return NULL;
   return ob->atb;
 }

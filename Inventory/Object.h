@@ -55,7 +55,7 @@ Object* obj_copy(const Object* ob);
 Sprite* obj_getSprite(Object* ob);
 
 const char* obj_getName(const Object* ob);
-Attributes * obj_getAttributes(const Object * ob);
+Attributes * obj_getAttributesRef(const Object * ob);
 obj_type obj_getType(const Object* ob);
 Canvas* obj_render(const Object* ob, int number, const Font* ftext, const Font* fnum, int h,int w,bool selected);
 int obj_getId(Object* ob);
