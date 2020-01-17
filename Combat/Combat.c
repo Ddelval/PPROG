@@ -751,27 +751,19 @@ Inventory* in =entity_getInvRef(e);
   fprintf(wod, "back\n");
   fclose(wod);
 
-   Attributes* attr = obj_getAttributes(inv_getSelected(entity_getInventory(e), CONSUMABLE));
+   Attributes* attr = obj_getAttributes(inv_getSelected(in, CONSUMABLE));
 
    if(!attr) return;
-   if(!attb_merge(c->stats[id], attr)) return;
-  
-  int testing = attb_get(attr , 0);
-  if(testing == 20) _combat_message(c, "UPSSS");
+   attb_mergeItself(c->stats[id], attr);
 
-
-   //if(attb_get(c->stats[id], HEALTH)>attb_get(entity_getAttributes(e), HEALTH)) {
-   //  attb_set(c->stats[id], attb_get(entity_getAttributes(e), HEALTH), HEALTH);
-   //}
+   if(attb_get(c->stats[id], HEALTH)>attb_get(entity_getAttributes(e), HEALTH)) {
+     attb_set(c->stats[id], attb_get(entity_getAttributes(e), HEALTH), HEALTH);
+   }
    attb_free(attr);
    if(id==ENEMY) _combat_message(c, "The enemy used a consumable to rise his stats!");
-   //else _combat_message(c, "You used your selected consumable to rise your stats!");
+   else _combat_message(c, "You used your selected consumable to rise your stats!");
 
-   // inv_decrease(entity_getInventory(e),inv_getSelected(entity_getInventory(e), CONSUMABLE), 1);
-
-
-
-  
+  inv_decrease(in,inv_getSelected(in, CONSUMABLE), 1);
   return;
 }
 

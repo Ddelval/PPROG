@@ -38,7 +38,7 @@ int * attb_getAll(Attributes* attb);
 
 Attributes* attb_setAll(Attributes* attb, int *p);
 
-
+void attb_mergeItself(Attributes * ori, Attributes * adder);
 
 Attributes* attb_load(FILE* f);
 

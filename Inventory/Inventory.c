@@ -164,7 +164,8 @@ Inventory* inv_remove(Inventory* inv, const Object* ob){
         }
     }
     inv->size[ob_ty]-=found;
-    return found? inv: NULL;
+//    return found? inv: NULL;
+      return inv;
 }
 Inventory* inv_decrease(Inventory* inv, const Object* ob, int quantity){
     if(!inv||!ob)return NULL;

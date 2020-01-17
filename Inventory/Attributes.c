@@ -92,6 +92,13 @@ Attributes* attb_copy(Attributes* a) {
 }
 
 
+void attb_mergeItself(Attributes * ori, Attributes * adder){
+	if(!ori||!adder) return;
+	for(int i=0;i<ATTRIBUTE_SIZE;i++)
+		if(!attb_set(ori, attb_get(ori, i) + attb_get(adder, i), i)) return;
+	return;
+}
+
 
 Attributes* attb_load(FILE* f){
 	if(!f) return NULL;
