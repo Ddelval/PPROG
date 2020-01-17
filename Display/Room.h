@@ -264,7 +264,7 @@ Room* room_processTriggers(Room * r, const Sprite * sp, int index);
  * @return          NULL if error
  *                  The array of triggers otherwise
  */
-Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz);
+Trigger** room_getTriggers(Room*r,tr_type tt, int sp_index, int* siz);
 
 /*-----------------------------------------------------------------*/
 /**

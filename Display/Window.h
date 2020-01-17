@@ -112,7 +112,7 @@ Window* win_clear(Window* w);
  * @param t 	Type of the trigger accepted by f
  * @return 		NULL in case of error
  */
-Window* win_addAction(Window* win,func_trig f, int index,trig_type t);
+Window* win_addAction(Window* win,func_trig f, int index,tr_type t);
 /*-----------------------------------------------------------------*/
 /**
  * @brief 	Gets the function that has to be executed when the 
@@ -139,9 +139,9 @@ func_trig win_getAction(Window* win, int index);
  * 		  selected Welem
  * 
  * @param win 	Window that contains the Welem
- * @return 		trig_type associated to the Welem 
+ * @return 		tr_type associated to the Welem 
  */
-trig_type win_getSelectedTrigType(Window * win);
+tr_type win_getSelectedTrigType(Window * win);
 /*-----------------------------------------------------------------*/
 /**
  * @brief Renders the window

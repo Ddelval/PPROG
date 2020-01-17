@@ -320,6 +320,19 @@ int spr_checkCollisions(const Sprite*s, const bool**rarr,int rwid,int rhei, int 
     }
     return 0;
 }
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Deletes all the triggers in the sprite
+ * 
+ * @param sp Sprite whose triggers will be deleted
+ */
+void spr_clearTrig(Sprite* sp){
+    if(!sp)return;
+    sp->trsize=0;
+}
+
+/*-----------------------------------------------------------------*/
 /** GETTERS **/
 const Canvas* spr_getDispData(const Sprite* spr){
     if(!spr)return NULL;
@@ -341,6 +354,11 @@ int spr_getHeight(const Sprite* spr){
     if(!spr) return -1;
     return spr->height;
 }
+
+int spr_getId(const Sprite* sp){
+    if(!sp)return 0;
+    return sp->id;
+}
 int spr_getTriginfo(const Sprite*s, int** tr_id, int** i1,int** i2, int** j1, int** j2){
     if(!s)return -1;
     *tr_id=calloc(s->trsize,sizeof(int));
@@ -357,6 +375,8 @@ int spr_getTriginfo(const Sprite*s, int** tr_id, int** i1,int** i2, int** j1, in
     }
     return s->trsize;
 }
+
+/*-----------------------------------------------------------------*/
 /** SETTERS **/
 void spr_setCoordinates(Sprite* sp,int i,int j){
     if(!sp)return;
@@ -370,14 +390,6 @@ void spr_setOI( Sprite* spr,int ipos){
 void spr_setOJ(Sprite* spr, int jpos){
     if(!spr)return;
     spr->jPos=jpos;
-}
-int spr_getId(const Sprite* sp){
-    if(!sp)return 0;
-    return sp->id;
-}
-void spr_clearTrig(Sprite* sp){
-    if(!sp)return;
-    sp->trsize=0;
 }
 void spr_setId(Sprite* sp,int id){
     if (sp)sp->id=id;

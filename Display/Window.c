@@ -18,7 +18,7 @@ struct _Window {
 	Pixel* forecol;
 	const Font* titlef;
 	func_trig* actions;
-	trig_type* act_type;
+	tr_type* act_type;
 	int action_size;
 	bool hasBorder;
 	Pixel* borderColor;
@@ -150,8 +150,8 @@ Window* win_copy(Window* win) {
 
 
 
-	win2->act_type=calloc(win->action_size,sizeof(trig_type));
-	memcpy(win2->act_type,win->act_type,win->action_size*sizeof(trig_type));
+	win2->act_type=calloc(win->action_size,sizeof(tr_type));
+	memcpy(win2->act_type,win->act_type,win->action_size*sizeof(tr_type));
 
 	win2->actions=calloc(win->action_size,sizeof(func_trig));
 	memcpy(win2->actions,win->actions,win->action_size*sizeof(func_trig));
@@ -260,15 +260,15 @@ Window* win_clear(Window* w) {
  * @param t 	Type of the trigger accepted by f
  * @return 		NULL in case of error
  */
-Window* win_addAction(Window* win,func_trig f, int index,trig_type t){
+Window* win_addAction(Window* win,func_trig f, int index,tr_type t){
 	if(!win)return NULL;
 	if(!win->actions){
 		win->actions=calloc(win->num_elems,sizeof(func_trig));
-		win->act_type=calloc(win->num_elems,sizeof(trig_type));
+		win->act_type=calloc(win->num_elems,sizeof(tr_type));
 	}
 	else{
 		win->actions=realloc(win->actions,sizeof(func_trig)*win->num_elems);
-		win->act_type=realloc(win->act_type,sizeof(trig_type)*win->num_elems);
+		win->act_type=realloc(win->act_type,sizeof(tr_type)*win->num_elems);
 	}
 	win->actions[index]=f;
 	win->act_type[index]=t;
@@ -309,9 +309,9 @@ func_trig win_getAction(Window* win, int index){
  * 		  selected Welem
  *
  * @param win 	Window that contains the Welem
- * @return 		trig_type associated to the Welem
+ * @return 		tr_type associated to the Welem
  */
-trig_type win_getSelectedTrigType(Window * win){
+tr_type win_getSelectedTrigType(Window * win){
 	if(!win||win->selected_elem==-1||win->selected_elem>=win->action_size)return -1;
 	return win->act_type[win->selected_elem];
 }

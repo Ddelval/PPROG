@@ -1032,7 +1032,7 @@ Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doa
 Display* disp_execute(Display* dis, int index, int room_index, void* en){
     if(!dis)return NULL;
     func_trig f =win_getSelectedAction(dis->latWindow[index]);
-    trig_type t=win_getSelectedTrigType(dis->latWindow[index]);
+    tr_type t=win_getSelectedTrigType(dis->latWindow[index]);
     if(tr_needsTrigger(t)){
         int a;
         Trigger** dat =room_getTriggers(dis->room,t,room_index,&a);

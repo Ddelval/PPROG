@@ -9,15 +9,17 @@
 struct _Trigger
 {
     int trig_id;
-    trig_type type;
+    tr_type type;
 
     char name[MAX_NAME];
     
+    int tier;
+
     /* Obtain resources */
     int obj_id;
     int sprite_index;
     int quantity;
-    int tier;
+    
     bool spr_remove;
 
     /* Change place */
@@ -73,11 +75,11 @@ Trigger * tr_load(FILE* f){
     fscanf(f,"%d %d\n",&t->trig_id,(int*)&t->type);
     fgets(t->name,MAX_NAME,f);
     if(strlen(t->name))t->name[strlen(t->name)-1]=0;
+    fscanf(f,"%d",&t->tier);
     if(t->type==OBTAIN){
-        fscanf(f,"%d %d %d %d", &t->tier, &t->obj_id, &t->quantity,&t->spr_remove); 
+        fscanf(f,"%d %d %d", &t->obj_id, &t->quantity,&t->spr_remove); 
     }
     if(t->type==ENTER){
-        fscanf(f,"%d",&t->tier);
         t->next_room[0]='\n';
         t->next_room[1]='\0';
         while(!strcmp(t->next_room,"\n"))fgets(t->next_room,MAX_ROOM,f);
@@ -112,7 +114,7 @@ int tr_getId(const Trigger* tr){
     return tr? tr->trig_id: -1;
 }
 
-trig_type tr_getType(const Trigger* tr){
+tr_type tr_getType(const Trigger* tr){
     return tr? tr->type:-1;
 }
 int tr_getObj_id(const Trigger* tr){
@@ -127,24 +129,24 @@ bool tr_getSpr_remove(const Trigger* tr){
 int tr_getQuantity(const Trigger* tr){
     return tr? tr->quantity:-1;
 }
-bool tr_needsTrigger(trig_type t){
+bool tr_needsTrigger(tr_type t){
     if(t==SHOW)return false;
     return true;
 }
 
-void* tr_getEntityRef(Trigger* t){
+void* tr_getEntityRef(const Trigger* t){
     if(!t)return NULL;
     return t->entit;
 }
 
-char* tr_getDesc(Trigger* t){
+char* tr_getDesc(const Trigger* t){
     return t? strdup(t->name):NULL;
 }
 
-int tr_getAlly_id(Trigger * t){
+int tr_getAlly_id(const Trigger * t){
     return t? t->ent_id:-1;
 }
-char* tr_getNWorld(Trigger* t){
+char* tr_getNWorld(const Trigger* t){
     if(!t)return NULL;
     return strdup(t->next_room);
 }
@@ -154,18 +156,16 @@ void tr_setId(Trigger * t, int id){
     t->trig_id=id;
 }
 
-Trigger* tr_setSpr(Trigger* tr, int i){
-    if(!tr)return NULL;
-    tr->sprite_index=i;
-    return tr;
+void tr_setSpr(Trigger* tr, int i){
+    if(tr) tr->sprite_index=i;
 }
 void tr_setWorld(Trigger* tr, char* wor){
     if(strlen(wor)+1>MAX_ROOM)return;
     if(tr)strcpy(tr->world,wor);
 }
-char* tr_getWorld(Trigger* tr){
+char* tr_getWorld(const Trigger* tr){
     return (tr)? strdup(tr->world):NULL;
 }
-int tr_getTier(Trigger* tr){
+int tr_getTier(const Trigger* tr){
     return tr? tr->tier: -1;
 }

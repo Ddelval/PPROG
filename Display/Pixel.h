@@ -182,4 +182,5 @@ int pix_retB(const Pixel* p);
 /*-----------------------------------------------------------------*/
 /// Returns the value of the alpha channel of p
 int pix_retA(const Pixel* p);
+
 #endif /* Pixel_h */

@@ -134,8 +134,20 @@ Sprite* spr_processShadows(const Sprite* s,Canvas* shad);
  */
 int spr_checkCollisions(const Sprite*s, const bool**rarr,int rwid,int rhei, int ni,int nj);
 
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Deletes all the triggers in the sprite
+ * 
+ * @param sp Sprite whose triggers will be deleted
+ */
+void spr_clearTrig(Sprite* sp);
+
+
+/*-----------------------------------------------------------------*/
 /** GETTERS **/
 const Canvas* spr_getDispData(const Sprite* spr);
+
+int spr_getId(const Sprite* sp);
 
 int spr_getOI(const Sprite* spr);
 
@@ -147,17 +159,15 @@ int spr_getHeight(const Sprite* spr);
 
 int spr_getTriginfo(const Sprite*s, int** tr_id, int** i1,int** i2, int** j1, int** j2);
 
+
+/*-----------------------------------------------------------------*/
 /** SETTERS **/
+
 void spr_setCoordinates(Sprite* sp,int i,int j);
 
 void spr_setOI( Sprite* spr,int ipos);
 
 void spr_setOJ(Sprite* spr, int jpos);
 
-
-
-
-int spr_getId(const Sprite* sp);
-void spr_clearTrig(Sprite* sp);
 void spr_setId(Sprite* sp,int id);
 #endif /* Sprite_h */

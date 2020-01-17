@@ -91,7 +91,7 @@ struct _Room{
 };
 
 
-Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz);
+Trigger** _room_getTriggersLoc(Room*r,tr_type tt, int i, int j, int* siz);
 
 /*-----------------------------------------------------------------*/
 /**
@@ -717,7 +717,7 @@ Room* room_processTriggers(Room * r, const Sprite * sp, int index){
  *            resultin array will be stored
  * @return Trigger** 
  */
-Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz){
+Trigger** _room_getTriggersLoc(Room*r,tr_type tt, int i, int j, int* siz){
     if(!r||i<0||j<0||i>=r->hei||j>=r->wid)return NULL;
     trigger* dat=r->trig[i][j];
     int cnt;
@@ -758,7 +758,7 @@ Trigger** _room_getTriggersLoc(Room*r,trig_type tt, int i, int j, int* siz){
  * @return          NULL if error
  *                  The array of triggers otherwise
  */
-Trigger** room_getTriggers(Room*r,trig_type tt, int sp_index, int* siz){
+Trigger** room_getTriggers(Room*r,tr_type tt, int sp_index, int* siz){
     if(!r||sp_index>=r->overpos)return NULL;
     int cn[4];
     Trigger** tr[4];
