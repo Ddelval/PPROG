@@ -1,4 +1,4 @@
-3
+4
 
 0 3 1
 Hello Gerald, our first priority right now is to get some basic resources so that we can repair the tools that were damaged by the rough landing.
@@ -31,3 +31,11 @@ Cave exploration
 To fulfill this quest you will need to explore the three caves and get the cement that you can find in them
 1
 6 3
+
+3 2 1
+Great job Gerald. We can see that all the enemies have been defeated and you have been able to collect the resources that we needed for the city hall.
+You can now clear a small area of the map and place it using the crafting menu.
+Starting the city
+You have to go into the crafting menu and build a city hall
+1
+101 1

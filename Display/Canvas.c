@@ -478,6 +478,78 @@ Canvas* canv_appendVI(Canvas* north, const Canvas* south){
 
 /*-----------------------------------------------------------------*/
 /**
+ * @brief Appends several canvases vertically and stores the result
+ *        in the top one.
+ * 
+ * @param north  Canvas on the top
+ * @param south  Canvas on the bottom
+ * @return       A NULL pointer in case of error, north otherwise
+ */
+Canvas* canv_appendVIAs(Canvas** canv, int siz,CAlign al, int margin){
+    if(!canv){
+        return NULL;
+    }
+    Canvas** buff=calloc(siz,sizeof(Canvas*));
+    
+    int wid=0;
+    for(int i=0;i<siz;++i){
+        wid=max(wid,canv[i]->wid);
+    }
+    int hei=0;
+    
+    for(int i=0;i<siz;++i){
+        Canvas* gs=canv_backGrnd(0,0,0,0,wid-canv[i]->wid,0);
+        Canvas* ggs=NULL;
+        if(al==RIGHT){
+            ggs=canv_appendH(gs,canv[i]);
+        }
+        else{
+            ggs=canv_appendH(canv[i],gs);
+        }
+        hei+=canv_getHeight(ggs);
+        buff[i]=ggs;
+        canv_free(gs);
+    }
+    Canvas* bac=canv_backGrnd(0,0,0,0,wid,margin);
+    Canvas* res=calloc(1,sizeof(Canvas));
+    if(!res){
+        for(int i=0;i<siz;++i)canv_free(buff[i]);
+        free(buff);
+        return NULL;
+    }
+    res->hei= hei+(siz-1)*margin;
+    res->wid= wid;
+    res->data=calloc(res->hei,sizeof(Pixel**));
+    int pos=0;
+    for(int i=0;i<siz;++i){
+        for(int j=0;j<buff[i]->hei;++j){
+            res->data[pos]=buff[i]->data[j];
+            pos++;
+        }
+        if(i!=siz-1){
+            Canvas* bcc=canv_copy(bac);
+            for(int j=0;j<margin;++j){
+                res->data[pos]=bcc->data[j];
+                pos++;
+            }
+            free(bcc->data);
+            free(bcc);
+        }
+        
+    }
+    for(int i=0;i<siz;++i){
+        free(buff[i]->data);
+        free(buff[i]);
+    }
+    free(buff);
+    canv_free(bac);
+   
+    return res;
+}
+
+
+/*-----------------------------------------------------------------*/
+/**
  * @brief Appends two canvases vertically using the given alignment 
  *        and stores the result in the top one
  * 

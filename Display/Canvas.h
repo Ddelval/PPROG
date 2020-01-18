@@ -246,6 +246,18 @@ Canvas* canv_appendVIA(Canvas* north,const Canvas* south,CAlign al);
 
 /*-----------------------------------------------------------------*/
 /**
+ * @brief Appends several canvases vertically and stores the result
+ *        in the top one.
+ * 
+ * @param north  Canvas on the top
+ * @param south  Canvas on the bottom
+ * @return       A NULL pointer in case of error, north otherwise
+ */
+Canvas* canv_appendVIAs(Canvas** canv, int siz,CAlign al, int margin);
+
+
+/*-----------------------------------------------------------------*/
+/**
  * @brief Adds a margin to a canvas. The padding will be transparent.
  * 
  * @param src       Canvas that will be placed in the center

@@ -32,9 +32,8 @@ struct _Display{
     bool pop_craf;
 };
 /** PROTOTYPES **/
-Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii* coord);
-Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doable, Canvas* bckg);
-
+Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii* coord,int* reccoords);
+Canvas* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doable,Canvas* bckg, int i1, int i2,int offset);
 /** FUNCTION DECLARATION **/
 
 /*-----------------------------------------------------------------*/
@@ -597,19 +596,50 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     if(!dis||!inv)return NULL;
     dis->pop_craf=true;
     int size=0;
+    int h=0;
     Recipe** rec=rdic_getAllDoable(inv,&size);
     if(!rec)return NULL;
-    pairii* coordinates =calloc(size,sizeof(pairii));
-    if(!coordinates){
+    pairii* coord_dots =calloc(size,sizeof(pairii));
+    int* coord_rec  =calloc(size+1,sizeof(pairii));
+    if(!coord_dots){
         free(rec);
         return NULL;
     }
     int selindex=0;
-    Canvas* base=_disp_renderCraftingWindow(dis,rec,size,coordinates);
-    if(!base)return NULL;
-    canv_print(stdout,base,0,0);
-    _disp_reprintCraft(coordinates,size,selindex,rec_doable(inv,rec[selindex]),base);
 
+    Canvas* back=disp_Render(dis);
+    Canvas* back2=canv_blur(back,BLUR_RAD);
+    canv_free(back);
+    canv_darken(back2,DARKEN);
+
+    Wlabel* wl=wl_ini("Recipies",fcat_lookup(M8),0);
+    Canvas* wl_r=wl_render(wl,dis->width);
+    int marg=15;
+    Canvas* wl_rr=canv_AdjustCrop(wl_r,dis->width,canv_getHeight(wl_r)+marg);
+
+    Canvas* bt=canv_Overlay(back2,wl_rr,0,0);
+    canv_print(stdout,bt,0,0);
+
+    Canvas* base=_disp_renderCraftingWindow(dis,rec,size,coord_dots,coord_rec);
+    if(!base)return NULL;
+
+    Canvas* bb=canv_subCopy(base,h,h+dis->height-canv_getHeight(wl_rr),0,canv_getWidth(base));
+    Canvas* bbe=canv_subCopy(back2,h+canv_getHeight(wl_rr),h+dis->height,0,canv_getWidth(base));
+    canv_addOverlay(bbe,bb,0,0);
+    canv_print(stdout,bbe,canv_getHeight(wl_rr),0);
+    canv_free(bbe);
+    canv_free(bb);
+    if(coord_rec[selindex+1]>h+dis->height||coord_rec[selindex]<h){
+        if(coord_rec[selindex+1]>h+dis->height) h=coord_rec[selindex];
+        if(coord_rec[selindex]<h)h=coord_rec[max(0,selindex-4)];
+        Canvas* bb=canv_subCopy(base,h,h+dis->height-canv_getHeight(wl_rr),0,canv_getWidth(base));
+        Canvas* bbe=canv_subCopy(back2,h+canv_getHeight(wl_rr),h+dis->height,0,canv_getWidth(base));
+        canv_addOverlay(bbe,bb,0,0);
+        canv_print(stdout,bbe,canv_getHeight(wl_rr),0);
+        canv_free(bbe);
+        canv_free(bb);
+    }
+    _disp_reprintCraft(coord_dots,size,selindex,rec_doable(inv,rec[selindex]),back2,h,h+dis->height,canv_getHeight(wl_rr));
 
     while(1){
         char c=getch1();
@@ -630,6 +660,10 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
                     Sprite* place=obj_getSprite(ob);
                     Sprite* player=room_getSpriteO(disp_getrefRoom(dis),0);
                     if(room_buildingInterface(disp_getrefRoom(dis),spr_getId(place),spr_getOI(player),spr_getOJ(player),0,0)){
+                        pairii p;
+                        p.fi=obj_getId(ob);
+                        p.se=1;
+                        addBuilding(p);
                         rec_decrease(rec[selindex],inv);
                     }
                     spr_free(place);
@@ -650,7 +684,18 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
         if(selindex==-10)break;
         else selindex=(selindex+size)%size;
         
-        _disp_reprintCraft(coordinates,size,selindex,rec_doable(inv,rec[selindex]),base);
+        if(coord_rec[selindex+1]>h+dis->height||coord_rec[selindex]<h){
+            if(coord_rec[selindex+1]>h+dis->height) h=coord_rec[selindex];
+            if(coord_rec[selindex]<h)h=coord_rec[max(0,selindex-2)];
+            Canvas* bb=canv_subCopy(base,h,h+dis->height-canv_getHeight(wl_rr),0,canv_getWidth(base));
+            Canvas* bbe=canv_subCopy(back2,canv_getHeight(wl_rr),dis->height,0,canv_getWidth(base));
+            canv_addOverlay(bbe,bb,0,0);
+            canv_print(stdout,bbe,canv_getHeight(wl_rr),0);
+            canv_free(bbe);
+            canv_free(bb);
+    }
+    _disp_reprintCraft(coord_dots,size,selindex,rec_doable(inv,rec[selindex]),back2,h,h+dis->height,canv_getHeight(wl_rr));
+
     }
     dis->pop_craf=false;
     Canvas* c=disp_Render(dis);
@@ -658,7 +703,7 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     canv_free(c);
     canv_free(base);
     free(rec);
-    free(coordinates);
+    free(coord_dots);
     return dis;
 }
 
@@ -871,18 +916,20 @@ Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest){
  * function
  *
  *
- * @param dis   Display to which the crafting window will be
- *              attached to
- * @param rec   Array of recipies that will be included in the
- *              window
- * @param size  Amount of elements in the arrays
- * @param coord Array in which the positions of the selectin
- *              indicators will be rendered
- * @return      New canvas with the graphical representation of
- *              the crafting window.
- *              NULL if error
+ * @param dis        Display to which the crafting window will be
+ *                   attached to
+ * @param rec        Array of recipies that will be included in the
+ *                   window
+ * @param size       Amount of elements in the arrays
+ * @param coord_dots Array in which the positions of the selection
+ *                   indicators will be rendered
+ * @param coord_rec  Array in which the vertical positions of the
+ *                   recipies will be stored
+ * @return           New canvas with the graphical representation of
+ *                   the crafting window.
+ *                   NULL if error
  */
-Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii* coord){
+Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii* coord_dots, int* coord_rec){
     if(!dis)return NULL;
 
     int gap_w=10;
@@ -933,48 +980,37 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii*
     Canvas* gap=canv_backGrnd(0,0,0,0,wid,gap_w);
     int margin=10;
     int box_w=20;
-    Canvas* cc=rec_render(rec[0],ob_wid,wid,hei,dis->width-2*margin-box_w);
-    Canvas* c;
-    c=canv_appendH(fdot,cc);
-    coord[0].fi=0.5*canv_getHeight(c);
-    coord[0].se=canv_getWidth(c);
-    for(int i=1;i<size;++i){
-        canv_appendVI(c,gap);
+
+    Canvas** arr=calloc(size,sizeof(Canvas*));
+    int accum=0;
+    for(int i=0;i<size;++i){
         Canvas* c2=rec_render(rec[i],ob_wid,wid,hei,dis->width-2*margin-box_w);
         Canvas* c3;
         c3=canv_appendH(fdot,c2);
-        coord[i].fi=canv_getHeight(c)+0.5*canv_getHeight(c3);
-        coord[i].se=canv_getWidth(c3);
-        canv_appendVIA(c,c3,RIGHT);
+        arr[i]=c3;
         canv_free(c2);
-        canv_free(c3);
+        if(i)accum+=margin;
+        coord_dots[i].fi=accum+0.5*canv_getHeight(c3);
+        coord_dots[i].se=canv_getWidth(c3);
+        coord_rec[i]=accum;
+
+        accum+=canv_getHeight(c3);
     }
+    coord_rec[size]=accum;
 
-
-    Wlabel* wl=wl_ini("Recipies",fcat_lookup(M8),0);
-    Canvas* wl_r=wl_render(wl,dis->width);
-    int marg=15;
-    Canvas* wl_rr=canv_AdjustCrop(wl_r,dis->width,canv_getHeight(wl_r)+marg);
-
+    Canvas* c=canv_appendVIAs(arr,size,RIGHT,margin);
+    for(int i=0;i<size;++i)canv_free(arr[i]);
+    free(arr);
     for(int i=0;i<size;++i){
-        coord[i].se=canv_getWidth(c)-coord[i].se +(dis->width-canv_getWidth(c))/2+1;
+        coord_dots[i].se=canv_getWidth(c)-coord_dots[i].se +(dis->width-canv_getWidth(c))/2+1;
         //coord[i].fi+=canv_getHeight(wl_rr)+ceil(canv_getHeight(fdot)/2.0);
-        coord[i].fi+=canv_getHeight(wl_rr)-ceil(CIRC_RAD/2.0);
+        coord_dots[i].fi-=ceil(CIRC_RAD/2.0);
     }
 
     Canvas* c_r=canv_AdjustCrop(c,dis->width,canv_getHeight(c));
-    canv_appendVI(wl_rr,c_r);
-    Canvas* back=disp_Render(dis);
-    Canvas* back2=canv_blur(back,BLUR_RAD);
-    canv_free(back);
-    canv_darken(back2,DARKEN);
-    canv_addOverlay(back2,wl_rr,0,0);
-    wl_free(wl);
-    canv_free(c_r);
     canv_free(c);
     canv_free(gap);
-    canv_free(cc);
-    return back2;
+    return c_r;
 }
 
 /*-----------------------------------------------------------------*/
@@ -992,7 +1028,8 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii*
  *                     rendered already
  * @return             NULL if error
  */
-Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doable,Canvas* bckg){
+
+Canvas* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doable, Canvas* bckg, int i1, int i2, int offset){
     if(!coordinates)return NULL;
 
     Pixel* nsel=pix_ini(NSEL_VALS);
@@ -1003,16 +1040,21 @@ Display* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doa
     Canvas* dotsel=canv_circle(sel,CIRC_RAD);
 
     for(int i=0;i<size;++i){
-        Canvas* back=canv_subCopy(bckg,coordinates[i].fi,coordinates[i].fi+canv_getHeight(dot),coordinates[i].se,coordinates[i].se+canv_getWidth(dot));
+        fprintf(stderr, "\ns:%d %d %d %d\n",i,coordinates[i].fi, i1,i2);
+        fflush(stderr);
+        if(coordinates[i].fi<i1)continue;
+        if(coordinates[i].fi>i2)break;
+        Canvas* back=canv_subCopy(bckg,offset+coordinates[i].fi-i1,offset+coordinates[i].fi-i1+canv_getHeight(dot),coordinates[i].se,coordinates[i].se+canv_getWidth(dot));
         if(i==selected){
             canv_addOverlay(back,dotsel,0,0);
         }
         else{
             canv_addOverlay(back,dot,0,0);
         }
-        canv_print(stdout,back,coordinates[i].fi,coordinates[i].se);
+        canv_print(stdout,back,offset+coordinates[i].fi-i1,coordinates[i].se);
+        canv_free(back);
     }
-    return (Display*)coordinates;
+    return bckg;
 }
 
 /*-----------------------------------------------------------------*/
