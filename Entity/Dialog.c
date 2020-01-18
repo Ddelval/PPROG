@@ -11,7 +11,7 @@ struct _Dialog {
   int id;
   int nlines;
   int linepos;
-  bool has_quest;
+  int quest_presence;
   Quest* q;
 };
 
@@ -36,7 +36,7 @@ Dialog* diag_copy(Dialog* diag) {
   d->id=diag->id;
   d->nlines=diag->nlines;
   d->linepos=diag->linepos;
-  d->has_quest=diag->has_quest;
+  d->quest_presence=diag->quest_presence;
   d->q=quest_copy(diag->q);
   d->lines=(char**)calloc(d->nlines,sizeof(char*));
   for(int i=0;i<d->nlines;i++) {
@@ -54,12 +54,14 @@ Dialog* diag_copy(Dialog* diag) {
 }
 Quest* diag_getQuest(Dialog* d){
   if(!d)return NULL;
-  if(!d->has_quest)return NULL;
-  d->has_quest=false;
+  if(d->quest_presence!=1)return NULL;
+  d->quest_presence=false;
   if(d->linepos!=d->nlines)return NULL;
   return quest_copy(d->q);
 }
-
+bool diag_advanceTier(Dialog* d){
+  return d? d->quest_presence==2 : true;
+}
 char* diag_getNext(Dialog* diag) {
   if(!diag) return NULL;
   if(diag->linepos>=diag->nlines)return NULL;
@@ -99,7 +101,7 @@ Dialog* diag_load(FILE* f,const Canvas* ent_pic) {
   if(!f) return NULL;
   Dialog* d=diag_ini();
   if(!d) return NULL;
-  fscanf(f,"%d %d %d\n",&d->id,&d->nlines,(bool*)&d->has_quest);
+  fscanf(f,"%d %d %d\n",&d->id,&d->nlines,&d->quest_presence);
   d->linepos=0;
   d->lines=(char**)calloc(d->nlines,sizeof(char*));
   for(int i=0;i<d->nlines;i++) {
@@ -114,7 +116,7 @@ Dialog* diag_load(FILE* f,const Canvas* ent_pic) {
     }
     strtok(d->lines[i], "\n");
   }
-  if(d->has_quest){
+  if(d->quest_presence==1){
     d->q=quest_load(f,ent_pic);
   }
   return d;

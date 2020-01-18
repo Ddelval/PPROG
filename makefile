@@ -72,3 +72,6 @@ Compile_obj/Combat/%.o: Combat/%.c Combat/%.h
 	@mkdir -p Compile_obj/Combat/
 	$(MIDDLE)
 	$(CC) -c  $< -o $@ $(LIB)
+
+run: GameTest
+	./GameTest

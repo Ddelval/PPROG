@@ -78,6 +78,7 @@ Entity *entity_load(FILE* f, Display *d){
       fscanf(f,"%d",(bool*)&e->has_dialog);
   }
   else if(e->t==ENEMY){
+    fscanf(f,"%d",(bool*)&e->has_dialog);
     fscanf(f,"%d %d %d %d",&e->i1, &e->i2, &e->j1, &e->j2);
   }
   
@@ -129,6 +130,7 @@ Entity* entity_copy(Entity* e) {
     return NULL;
   }
   r->room_index=e->room_index;
+  r->has_dialog=e->has_dialog;
   r->i1=e->i1;
   r->i2=e->i2;
   r->j1=e->j1;

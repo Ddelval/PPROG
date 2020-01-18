@@ -59,6 +59,8 @@ void trig_talk(Trigger* t,void* e, void* d){
     quest_free(a);
     free(n);
     
+    dman_autoAdvance(dd);
+    
 }
 void trig_enter(Trigger* t, void* e, void* d){
     extern char* next_world;

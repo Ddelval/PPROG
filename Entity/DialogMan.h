@@ -45,4 +45,5 @@ char* dman_getLine(DialogMan* dic);
 DialogMan* dman_setDialog(DialogMan* dman, int did);
 DialogMan* dman_advance(DialogMan* dd);
 Quest* dman_fetchQuest(DialogMan* dd);
+void dman_autoAdvance(DialogMan* dd);
 #endif /* DIALOGMAN_H */

@@ -70,12 +70,12 @@ DialogMan* dman_copy(DialogMan* dman) {
 }
 char* dman_getLine(DialogMan* dic){
   if(!dic) return NULL;
-  if(tier>=dic->size)return NULL;
+  if(tier>=dic->size) return diag_getNext(dic->d[dic->size-1]);
   return diag_getNext(dic->d[tier]);
 }
 Quest* dman_fetchQuest(DialogMan* dd){
   if(!dd)return NULL;
-  if(tier>=dd->size)return NULL;
+  if(tier>=dd->size)return diag_getQuest(dd->d[dd->size-1]);
   return diag_getQuest(dd->d[tier]);
 }
 
@@ -105,3 +105,6 @@ DialogMan* dman_resetDialog(DialogMan* dd) {
   return NULL;
 }
 
+void dman_autoAdvance(DialogMan* dd){
+  if(dd && diag_advanceTier(dd->d[tier]))tier++;
+}

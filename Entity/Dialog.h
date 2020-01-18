@@ -64,4 +64,10 @@ Dialog* diag_load(FILE* f, const Canvas* entpic);
 */
 Quest* diag_getQuest(Dialog* d);
 
+/*
+    Checks if the tier should be advanced after
+    this dialog that does not have a quest
+*/
+bool diag_advanceTier(Dialog* d);
+
 #endif /* DIALOG_H */

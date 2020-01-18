@@ -895,7 +895,8 @@ Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest){
 
     canv_addOverlay(backg2,tit,10,hmargin);
     canv_print(stdout,backg2,0,0);
-
+    
+    fflush(stdin);
     char c=getch1(); //Wait for input
 
     canv_print(stdout,backg,0,0);

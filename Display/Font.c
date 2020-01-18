@@ -165,7 +165,7 @@ int font_calcWidth(const Font* f,char* txt){
         else ch++;
     }
     
-    return f->wid*ch+(ch+sp)*f->padding+sp*f->whitespace;
+    return f->wid*ch+(ch+sp+1)*f->padding+sp*f->whitespace;
 }
 
 /*-----------------------------------------------------------------*/

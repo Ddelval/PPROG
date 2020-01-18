@@ -303,6 +303,11 @@ World* wo_launch(World* w){
 
         if(t){
             Entity* e=tr_getEntityRef(t);
+            if(entity_getHasDialog(e)){
+                char* nam=entity_getName(e);
+                disp_DialogWindow(w->dis,entity_getDialogs(e),nam);
+                free(nam);
+            }
             int index=combat_launch(w->player,e);
             if(index==-1){
                 return NULL;

@@ -72,14 +72,14 @@ Canvas* wl_render(Wlabel* l,int width){
 		Canvas* c= font_renderText(l->f, l->txt);
         Canvas*cc=canv_AdjustCrop(c, width, canv_getHeight(c));
         canv_free(c);
-				Canvas* cb=canv_backGrnd(l->br,l->bg, l->bb, l->ba, canv_getWidth(cc), canv_getHeight(cc));
-				if(!canv_addOverlay(cb, cc, 0, 0)) {
-					canv_free(cb);
-					canv_free(cc);
-					return NULL;
-				}
-				canv_free(cc);
-				return cb;
+		Canvas* cb=canv_backGrnd(l->br,l->bg, l->bb, l->ba, canv_getWidth(cc), canv_getHeight(cc));
+		if(!canv_addOverlay(cb, cc, 0, 0)) {
+			canv_free(cb);
+			canv_free(cc);
+			return NULL;
+		}
+		canv_free(cc);
+		return cb;
 	}
 	char* endpos=l->txt;
 	char*res;
