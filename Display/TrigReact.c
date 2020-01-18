@@ -1,6 +1,9 @@
 #include "TrigReact.h"
 /*** Functions to process triggers ***/
 extern int tier;
+
+void _trig_checkQuest(Entity* e, Display* d);
+
 void trig_give(Trigger* t, void* e, void* d){
 
     if(!t||!e)return;
@@ -13,19 +16,7 @@ void trig_give(Trigger* t, void* e, void* d){
         room_printModBackg(r,0,0);
     }
 
-
-
-    //Check for completion of quest:
-    
-    int len=0;
-    Quest** q= entity_questJustCompleted(e,&len);
-    if(len){
-        for(int i=0;i<len;++i){
-            disp_QuestFulfilledWindow(d,q[i]);
-            quest_free(q[i]);
-        }
-    }
-    free(q);
+    _trig_checkQuest(e,d);
 } 
 void trig_showInv(Trigger* t, void* e,void* d){
     if(!e||!d)return;
@@ -36,6 +27,7 @@ void trig_showRec(Trigger* t,void *e, void* d){
     if(!e||!d)return;
     Inventory* in=entity_getInvRef(e);
     disp_CraftingWindow(d,in);
+    _trig_checkQuest(e,d);
 }
 void trig_showQuest(Trigger* t, void *e, void* d){
     if(!e||!d)return;
@@ -71,4 +63,18 @@ void trig_talk(Trigger* t,void* e, void* d){
 void trig_enter(Trigger* t, void* e, void* d){
     extern char* next_world;
     next_world=tr_getNWorld(t);
+}
+
+//Check for completion of quest:
+void _trig_checkQuest(Entity* e, Display* d){
+        
+    int len=0;
+    Quest** q= entity_questJustCompleted(e,&len);
+    if(len){
+        for(int i=0;i<len;++i){
+            disp_QuestFulfilledWindow(d,q[i]);
+            quest_free(q[i]);
+        }
+    }
+    free(q);
 }

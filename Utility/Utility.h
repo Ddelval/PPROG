@@ -39,4 +39,7 @@ char getch1(void);
 void term_restore();
 void term_init();
 int sendToScreen(FILE* f, char* ch);
+
+bool checkBuilding(pairii p);
+void addBuilding(pairii p);
 #endif /* Utility_h */

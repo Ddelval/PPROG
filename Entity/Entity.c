@@ -417,7 +417,22 @@ Quest** entity_questJustCompleted(Entity* e, int* size){
     if(quest_getCompleted(e->adq_quests[i]))continue;
     int len=0;
     pairii* req= quest_getRequirements(e->adq_quests[i],&len);
-    if(inv_checkPresent(entity_getInventory(e),req,len)){
+    bool build=true;
+    for(int i=0;i<len;++i){
+      Object* ob=odic_lookup(req[i].fi);
+      if(obj_getType(ob)==BUILDING){
+        if(!checkBuilding(req[i]))build=false;
+        else{
+          for(int j=i+1;j<len;++j){
+            req[j-1]=req[j];
+          }
+          len--;
+        }
+      }
+      obj_free(ob);
+      if(!build)break;
+    }
+    if(build&&inv_checkPresent(entity_getInventory(e),req,len)){
       siz++;
       res=realloc(res,siz*sizeof(Quest*));
       quest_setCompleted(e->adq_quests[i],true);

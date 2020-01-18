@@ -72,4 +72,5 @@ Canvas* wl_renderSmall(Wlabel* l,int width);
 /// @param b		Blue channel of the background
 /// @param a		Alpha channel of the background
 Wlabel* wl_setBackColor(Wlabel* w, int r,int g,int b,int a);
+
 #endif /* Wlabel_h */

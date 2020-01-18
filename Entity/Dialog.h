@@ -59,7 +59,9 @@ Dialog* diag_jumpLines(Dialog* diag, int lines);
 */
 Dialog* diag_load(FILE* f, const Canvas* entpic);
 
-
+/*
+    Returns the quest attached to the dialog
+*/
 Quest* diag_getQuest(Dialog* d);
 
 #endif /* DIALOG_H */

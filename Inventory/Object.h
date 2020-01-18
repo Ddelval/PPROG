@@ -14,8 +14,8 @@
 #include "Skill.h"
 #include "Font.h"
 typedef struct _Object Object;
-#define OBJ_TYPE_SIZE 3
-typedef enum {WEAPON, CONSUMABLE, RESOURCE} obj_type;
+#define OBJ_TYPE_SIZE 4
+typedef enum {WEAPON, CONSUMABLE, RESOURCE, BUILDING} obj_type;
 #define OBJ_MAX_ATTACKS 4
 
 char** obj_type_def();

@@ -6,8 +6,28 @@
 
 #include "Utility.h"
 
-int tier=0;
+int tier=3;
 char* curr_world=NULL;
+pairii* pai=NULL;
+int pailen=0;
+
+bool checkBuilding(pairii p){
+    for(int i=0;i<pailen;++i){
+        if(pai[i].fi==p.fi&&pai[i].se>=p.se)return true;
+    }
+    return false;
+}
+void addBuilding(pairii p){
+    for(int i=0;i<pailen;++i){
+        if(pai[i].fi==p.fi){
+            pai[i].se+=p.se;
+            return;
+        }
+    }
+    pai=realloc(pai,sizeof(pairii)*(pailen+1));
+    pai[pailen]=p;
+    pailen++;
+}
 
 void append(char* dest, int* spos, const char* orig){
     if(!dest||!spos||!orig){
