@@ -42,6 +42,27 @@ Concrete
 2
 1
 
+7
+Titanium
+107
+107
+2
+1
+
+8
+Uranium
+108
+108
+2
+1
+
+9
+Hexacrom
+109
+109
+2
+1
+
 1100
 AlGeo grades
 2200
