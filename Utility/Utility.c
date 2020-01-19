@@ -6,7 +6,7 @@
 
 #include "Utility.h"
 
-int tier=3;
+int tier=10;
 char* curr_world=NULL;
 pairii* pai=NULL;
 int pailen=0;
@@ -79,6 +79,12 @@ char getch1(void)
     return c;
  }
 
+char waitforchar(void){
+    fflush(stdin);
+    sleep(2);
+    fflush(stdin);
+    return getch1();
+}
 struct termios initial;
 //sem_t mut;
 void term_restore(){

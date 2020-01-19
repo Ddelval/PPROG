@@ -12,5 +12,5 @@
 0 300 400 Player
 0
 2
-2 200 397 Alien1
-2 240 403 Alien2
+2 200 397 Alien
+2 240 403 Alien

@@ -13,6 +13,7 @@ char* w_dir="Worlds/";
 char* next_world;
 
 extern char* curr_world;
+extern int tier;
 
 struct _World{
     char*    name;
@@ -23,6 +24,9 @@ struct _World{
     Entity** enemies;
     int      allSiz, enSiz;
 };
+
+int  _wo_spacecraftMenu();
+
 
 World* wo_ini(){
     World* w=calloc(1,sizeof(World));
@@ -326,13 +330,187 @@ World* wo_launch(World* w){
             Canvas* c=disp_Render(w->dis);
             canv_print(stdout,c,0,0);
             canv_free(c);
-            
+            tr_free(t);
         }
+
         if(next_world!=NULL){
+
+            if(strcmp(next_world,"Spacecraft")==0){
+                if(_wo_spacecraftMenu()==0){
+                    Canvas* c=disp_Render(w->dis);
+                    canv_print(stdout,c,0,0);
+                    canv_free(c);
+                    continue;
+                }
+            }
+
+
             return w;
         }
     }
     return w;
+}
+
+
+int  _wo_spacecraftMenu(){
+
+    Sprite* sp=sdic_lookup(5000);
+    Canvas* c=spr_getDispData(sp);
+
+    char* prefix="Go to ";
+
+    int wid=canv_getWidth(c);
+    int hei=canv_getHeight(c);
+    int offset=0;
+    int retval=-1;
+
+    FILE * f=fopen("Dictionaries/space.txt","r");
+    Wlabel* wl=wl_ini("Control Module",fcat_lookup(M8),0);
+    Canvas* cc=wl_renderSmall(wl,wid);
+    Canvas* bcc=canv_subCopy(c,5,10+canv_getHeight(cc),wid/2-canv_getWidth(cc)/2,wid/2+canv_getWidth(cc)/2);
+    Canvas* bcc1=canv_blur(bcc,10);
+    canv_darken(bcc1,0.4);
+    canv_addOverlay(bcc1,cc,5,0);
+    offset=canv_getHeight(bcc1);
+    canv_addOverlay(c,bcc1,0,wid/2-canv_getWidth(cc)/2);
+
+    canv_free(cc);
+    canv_free(bcc);
+    canv_free(bcc1);
+    wl_free(wl);
+
+
+    Canvas* can=canv_backGrnd(0,0,0,0,0,0);
+    int wor;
+    int margin=10;
+    fscanf(f,"%d",&wor);
+    char** charr=calloc(wor,sizeof(char*));
+    pairii* coord =calloc(wor,sizeof(pairii));
+    char* buff=calloc(256,sizeof(char));
+    if(!charr||!coord||!buff){
+        free(coord); free(charr); free(buff);
+        spr_free(sp);
+        canv_free(can);
+        return -1;
+    }
+    
+    for(int i=0;i<wor;++i){
+        int t;
+        fscanf(f,"%d\n",&t);
+        if(t>tier)continue;
+        char*  w=calloc(256,sizeof(char));
+        char* fn=calloc(256,sizeof(char));
+
+        if(!w||!fn){
+            free(coord); free(charr); free(buff);
+            free(w); free(fn);
+            spr_free(sp);
+            canv_free(can);
+            return -1;
+        }
+        fgets(w,256,f);
+        if(w[strlen(w)-1]=='\n')w[strlen(w)-1]=0;
+
+        fgets(fn,256,f);
+        if(fn[strlen(fn)-1]=='\n')fn[strlen(fn)-1]=0;
+
+        if(strcmp(fn,curr_world)==0)continue;
+
+        strcpy(buff,prefix);
+        strcpy(buff+strlen(prefix),w);
+        Wlabel* wla=wl_ini(buff,fcat_lookup(M6),0);
+        Canvas* cc=wl_renderSmall(wla,wid);
+
+        Canvas* bcc=canv_subCopy(c,offset+canv_getHeight(can)+margin,offset+canv_getHeight(can)+margin+canv_getHeight(cc),wid/2-canv_getWidth(cc)/2,wid/2+canv_getWidth(cc)/2);
+        Canvas* bcc1=canv_blur(bcc,10);
+        canv_darken(bcc1,0.6);
+        canv_addOverlay(bcc1,cc,0,0);
+
+        coord[i].fi=canv_getHeight(can)+canv_getHeight(cc)/2+margin;
+        coord[i].se=canv_getWidth(cc)/2;
+        Canvas* cc2=canv_addMargin(bcc1,margin,0,0,0);
+        canv_appendVI(can,cc2);
+        canv_free(cc);
+        canv_free(cc2);
+        canv_free(bcc);
+        canv_free(bcc1);
+        wl_free(wla);
+        free(w);
+        charr[i]=fn;
+    }
+    canv_addOverlay(c,can,offset+margin,wid/2-canv_getWidth(can)/2);
+    canv_print(stdout,c,0,0);
+    canv_free(can);
+    free(buff);
+    fclose(f);
+
+
+    
+    Pixel* p=pix_ini(150,150,255,255);
+    Canvas* dot=canv_circle(p,10);
+    pix_free(p);
+
+    for(int i=0;i<wor;++i){
+        coord[i].fi+=offset+margin-canv_getHeight(dot)/2;
+        coord[i].se= wid/2-coord[i].se-canv_getWidth(dot)/2-2*margin;
+    }
+
+    int pselindex=0;
+    int selindex=0;
+    while(charr[selindex]==NULL)selindex=(selindex+1+wor)%wor;
+    
+    Canvas* covv=canv_subCopy(c,coord[selindex].fi,coord[selindex].fi+canv_getHeight(dot),coord[selindex].se,coord[selindex].se+canv_getWidth(dot));
+    canv_addOverlay(covv,dot,0,0);
+    canv_print(stdout,covv,coord[selindex].fi,coord[selindex].se);
+    pselindex=selindex;
+    canv_free(covv);
+
+
+    char cinput;
+    while(true){
+        cinput=getch1();
+        switch(cinput){
+            case 'Q' : case 'E':
+                retval=0;
+                break;
+            case 'O' : case 'W':
+                selindex=(selindex+1+wor)%wor;
+                while(charr[selindex]==NULL)selindex=(selindex+1+wor)%wor;
+                break;
+            case 'L' : case 'S':
+                selindex=(selindex-1+wor)%wor;
+                while(charr[selindex]==NULL)selindex=(selindex-1+wor)%wor;
+                break;
+            case 'J':
+                retval=1;
+                break;
+        }
+        
+        if(retval!=-1)break;
+
+        Canvas* cov=canv_subCopy(c,coord[pselindex].fi,coord[pselindex].fi+canv_getHeight(dot),coord[pselindex].se,coord[pselindex].se+canv_getWidth(dot));
+        canv_print(stdout,cov,coord[pselindex].fi,coord[pselindex].se);
+        canv_free(cov);
+
+
+        Canvas* covv=canv_subCopy(c,coord[selindex].fi,coord[selindex].fi+canv_getHeight(dot),coord[selindex].se,coord[selindex].se+canv_getWidth(dot));
+        canv_addOverlay(covv,dot,0,0);
+        canv_print(stdout,covv,coord[selindex].fi,coord[selindex].se);
+        pselindex=selindex;
+        canv_free(covv);
+    }
+    
+    canv_free(dot);
+    spr_free(sp);
+    free(next_world);
+    free(coord);
+
+    if(retval==1)next_world=strdup(charr[selindex]);
+    for(int i=0;i<wor;++i)free(charr[i]);
+    free(charr);
+
+    return retval;
+
 }
 
 World* wo_getNext(){

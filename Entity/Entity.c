@@ -129,12 +129,14 @@ Entity* entity_copy(Entity* e) {
     entity_free(r);
     return NULL;
   }
+
   r->room_index=e->room_index;
   r->has_dialog=e->has_dialog;
   r->i1=e->i1;
   r->i2=e->i2;
   r->j1=e->j1;
   r->j2=e->j2;
+
   for(int i=0;i<MAX_QUESTS;++i){
     r->adq_quests[i]=quest_copy(e->adq_quests[i]);
   }

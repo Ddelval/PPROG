@@ -64,8 +64,8 @@ World* _game_getW(Game*g, char* c){
 int game_execute(Game* g){
     if(!g)return 1;
     World* p,*n;
-    if(wo_launch(_game_getW(g,"Main"))==NULL)return 1;
-    p=_game_getW(g,"Main");
+    if(wo_launch(_game_getW(g,"Roseland"))==NULL)return 1;
+    p=_game_getW(g,"Roseland");
     while(next_world){
         n=_game_getW(g,next_world);
         wo_transferPlayer(n,p);

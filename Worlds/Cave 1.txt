@@ -12,5 +12,5 @@
 0 300 400 Player
 0
 2
-2 195 380 Alien1
-2 245 400 Alien2
+2 195 380 Alien
+2 245 400 Alien

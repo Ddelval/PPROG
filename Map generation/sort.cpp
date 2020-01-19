@@ -19,6 +19,7 @@ int main(){
     map<int,int> hei;
     hei.insert({23,82});
     hei.insert({22,82});
+    hei.insert({6001,82});
     hei.insert({21,82});
     hei.insert({20,82});
     hei.insert({6,57});

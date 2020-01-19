@@ -36,6 +36,7 @@ int max(int a,int b);
 int min(int a,int b);
 
 char getch1(void);
+char waitforchar(void);
 void term_restore();
 void term_init();
 int sendToScreen(FILE* f, char* ch);

@@ -323,7 +323,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
         canv_free(wl_rend); wl_rend=NULL;
 
         //Waits for a new character
-        in=getch1();
+        in=waitforchar();
         if(in=='Q'||in=='E'){
             goto END;
         }
@@ -645,10 +645,10 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
         char c=getch1();
         switch(c){
             case 'W': case 'O':
-                selindex++;
+                selindex--;
                 break;
             case 'S': case 'L':
-                selindex--;
+                selindex++;
                 break;
             case 'J':
                 selindex++;selindex--;
@@ -897,7 +897,7 @@ Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest){
     canv_print(stdout,backg2,0,0);
     
     fflush(stdin);
-    char c=getch1(); //Wait for input
+    char c=waitforchar(); //Wait for input
 
     canv_print(stdout,backg,0,0);
     canv_free(backg);
@@ -1161,7 +1161,9 @@ int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j, bool scr
     if(a==-1)return -1;
     if(a==b||a==c){
         if(scroll&&disp_scroll(d,0.5*(i>0)-0.5*(i<0),0.5*(j>0)-0.5*(j<0))==1){
-            canv_print(stdout,room_getRender(d->room),0,0);
+            Canvas* cnv=room_getRender(d->room);
+            canv_print(stdout,cnv,0,0);
+            canv_free(cnv);
         }
     }
     else{

@@ -1,4 +1,5 @@
-9
+14
+
 0 0
 Cut wood
 0
@@ -46,3 +47,28 @@ Cave 2
 Enter cave3
 2
 Cave 3
+
+9 1
+Enter spacecraft
+4
+Spacecraft
+
+10 1
+Enter cave4
+4
+Cave 4
+
+11 1
+Exit cave4
+0
+Roseland
+
+12 1
+Enter cave5
+0
+Cave 5
+
+13 0
+Get Titanium
+1
+7 10 1

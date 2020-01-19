@@ -1,4 +1,4 @@
-4
+5
 
 0 3 1
 Hello Gerald, our first priority right now is to get some basic resources so that we can repair the tools that were damaged by the rough landing.
@@ -47,16 +47,6 @@ Roseland
 This weird planet is the place where you will find Titanium, go there and bring the materials here, safely.
 1
 7 3
-
-4 7 2
-Oh my goodness, thank you for saving me from those monsters. My name is Ciry, I am the only person left Roseland, sometime ago those creepy creatures started to show up in these lands
-I have been hiding from them since that moment. Have you come to get some titaniun?
-I have lied to you sir, I am not the only inhabitant in Roseland, The Watcher lives here too and he is likely to be angry at you, he uses titaniun to build his telescope.
-If you are not afraid of facing him, you should know that he has been milleniums observing everything and has developed the ability of prediction, he will likely dogde our strikes, unless he cant, of course.
-
-4 3 11
-Ohh, I saw you landing some time ago, your name is Geralt, welcome to my domains, Roseland is a good place to visit, I dont care, but you will not leave us with the titanium in your bag.
-Surrender or die fighting, many have tried before and nobody has been able to even touch me!!
 
 5 6 1
 Ohh Gerald I am so glad to see you again and with Titanium, well now you should be able to build some more structures, I heavily recommend you to do so. When you are done with that, another planet awaits you,

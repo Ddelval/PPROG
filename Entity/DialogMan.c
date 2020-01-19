@@ -106,5 +106,6 @@ DialogMan* dman_resetDialog(DialogMan* dd) {
 }
 
 void dman_autoAdvance(DialogMan* dd){
-  if(dd && diag_advanceTier(dd->d[tier]))tier++;
+  int index=min(tier,dd->size-1);
+  if(dd && dd->d[index] && diag_advanceTier(dd->d[index]))tier++;
 }
