@@ -259,12 +259,14 @@ Combat* _combat_executeMove(Combat* c, int choice) {
     if(attb_get(c->stats[PLAYER], SPEED)>attb_get(c->stats[ENEMY], SPEED)) {
       p=_combat_playerMove(c, choice);
       if(!p) return NULL;
+      if(attb_get(c->stats[ENEMY], HEALTH)<=0) return c;
       sleep(2);
       e=_combat_enemyMove(c);
       if(!e) return NULL;
     } else {
       e=_combat_enemyMove(c);
       if(!e) return NULL;
+      if(attb_get(c->stats[ENEMY], HEALTH)<=0) return c;
       sleep(2);
       p=_combat_playerMove(c, choice);
       if(!p) return NULL;
