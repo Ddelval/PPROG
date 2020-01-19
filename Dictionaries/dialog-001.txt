@@ -1,4 +1,4 @@
-5
+6
 
 0 3 1
 Hello Gerald, our first priority right now is to get some basic resources so that we can repair the tools that were damaged by the rough landing.
@@ -48,13 +48,15 @@ This weird planet is the place where you will find Titanium, go there and bring 
 1
 7 3
 
-5 6 1
+5 2 1
 Ohh Gerald I am so glad to see you again and with Titanium, well now you should be able to build some more structures.
 In order to accomodate all the people that will come in the rocket from Earth, we will need you to build some houses.
 Building houses
 In order to have enough room for all the people, we will need some more buildings
 1
 100 4
+
+
 
 
 , I heavily recommend you to do so. When you are done with that, another planet awaits you,
