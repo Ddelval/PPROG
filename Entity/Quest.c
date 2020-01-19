@@ -27,14 +27,14 @@ void quest_free(Quest*q){
 }
 /**
  * @brief Reads the quest from a file
- * 
+ *
  * The format is the following:
  * Title
  * Description
  * obj_to_get_id
- * 
+ *
  * @param f File from which the data will be read
- * @return  New quest 
+ * @return  New quest
  */
 Quest* quest_load(FILE* f,const Canvas* ent_pic){
     if(!f)return NULL;
@@ -102,13 +102,13 @@ Canvas* quest_render(Quest* src, int wid){
         canv_free(oc);
         obj_free(o);
     }
-    
-    wic=wi_ini("Requierements:",fcat_lookup(M6),0,5,TEXT_WEST);
+
+    wic=wi_ini("Requirements:",fcat_lookup(M6),0,5,TEXT_WEST);
     wi_setCanvas(wic,c);
     tmp=wi_render(wic,wid);
     canv_appendVI(res,tmp);
     canv_appendVI(res,mrg);
-    
+
     canv_free(c);
     canv_free(tmp);
     wi_free(wic);
@@ -117,7 +117,7 @@ Canvas* quest_render(Quest* src, int wid){
     wi_setCanvas(wic,src->ent_pic);
     Canvas* lef=wi_renderSmall(wic,wid);
 
-    
+
 
     char* cc=calloc(strlen(src->asigner)+3,sizeof(char));
     sprintf(cc,"(%s)",src->asigner);

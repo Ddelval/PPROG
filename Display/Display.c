@@ -302,7 +302,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
     canv_darken(back,DARKEN);
     canv_addOverlay(back,nam_rend,0,0);
     if(!back)goto ERR_END;
-    
+
     txt=dman_getLine(dman);
     if(!txt) txt=strdup("... ... ...");
 
@@ -313,7 +313,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
     if(!wl_rend)goto ERR_END;
 
     result=canv_Overlay(back,wl_rend,10+canv_getHeight(nam_rend),hmargin);
-    
+
     canv_print(stdout,result,ipos,0);
     canv_free(result);
     result=NULL;
@@ -422,12 +422,12 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
             c2=wl_render(w,dis->width);
             wl_free(w);
         }
-        
+
         titlecoord[i].fi=canv_getHeight(c);
         titlecoord[i].se=canv_getWidth(c2);
         canv_appendVI(c,c2);
         canv_free(c2);
-        
+
         Canvas * b=dat[i][0];
         coordinates[i]=calloc(dimens[i],sizeof(pairii));
         for(int j=1;j<dimens[i];++j){
@@ -550,7 +550,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
 END:
     canv_free(back3);
     canv_free(back2);
-    
+
     for(int i=0;i<OBJ_TYPE_SIZE;++i)free(text[i]);
     free(text);
     free(sizes);
@@ -659,6 +659,9 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
 
                     Sprite* place=obj_getSprite(ob);
                     Sprite* player=room_getSpriteO(disp_getrefRoom(dis),0);
+                    Canvas* rightc=canv_backGrnd(0,0,0,255,dis->width - dis->vdiv, dis->height);
+                    canv_print(stdout, rightc, dis->vdiv, 0);
+                    canv_free(rightc);
                     if(room_buildingInterface(disp_getrefRoom(dis),spr_getId(place),spr_getOI(player),spr_getOJ(player),0,0)){
                         pairii p;
                         p.fi=obj_getId(ob);
@@ -683,7 +686,7 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
         }
         if(selindex==-10)break;
         else selindex=(selindex+size)%size;
-        
+
         if(coord_rec[selindex+1]>h+dis->height||coord_rec[selindex]<h){
             if(coord_rec[selindex+1]>h+dis->height) h=coord_rec[selindex];
             if(coord_rec[selindex]<h)h=coord_rec[max(0,selindex-2)];
@@ -741,7 +744,7 @@ int disp_chooseWindow(Display* dis, func_trig f, Trigger** dat, int siz){
         el[i]=we_createLabel(tmp,fcat_lookup(M6),0);
         free(tmp);
         if(!el[i]){ fail=true; goto END; }
-        
+
     }
     win=win_ini("Choose an action:",el,siz,wid,hei,jpos,ipos,fcat_lookup(M8));
     if(!win){ fail=true; goto END; }
@@ -895,7 +898,7 @@ Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest){
 
     canv_addOverlay(backg2,tit,10,hmargin);
     canv_print(stdout,backg2,0,0);
-    
+
     fflush(stdin);
     char c=waitforchar(); //Wait for input
 
@@ -1337,12 +1340,12 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
             c2=wl_render(w,dis->width);
             wl_free(w);
         }
-        
+
         titlecoord[i].fi=canv_getHeight(c);
         titlecoord[i].se=canv_getWidth(c2);
         canv_appendVI(c,c2);
         canv_free(c2);
-        
+
         Canvas * b=dat[i][0];
         coordinates[i]=calloc(dimens[i],sizeof(pairii));
         for(int j=1;j<dimens[i];++j){
@@ -1384,7 +1387,7 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
         char* txt;
 
         switch(cha){
-       
+
             case 'A':
                 inv_incrementSelected(inv, typesel,-1);
                 break;
@@ -1408,7 +1411,7 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
 END:
     canv_free(back3);
     canv_free(back2);
-    
+
     for(int i=0;i<OBJ_TYPE_SIZE;++i)free(text[i]);
     free(text);
     free(sizes);

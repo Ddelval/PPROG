@@ -111,20 +111,3 @@ Attributes* attb_load(FILE* f){
 
 
 
-/*
-   NO USAR!!!
-   Function name: attb_print
-   Utility: it prints the attribute values in a string format into a file.
-   Inputs: FILE pointer, attb pointer
-   Outputs: int that contains the number of characters that have been printed
- */
-/* int attb_print(FILE *pf, Attributes* attb){
-        int i = 0;
-        if(!attb || !pf) return -1;
-
-        i = fprintf(pf, "[Health: %d,Attack: %d,Defense: %d,Speed: %d,Agility: %d]", attb_get(attb, 1),attb_get(attb, 2),attb_get(attb, 3),attb_get(attb, 4),attb_get(attb, 5));
-
-        if (ferror(pf)||i<0) return -1;
-
-        return i;
-} */
