@@ -49,7 +49,15 @@ This weird planet is the place where you will find Titanium, go there and bring 
 7 3
 
 5 6 1
-Ohh Gerald I am so glad to see you again and with Titanium, well now you should be able to build some more structures, I heavily recommend you to do so. When you are done with that, another planet awaits you,
+Ohh Gerald I am so glad to see you again and with Titanium, well now you should be able to build some more structures.
+In order to accomodate all the people that will come in the rocket from Earth, we will need you to build some houses.
+Building houses
+In order to have enough room for all the people, we will need some more buildings
+1
+100 4
+
+
+, I heavily recommend you to do so. When you are done with that, another planet awaits you,
 but this time... Well you must understand the risk that we are taking here, if we want to survive we will need energy and to get it we will need uranium. In that planet lives an horrendous monster
 I hope you can understand I wouldn't be sending you in such a mission if it wasn't absolutely vital. Please Gerald be carefull, the old stories tell that one of her gazes deplenish all of one man's strengths.
 The creature in Salen
