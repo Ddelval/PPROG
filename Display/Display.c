@@ -1302,6 +1302,7 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
     pairii* sizes=NULL;
     pairii** coordinates=NULL;
     pairii* titlecoord=NULL;
+    bool toquit=false;
 
     Canvas *** dat=inv_render(inv,&dim,&dimens,&text,&sizes,ftext,fnumbers);
     Wlabel* tit=wl_ini("Inventory",ftitle,10);
@@ -1395,7 +1396,9 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
                 inv_incrementSelected(inv, typesel,1);
                 break;
             case 'E': case 'Q':
-                return NULL;
+                toquit=true;
+                goto END;
+                break;
             case'J':
                 goto END;
                 break;
@@ -1437,5 +1440,6 @@ END:
     if(!ccc)return NULL;
     canv_print(stdout,ccc,0,0);
     canv_free(ccc);
-    return dis;
+    if(toquit==true) return NULL;
+    else return dis;
 }
