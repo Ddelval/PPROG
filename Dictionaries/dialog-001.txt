@@ -56,6 +56,15 @@ In order to have enough room for all the people, we will need some more building
 1
 100 4
 
+6 3 1
+Great. We only need one more building to be able to accomodate our comrades. A power station.
+However, in order to build one, we will need Uranium and Hexacrom.
+The only planet that would contain both of those is Icarus. You shall explore the planet and find Uranium and Hexacrom. 
+Exploring Icarus
+Icarus is a small planet rich in resources but you are not the only one that craves them.
+2
+8 2
+9 2
 
 
 
@@ -75,19 +84,6 @@ The misterious comet
 Adolf told me to neutralize the threat and recover the Hexacrom, there is no time to lose, I must go there.
 1
 9 1
-
-6 9 3
-Hey, traveller what are you doing in Icarus, my name is Harold I am one of the survivors of the X-Bomb. I worked here alongside several other engineers providing Germany with satellite support during the WW3.
-Wow you know commander Adolf, what an honour. This satellite has been broken since the explosion, it is impossible that he have been providing intel to you, maybe someone has lied.
-Do you want the hexacrom? Such a heat resistent material was used in order to build Icarus and also the X-bomb... However if you want to get it you will need to talk to the scientist who developed it.
-He was a nice dude... but now he is crazy, he locked himself in the control room after the explosion with all the Hexacrom reserves. Now I hear him shouting loud at night, he calls himself The Algebrist.
-Good luck talking to him.
-
-6 5 13
-Ummmmmm X^N+Y^N equals ... Who is there? Ciri are you there, did you asked the Watcher about that? I told you not to do it!
-I am not crazy. What do you want stranger? The hexacrom? That dangerous thing put all of us in this situation in first place,why sould I give it to you? it was not my fault the calculus are here there is no mistake
-he betrayed me. Who sends you? Ohh Adolf, then there is no doubt I will kill you and when Icarus impacts Kaer I will destroy the traitor, I will make him pay but first I will kill you!
-
 7 3 1
 Geralt I am so glad to see you, now that we have the hexacrom we will be able to construct a new world in this planet, the rocket that was sent from the Earth is about to arrive, finish the last buildings and all will finally end. Did the Algebrist told you something about me? He is mad, I hope you didn't believe a single word. Well see you later.
 The end?
