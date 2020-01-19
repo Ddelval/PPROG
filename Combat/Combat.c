@@ -31,7 +31,7 @@ Combat* _combat_executeMove(Combat* c, int choice);
 int* _combat_playerMove(Combat* c, int choice);
 int* _combat_executeEnemyMove(Combat *c, int choice);
 int* _combat_enemyMove(Combat* c);
-void _combat_applyConsumable(Combat* c, Entity* e, int id);
+int _combat_applyConsumable(Combat* c, Entity* e, int id);
 void _combat_message(Combat* c, char* message);
 void _combat_info(Combat* c, int index);
 
@@ -198,7 +198,9 @@ Combat* _combat_executeMove(Combat* c, int choice) {
   if(!c||choice>OBJ_MAX_ATTACKS) return NULL;
 
   if(choice==COMBAT_CONSUMABLE) {
-    _combat_applyConsumable(c, c->player, PLAYER);
+    int retv=_combat_applyConsumable(c, c->player, PLAYER);
+    if(retv<0) return c;
+    if(retv==0) return NULL;
     sleep(2);
     if(!_combat_enemyMove(c)) return NULL;
     sleep(2);
@@ -764,20 +766,22 @@ int* _combat_enemyMove(Combat* c) {
  * @param entity Entity user
  * @param int Id user
  *
- * @return  void
+ * @return  A negative number if no consumable is used,
+ *          a positive number if no error happened,
+ *          zero if any error occurred.
  */
-void _combat_applyConsumable(Combat* c, Entity* e, int id) {
-  if(!c||!e||id>1||id<0) return;
+int _combat_applyConsumable(Combat* c, Entity* e, int id) {
+  if(!c||!e||id>1||id<0) return 0;
 
   Inventory* in =entity_getInvRef(e);
-  disp_InventoryWindow2(c->cd,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6));
+  if(!disp_InventoryWindow2(c->cd,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6))) return -1;
   FILE* wod=fopen("wod", "w");
   fprintf(wod, "back\n");
   fclose(wod);
 
    const Attributes* attr = obj_getAttributesRef(inv_getSelected(in, CONSUMABLE));
 
-   if(!attr) return;
+   if(!attr) return 0;
    attb_mergeItself(c->stats[id], attr);
 
    if(attb_get(c->stats[id], HEALTH)>attb_get(entity_getAttributes(e), HEALTH)) {
@@ -788,7 +792,7 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
    else _combat_message(c, "You used your selected consumable to rise your stats!");
 
   inv_decrease(in,inv_getSelected(in, CONSUMABLE), 1);
-  return;
+  return 1;
 }
 /**
  * @brief Prints a message in the combat interface
@@ -951,7 +955,7 @@ END:
   free(disp_dim);
   spr_free(ps);
   spr_free(es);
-  fprintf(stdout, "\a \a");
+  //fprintf(stdout, "\a \a");
   return c;
 }
 

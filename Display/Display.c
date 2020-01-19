@@ -1394,7 +1394,9 @@ Display* disp_InventoryWindow2(Display* dis, Inventory* inv, Font* ftitle, Font*
             case 'D':
                 inv_incrementSelected(inv, typesel,1);
                 break;
-            case 'E': case 'Q': case'J':
+            case 'E': case 'Q':
+                return NULL;
+            case'J':
                 goto END;
                 break;
         }
