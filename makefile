@@ -1,5 +1,5 @@
 .SECONDARY:
-CC= @gcc-8 -g ## -fsanitize=address -fno-omit-frame-pointer
+CC= @gcc -g ## -fsanitize=address -fno-omit-frame-pointer
 EXE:=WorldTest TestCombat GameTest
 
 

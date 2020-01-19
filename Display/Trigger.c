@@ -12,14 +12,14 @@ struct _Trigger
     tr_type type;
 
     char name[MAX_NAME];
-    
+
     int tier;
 
     /* Obtain resources */
     int obj_id;
     int sprite_index;
     int quantity;
-    
+
     bool spr_remove;
 
     /* Change place */
@@ -34,7 +34,7 @@ struct _Trigger
 /*-----------------------------------------------------------------*/
 /**
  * @brief Allocates the memory for the new trigger
- * 
+ *
  * @return The new trigger
  */
 Trigger* tr_ini(){
@@ -77,7 +77,7 @@ Trigger * tr_load(FILE* f){
     if(strlen(t->name))t->name[strlen(t->name)-1]=0;
     fscanf(f,"%d",&t->tier);
     if(t->type==OBTAIN){
-        fscanf(f,"%d %d %d", &t->obj_id, &t->quantity,&t->spr_remove); 
+        fscanf(f,"%d %d %u", &t->obj_id, &t->quantity,&t->spr_remove); 
     }
     if(t->type==ENTER){
         t->next_room[0]='\n';
@@ -94,7 +94,7 @@ Trigger * tr_load(FILE* f){
 /*-----------------------------------------------------------------*/
 /**
  * @brief Frees the Trigger
- * 
+ *
  * @param t Trigger to be freed
  */
 void tr_free(Trigger* t){

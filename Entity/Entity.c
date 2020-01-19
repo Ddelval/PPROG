@@ -71,17 +71,17 @@ Entity *entity_load(FILE* f, Display *d){
   inv_free(e->inv);
 
   int spindex;
-  fscanf(f,"%d %d %d\n",&(e->id),(ent_type*)&(e->t),&spindex);
+  fscanf(f,"%d %u %d\n",&(e->id),(ent_type*)&(e->t),&spindex);
   fgets(e->name,MAX_NAME_LENGTH,f);
   if(strlen(e->name)>0)e->name[strlen(e->name)-1]=0;
   if(e->t==ALLY){
-      fscanf(f,"%d",(bool*)&e->has_dialog);
+      fscanf(f,"%u",(bool*)&e->has_dialog);
   }
   else if(e->t==ENEMY){
-    fscanf(f,"%d",(bool*)&e->has_dialog);
+    fscanf(f,"%u",(bool*)&e->has_dialog);
     fscanf(f,"%d %d %d %d",&e->i1, &e->i2, &e->j1, &e->j2);
   }
-  
+
   e->ipos=0;
   e->jpos=0;
   e->attr= attb_load(f);
@@ -281,7 +281,7 @@ void entity_free(Entity *p){
   for(int i=0;i<MAX_QUESTS;++i)quest_free(p->adq_quests[i]);
 
   if(p->dman)dman_free(p->dman);
-  
+
   free(p);
   return;
 }
@@ -386,9 +386,9 @@ Quest** entity_getQuests(Entity* e, int* siz){
 }
 Entity* entity_modPlayer(Entity* prev, Entity* new){
   if(!prev||!new)return NULL;
-  inv_free(prev->inv); 
+  inv_free(prev->inv);
   prev->inv=inv_copy(new->inv);
-  attb_free(prev->attr); 
+  attb_free(prev->attr);
   prev->attr=attb_copy(new->attr);
   return prev;
 }
@@ -409,7 +409,7 @@ Quest* entity_fetchFulfilledQuest(Entity* e,char*n){
     }
     free(cc);
   }
-  
+
   return cr;
 }
 Quest** entity_questJustCompleted(Entity* e, int* size){
@@ -445,6 +445,6 @@ Quest** entity_questJustCompleted(Entity* e, int* size){
     free(req);
   }
   *size=siz;
-  
+
   return res;
 }
