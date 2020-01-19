@@ -876,7 +876,7 @@ Display* disp_QuestFulfilledWindow(Display* dis, Quest* quest){
 
     char* o=quest_getAsigner(quest);
     char* cc=calloc(120,sizeof(char));
-    sprintf(cc,"You have collected all the object required. You shall now return and talk to %s",o);
+    sprintf(cc,"You have collected all the objects required. You shall now return and talk to %s",o);
     free(o);
 
     Wlabel* wll=wl_ini(cc,fcat_lookup(M6),0);
