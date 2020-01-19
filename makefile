@@ -73,6 +73,6 @@ Compile_obj/Combat/%.o: Combat/%.c Combat/%.h
 	$(MIDDLE)
 	$(CC) -c  $< -o $@ $(LIB)
 
-run: GameTest
+run: Compile_obj/GameTest.o
 	##ASAN_OPTIONS=detect_leaks=1 ./GameTest 2>err.txt
 	./GameTest 2>err.txt

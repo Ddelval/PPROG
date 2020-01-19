@@ -148,7 +148,7 @@ Combat* combat_execute(Combat* c) {
               if(!_combat_executeMove(c, selindex)) return NULL;
               if(attb_get(c->stats[PLAYER], HEALTH)<=0||attb_get(c->stats[ENEMY], HEALTH)<=0) {
                 FILE* pad=fopen("pad", "w");
-                fprintf(pad, "%d %d\n", attb_get(c->stats[PLAYER], HEALTH), attb_get(c->stats[ENEMY], HEALTH));
+                //fprintf(pad, "%d %d\n", attb_get(c->stats[PLAYER], HEALTH), attb_get(c->stats[ENEMY], HEALTH));
                 _combat_message(c, "1... 2... 3... This combat is over!");
                 return c;
               }
@@ -379,7 +379,7 @@ int* _combat_playerMove(Combat* c, int choice) {
     return NULL;
   }
   ret[0]=attack;
-  fprintf(pa, "%d\n", attack);
+  //fprintf(pa, "%d\n", attack);
   /*  SLOWING UP ENEMY  */
   int slowing = attb_get(c->stats[PLAYER], ATTACK)*0.2 - attb_get(c->stats[ENEMY], DEFENSE);
   if(slowing < 0) slowing = attb_get(attk, SPEED);

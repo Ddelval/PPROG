@@ -355,7 +355,7 @@ World* wo_launch(World* w){
 int  _wo_spacecraftMenu(){
 
     Sprite* sp=sdic_lookup(5000);
-    Canvas* c=spr_getDispData(sp);
+    Canvas* c=canv_copy(spr_getDispData(sp));
 
     char* prefix="Go to ";
 

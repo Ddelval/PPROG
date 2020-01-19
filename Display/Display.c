@@ -323,7 +323,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
         canv_free(wl_rend); wl_rend=NULL;
 
         //Waits for a new character
-        in=waitforchar();
+        in=getch1();
         if(in=='Q'||in=='E'){
             goto END;
         }
@@ -1041,7 +1041,7 @@ Canvas* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doab
     Canvas* dotsel=canv_circle(sel,CIRC_RAD);
 
     for(int i=0;i<size;++i){
-        fprintf(stderr, "\ns:%d %d %d %d\n",i,coordinates[i].fi, i1,i2);
+        //fprintf(stderr, "\ns:%d %d %d %d\n",i,coordinates[i].fi, i1,i2);
         fflush(stderr);
         if(coordinates[i].fi<i1)continue;
         if(coordinates[i].fi>i2)break;
