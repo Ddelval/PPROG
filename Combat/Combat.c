@@ -58,7 +58,15 @@ int combat_launch(Entity* player, Entity* enemy){
   return retval;
 }
 
-
+/**
+ * @brief Creates and sets up the combat strcuture.
+ *
+ * @param player Player entity
+ * @param enemy  Enemy entity
+ * @return  NULL if there has been any error
+ *          pointer to Combat structure
+ *           
+ */
 Combat* combat_ini(Entity* player, Entity* enemy) {
   if(!player||!enemy) return NULL;
   Combat* c = (Combat*)calloc(1, sizeof(Combat));
@@ -131,6 +139,17 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
   return c;
 }
 
+/**
+ * @brief Managing combat function, calls auxiliar ones
+ *        controls the correct combat development
+ * 
+ * @param combat Combat structure
+ * 
+ * @return  NULL if there has been any error
+ *          Combat structure if all was OK
+ *           
+ */
+
 Combat* combat_execute(Combat* c) {
   if(!c||!c->cd) return NULL;
 
@@ -163,6 +182,17 @@ Combat* combat_execute(Combat* c) {
 
   }
 }
+
+/**
+ * @brief Develops every attack executed by the player
+ * 
+ * @param combat Combat structure
+ * 
+ * @return  NULL if there has been any error
+ *          Combat structure if all was OK
+ *           
+ */
+
 
 Combat* _combat_executeMove(Combat* c, int choice) {
   if(!c||choice>OBJ_MAX_ATTACKS) return NULL;
@@ -346,6 +376,17 @@ Combat* _combat_executeMove(Combat* c, int choice) {
   return c;
 }
 
+/**
+ * @brief Functions that interacts with the player
+ *  in order to allow him selecting a move
+ * @param combat Combat structure
+ * 
+ * @return  NULL if there has been any error
+ *          Int movement selection
+ *           
+ */
+
+
 int* _combat_playerMove(Combat* c, int choice) {
   if(!c||choice<0||choice>=OBJ_MAX_ATTACKS) return NULL;
   int* ret=(int*)calloc(10, sizeof(int));
@@ -502,6 +543,17 @@ int* _combat_playerMove(Combat* c, int choice) {
   return ret;
 }
 
+/**
+ * @brief Managing combat function, calls auxiliar ones
+ *        controls the correct combat development
+ * 
+ * @param combat Combat structure
+ * 
+ * @return  NULL if there has been any error
+ *          Combat structure if all was OK
+ *           
+ */
+
 int* _combat_executeEnemyMove(Combat *c, int choice) {
   if(!c||choice<0||choice>=OBJ_MAX_ATTACKS) return NULL;
 
@@ -647,7 +699,15 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
   _combat_message(c, message);
   return ret;
 }
-
+/**
+ * @brief Selects the attack executed by the enemy
+ * 
+ * @param combat Combat structure
+ * 
+ * @return  NULL if there has been any error
+ *          Int Selected movement
+ *           
+ */
 int* _combat_enemyMove(Combat* c) {
   if(!c) return NULL;
   int* ret=(int*)calloc(10, sizeof(int));
@@ -695,7 +755,15 @@ int* _combat_enemyMove(Combat* c) {
   return _combat_executeEnemyMove(c, max_attack);
 }
 
-
+/**
+ * @brief Takes care of the process of using consumables
+ * 
+ * @param combat Combat structure
+ * @param entity Entity user
+ * @param int Id user
+ * 
+ * @return  void
+ */
 void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   if(!c||!e||id>1||id<0) return;
 
@@ -720,7 +788,14 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
   inv_decrease(in,inv_getSelected(in, CONSUMABLE), 1);
   return;
 }
-
+/**
+ * @brief Prints a message in the combat interface
+ * 
+ * @param combat Combat structure
+ * @param char pointer Message
+ * 
+ * @return  void
+ */
 void _combat_message(Combat* c, char* message) {
   if(!c||!message||!c->cd) return;
   //win_remWindowElement(disp_getLWindow(c->cd,PLAYER_INFO), 0);
@@ -759,7 +834,15 @@ void _combat_message(Combat* c, char* message) {
   free(disp_dim);
   return;
 }
+/**
+ * @brief Loads the combat process linked to a determined combat structure
+ * 
+ * @param combat Combat structure
 
+ * 
+ * @return  NULL in case of error
+ *          Combat pointer in case of success
+ */
 Combat* combat_load(Combat*c) {
   if(!c||!c->cd||!c->player||!c->enemy) return NULL;
 
@@ -869,7 +952,13 @@ END:
   return c;
 }
 
-
+/**
+ * @brief Frees the structure of the combat
+ * 
+ * @param combat Combat structure
+ * 
+ * @return  void
+ */
 void combat_free(Combat* c) {
   if(!c) return;
   attb_free(c->stats[0]);
@@ -883,7 +972,14 @@ void combat_free(Combat* c) {
   disp_free(c->cd);
   free(c);
 }
-
+/**
+ * @brief Provides all the combat info required in the interface
+ * 
+ * @param combat Combat structure
+ * @param index Interger
+ * 
+ * @return  void
+ */
 void _combat_info(Combat* c, int index) {
   if(index>MAX_ATTACKS||index<0||!c||!c->cd) return;
 
