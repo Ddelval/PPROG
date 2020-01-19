@@ -9,6 +9,9 @@
 #define MEM_INCREMENT 1.5
 #define MEM_INI 5
 #define MAX_TRIG 20
+#define W_DATA 0
+#define H_DATA 1
+#define VD_DATA 2
 
 extern int tier;
 /**
@@ -959,14 +962,16 @@ Room* room_removeOver(Room* r, int index){
  * @param aj     Initial horizontal coordinate of the sprite
  * @param room_i Horizontal offset of the room
  * @param room_j Vertical offset of the room
+ * @param dims   Dimensions of the parent display of the room
  * @return       NULL if error
  */
-Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int room_j){
-    if(!r)return NULL;
+Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int room_j, int* dims){
+    if(!r||!dims)return NULL;
     Canvas* aux=NULL;
     Canvas* fin=NULL;
     Sprite* s=sdic_lookup(spid);
     Canvas* base=room_getRender(r);
+    Canvas* rightc=canv_backGrnd(0,0,0,255,dims[W_DATA] - dims[VD_DATA]+10, dims[H_DATA]);
     bool buil=false;
 
     int ipos,jpos;
@@ -1006,6 +1011,7 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
     aux=canv_filter(spr_getDispData(s),p);
     canv_darken(aux,1.2);
     fin=canv_Overlay(base,aux,ipos,jpos);
+    canv_appendHI(fin, rightc);
     canv_print(stdout,fin,0,0);
 
     while(1){
@@ -1063,6 +1069,7 @@ END:
     pix_free(green);
     canv_free(fin);
     canv_free(aux);
+    canv_free(rightc);
 
     //Print the initial room
     Canvas* res=room_getRender(r);

@@ -37,7 +37,7 @@ World* wo_get(char* c){
 
     if(curr_world)free(curr_world);
     curr_world=strdup(c);
-    
+
     char* n=calloc(strlen(w_dir)+strlen(c)+5,sizeof(char));
     int pos=0;
     append(n,&pos,w_dir);
@@ -74,7 +74,7 @@ Display* _wo_gameDisplay(Room* r){
     if(!dis)goto FAIL;
 
     /** Actions Window **/
-    
+
     ch=calloc(act_size,sizeof(char*));
     if(!ch)goto FAIL;
     ch[0]="Collect";
@@ -107,7 +107,7 @@ Display* _wo_gameDisplay(Room* r){
     cn[0]="Move: W,A,S,D";
     cn[1]="Select action: O,L";
     cn[2]="Execute action: J";
-    cn[3]="Exit window: W";
+    cn[3]="Exit window: Q";
 
     wec=calloc(cont_size,sizeof(Welem*));
     if(!wec)goto FAIL;
@@ -192,7 +192,7 @@ Entity* _wo_eload(FILE* f,World * w){
  */
 World* wo_load(FILE* f){
     if(!f)return NULL;
-    
+
     World* w=wo_ini();
     Room* r=room_load(f);
     if(!w||!r){
@@ -244,7 +244,7 @@ World* wo_load(FILE* f){
     //fprintf(stderr,"%s -> %d %d %d %d\n",w->name,i,j,b2,r2);
     //fflush(stderr);
     room_setBounds(rr,t2,l2,b2,r2);
-    
+
     fscanf(f,"%d",&(w->allSiz));
     w->allies=calloc(w->allSiz,sizeof(Entity*));
     for(int i=0;i<w->allSiz;++i){
@@ -324,8 +324,8 @@ World* wo_launch(World* w){
                     entity_free(w->enemies[index]);
                     w->enemies[index]=NULL;
                 }
-                
-                
+
+
             }
             Canvas* c=disp_Render(w->dis);
             canv_print(stdout,c,0,0);
@@ -393,7 +393,7 @@ int  _wo_spacecraftMenu(){
         canv_free(can);
         return -1;
     }
-    
+
     for(int i=0;i<wor;++i){
         int t;
         fscanf(f,"%d\n",&t);
@@ -445,7 +445,7 @@ int  _wo_spacecraftMenu(){
     fclose(f);
 
 
-    
+
     Pixel* p=pix_ini(150,150,255,255);
     Canvas* dot=canv_circle(p,10);
     pix_free(p);
@@ -458,7 +458,7 @@ int  _wo_spacecraftMenu(){
     int pselindex=0;
     int selindex=0;
     while(charr[selindex]==NULL)selindex=(selindex+1+wor)%wor;
-    
+
     Canvas* covv=canv_subCopy(c,coord[selindex].fi,coord[selindex].fi+canv_getHeight(dot),coord[selindex].se,coord[selindex].se+canv_getWidth(dot));
     canv_addOverlay(covv,dot,0,0);
     canv_print(stdout,covv,coord[selindex].fi,coord[selindex].se);
@@ -485,7 +485,7 @@ int  _wo_spacecraftMenu(){
                 retval=1;
                 break;
         }
-        
+
         if(retval!=-1)break;
 
         Canvas* cov=canv_subCopy(c,coord[pselindex].fi,coord[pselindex].fi+canv_getHeight(dot),coord[pselindex].se,coord[pselindex].se+canv_getWidth(dot));
@@ -499,7 +499,7 @@ int  _wo_spacecraftMenu(){
         pselindex=selindex;
         canv_free(covv);
     }
-    
+
     canv_free(dot);
     spr_free(sp);
     free(next_world);

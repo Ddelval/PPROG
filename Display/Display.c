@@ -659,10 +659,10 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
 
                     Sprite* place=obj_getSprite(ob);
                     Sprite* player=room_getSpriteO(disp_getrefRoom(dis),0);
-                    Canvas* rightc=canv_backGrnd(0,0,0,255,dis->width - dis->vdiv, dis->height);
-                    canv_print(stdout, rightc, dis->vdiv, 0);
-                    canv_free(rightc);
-                    if(room_buildingInterface(disp_getrefRoom(dis),spr_getId(place),spr_getOI(player),spr_getOJ(player),0,0)){
+                    // Canvas* rightc=canv_backGrnd(0,0,0,255,dis->width - dis->vdiv+10, dis->height);
+                    // canv_print(stdout, rightc,0, dis->vdiv);
+                    // canv_free(rightc);
+                    if(room_buildingInterface(disp_getrefRoom(dis),spr_getId(place),spr_getOI(player),spr_getOJ(player),0,0, disp_getDimensions(dis))){
                         pairii p;
                         p.fi=obj_getId(ob);
                         p.se=1;

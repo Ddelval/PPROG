@@ -65,7 +65,7 @@ int combat_launch(Entity* player, Entity* enemy){
  * @param enemy  Enemy entity
  * @return  NULL if there has been any error
  *          pointer to Combat structure
- *           
+ *
  */
 Combat* combat_ini(Entity* player, Entity* enemy) {
   if(!player||!enemy) return NULL;
@@ -142,12 +142,12 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
 /**
  * @brief Managing combat function, calls auxiliar ones
  *        controls the correct combat development
- * 
+ *
  * @param combat Combat structure
- * 
+ *
  * @return  NULL if there has been any error
  *          Combat structure if all was OK
- *           
+ *
  */
 
 Combat* combat_execute(Combat* c) {
@@ -185,12 +185,12 @@ Combat* combat_execute(Combat* c) {
 
 /**
  * @brief Develops every attack executed by the player
- * 
+ *
  * @param combat Combat structure
- * 
+ *
  * @return  NULL if there has been any error
  *          Combat structure if all was OK
- *           
+ *
  */
 
 
@@ -382,10 +382,10 @@ Combat* _combat_executeMove(Combat* c, int choice) {
  * @brief Functions that interacts with the player
  *  in order to allow him selecting a move
  * @param combat Combat structure
- * 
+ *
  * @return  NULL if there has been any error
  *          Int movement selection
- *           
+ *
  */
 
 
@@ -548,12 +548,12 @@ int* _combat_playerMove(Combat* c, int choice) {
 /**
  * @brief Managing combat function, calls auxiliar ones
  *        controls the correct combat development
- * 
+ *
  * @param combat Combat structure
- * 
+ *
  * @return  NULL if there has been any error
  *          Combat structure if all was OK
- *           
+ *
  */
 
 int* _combat_executeEnemyMove(Combat *c, int choice) {
@@ -703,12 +703,12 @@ int* _combat_executeEnemyMove(Combat *c, int choice) {
 }
 /**
  * @brief Selects the attack executed by the enemy
- * 
+ *
  * @param combat Combat structure
- * 
+ *
  * @return  NULL if there has been any error
  *          Int Selected movement
- *           
+ *
  */
 int* _combat_enemyMove(Combat* c) {
   if(!c) return NULL;
@@ -759,11 +759,11 @@ int* _combat_enemyMove(Combat* c) {
 
 /**
  * @brief Takes care of the process of using consumables
- * 
+ *
  * @param combat Combat structure
  * @param entity Entity user
  * @param int Id user
- * 
+ *
  * @return  void
  */
 void _combat_applyConsumable(Combat* c, Entity* e, int id) {
@@ -792,10 +792,10 @@ void _combat_applyConsumable(Combat* c, Entity* e, int id) {
 }
 /**
  * @brief Prints a message in the combat interface
- * 
+ *
  * @param combat Combat structure
  * @param char pointer Message
- * 
+ *
  * @return  void
  */
 void _combat_message(Combat* c, char* message) {
@@ -838,10 +838,10 @@ void _combat_message(Combat* c, char* message) {
 }
 /**
  * @brief Loads the combat process linked to a determined combat structure
- * 
+ *
  * @param combat Combat structure
 
- * 
+ *
  * @return  NULL in case of error
  *          Combat pointer in case of success
  */
@@ -951,14 +951,15 @@ END:
   free(disp_dim);
   spr_free(ps);
   spr_free(es);
+  fprintf(stdout, "\a \a");
   return c;
 }
 
 /**
  * @brief Frees the structure of the combat
- * 
+ *
  * @param combat Combat structure
- * 
+ *
  * @return  void
  */
 void combat_free(Combat* c) {
@@ -976,10 +977,10 @@ void combat_free(Combat* c) {
 }
 /**
  * @brief Provides all the combat info required in the interface
- * 
+ *
  * @param combat Combat structure
  * @param index Interger
- * 
+ *
  * @return  void
  */
 void _combat_info(Combat* c, int index) {
