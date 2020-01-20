@@ -1,0 +1,25 @@
+1 9 Cave
+800 1600
+255, 0, 0, 0
+
+4
+10006056 12 200
+10006057 12 270
+6059 348 270
+58 2 188
+
+0 1 1001
+Player
+100 150 50 50 50 
+2
+202 1
+7 10
+
+90 400
+1
+Roseland
+This weird planet is the place where you will find Titanium, go there and bring the materials here, safely.
+1
+7 3
+0
+0

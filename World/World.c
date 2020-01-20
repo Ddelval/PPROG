@@ -385,7 +385,6 @@ int  _wo_spacecraftMenu(){
     canv_darken(bcc1,0.4);
     canv_addOverlay(bcc1,cc,5,0);
     offset=canv_getHeight(bcc1);
-    offset+=150;
     canv_addOverlay(c,bcc1,0,wid/2-canv_getWidth(cc)/2);
 
     canv_free(cc);

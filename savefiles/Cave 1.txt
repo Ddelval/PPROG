@@ -1,0 +1,32 @@
+1 9 Cave
+800 1600
+255, 0, 0, 0
+
+4
+56 12 200
+57 12 270
+59 348 270
+58 2 188
+
+0 1 1001
+Player
+100 150 50 50 50 
+9
+202 1
+302 1
+305 1
+301 1
+303 1
+2 3
+1 2
+3 1
+6 2
+
+90 400
+1
+Cave exploration
+To fulfill this quest you will need to explore the three caves and get the cement that you can find in them
+1
+6 3
+0
+0
