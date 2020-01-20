@@ -7,7 +7,7 @@ struct _Game{
     int loadedsize;
 };
 
-
+char* first_world;
 Game* game_ini(){
     return calloc(1,sizeof(Game));
 }
@@ -20,6 +20,45 @@ void game_free(Game* g){
         free(g->loaded);
     }
     free(g);
+}
+Game* game_loadSave(Game* g){
+    FILE* f=fopen("savefiles/stat.txt","r");
+    if(!f)return game_loadWorlds(g);
+    extern int tier;
+    fscanf(f,"%d\n",&tier);
+    first_world=calloc(256,sizeof(char));
+    fgets(first_world,255,f);
+    fclose(f);
+
+
+    char buffer[256];
+    char buffer2[256];
+    FILE* f2;
+    FILE* fp=popen("/bin/ls -1 Worlds/","r");
+    if(!fp)return NULL;
+    while(fgets(buffer,256,fp)){
+        
+        if(g->loaded)g->loaded=realloc(g->loaded,sizeof(World*)*(g->loadedsize+1));
+        else g->loaded=calloc(1,sizeof(World*));
+        if(!g->loaded)return NULL;
+        
+        buffer[strlen(buffer)-1]=0;
+        sprintf(buffer2, "Worlds/%s",buffer);
+        f2=fopen(buffer2,"r");
+        buffer[strlen(buffer)-4]=0;
+
+        if(f2){
+            g->loaded[g->loadedsize]=wo_readSave(f2);
+        }
+        else{
+            g->loaded[g->loadedsize]=wo_get(buffer);
+            if(!g->loaded[g->loadedsize])return NULL;
+        }
+        
+        wo_setName(g->loaded[g->loadedsize],buffer);
+        g->loadedsize++;
+    }
+    return g;
 }
 /**
  * @brief Loads all the worlds
@@ -45,6 +84,7 @@ Game* game_loadWorlds(Game* g){
         wo_setName(g->loaded[g->loadedsize],buffer);
         g->loadedsize++;
     }
+    first_world=strdup("Main");
     return g;
     
 }
@@ -64,8 +104,8 @@ World* _game_getW(Game*g, char* c){
 int game_execute(Game* g){
     if(!g)return 1;
     World* p,*n;
-    if(wo_launch(_game_getW(g,"Main"))==NULL)return 1;
-    p=_game_getW(g,"Main");
+    if(wo_launch(_game_getW(g,first_world))==NULL)return 1;
+    p=_game_getW(g,first_world);
     while(next_world&&strcmp(next_world,"End")!=0){
         n=_game_getW(g,next_world);
         wo_transferPlayer(n,p);
@@ -84,6 +124,7 @@ int game_execute(Game* g){
 
 }
 void game_closing(){
+    free(first_world);
     sdic_free();
     edic_free();
     trdic_free();
@@ -92,14 +133,76 @@ void game_closing(){
     term_restore();
 }
 
+
+int _game_chooseStart(){
+    Sprite* ssp=sdic_lookup(5002);
+    Canvas* cnv=canv_copy(spr_getDispData(ssp));
+    Wlabel* wl1= wl_ini("1 - New game",fcat_lookup(M8),0);
+    Wlabel* wl2= wl_ini("2 - Load game",fcat_lookup(M8),0);
+    Canvas* c1=wl_renderSmall(wl1,1200);
+    Canvas* c2=wl_renderSmall(wl2,1200);
+
+    Canvas* cc1=canv_subCopy(cnv,200,200+canv_getHeight(c1)+10,200,200+canv_getWidth(c1)+20);
+    canv_darken(cc1,0.8);
+    canv_addOverlay(cc1,c1,5,10);
+
+    Canvas* cc2=canv_subCopy(cnv,260,260+canv_getHeight(c2)+10,200,200+canv_getWidth(c2)+20);
+    canv_darken(cc2,0.4);
+    canv_addOverlay(cc2,c2,5,10);
+
+    canv_addOverlay(cnv,cc1,200,200);
+    canv_addOverlay(cnv,cc2,260,200);
+
+
+    canv_print(stdout,cnv,0,0);
+
+    canv_free(c1);
+    canv_free(c2);
+    canv_free(cc1);
+    canv_free(cc2);
+    canv_free(cnv);
+    wl_free(wl1);
+    wl_free(wl2);
+    spr_free(ssp);
+    while(1){
+        char c=getch1();
+        if(c=='1')return 0;
+        if(c=='2')return 1;
+    }
+    return -1;
+}
+
+
+
 int game_launch(){
     int retval=0;
     game_opening();
     Game* g=game_ini();
-    if(game_loadWorlds(g)==NULL){
+
+
+    int ch=_game_chooseStart();
+
+
+    Sprite* s=sdic_lookup(5003);
+    canv_print(stdout,spr_getDispData(s),0,0);
+    spr_free(s);
+
+
+
+
+    if(ch==0){
+        if(game_loadWorlds(g)==NULL){
         retval=1;
         goto END;
     }
+    }
+    else{
+        if(game_loadSave(g)==NULL){
+        retval=1;
+        goto END;
+    }
+    }
+    
     if(game_execute(g)){
         retval=1;
     }

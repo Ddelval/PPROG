@@ -32,6 +32,18 @@ void quest_free(Quest*q);
  * @return  New quest or NULL in case of error
 **/
 Quest* quest_load(FILE* f, const Canvas* ent);
+
+/**
+ * @brief Stores a description of the quest in a file
+ * 
+ * This description can later be read by the load function
+ * 
+ * @param q  Quest to be stored
+ * @param f  File in which it will be stored
+ * @return   NULL if error 
+ */
+Quest* quest_storeinFile(Quest* q, FILE* f);
+
 /**
  * @brief Copies a quest.
  * @param src: The quest to be copied.

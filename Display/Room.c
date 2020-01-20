@@ -1272,7 +1272,7 @@ Room* room_copy(const Room* r){
  */
 Room* room_saveToFile(Room* r,FILE* f){
     if(!r||!f)return NULL;
-    fprintf(f,"%d %d %s\n",r->id, strlen(r->name)+2,r->name);
+    fprintf(f,"%d %lu %s\n",r->id, strlen(r->name)+5,r->name);
     fprintf(f,"%d %d\n",r->hei, r->wid);
     fprintf(f,"%d, %d, %d, %d\n",pix_retA(r->backcol),pix_retR(r->backcol),pix_retG(r->backcol),pix_retB(r->backcol));
     fprintf(f,"\n%d\n",r->backpos);

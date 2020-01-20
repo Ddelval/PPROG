@@ -101,13 +101,14 @@ Display* _wo_gameDisplay(Room* r){
     win_addAction(act,trig_enter,5,ENTER);
     win_setSelected(act,0);
     /** Controls **/
-    int cont_size=4;
+    int cont_size=5;
     cn=calloc(cont_size,sizeof(char*));
     if(!cn)goto FAIL;
     cn[0]="Move: W,A,S,D";
     cn[1]="Select action: O,L";
     cn[2]="Execute action: J";
     cn[3]="Exit window: Q";
+    cn[4]="Exit game: B";
 
     wec=calloc(cont_size,sizeof(Welem*));
     if(!wec)goto FAIL;
@@ -269,6 +270,7 @@ World* wo_transferPlayer(World* next, World* prev){
 
 World* wo_launch(World* w){
     if(!w)return NULL;
+    int ptier=0;
     if(curr_world)free(curr_world);
     curr_world=strdup(w->name);
     Canvas* d=disp_Render(w->dis);
@@ -276,6 +278,7 @@ World* wo_launch(World* w){
     canv_print(stdout,d,0,0);
     canv_free(d);
     while(1){
+        ptier=tier;
         char c=getch1();
         next_world=NULL;
         if(c=='W'){
@@ -299,11 +302,19 @@ World* wo_launch(World* w){
         }
         if(c=='J'){
             disp_execute(w->dis,0,entity_getRoomIndex(w->player),w->player);
-            wo_save(w);
+            
         }
         if(c=='B'){
+            wo_save(w);
             break;
         }
+
+        if(tier!=ptier){
+            wo_save(w);
+        }
+
+
+
         Trigger* t=room_checkCombat(r,0);
 
         if(t){
@@ -345,7 +356,7 @@ World* wo_launch(World* w){
                 }
             }
 
-
+            wo_save(w);
             return w;
         }
     }
@@ -534,14 +545,31 @@ const char* wo_getName(World* wp){
 World* wo_save(World* w){
     if(!w)return NULL;
     system("mkdir -p savefiles/");
+    
+    
+    FILE* f=fopen("savefiles/stat.txt","w");
+    if(!f)return NULL;
+    fprintf(f,"%d\n%s",tier,w->name);
+    fclose(f);
+    
+    
     char buff[128];
+
+
+
+
     sprintf(buff,"savefiles/%s.txt",w->name);
-    FILE* f=fopen(buff,"w");
+    f=fopen(buff,"w");
     if(!f)return NULL;
     room_saveToFile(disp_getrefRoom(w->dis),f);
     fprintf(f,"\n");
     entity_saveToFile(w->player,f);
     fprintf(f,"\n%d %d\n",entity_getCoordI(w->player),entity_getCoordJ(w->player));
+
+    int siz=0;
+    Quest** q=entity_getQuests(w->player,&siz);
+    fprintf(f,"%d\n",siz);
+    for(int i=0;i<siz;++i)quest_storeinFile(q[i],f);
 
     int as=0;
     for(int i=0;i<w->allSiz;++i)as+=(w->allies[i]!=NULL);
@@ -617,6 +645,21 @@ World* wo_readSave(FILE *f){
     }
     room_setBounds(r,t2,l2,b2,r2);
     free(dim);
+
+    int sp;
+    fscanf(f,"%d",&s);
+    
+    Entity*sss =edic_lookup(1,NULL);
+    Sprite* ss=entity_getSprite(s);
+    
+
+    for(int i=0;i<s;++i){
+        Quest* q=quest_load(f,spr_getDispData(ss));
+        entity_addQuest(w->player,q);
+        quest_free(q);
+    }
+    entity_free(sss);
+    spr_free(ss);
 
 
     fscanf(f,"%d",&w->allSiz);

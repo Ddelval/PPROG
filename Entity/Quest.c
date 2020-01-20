@@ -53,6 +53,18 @@ Quest* quest_load(FILE* f,const Canvas* ent_pic){
     return q;
 }
 
+Quest* quest_storeinFile(Quest* q, FILE* f){
+    
+    if(!q||!f)return NULL;
+    
+    fprintf(f,"%s\n%s\n%d\n",q->title,q->desc,q->len);
+    for(int i=0;i<q->len;++i){
+        fprintf(f,"%d %d\n",q->obj[i].fi,q->obj[i].se);
+    }
+    return q;
+
+}
+
 Quest* quest_copy(const Quest* src){
     if(!src)return NULL;
     Quest* n=quest_ini();
