@@ -96,7 +96,7 @@ Game* game_loadWorlds(Game* g){
         wo_setName(g->loaded[g->loadedsize],buffer);
         g->loadedsize++;
     }
-    first_world=strdup("Main");
+    first_world=strdup("Cave 1");
     return g;
     
 }
