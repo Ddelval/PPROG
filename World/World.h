@@ -81,4 +81,5 @@ const char* wo_getName(World* wp);
  * @return NULL in case of error or a pointer to the new world.
 **/
 World* wo_transferPlayer(World* next, World* prev);
+
 #endif

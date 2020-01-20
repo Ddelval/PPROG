@@ -2,7 +2,6 @@
 //	World.c
 //  Created by David del Val on 15/12/2019
 
-//valgrind --leak-check=full ./WorldTest 2>out.txt
 
 
 #include "World.h"
@@ -27,6 +26,8 @@ struct _World{
 
 int  _wo_spacecraftMenu();
 Display* _wo_gameDisplay(Room* r);
+World* wo_save(World* w);
+World* wo_readSave(FILE *f);
 
 World* wo_ini(){
     World* w=calloc(1,sizeof(World));
@@ -542,6 +543,11 @@ const char* wo_getName(World* wp){
     return wp? wp->name: NULL;
 }
 
+/**
+ * @brief stores a world in a save file
+ * 
+ * NOT FINISHED 
+ */
 World* wo_save(World* w){
     if(!w)return NULL;
     system("mkdir -p savefiles/");
@@ -590,6 +596,11 @@ World* wo_save(World* w){
     fclose(f);
     return w;
 }
+/**
+ * @brief Reads s world from a save file
+ * 
+ * NOT FINISHED 
+ */
 World* wo_readSave(FILE *f){
     if(!f)return NULL;
     Room* r=room_load(f);
@@ -647,13 +658,13 @@ World* wo_readSave(FILE *f){
     free(dim);
 
     int sp;
-    fscanf(f,"%d",&s);
+    fscanf(f,"%d",&sp);
     
     Entity*sss =edic_lookup(1,NULL);
-    Sprite* ss=entity_getSprite(s);
+    Sprite* ss=entity_getSprite(sss);
     
 
-    for(int i=0;i<s;++i){
+    for(int i=0;i<sp;++i){
         Quest* q=quest_load(f,spr_getDispData(ss));
         entity_addQuest(w->player,q);
         quest_free(q);

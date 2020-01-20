@@ -21,6 +21,18 @@ void game_free(Game* g){
     }
     free(g);
 }
+/**
+ * @brief Loads all the worlds. 
+ * 
+ * The ones that have been saved in a previous execution
+ * will be loaded from the save instead of the original
+ * version.
+ * 
+ * NOT FINISHED
+ * 
+ * @param g Game in which the worlds will be loaded
+ * @return  NULL if error
+ */
 Game* game_loadSave(Game* g){
     FILE* f=fopen("savefiles/stat.txt","r");
     if(!f)return game_loadWorlds(g);
@@ -48,7 +60,7 @@ Game* game_loadSave(Game* g){
         buffer[strlen(buffer)-4]=0;
 
         if(f2){
-            g->loaded[g->loadedsize]=wo_readSave(f2);
+            //g->loaded[g->loadedsize]=wo_readSave(f2);
         }
         else{
             g->loaded[g->loadedsize]=wo_get(buffer);
@@ -115,7 +127,7 @@ int game_execute(Game* g){
     }
     if(next_world&&strcmp(next_world,"End")==0){
         Sprite* s=sdic_lookup(5001);
-        canv_print(stdout,spr_getDispData(s),0,0);
+        canv_print(stdout,(Canvas*)spr_getDispData(s),0,0);
         char c=getch1();
         spr_free(s);
         
@@ -138,31 +150,21 @@ int _game_chooseStart(){
     Sprite* ssp=sdic_lookup(5002);
     Canvas* cnv=canv_copy(spr_getDispData(ssp));
     Wlabel* wl1= wl_ini("1 - New game",fcat_lookup(M8),0);
-    Wlabel* wl2= wl_ini("2 - Load game",fcat_lookup(M8),0);
     Canvas* c1=wl_renderSmall(wl1,1200);
-    Canvas* c2=wl_renderSmall(wl2,1200);
 
     Canvas* cc1=canv_subCopy(cnv,200,200+canv_getHeight(c1)+10,200,200+canv_getWidth(c1)+20);
     canv_darken(cc1,0.8);
     canv_addOverlay(cc1,c1,5,10);
 
-    Canvas* cc2=canv_subCopy(cnv,260,260+canv_getHeight(c2)+10,200,200+canv_getWidth(c2)+20);
-    canv_darken(cc2,0.4);
-    canv_addOverlay(cc2,c2,5,10);
-
-    canv_addOverlay(cnv,cc1,200,200);
-    canv_addOverlay(cnv,cc2,260,200);
+    canv_addOverlay(cnv,cc1,260,200);
 
 
     canv_print(stdout,cnv,0,0);
 
     canv_free(c1);
-    canv_free(c2);
     canv_free(cc1);
-    canv_free(cc2);
     canv_free(cnv);
     wl_free(wl1);
-    wl_free(wl2);
     spr_free(ssp);
     while(1){
         char c=getch1();
@@ -179,29 +181,22 @@ int game_launch(){
     game_opening();
     Game* g=game_ini();
 
-
+    //This would contemplate several options at startup
     int ch=_game_chooseStart();
 
 
     Sprite* s=sdic_lookup(5003);
-    canv_print(stdout,spr_getDispData(s),0,0);
+    canv_print(stdout,(Canvas*)spr_getDispData(s),0,0);
     spr_free(s);
 
 
 
 
-    if(ch==0){
-        if(game_loadWorlds(g)==NULL){
+    if(game_loadWorlds(g)==NULL){
         retval=1;
         goto END;
     }
-    }
-    else{
-        if(game_loadSave(g)==NULL){
-        retval=1;
-        goto END;
-    }
-    }
+
     
     if(game_execute(g)){
         retval=1;
