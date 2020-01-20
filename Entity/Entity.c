@@ -397,6 +397,10 @@ Entity* entity_modPlayer(Entity* prev, Entity* new){
   prev->inv=inv_copy(new->inv);
   attb_free(prev->attr);
   prev->attr=attb_copy(new->attr);
+  for(int i=0;i<MAX_QUESTS;++i){
+    prev->adq_quests[i]=new->adq_quests[i];
+    new->adq_quests[i]=NULL;
+  }
   return prev;
 }
 
