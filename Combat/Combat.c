@@ -107,21 +107,13 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
     font_free(f8);
     return NULL;
   }
-  /*if(!entity_addtoDisplay(c->player, c->cd)) {
-    combat_free(c);
-    font_free(f8);
-    return NULL;
-  }*/
+
   c->enemy = entity_copy(enemy);
   if(!c->enemy) {
     combat_free(c);
     return NULL;
   }
-  /*if(!entity_addtoDisplay(c->enemy, c->cd)) {
-    combat_free(c);
-    font_free(f8);
-    return NULL;
-  }*/
+
   c->name[PLAYER] = entity_getName(player);
   c->name[ENEMY] = entity_getName(enemy);
   c->stats[PLAYER] = attb_copy(entity_getAttributes(player));

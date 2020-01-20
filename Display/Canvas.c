@@ -1296,6 +1296,38 @@ Canvas* canv_circle(Pixel* p,int rad){
 }
 
 /*-----------------------------------------------------------------*/
+/**
+ * @brief Scales up a canvas by a whole factor
+ * 
+ * For instance, if ratio==2, and the given canvas is G
+ * the result will be:
+ * 
+ *          GG
+ *          GG
+ * 
+ * 
+ * @param src       Canvas to be scaled
+ * @param ratio     Relation between the new dimensions
+ *                  and the previous ones
+ * @return          New canvas or null if error
+ */
+Canvas* canv_scaleCopy(const Canvas* src, int ratio){
+    if(!src)return NULL;
+    Canvas* c=canv_ini(src->wid*ratio,src->hei*ratio);
+    if(!c)return NULL;
+    for(int i=0;i<c->hei;++i){
+        for(int j=0;j<c->wid;++j){
+            c->data[i][j]=pix_copy(src->data[i/ratio][j/ratio]);
+            if(!c->data[i][j]){
+                canv_free(c);
+                return NULL;
+            }
+        }
+    }
+    return c;
+}
+
+/*-----------------------------------------------------------------*/
 /// Returns the width of the canvas
 int canv_getWidth(const Canvas* c){
   if(!c)return -1;

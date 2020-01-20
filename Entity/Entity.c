@@ -164,6 +164,13 @@ Entity* entity_setSprite(Entity* p,int d){
   return p;
 }
 
+Entity* entity_setActualSprite(Entity* p,Sprite* s){
+  if(!p||!s)return NULL;
+  if(p->s)spr_free(s);
+  p->s=spr_copy(s);
+  return p;
+}
+
 Sprite* entity_getSprite(Entity* p) {
   if(!p||!p->s) return NULL;
 

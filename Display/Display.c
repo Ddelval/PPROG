@@ -323,7 +323,7 @@ Display* disp_DialogWindow(Display* dis, DialogMan* dman, char * ename){
         canv_free(wl_rend); wl_rend=NULL;
 
         //Waits for a new character
-        in=getch1();
+        in=waitforchar();
         if(in=='Q'||in=='E'){
             goto END;
         }

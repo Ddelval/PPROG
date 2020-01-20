@@ -394,3 +394,8 @@ void spr_setOJ(Sprite* spr, int jpos){
 void spr_setId(Sprite* sp,int id){
     if (sp)sp->id=id;
 }
+void spr_setCanvas(Sprite* so, Canvas* c){
+    if(!so||!c)return;
+    if(so->canvas)canv_free(so->canvas);
+    so->canvas=canv_copy(c);
+}

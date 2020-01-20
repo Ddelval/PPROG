@@ -69,6 +69,12 @@ Entity* entity_setName(Entity* p, char* c);
 Entity* entity_setSprite(Entity* p, int d);
 
 /*
+    Given an entity and a sprite, it sets the sprite of the entity to the sprite
+    given.
+*/
+Entity* entity_setActualSprite(Entity* p,Sprite* s);
+
+/*
     Given an Entity* it returns an Sprite* with copy of the sprite associated to
     that entity or NULL in case of errors.
 */

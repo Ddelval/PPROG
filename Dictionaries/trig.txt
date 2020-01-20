@@ -1,4 +1,4 @@
-14
+18
 
 0 0
 Cut wood
@@ -72,3 +72,24 @@ Cave 5
 Get Titanium
 1
 7 10 1
+
+14 1
+Enter cave6
+0
+Cave 6
+
+15 0
+Get uranium
+0
+8 1 1
+
+16 0
+Get hexacrom
+0
+6
+9 1 1
+
+17 1
+Exit cave6
+0
+Icarus

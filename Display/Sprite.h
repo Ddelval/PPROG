@@ -170,4 +170,6 @@ void spr_setOI( Sprite* spr,int ipos);
 void spr_setOJ(Sprite* spr, int jpos);
 
 void spr_setId(Sprite* sp,int id);
+
+void spr_setCanvas(Sprite* so, Canvas* c);
 #endif /* Sprite_h */

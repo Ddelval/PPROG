@@ -475,6 +475,24 @@ Canvas* canv_filter(const Canvas* c,const Pixel* p);
 Canvas* canv_circle(Pixel* p,int rad);
 
 /*-----------------------------------------------------------------*/
+/**
+ * @brief Scales up a canvas by a whole factor
+ * 
+ * For instance, if ratio==2, and the given canvas is G
+ * the result will be:
+ * 
+ *          GG
+ *          GG
+ * 
+ * 
+ * @param src       Canvas to be scaled
+ * @param ratio     Relation between the new dimensions
+ *                  and the previous ones
+ * @return          New canvas or null if error
+ */
+Canvas* canv_scaleCopy(const Canvas* src, int ratio);
+
+/*-----------------------------------------------------------------*/
 /// Returns the width of the canvas
 int canv_getWidth(const Canvas* c);
 
