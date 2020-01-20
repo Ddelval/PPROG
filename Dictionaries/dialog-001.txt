@@ -2,18 +2,18 @@
 
 0 3 1
 Hello Gerald, our first priority right now is to get some basic resources so that we can repair the tools that were damaged by the rough landing.
-To begin with, I need you to bring us some wood and stone. Your equipement will enable you to gather them by just selecting collect in the menu.
+To begin, I need you to bring us some wood and stone. Your equipement will enable you to gather them by selecting collect in the menu.
 Good luck. I will be expecting the resources as soon as possible
 Basic gathering
-We need to get this resources to fix some of our broken equipment
+We need to get this resources to fix our broken equipment
 2
 1 2
 2 4
 
 1 4 1
 With these resources we will now be able to start fixing our tools.
-However, while you were collecting them, we were able to get our furnaces working so now you will be able to get iron from iron ore and coal.
-If you also get some wood, you will be able to craft a basic weapon that should be enough for you next mission.
+However, while you were collecting them, we were able to get our furnaces working so now you will be able to create iron from iron ore and coal.
+In addition to some wood, you will be able to craft a basic weapon that should be enough for you next mission.
 Get the iron ore and craft a basic Iron sword.
 Getting armed
 As Adolf told you, you have to get the iron ore, turn it into iron and use it to craft the sword
@@ -21,10 +21,10 @@ As Adolf told you, you have to get the iron ore, turn it into iron and use it to
 202 1
 
 2 6 1
-Hi Gerald. I see that you already got you first weapon. I know that it is not much but it is all we have until we can get the tools in the spacecraft ready.
-Now we need you to go explore a few caves that our intel team found before we got here. There are three of them in the north of this region.
+I see that you already got your first weapon. I know that it is not much but it is all we have until we can get the tools in the spacecraft ready.
+Now we need you to go explore a few caves that our intel team found before we got here. There are three of them in the north, and north east of this region.
 Our scanners confirmed that in one of them you will find a creature called Kazarum Kizarim.
-Beating it will not be easy but we cannot stablish a colony here with such creatures wandering around.
+Beating it will not be easy but we cannot establish an existence here with such creatures wandering around.
 Also, we just found some blueprints in the storage module that will allow us to build a city hall. Hopefully, you can get the materials there. 
 I will need you to bring 3 sacks of cement.
 Cave exploration
@@ -41,15 +41,15 @@ You have to go into the crafting menu and build a city hall
 101 1
 
 4 2 1
-Well, this is starting to take some shape, now that I have seen your skills, I feel confident to send you into another planet, but be ready, widely challenging adventures await you there.
-Your task will be to obtain some crafty materials that cannot be found naturally in this place in order to construct some new structures.
+Well, this is starting to take some shape, now that I have seen your skills, I feel confident enough to send you into another planet, but be ready, widely challenging adventures await you there.
+Your task is to obtain some crafty materials that cannot be found naturally in this place in order to construct some new structures.
 Roseland
 This weird planet is the place where you will find Titanium, go there and bring the materials here, safely.
 1
 7 3
 
 5 2 1
-Ohh Gerald I am so glad to see you again and with Titanium, well now you should be able to build some more structures.
+Gerald I am so glad to see you again and with Titanium, well now you should be able to build some more buildings.
 In order to accomodate all the people that will come in the rocket from Earth, we will need you to build some houses.
 Building houses
 In order to have enough room for all the people, we will need some more buildings
@@ -57,7 +57,7 @@ In order to have enough room for all the people, we will need some more building
 100 4
 
 6 3 1
-Great. We only need one more building to be able to accomodate our comrades. A power station.
+Great. We only need one more building to be able to accomodate to our comrades needs. A power station.
 However, in order to build one, we will need Uranium and Hexacrom.
 The only planet that would contain both of those is Icarus. You shall explore the planet and find Uranium and Hexacrom. 
 Exploring Icarus
@@ -68,7 +68,7 @@ Icarus is a small planet rich in resources but you are not the only one that cra
 
 7 2 1
 Gerald I am so glad to see you, now that we have the hexacrom and the uranium we will be able to construct a new world in this planet.
-The rocket from the Earth is about to arrive so build the two power stations that we need as soon as you can.
+The rocket from Earth is about to arrive so build the two power stations that we need as soon as you can.
 Power plants
 Build the two power plants
 1
@@ -78,27 +78,3 @@ Build the two power plants
 I have seen the new power plants Gerald. With those, we should be able to provide electricity to all our new inhabitants
 The rocket from Earth will be here any minute, and we have everything ready.
 You can just sit down and relax.
-
-
-
-
-, I heavily recommend you to do so. When you are done with that, another planet awaits you,
-but this time... Well you must understand the risk that we are taking here, if we want to survive we will need energy and to get it we will need uranium. In that planet lives an horrendous monster
-I hope you can understand I wouldn't be sending you in such a mission if it wasn't absolutely vital. Please Gerald be carefull, the old stories tell that one of her gazes deplenish all of one man's strengths.
-The creature in Salen
-In this planet, Salen, uraniun can be found in the surface, but the radioactivity seems to have created such an abomination... Get four pieces of uraniun and return alive.
-1
-8 3
-
-6 3 1
-I cannot believe you made it Gerald, loads of new posibilites have arised since we obtained uraniun, make sure to give a look to our new crafing blueprints.
-Gerald this is an emergency, the reports from Icarus indicate us that a comet is moving toward us at a vertiginous speed you must travel there and find out if it is a threat to us.
-The in the comet's surface several containers have been spotted, they contain Hexacrom one of the latest technologies developed in the Earth, there is no time to loose go there and accomplish your dutties.
-The misterious comet
-Adolf told me to neutralize the threat and recover the Hexacrom, there is no time to lose, I must go there.
-1
-9 1
-7 3 1
-Geralt I am so glad to see you, now that we have the hexacrom we will be able to construct a new world in this planet, the rocket that was sent from the Earth is about to arrive, finish the last buildings and all will finally end. Did the Algebrist told you something about me? He is mad, I hope you didn't believe a single word. Well see you later.
-The end?
-Build the final structures. Go for a walk, enjoy the sunny wheather and talk with Adolf when you feel like you are done, or do something else.
