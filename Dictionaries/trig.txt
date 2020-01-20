@@ -1,4 +1,4 @@
-18
+25
 
 0 0
 Cut wood
@@ -92,3 +92,36 @@ Get hexacrom
 Exit cave6
 0
 Icarus
+
+18 0
+Get poti
+0
+301 1 1
+
+19 0
+Get poti
+0
+302 1 1
+
+20 0
+Get poti
+0
+303 1 1
+
+21 0
+Get poti
+0
+304 1 1
+
+22 0
+Get poti
+0
+305 1 1
+
+23 0
+Get laser
+203 1 1
+
+24 0
+Get laser
+204 1 1
