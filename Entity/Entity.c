@@ -455,3 +455,18 @@ Quest** entity_questJustCompleted(Entity* e, int* size){
 
   return res;
 }
+
+Entity* entity_saveToFile(Entity* e,FILE* f){
+  if(!e||!f)return NULL;
+  fprintf(f,"%d %u %d\n",e->id,e->t,spr_getId(e->s));
+  fprintf(f,"%s\n",e->name);
+  if(e->t==ALLY){
+    fprintf(f,"%u\n",e->has_dialog);
+  }
+  if(e->t==ENEMY){
+    fprintf(f,"%u\n %d %d %d %d\n",e->has_dialog,e->i1,e->i2,e->j1,e->j2);
+  }
+  attb_saveToFile(e->attr,f);
+  inv_saveToFile(e->inv,f);
+  return e;
+}

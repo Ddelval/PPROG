@@ -6,7 +6,7 @@
 
 #include "Utility.h"
 
-int tier=0;
+int tier=10;
 char* curr_world=NULL;
 pairii* pai=NULL;
 int pailen=0;

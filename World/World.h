@@ -43,4 +43,7 @@ World* wo_getNext();
 World* wo_setName(World* wp,char*c);
 const char* wo_getName(World* wp);
 World* wo_transferPlayer(World* next, World* prev);
+
+World* wo_save(World* w);
+World* wo_readSave(FILE *f);
 #endif

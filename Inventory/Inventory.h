@@ -118,6 +118,18 @@ Inventory* inv_insertSeveral(Inventory* inv,const Object*ob,int quantity);
  *           
  */
 Inventory* inv_load(FILE* f);
+
+/**
+ * @brief Saves the data of the inventory in a file
+ * 
+ * The format is such that inv_load can read it
+ * 
+ * @param inv   Inventory to be saved
+ * @param f     File in which it will be saved
+ * @return      NULL if error
+ */
+Inventory* inv_saveToFile(Inventory* inv, FILE* f);
+
 /**
  * @brief Checks if the object is present in the inventory
  *
@@ -140,6 +152,7 @@ bool inv_checkPresent(const Inventory* inv, pairii* obj, int len);
  */
 Object* inv_getSelectedCopy(const Inventory* inv, obj_type t);
 const Object* inv_getSelected(const Inventory * inv, obj_type t);
+
 int inv_getSelectedIndex(const Inventory* inv, obj_type t);
 /**
  * @brief Moves the position that marks the selected object
@@ -168,4 +181,10 @@ Inventory* inv_incrementSelected(Inventory* inv, obj_type t, int incr);
  *           
  */
 Canvas* inv_renderObj(Inventory* inv, obj_type t, int hei, int wid, const Font* ftext, const Font* fnum, int pos,bool selected);
+
+/*
+    Gets the number of elements of a given type in the inventory
+    -1 if error
+*/
+int inv_getTypeSize(const Inventory* inv, obj_type o);
 #endif

@@ -97,4 +97,10 @@ Attributes* attb_merge(Attributes* primary, Attributes* secondary);
 */
 Attributes* attb_copy(Attributes* a);
 
+/*
+   Prints the attributes to the given file in a formta that can be read by
+   attb_load
+*/
+Attributes* attb_saveToFile(Attributes* a, FILE* f);
+
 #endif /* attb_H */

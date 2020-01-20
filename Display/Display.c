@@ -1172,7 +1172,7 @@ int disp_incPos(Display* d,int index, int i, int j, int* f_i, int *f_j, bool scr
     else{
         room_printMod(d->room,index, 0, 0);
     }
-    room_getBSpritePos(d->room,index,f_i,f_j);
+    room_getOSpritePos(d->room,index,f_i,f_j);
     return 0;
 }
 

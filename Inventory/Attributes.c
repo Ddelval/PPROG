@@ -109,5 +109,11 @@ Attributes* attb_load(FILE* f){
 	return a;
 }
 
+Attributes* attb_saveToFile(Attributes* a, FILE* f){
+	if(!a||!f)return NULL;
+	for(int i=0;i<ATTRIBUTE_SIZE;++i)fprintf(f,"%d ",a->data[i]);
+	fprintf(f,"\n");
+	return a;
+}
 
 

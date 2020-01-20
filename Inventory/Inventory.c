@@ -261,6 +261,19 @@ Inventory* inv_load(FILE* f){
     return inv;
 }
 
+Inventory* inv_saveToFile(Inventory* inv, FILE* f){
+    if(!inv||!f)return NULL;
+    int tosiz=0;
+    for(int i=0;i<OBJ_TYPE_SIZE;++i)tosiz+=inv->size[i];
+    fprintf(f,"%d\n",tosiz);
+    for(int i=0;i<OBJ_TYPE_SIZE;++i){
+        for(int j=0;j<inv->size[i];++j){
+            fprintf(f,"%d %d\n",obj_getId(inv->items[i][j]),inv->times[i][j]);
+        }
+    }
+    return inv;
+}
+
 bool inv_checkPresent(const Inventory* inv, pairii* obj, int len){
     if(!inv||!obj)return false;
 
@@ -292,4 +305,8 @@ Canvas* inv_renderObj(Inventory* inv, obj_type t, int hei, int wid, const Font* 
 }
 int inv_getSelectedIndex(const Inventory* inv, obj_type t){
     return inv? inv->selected[t]:-1;
+}
+
+int inv_getTypeSize(const Inventory* inv, obj_type o){
+    return inv? inv->size[o]: -1;
 }

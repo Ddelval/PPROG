@@ -41,6 +41,13 @@ Entity *entity_ini (char *name, ent_type t, int i, int j);
 Entity *entity_load(FILE* f, Display *r);
 
 /*
+    Stores the data of the entity in the given file in a format
+    that can later be read by entity_load
+*/
+
+Entity* entity_saveToFile(Entity* e,FILE* f);
+
+/*
     Given an Entity* it frees it and all its initilized fields.
 */
 void entity_free(Entity *p);

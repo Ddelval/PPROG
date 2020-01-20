@@ -369,6 +369,26 @@ Room* room_getBSpritePos(const Room *r, int index, int* i, int *j){
 
 /*-----------------------------------------------------------------*/
 /**
+ * @brief Gets the position of a overs sprite
+ *
+ * @param r     Room in which the sprite is
+ * @param index Position of the sprite in r->overs
+ * @param i     Pointer to a variable where the i-coordinate will be
+ *              stored
+ * @param j     Pointer to a variable where the j-coordinate will be
+ *              stored
+ * @return      NULL in case of error
+ */
+Room* room_getOSpritePos(const Room *r, int index, int* i, int *j){
+    if(!r||index<0||index>=r->overpos||!i||!j)return NULL;
+    *i=spr_getOI(r->overs[index]);
+    *j=spr_getOJ(r->overs[index]);
+    return (Room*)r;
+}
+
+
+/*-----------------------------------------------------------------*/
+/**
  * @brief Renders the room
  *
  * Note that this function will not redraw the base layer
@@ -1010,8 +1030,8 @@ Room* room_buildingInterface(Room*r, int spid,int ai, int aj,int room_i, int roo
     if((pi+ph>=ipos&&pi<=ipos+ spr_getHeight(s)) && (pj+pw>=jpos&&pj<=jpos+ spr_getWidth(s)))p=red;
     aux=canv_filter(spr_getDispData(s),p);
     canv_darken(aux,1.2);
+    canv_appendHI(base, rightc);
     fin=canv_Overlay(base,aux,ipos,jpos);
-    canv_appendHI(fin, rightc);
     canv_print(stdout,fin,0,0);
 
     while(1){
@@ -1239,4 +1259,25 @@ Room* room_copy(const Room* r){
         }
     }
     return r2;
+}
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Saves the crucial information of the room in a file
+ *        This information can later be read by room_load
+ * 
+ * @param r Room to be saved
+ * @param f File in which it should be saved
+ * @return  NULL if error 
+ */
+Room* room_saveToFile(Room* r,FILE* f){
+    if(!r||!f)return NULL;
+    fprintf(f,"%d %d %s\n",r->id, strlen(r->name)+2,r->name);
+    fprintf(f,"%d %d\n",r->hei, r->wid);
+    fprintf(f,"%d, %d, %d, %d\n",pix_retA(r->backcol),pix_retR(r->backcol),pix_retG(r->backcol),pix_retB(r->backcol));
+    fprintf(f,"\n%d\n",r->backpos);
+    for(int i=0;i<r->backpos;++i){
+        fprintf(f,"%d %d %d\n",r->backg[i].id,r->backg[i].i,r->backg[i].j);
+    }
+    return r;
 }

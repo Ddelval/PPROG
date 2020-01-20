@@ -766,6 +766,7 @@ int _combat_applyConsumable(Combat* c, Entity* e, int id) {
   if(!c||!e||id>1||id<0) return 0;
 
   Inventory* in =entity_getInvRef(e);
+  if(inv_getTypeSize(in,CONSUMABLE)<=0)return -1;
   if(!disp_InventoryWindow2(c->cd,in,fcat_lookup(M8),fcat_lookup(M6),fcat_lookup(M4),fcat_lookup(M6))) return -1;
   FILE* wod=fopen("wod", "w");
   fprintf(wod, "back\n");

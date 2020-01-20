@@ -116,6 +116,21 @@ Room* room_getBSpritePos(const Room *r, int index, int* i, int *j);
 
 /*-----------------------------------------------------------------*/
 /**
+ * @brief Gets the position of a overs sprite
+ *
+ * @param r     Room in which the sprite is
+ * @param index Position of the sprite in r->overs
+ * @param i     Pointer to a variable where the i-coordinate will be
+ *              stored
+ * @param j     Pointer to a variable where the j-coordinate will be
+ *              stored
+ * @return      NULL in case of error
+ */
+Room* room_getOSpritePos(const Room *r, int index, int* i, int *j);
+
+
+/*-----------------------------------------------------------------*/
+/**
  * @brief Renders the room
  *
  * Note that this function will not redraw the base layer
@@ -363,6 +378,18 @@ Room* room_processAlly(Room* r, void *e,const Sprite* s,int ally_index, int rad)
  * @return Room*
  */
 Room* room_processEnemy(Room* r,void* e,int enemy_index, int i1,int i2,int j1,int j2);
+
+/*-----------------------------------------------------------------*/
+/**
+ * @brief Saves the crucial information of the room in a file
+ *        This information can later be read by room_load
+ * 
+ * @param r Room to be saved
+ * @param f File in which it should be saved
+ * @return  NULL if error 
+ */
+Room* room_saveToFile(Room* r,FILE* f);
+
 
 /*-----------------------------------------------------------------*/
 ///Gets the name of the room

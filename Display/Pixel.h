@@ -54,6 +54,16 @@ Pixel* pix_newTransparent();
 Pixel* pix_load(FILE* f);
 
 /*-----------------------------------------------------------------*/
+/**
+ * @brief Prints the pixel to a file
+ * 
+ * @param p Pixel to be printed
+ * @param f File in which the pixel will be printed
+ * @return  NULL if error
+ */
+Pixel* pix_print(Pixel* p, FILE* f);
+
+/*-----------------------------------------------------------------*/
 /// Creates a new pixel with the same values in every channel
 /// @param src Pixel whose values will be copied
 Pixel * pix_copy(const Pixel* src);

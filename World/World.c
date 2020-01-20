@@ -26,7 +26,7 @@ struct _World{
 };
 
 int  _wo_spacecraftMenu();
-
+Display* _wo_gameDisplay(Room* r);
 
 World* wo_ini(){
     World* w=calloc(1,sizeof(World));
@@ -299,8 +299,9 @@ World* wo_launch(World* w){
         }
         if(c=='J'){
             disp_execute(w->dis,0,entity_getRoomIndex(w->player),w->player);
+            wo_save(w);
         }
-        if(c=='E'){
+        if(c=='B'){
             break;
         }
         Trigger* t=room_checkCombat(r,0);
@@ -528,4 +529,124 @@ World* wo_setName(World* wp,char*c){
 }
 const char* wo_getName(World* wp){
     return wp? wp->name: NULL;
+}
+
+World* wo_save(World* w){
+    if(!w)return NULL;
+    system("mkdir -p savefiles/");
+    char buff[128];
+    sprintf(buff,"savefiles/%s.txt",w->name);
+    FILE* f=fopen(buff,"w");
+    if(!f)return NULL;
+    room_saveToFile(disp_getrefRoom(w->dis),f);
+    fprintf(f,"\n");
+    entity_saveToFile(w->player,f);
+    fprintf(f,"\n%d %d\n",entity_getCoordI(w->player),entity_getCoordJ(w->player));
+
+    int as=0;
+    for(int i=0;i<w->allSiz;++i)as+=(w->allies[i]!=NULL);
+    fprintf(f,"%d\n",as);
+    for(int i=0;i<w->allSiz;++i){
+        if(w->allies[i]==NULL)continue;
+        entity_saveToFile(w->allies[i],f);
+        fprintf(f,"\n%d %d\n",entity_getCoordI(w->allies[i]),entity_getCoordJ(w->allies[i]));
+    }
+    as=0;
+    for(int i=0;i<w->enSiz;++i)as+=(w->enemies[i]!=NULL);
+    fprintf(f,"%d\n",as);
+    for(int i=0;i<w->enSiz;++i){
+        if(w->enemies[i]==NULL)continue;
+        entity_saveToFile(w->enemies[i],f);
+        fprintf(f,"\n%d %d\n",entity_getCoordI(w->enemies[i]),entity_getCoordJ(w->enemies[i]));
+    }
+    fclose(f);
+    return w;
+}
+World* wo_readSave(FILE *f){
+    if(!f)return NULL;
+    Room* r=room_load(f);
+    World* w=wo_ini();
+    if(!w||!r){
+        room_free(r);
+        wo_free(w);
+    }
+    w->dis= _wo_gameDisplay(r);
+    room_free(r);
+    r=disp_getrefRoom(w->dis);
+    w->player=entity_load(f,w->dis);
+    int i,j;
+    fscanf(f,"%d %d",&i, &j);
+    entity_setCoordI(w->player,i);
+    entity_setCoordJ(w->player,j);
+
+    room_setPlayer(r,w->player);
+
+    Sprite* s=entity_getSprite(w->player);
+    i=entity_getCoordI(w->player);
+    j=entity_getCoordJ(w->player);
+    spr_free(s);
+    int* dim= disp_getDimensions(w->dis);
+    int t2,b2,r2,l2;
+    int h, w2;
+    h=dim[H_DATA];
+    w2=dim[VD_DATA];
+    if(i-h/2<0){
+        t2=0;
+        b2=h;
+    }
+    else if(i+h/2>=room_getHeight(r)){
+        t2=room_getHeight(r)-h;
+        b2=room_getHeight(r);
+    }
+    else{
+        t2=i-h/2;
+        b2=i+h/2;
+    }
+
+    if(j-w2/2<0){
+        l2=0;
+        r2=w2;
+    }
+    else if(j+w2/2>=room_getWidth(r)){
+        l2=room_getWidth(r)-w2;
+        r2=room_getWidth(r);
+    }
+    else{
+        l2=j-w2/2;
+        r2=j+w2/2;
+    }
+    room_setBounds(r,t2,l2,b2,r2);
+    free(dim);
+
+
+    fscanf(f,"%d",&w->allSiz);
+    w->allies=calloc(w->allSiz,sizeof(Entity*));
+    if(!w->allies){
+        wo_free(w); return NULL;
+    }
+    for(int i=0;i<w->allSiz;++i){
+        w->allies[i]=entity_load(f,w->dis);
+        int n,m;
+        fscanf(f,"%d %d",&n, &m);
+        entity_setCoordI(w->allies[i],n);
+        entity_setCoordJ(w->allies[i],m);
+        entity_processAlly(w->allies[i]);
+    }
+
+    fscanf(f,"%d",&w->enSiz);
+    w->enemies=calloc(w->enSiz,sizeof(Entity*));
+    if(!w->enemies){
+        wo_free(w); return NULL;
+    }
+    for(int i=0;i<w->enSiz;++i){
+        w->enemies[i]=entity_load(f,w->dis);
+        int n,m;
+        fscanf(f,"%d %d",&n, &m);
+        entity_setCoordI(w->enemies[i],n);
+        entity_setCoordJ(w->enemies[i],m);
+        entity_processEnemy(w->enemies[i]);
+    }
+    
+    return w;
+
 }
