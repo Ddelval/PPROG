@@ -33,7 +33,12 @@ void trig_showQuest(Trigger* t, void *e, void* d){
     if(!e||!d)return;
     int s=0;
     Quest**q= entity_getQuests(e,&s);
+    if(!q)return;
     disp_QuestWindow(d,s,q);
+    
+    for(int i=0;i<s;++i)quest_free(q[i]);
+    free(q);
+
 }
 void trig_talk(Trigger* t,void* e, void* d){
     if(!t||!e||!d)return;

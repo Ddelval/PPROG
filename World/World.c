@@ -306,12 +306,12 @@ World* wo_launch(World* w){
             
         }
         if(c=='B'){
-            wo_save(w);
+            //wo_save(w);
             break;
         }
 
         if(tier!=ptier){
-            wo_save(w);
+            //wo_save(w);
         }
 
 

@@ -127,7 +127,9 @@ Combat* combat_ini(Entity* player, Entity* enemy) {
 
   c->moveset[PLAYER] = obj_getAttacks(c->weapons[PLAYER]);
   c->moveset[ENEMY] = obj_getAttacks(c->weapons[ENEMY]);
-
+  
+  font_free(f8);
+  
   return c;
 }
 

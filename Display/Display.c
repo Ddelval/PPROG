@@ -619,6 +619,8 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
 
     Canvas* bt=canv_Overlay(back2,wl_rr,0,0);
     canv_print(stdout,bt,0,0);
+    canv_free(bt);
+    canv_free(wl_r);
 
     Canvas* base=_disp_renderCraftingWindow(dis,rec,size,coord_dots,coord_rec);
     if(!base)return NULL;
@@ -704,7 +706,9 @@ Display* disp_CraftingWindow(Display* dis,Inventory* inv){
     Canvas* c=disp_Render(dis);
     canv_print(stdout,c,0,0);
     canv_free(c);
+    canv_free(wl_rr);
     canv_free(base);
+    canv_free(back2);
     free(rec);
     free(coord_dots);
     return dis;
@@ -849,6 +853,8 @@ Display* disp_QuestWindow(Display* dis, int amount, Quest** quests){
 
     canv_addOverlay(backg2,tit,10,hmargin);
     canv_print(stdout,backg2,0,0);
+    canv_free(backg2);
+    canv_free(tit);
 
     char c=getch1();
     while(c!='Q'&&c!='E'){
@@ -856,7 +862,7 @@ Display* disp_QuestWindow(Display* dis, int amount, Quest** quests){
         //fprintf(stderr,"\n%c",c);
     }
     canv_print(stdout,backg,0,0);
-
+    canv_free(backg);
     return dis;
 
 }
@@ -1005,6 +1011,7 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii*
     Canvas* c=canv_appendVIAs(arr,size,RIGHT,margin);
     for(int i=0;i<size;++i)canv_free(arr[i]);
     free(arr);
+
     for(int i=0;i<size;++i){
         coord_dots[i].se=canv_getWidth(c)-coord_dots[i].se +(dis->width-canv_getWidth(c))/2+1;
         //coord[i].fi+=canv_getHeight(wl_rr)+ceil(canv_getHeight(fdot)/2.0);
@@ -1014,6 +1021,7 @@ Canvas* _disp_renderCraftingWindow(Display* dis, Recipe** rec, int size, pairii*
     Canvas* c_r=canv_AdjustCrop(c,dis->width,canv_getHeight(c));
     canv_free(c);
     canv_free(gap);
+    canv_free(fdot);
     return c_r;
 }
 
@@ -1043,6 +1051,9 @@ Canvas* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doab
     else sel=pix_ini(200,0,0,255);
     Canvas* dotsel=canv_circle(sel,CIRC_RAD);
 
+    pix_free(nsel);
+    pix_free(sel);
+
     for(int i=0;i<size;++i){
         //fprintf(stderr, "\ns:%d %d %d %d\n",i,coordinates[i].fi, i1,i2);
         fflush(stderr);
@@ -1058,6 +1069,8 @@ Canvas* _disp_reprintCraft(pairii* coordinates, int size, int selected,bool doab
         canv_print(stdout,back,offset+coordinates[i].fi-i1,coordinates[i].se);
         canv_free(back);
     }
+    canv_free(dot);
+    canv_free(dotsel);
     return bckg;
 }
 

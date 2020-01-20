@@ -76,7 +76,7 @@ SpriteDic* sdic_ini(){
         }
     }
     fclose(f);
-    fopen(sdic_dup,"r");
+    f=fopen(sdic_dup,"r");
     fscanf(f,"%d",&num);
     s->dat=realloc(s->dat,sizeof(Sprite*)*(siz+num));
     for(int i=0;i<num;++i){

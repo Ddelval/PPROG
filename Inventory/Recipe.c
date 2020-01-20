@@ -184,7 +184,9 @@ Canvas* rec_render(Recipe* r, int obj_wid, int wid, int hei, int max_wid){
         canv_appendHI(txt,aux);
         canv_free(aux);
         obj_free(ob);
+        canv_free(l);
         canv_free(l2);
+        wl_free(wl);
         canv_free(eq);
         return txt;
 }
