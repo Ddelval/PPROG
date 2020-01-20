@@ -175,6 +175,9 @@ Object* obj_renderDims(const Object* ob, int number, const Font* ftext, const Fo
     c2=wl_render(num,canv_getWidth(c));
     canv_appendVI(c,c2);
     canv_free(c2);
+    Canvas* cmar=canv_addMargin(c,2,4,2,4);
+    canv_free(c);
+    c=cmar;
 
     Canvas* bb=canv_backGrnd(50,50,150,255,canv_getWidth(c)+4,canv_getHeight(c)+2);
     canv_addOverlay(bb,c,1,2);

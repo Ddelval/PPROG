@@ -81,7 +81,7 @@ char getch1(void)
 
 char waitforchar(void){
     char c;
-    
+
     while((c=getch1())&&c!='Q'&&c!='E'&&c!='J');
 
     return c;

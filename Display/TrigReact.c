@@ -60,6 +60,10 @@ void trig_talk(Trigger* t,void* e, void* d){
     free(n);
     
     dman_autoAdvance(dd);
+    extern char* next_world;
+    if (tier>=TIER_FINISHED){
+        next_world=strdup("End");
+    }
     
 }
 void trig_enter(Trigger* t, void* e, void* d){

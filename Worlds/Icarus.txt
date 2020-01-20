@@ -42,7 +42,7 @@
 
 -1
 
-0 300 300 Player
+0 280 320 Player
 1
-7 170 600 Harold
+7 170 580 Harold
 0

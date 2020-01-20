@@ -21,7 +21,7 @@
 #define DISP_WIDTH 1200
 
 #define ENTITY_TALK_RAD 20
-
+#define TIER_FINISHED 8
 
 
 typedef enum{false,true}bool;

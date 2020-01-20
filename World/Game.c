@@ -64,13 +64,21 @@ World* _game_getW(Game*g, char* c){
 int game_execute(Game* g){
     if(!g)return 1;
     World* p,*n;
-    if(wo_launch(_game_getW(g,"Cave 6"))==NULL)return 1;
-    p=_game_getW(g,"Main");
-    while(next_world){
+    if(wo_launch(_game_getW(g,"Icarus"))==NULL)return 1;
+    p=_game_getW(g,"Icarus");
+    while(next_world&&strcmp(next_world,"End")!=0){
         n=_game_getW(g,next_world);
         wo_transferPlayer(n,p);
         if(!wo_launch(n))return 1;
         p=n;
+        
+    }
+    if(next_world&&strcmp(next_world,"End")==0){
+        Sprite* s=sdic_lookup(5001);
+        canv_print(stdout,spr_getDispData(s),0,0);
+        char c=getch1();
+        spr_free(s);
+        
     }
     return 0;
 

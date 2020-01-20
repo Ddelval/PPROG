@@ -474,11 +474,11 @@ int  _wo_spacecraftMenu(){
                 retval=0;
                 break;
             case 'O' : case 'W':
-                selindex=(selindex+1+wor)%wor;
+                selindex=(selindex-1+wor)%wor;
                 while(charr[selindex]==NULL)selindex=(selindex+1+wor)%wor;
                 break;
             case 'L' : case 'S':
-                selindex=(selindex-1+wor)%wor;
+                selindex=(selindex+1+wor)%wor;
                 while(charr[selindex]==NULL)selindex=(selindex-1+wor)%wor;
                 break;
             case 'J':

@@ -100,7 +100,7 @@ Canvas* wl_render(Wlabel* l,int width){
 		free(res);
 		if(!strlen(endpos))break;
 	}
-	Canvas* cc=canv_AdjustCrop(c, width, canv_getHeight(c));
+	Canvas* cc=canv_AdjustCrop(c, max(canv_getWidth(c),width), canv_getHeight(c));
 	//canv_print(stdout,cc,0,0);
 	canv_free(c);
 	Canvas* cb=canv_backGrnd(l->br,l->bg, l->bb, l->ba, canv_getWidth(cc), canv_getHeight(cc));

@@ -81,13 +81,12 @@ Cave 6
 15 0
 Get uranium
 0
-8 1 1
+8 5 1
 
 16 0
 Get hexacrom
 0
-6
-9 1 1
+9 5 1
 
 17 1
 Exit cave6

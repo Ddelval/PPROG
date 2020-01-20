@@ -66,6 +66,20 @@ Icarus is a small planet rich in resources but you are not the only one that cra
 8 2
 9 2
 
+7 2 1
+Gerald I am so glad to see you, now that we have the hexacrom and the uranium we will be able to construct a new world in this planet.
+The rocket from the Earth is about to arrive so build the two power stations that we need as soon as you can.
+Power plants
+Build the two power plants
+1
+102 1
+
+8 3 0
+I have seen the new power plants Gerald. With those, we should be able to provide electricity to all our new inhabitants
+The rocket from Earth will be here any minute, and we have everything ready.
+You can just sit down and relax.
+
+
 
 
 , I heavily recommend you to do so. When you are done with that, another planet awaits you,

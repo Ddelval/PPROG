@@ -44,29 +44,22 @@ Concrete
 
 7
 Titanium
-107
-107
+117
+117
 2
 1
 
 8
 Uranium
-108
-108
+116
+116
 2
 1
 
 9
 Hexacrom
-109
-109
-2
-1
-
-1100
-AlGeo grades
-2200
-2200
+118
+118
 2
 1
 
@@ -81,6 +74,13 @@ House
 Hall
 108
 51
+3
+1
+
+102
+Power plant
+112
+52
 3
 1
 
