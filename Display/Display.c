@@ -460,6 +460,7 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
     char cha;
     int selindex=inv_getSelectedIndex(inv,WEAPON);
     int typesel=WEAPON;
+    while(dimens[typesel]<=0)typesel=(typesel+1+OBJ_TYPE_SIZE)%OBJ_TYPE_SIZE;
     while(1){
         cha=getch1();
 
@@ -537,9 +538,13 @@ Display* disp_InventoryWindow(Display* dis, Inventory* inv, Font* ftitle, Font* 
                 goto END;
                 break;
         }
-        Canvas* nsel=inv_renderObj(inv,typesel,sizes[typesel].fi,sizes[typesel].se,ftext,fnumbers,selindex,false);
-        canv_print(stdout,nsel,coordinates[typesel][selindex].fi+10,coordinates[typesel][selindex].se+1);
-        canv_free(nsel);
+
+        if(selindex>=0){
+            Canvas* nsel=inv_renderObj(inv,typesel,sizes[typesel].fi,sizes[typesel].se,ftext,fnumbers,selindex,false);
+            canv_print(stdout,nsel,coordinates[typesel][selindex].fi+10,coordinates[typesel][selindex].se+1);
+            canv_free(nsel);
+        }
+        
 
         selindex=inv_getSelectedIndex(inv,typesel);
         Canvas* sel=inv_renderObj(inv,typesel,sizes[typesel].fi,sizes[typesel].se,ftext,fnumbers,selindex,true);
